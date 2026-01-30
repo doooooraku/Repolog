@@ -15,7 +15,7 @@
 
 ## 1. プロダクト概要
 ### 1.1 一言で
-Repolog は、現場の写真を“証拠として整理し”、コメントとメタ情報（作成日時/場所/天気など）を添えて、**提出に強いA4 PDFレポート**を最短で作るアプリ。
+Repolog は、現場の写真を“証拠として整理し”、コメントとメタ情報（作成日時/場所/天気など）を添えて、**提出に強いA4/Letter PDFレポート**を最短で作るアプリ。
 
 ### 1.2 コア価値（不変条件）
 - **証拠性**: 写真は欠けない（切り抜かない）。縦横比は維持し、枠内に縮小（contain）して載せる。
@@ -71,7 +71,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 ### 4.1 画面一覧（最小）
 - Home（タイムライン）
 - レポート詳細（編集・写真管理・PDF）
-- PDFプレビュー（設定: 標準/大きく）
+- PDFプレビュー（設定: 用紙サイズA4/Letter、標準/大きく）
 - 課金（Paywall）
 - 設定（言語、位置情報ON/OFF、バックアップ、利用規約）
 
@@ -108,6 +108,10 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
   - 50枚超え: PDF作成時に警告モーダル（Generate / 戻る）
 
 ### 4.4 PDFプレビュー（無制限）
+- 用紙サイズ:
+  - A4 / Letter（タブ切り替え）
+  - 初期値はA4
+  - 選択はプレビューと出力に反映される
 - レイアウト設定:
   - 標準（1ページ2枚）
   - 大きく（1ページ1枚） ※Freeでも選択・プレビュー可能（購買刺激）
@@ -167,9 +171,13 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 - カウント: `Array.from(text).length`（絵文字ズレを減らす）
 - 4000超えは入力を止める（仕様が明快）
 
-### F-06 PDF生成（A4のみ）
+### F-06 PDF生成（A4/Letter）
 #### 目的
-- “提出に強い” A4縦PDFを、崩れずに生成する。
+- “提出に強い” A4/Letter縦PDFを、崩れずに生成する。
+
+#### 用紙サイズ（プレビューと出力で一致）
+- A4 / Letter を選択可能
+- 初期値は A4
 
 #### ページ構成（固定）
 - Page 1: 表紙（Cover）
@@ -250,7 +258,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 - photos:
   - id, reportId, orderIndex, localUri, width, height, capturedAt(optional), compressedUri(optional)
 - exports:
-  - id, reportId, exportedAtLocal, layoutMode, pageCount, photoCount, planAtExport(Free/Pro)
+  - id, reportId, exportedAtLocal, layoutMode, pageCount, photoCount, paperSize(A4/Letter), planAtExport(Free/Pro)
 
 ---
 
@@ -276,7 +284,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 > ここは“方針”だけ。コード詳細は How-to / ADR / 実装へ。
 
 ### 8.1 PDF生成（Expo Print）
-- HTML/CSS でレイアウトし、`@page { size: A4; }` を指定する。
+- HTML/CSS でレイアウトし、`@page { size: A4; }` / `@page { size: letter; }` を生成時に切り替える。
 - CSSの単位は mm を基本（読みやすくズレにくい）
 - 画像は `<img style="object-fit: contain;">` で枠内に収める。
 
@@ -297,7 +305,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 
 ---
 
-## 10. PDF HTMLテンプレ（A4縦 / 崩れない最小構成）
+## 10. PDF HTMLテンプレ（A4/Letter縦 / 崩れない最小構成）
 > 目的: 実装者が「このまま組めば崩れない」状態にするための“骨格テンプレ”。  
 > 注意: ここでは **レイアウトとルール** を固定する。装飾（色・フォントサイズ微調整）はFigma側で詰める。
 
@@ -469,19 +477,20 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 ### 10.2 CSS
 ```css
 /* =========================================
-   A4 / Print stable base
-   - 仕様：A4縦、mm単位、写真はcontain（欠けない）
+   A4/Letter / Print stable base
+   - 仕様：A4/Letter縦、mm単位、写真はcontain（欠けない）
    ========================================= */
 
-/* A4サイズをCSS側で固定（PDF化でズレにくい） */
+/* 用紙サイズは生成側で差し替える（A4 / letter） */
 @page {
-  size: A4 portrait;
+  size: {{paperSize}} portrait;
   margin: 0; /* 余白は .page の padding で管理（画面プレビューと一致させる） */
 }
 
 :root{
-  --page-w: 210mm;
-  --page-h: 297mm;
+  /* A4: 210mm x 297mm / Letter: 216mm x 279mm */
+  --page-w: {{pageWidthMm}};
+  --page-h: {{pageHeightMm}};
   --page-pad: 12mm;
 
   --footer-h: 10mm;
@@ -523,7 +532,7 @@ body {
   print-color-adjust: exact;
 }
 
-/* 1ページ（A4の“紙”そのもの） */
+/* 1ページ（用紙そのもの） */
 .page {
   width: var(--page-w);
   height: var(--page-h);
