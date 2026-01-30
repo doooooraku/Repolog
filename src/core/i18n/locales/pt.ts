@@ -1,0 +1,177 @@
+import baseEn from './en';
+
+const dict = {
+  ...baseEn,
+  // --- Home / Header (ホーム画面 / ヘッダー) ---
+  daysStreak: 'DIAS SEGUIDOS',
+  yourChain: 'SUA CORRENTE',
+  allDoneDays: 'DIAS COMPLETOS',
+
+  // --- Settings (General) (設定：一般) ---
+  settings: 'Configurações',
+  hapticOff: 'Vibração desativada',
+  language: 'Idioma',
+  sound: 'Som',
+  haptics: 'Vibração',
+  theme: 'Tema',
+
+  // --- Purchase / Restore (購入 / 復元) ---
+  restore: 'Restaurar Compras',
+  purchaseSuccess: 'O plano Pro está ativo agora.',
+  purchaseFailed: 'Falha na compra. Tente novamente mais tarde.',
+  restoreSuccess: 'Histórico de compras restaurado.',
+  restoreNotFound: 'Nenhuma compra encontrada para restaurar.',
+  restoreFailed: 'Falha ao restaurar compras.',
+
+  // --- Settings (Sound & Info) (設定：音と情報) ---
+  version: 'Versão do App',
+  tapSound: 'Som do toque',
+  click: 'Clique',
+  pop: 'Pop',
+  soundSwitchLabel: 'Efeitos Sonoros',
+
+  // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
+  proTitle: 'Desbloqueie sua corrente.',
+  proHeaderTitle: 'Repolog Pro',
+  proSubtitle: 'Vá além de 3 hábitos e torne seus pontos imparáveis.',
+  proPlanFreeTitle: 'Grátis',
+  proPlanMonthlyTitle: 'Mensal',
+  proPlanYearlyTitle: 'Anual',
+  proPlanYearlyBadge: 'Melhor opção',
+  proBadgeShort: 'PRO',
+  priceFree: '$0 / para sempre', // または 'Grátis / para sempre'
+  proOnlyTitle: 'Recurso Pro',
+  proOnlyTheme: 'Faça upgrade para o Pro para usar este tema.',
+  openPro: 'Ver Plano Pro',
+  cancel: 'Cancelar',
+
+  // --- Settings (Appearance) (設定：見た目) ---
+  flowEffectTitle: 'Animação de fluxo elétrico',
+  flowEffectHelp:
+    'Deixe um fluxo neon percorrer sua linha de corrente. Desative se preferir um visual mais calmo.',
+
+  // --- Heatmap Range (Settings) (ヒートマップ表示期間) ---
+  heatmapRangeTitle: 'Intervalo de exibição',
+  heatmapRangeHelp: 'Escolha quantos dias da sua corrente mostrar no mapa de calor da tela inicial.',
+  heatmapRange7: '1 semana',
+  heatmapRange30: '1 mês',
+  heatmapRange60: '2 meses',
+  heatmapRange90: '3 meses',
+  heatmapRange180: '6 meses',
+  heatmapRange365: '1 ano',
+  heatmapSummaryPrefix: 'Últimos ',
+  heatmapSummarySuffix: ' dias',
+  heatmapAgoSuffix: ' dias atrás',
+  heatmapToday: 'Hoje',
+
+  // --- Themes (テーマ) ---
+  themeDesc: 'Mude a aparência do aplicativo.',
+  themeDarkLabel: 'Escuro',
+  themeNeonPinkLabel: 'Neon Rosa',
+  themeCyberBlueLabel: 'Cyber Azul',
+  freeThemeNote: 'Grátis: Apenas Escuro / Pro desbloqueia Neon Rosa e Cyber Azul',
+  proThemeNote: 'Temas Pro estarão disponíveis em breve.',
+
+  // --- Habit Management (習慣管理) ---
+  newHabitTitle: 'Novo Hábito',
+  editHabitTitle: 'Editar Hábito',
+  habitNameLabel: 'Nome',
+  habitNamePlaceholder: 'ex: Ler um livro, Beber água',
+  habitIconLabel: 'Ícone',
+  deleteHabit: 'Excluir este hábito',
+  deleteConfirmationTitle: 'Excluir hábito?',
+  deleteConfirmationMessage: 'Esta ação não pode ser desfeita. Todo o histórico será perdido.',
+  save: 'Salvar',
+  create: 'Criar',
+
+  // --- Icon Categories & Labels (アイコンカテゴリとラベル) ---
+  iconCatBasic: 'Básico',
+  iconCatHealth: 'Saúde',
+  iconCatLearning: 'Aprendizado',
+
+  iconLabelStreak: 'Sequência',
+  iconLabelTask: 'Tarefa',
+  iconLabelShine: 'Brilho',
+  iconLabelClean: 'Limpeza',
+  iconLabelLaundry: 'Lavanderia',
+  iconLabelWater: 'Água',
+  iconLabelWalk: 'Caminhada',
+  iconLabelSleep: 'Sono',
+  iconLabelWorkout: 'Treino',
+  iconLabelBarbell: 'Haltere',
+  iconLabelRead: 'Leitura',
+  iconLabelArt: 'Arte',
+  iconLabelMedia: 'Mídia',
+  iconLabelStudy: 'Estudo',
+  iconLabelLanguage: 'Idioma',
+
+  // --- Misc / Errors (その他 / エラー) ---
+  habitButtonSuffix: ' botão de hábito',
+  errorLoadFailed: 'Falha ao carregar dados.',
+  errorTitleRequired: 'O título é obrigatório.',
+  errorTitleTooLong: 'O título deve ter 20 caracteres ou menos.',
+  errorSaveFailed: 'Falha ao salvar.',
+  errorDeleteFailed: 'Falha ao excluir.',
+  errorToggleFailed: 'Falha ao atualizar registro.',
+  habitLimitTitle: 'Limite do plano gratuito',
+  habitLimitBody: 'No plano gratuito você pode criar até 3 hábitos.',
+
+  // --- Settings description (設定の説明) ---
+  hapticsDescription: 'Feedback tátil (vibração)',
+
+  // --- Reminder (リマインダー) ---
+  reminderSectionTitle: 'Lembrete',
+  reminderToggleLabel: 'Usar lembrete',
+  reminderTimeLabel: 'Horário da notificação',
+  reminderNotificationBody: 'É hora de construir sua corrente!',
+
+  // --- Review (7-day streak) (レビュー依頼) ---
+  streak7Title: 'Sequência de 7 dias!',
+  streak7Message: 'Você manteve sua corrente por uma semana inteira. Ótimo trabalho!',
+  ok: 'Incrível',
+
+  // --- Language labels (言語名) ---
+  languageChange: 'Mudar idioma',
+  currentLanguage: 'Atual',
+  languageNameEn: 'Inglês',
+  languageNameJa: 'Japonês',
+  languageNameFr: 'Francês',
+  languageNameEs: 'Espanhol',
+  languageNameDe: 'Alemão',
+  languageNameIt: 'Italiano',
+  languageNamePt: 'Português',
+  languageNameRu: 'Russo',
+  languageNameZhHans: 'Chinês (简体)',
+  languageNameZhHant: 'Chinês (繁體)',
+  languageNameKo: 'Coreano',
+  languageNameHi: 'Hindi',
+  languageNameId: 'Indonésio',
+  languageNameTh: 'Tailandês',
+  languageNameVi: 'Vietnamita',
+  languageNameTr: 'Turco',
+  languageNameNl: 'Holandês',
+  languageNameSv: 'Sueco',
+
+  // --- Tutorial (チュートリアル) ---
+  tutorialWelcomeBody:
+    'Welcome!\nRepolog helps you build a chain of habits.\nTap the + button at the bottom right to create your first habit.',
+  tutorialPressFabBody:
+    'Tap the + button at the bottom right to create your first habit.',
+  tutorialPressHabitBody:
+    'Now tap the habit you just created.\nA tap marks today as done.',
+  tutorialExplainChainBody:
+    'That tap increased your DAYS STREAK and lit up YOUR CHAIN.\nKeep going each day to grow your chain.',
+  tutorialEditIconBody: 'First, choose an icon that matches your habit.',
+  tutorialEditNameBody:
+    'Next, enter a habit name.\nFor example: Drink water or Read a book.',
+  tutorialEditSubmitBody:
+    'All set!\nTap Create below to add it to your Home screen.',
+  tutorialGotIt: 'Got it',
+  tutorialNext: 'Próximo',
+  tutorialWelcome: 'Bem-vindo ao Repolog',
+  tutorialDesc1: 'Conecte seus hábitos diários e construa sua própria corrente.',
+  tutorialDesc2: 'Não quebre a corrente para manter o hábito.',
+  tutorialStart: 'Começar',
+};
+
+export default dict;

@@ -1,0 +1,219 @@
+const baseEn = {
+  // --- Home / Header ---
+  daysStreak: 'DAYS STREAK',
+  yourChain: 'YOUR CHAIN',
+  allDoneDays: 'ALL DONE DAYS',
+  homeLoading: 'Loading...',
+  homeAddHabitLabel: 'Add habit',
+
+  // --- Settings (General) ---
+  settings: 'Settings',
+  hapticOff: 'Haptics off',
+  language: 'Language',
+  sound: 'Sound',
+  haptics: 'Haptics',
+  theme: 'Theme',
+
+  // --- Purchase / Restore ---
+  restore: 'Restore Purchases',
+  purchaseSuccess: 'Pro plan is now active.',
+  purchaseFailed: 'Purchase failed. Please try again later.',
+  restoreSuccess: 'Purchase history restored.',
+  restoreNotFound: 'No purchases were found to restore.',
+  restoreFailed: 'Failed to restore purchases.',
+  restoreDesc: 'Restore purchases made with this account.',
+
+  // --- Settings (Sound & Info) ---
+  version: 'App Version',
+  tapSound: 'Tap sound',
+  tapSoundLabel: 'Tap sound type',
+  click: 'Click',
+  pop: 'Pop',
+  soundSwitchLabel: 'Sound Effects',
+
+  // --- Pro Screen (Paywall) ---
+  proTitle: 'Unlock your chain.',
+  proHeaderTitle: 'Repolog Pro',
+  proSubtitle: 'Go beyond 3 habits and make your dots unstoppable.',
+  proPlanFreeTitle: 'Free',
+  proPlanMonthlyTitle: 'Monthly',
+  proPlanYearlyTitle: 'Yearly',
+  proPlanYearlyBadge: 'Best value',
+  proBadgeShort: 'PRO',
+  priceFree: '$0 / forever',
+  priceLoading: 'Loading...',
+  priceUnavailable: 'Unavailable',
+  proMonthlyTagline: 'Start small, cancel anytime.',
+  proYearlyTagline: 'For serious habit builders.',
+  proCompareTitle: 'What changes with Pro',
+  proCompareSubtitle: 'Free is enough to start. Pro removes limits.',
+  proCompareHeaderFeature: 'Feature',
+  proCompareHeaderFree: 'Free',
+  proCompareHeaderPro: 'Pro',
+  proFeatureHabits: 'Max habits',
+  proFeatureHabitsFree: 'Up to 3',
+  proFeatureHabitsPro: 'Unlimited',
+  proFeatureThemes: 'Themes',
+  proFeatureThemesFree: 'Dark only',
+  proFeatureThemesPro: 'All themes unlocked',
+  proFeatureUnlimited: 'Unlimited habits',
+  proYearlySavingShort: 'Save ~37% (Best value)',
+  proCtaYearly: 'Start Yearly Plan',
+  proCtaMonthly: 'Start Monthly Plan',
+  proCtaStayFree: 'Stay Free',
+  proFinePrint: 'Subscriptions auto-renew. Cancel anytime in your account settings.',
+  subscriptionDetailsTitle: 'Subscription Details',
+  subscriptionDetailsLengthLabel: 'Length',
+  subscriptionDetailsPriceLabel: 'Price',
+  subscriptionDetailsPerMonthLabel: 'Price per month',
+  subscriptionLengthMonthly: '1 month',
+  subscriptionLengthYearly: '1 year',
+  legalSectionTitle: 'Legal',
+  legalPrivacyPolicyLabel: 'Privacy Policy',
+  legalTermsOfUseLabel: 'Terms of Use (EULA)',
+  proOnlyTitle: 'Pro Feature',
+  proOnlyTheme: 'Upgrade to Pro to use this theme.',
+  openPro: 'View Pro Plan',
+  cancel: 'Cancel',
+
+  // --- Settings (Appearance) ---
+  flowEffectTitle: 'Electric flow animation',
+  flowEffectHelp:
+    'Let a neon electric flow run along your chain line. Turn this off if you prefer a calmer look.',
+
+  // --- Heatmap Range (Settings) ---
+  heatmapRangeTitle: 'Chain display range',
+  heatmapRangeHelp: 'Choose how many days of your chain to show in the home heatmap.',
+  heatmapRange7: '1 week',
+  heatmapRange30: '1 month',
+  heatmapRange60: '2 months',
+  heatmapRange90: '3 months',
+  heatmapRange180: '6 months',
+  heatmapRange365: '1 year',
+  heatmapSummaryPrefix: 'Last ',
+  heatmapSummarySuffix: ' days',
+  heatmapAgoSuffix: ' days ago',
+  heatmapToday: 'Today',
+
+  // --- Themes ---
+  themeDesc: 'Change the appearance of the app.',
+  themeDarkLabel: 'Dark',
+  themeNeonPinkLabel: 'Neon Pink',
+  themeCyberBlueLabel: 'Cyber Blue',
+  freeThemeNote: 'Free: Dark only / Pro unlocks Neon Pink & Cyber Blue',
+  proThemeNote: 'Pro themes will be available soon.',
+
+  // --- Habit Management ---
+  newHabitTitle: 'New Habit',
+  editHabitTitle: 'Edit Habit',
+  editNewHabit: 'New habit',
+  editCategoryLabel: 'Category',
+  editNameLabel: 'Habit name (max 20 chars)',
+  editNamePlaceholder: 'Enter a habit name...',
+  editSaveChanges: 'Save changes',
+  editCreateHabit: 'Create habit',
+  editDeleteHabit: 'Delete habit',
+  habitNameLabel: 'Name',
+  habitNamePlaceholder: 'e.g. Read a book, Drink water',
+  habitIconLabel: 'Icon',
+  deleteHabit: 'Delete this habit',
+  deleteConfirmBody: 'Are you sure? This cannot be undone.',
+  delete: 'Delete',
+  deleteConfirmationTitle: 'Delete habit?',
+  deleteConfirmationMessage: 'This action cannot be undone. All history will be lost.',
+  save: 'Save',
+  create: 'Create',
+
+  // --- Icon Categories & Labels ---
+  iconCatBasic: 'Basic',
+  iconCatHealth: 'Health',
+  iconCatLearning: 'Learning',
+
+  iconLabelStreak: 'Streak',
+  iconLabelTask: 'Task',
+  iconLabelShine: 'Shine',
+  iconLabelClean: 'Clean',
+  iconLabelLaundry: 'Laundry',
+  iconLabelWater: 'Water',
+  iconLabelWalk: 'Walk',
+  iconLabelSleep: 'Sleep',
+  iconLabelWorkout: 'Workout',
+  iconLabelBarbell: 'Barbell',
+  iconLabelRead: 'Read',
+  iconLabelArt: 'Art',
+  iconLabelMedia: 'Media',
+  iconLabelStudy: 'Study',
+  iconLabelLanguage: 'Language',
+
+  // --- Misc / Errors ---
+  habitButtonSuffix: ' habit button',
+  errorLoadFailed: 'Failed to load data.',
+  errorTitleRequired: 'Title is required.',
+  errorTitleTooLong: 'Title must be 20 characters or less.',
+  errorSaveFailed: 'Failed to save.',
+  errorDeleteFailed: 'Failed to delete.',
+  errorToggleFailed: 'Failed to update record.',
+  habitLimitTitle: 'Free plan limit',
+  habitLimitBody: 'On the free plan you can create up to 3 habits.',
+
+  // --- Settings description ---
+  hapticsDescription: 'Haptic feedback (vibration)',
+
+  // --- Reminder ---
+  reminderSectionTitle: 'Reminder',
+  reminderToggleLabel: 'Use reminder',
+  reminderTimeLabel: 'Notification time',
+  reminderNotificationBody: 'It’s time to build your chain!',
+
+  // --- Review (7-day streak) ---
+  streak7Title: '7-day streak!',
+  streak7Message: 'You have kept your chain for a full week. Great job!',
+  ok: 'Awesome',
+
+  // --- Language labels ---
+  languageChange: 'Change language',
+  currentLanguage: 'Current',
+  languageNameEn: 'English',
+  languageNameJa: 'Japanese',
+  languageNameFr: 'French',
+  languageNameEs: 'Spanish',
+  languageNameDe: 'German',
+  languageNameIt: 'Italian',
+  languageNamePt: 'Portuguese',
+  languageNameRu: 'Russian',
+  languageNameZhHans: 'Chinese (Simplified)',
+  languageNameZhHant: 'Chinese (Traditional)',
+  languageNameKo: 'Korean',
+  languageNameHi: 'Hindi',
+  languageNameId: 'Indonesian',
+  languageNameTh: 'Thai',
+  languageNameVi: 'Vietnamese',
+  languageNameTr: 'Turkish',
+  languageNameNl: 'Dutch',
+  languageNameSv: 'Swedish',
+
+  // --- Tutorial ---
+  tutorialWelcomeBody:
+    'Welcome!\nRepolog helps you build a chain of habits.\nTap the + button at the bottom right to create your first habit.',
+  tutorialPressFabBody:
+    'Tap the + button at the bottom right to create your first habit.',
+  tutorialPressHabitBody:
+    'Now tap the habit you just created.\nA tap marks today as done.',
+  tutorialExplainChainBody:
+    'That tap increased your DAYS STREAK and lit up YOUR CHAIN.\nKeep going each day to grow your chain.',
+  tutorialEditIconBody: 'First, choose an icon that matches your habit.',
+  tutorialEditNameBody:
+    'Next, enter a habit name.\nFor example: Drink water or Read a book.',
+  tutorialEditSubmitBody:
+    'All set!\nTap Create below to add it to your Home screen.',
+  tutorialGotIt: 'Got it',
+  tutorialNext: 'Next',
+  tutorialWelcome: 'Welcome to Repolog',
+  tutorialDesc1: 'Connect your daily habits and build your own chain.',
+  tutorialDesc2: 'Don’t break the chain to make habits stick.',
+  tutorialStart: 'Get Started',
+};
+
+export type TranslationKey = keyof typeof baseEn;
+
+export default baseEn;
