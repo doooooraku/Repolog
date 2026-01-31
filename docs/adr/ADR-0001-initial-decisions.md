@@ -1,6 +1,6 @@
 # ADR-0001: 初期の決定事項（ベースライン）を ADR/constraints に集約する
 
-- Status: Accepted
+- Status: Superseded
 - Date: 2026-01-17
 - Deciders: Repolog core
 - Scope: Repolog v1.x（仕様のベースライン）
@@ -9,6 +9,8 @@
   - docs/adr/README.md（ADR運用ルール）
   - docs/adr/adr_template.md（ADRテンプレ）
   - docs/reference/basic_spec.md / docs/reference/functional_spec.md / docs/reference/constraints.md（初期仕様の参照元）
+  - ADR-0006-storage-policy-asyncstorage-securestore（データ保存方針の更新）
+- Note: 本ADRの「データ保存方針」はADR-0006で更新。その他の項目は引き続き有効。
 
 ---
 
