@@ -198,6 +198,15 @@ const dict = {
   addressLabel: 'Address',
   addressPlaceholder: 'Enter address...',
   obtaining: 'Obtaining...',
+  photosLabel: 'Photos',
+  addFromCamera: 'Camera',
+  addFromLibrary: 'Library',
+  photoLimitHint: 'Free plan allows up to {max} photos per report.',
+  photoLimitTitle: 'Photo limit reached',
+  photoLimitBody: 'Free plan allows up to {max} photos per report.',
+  photoPermissionDenied: 'Photo permission denied',
+  photoAddFailed: 'Failed to add photo',
+  photoEmpty: 'No photos yet.',
 };
 
 export default dict;

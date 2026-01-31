@@ -11,13 +11,18 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Image } from 'expo-image';
 
-import type { AddressSource, Report, WeatherType } from '@/src/types/models';
+import type { AddressSource, Photo, Report, WeatherType } from '@/src/types/models';
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { createReport, getReportById, updateReport } from '@/src/db/reportRepository';
 import { clampComment, remainingCommentChars } from '@/src/features/reports/reportUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
+import { listPhotosByReport } from '@/src/db/photoRepository';
+import { addPhotosFromCamera, addPhotosFromLibrary } from '@/src/services/photoService';
+import { resolvePhotoAddLimit, MAX_FREE_PHOTOS_PER_REPORT } from '@/src/features/photos/photoUtils';
+import { proService } from '@/src/services/proService';
 
 type LocationState = {
   lat: number | null;
@@ -60,6 +65,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [loading, setLoading] = useState<boolean>(Boolean(reportId));
   const [saving, setSaving] = useState(false);
   const [report, setReport] = useState<Report | null>(null);
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [isPro, setIsPro] = useState(false);
 
   const [reportName, setReportName] = useState('');
   const [comment, setComment] = useState('');
@@ -98,6 +105,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           addressSource: existing.addressSource,
           addressLocale: existing.addressLocale,
         });
+        const photoList = await listPhotosByReport(existing.id);
+        if (mounted) setPhotos(photoList);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -107,6 +116,22 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       mounted = false;
     };
   }, [reportId, t.errorLoadFailed]);
+
+  useEffect(() => {
+    let mounted = true;
+    proService
+      .loadLocalState()
+      .then((state) => {
+        if (!mounted) return;
+        setIsPro(Boolean(state?.isPro));
+      })
+      .catch(() => {
+        if (mounted) setIsPro(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleFetchLocation = useCallback(async () => {
     if (!includeLocation || locationLoading) return;
@@ -175,22 +200,37 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     [t],
   );
 
+  const buildPayload = useCallback(() => ({
+    reportName: reportName.trim() || null,
+    comment,
+    weather,
+    locationEnabledAtCreation: report?.locationEnabledAtCreation ?? includeLocation,
+    lat: includeLocation ? locationState.lat : null,
+    lng: includeLocation ? locationState.lng : null,
+    latLngCapturedAt: includeLocation ? locationState.latLngCapturedAt : null,
+    address: includeLocation ? locationState.address : null,
+    addressSource: includeLocation ? locationState.addressSource : null,
+    addressLocale: includeLocation ? locationState.addressLocale : null,
+  }), [report, reportName, comment, weather, includeLocation, locationState]);
+
+  const ensureReport = useCallback(async () => {
+    if (report) return report;
+    const created = await createReport(buildPayload());
+    setReport(created);
+    setCreatedAt(created.createdAt);
+    return created;
+  }, [report, buildPayload]);
+
+  const refreshPhotos = useCallback(async (reportIdValue: string) => {
+    const list = await listPhotosByReport(reportIdValue);
+    setPhotos(list);
+  }, []);
+
   const handleSave = async () => {
     if (saving) return;
     setSaving(true);
     try {
-      const payload = {
-        reportName: reportName.trim() || null,
-        comment,
-        weather,
-        locationEnabledAtCreation: report?.locationEnabledAtCreation ?? includeLocation,
-        lat: includeLocation ? locationState.lat : null,
-        lng: includeLocation ? locationState.lng : null,
-        latLngCapturedAt: includeLocation ? locationState.latLngCapturedAt : null,
-        address: includeLocation ? locationState.address : null,
-        addressSource: includeLocation ? locationState.addressSource : null,
-        addressLocale: includeLocation ? locationState.addressLocale : null,
-      };
+      const payload = buildPayload();
       if (reportId) {
         await updateReport({ id: reportId, ...payload });
       } else {
@@ -205,6 +245,44 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       setSaving(false);
     }
   };
+
+  const handleAddPhotos = useCallback(
+    async (source: 'camera' | 'library') => {
+      try {
+        const current = await ensureReport();
+        const existingCount = photos.length;
+        const limitStatus = resolvePhotoAddLimit(isPro, existingCount, 1);
+        if (limitStatus.blocked && !isPro && limitStatus.allowedCount === 0) {
+          Alert.alert(
+            t.photoLimitTitle,
+            t.photoLimitBody.replace('{max}', String(MAX_FREE_PHOTOS_PER_REPORT)),
+          );
+          return;
+        }
+
+        const result =
+          source === 'camera'
+            ? await addPhotosFromCamera(current.id, isPro)
+            : await addPhotosFromLibrary(current.id, isPro);
+
+        if (result.reason === 'permission') {
+          Alert.alert(t.photoPermissionDenied);
+          return;
+        }
+        if (result.canceled) return;
+        if (result.blocked && !isPro) {
+          Alert.alert(
+            t.photoLimitTitle,
+            t.photoLimitBody.replace('{max}', String(MAX_FREE_PHOTOS_PER_REPORT)),
+          );
+        }
+        await refreshPhotos(current.id);
+      } catch {
+        Alert.alert(t.photoAddFailed);
+      }
+    },
+    [ensureReport, photos.length, isPro, refreshPhotos, t],
+  );
 
   const remaining = remainingCommentChars(comment);
 
@@ -311,6 +389,32 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             </View>
           </View>
         )}
+      </View>
+
+      <View style={styles.section}>
+        <View style={styles.rowBetween}>
+          <Text style={styles.sectionTitle}>{t.photosLabel}</Text>
+          <Text style={styles.subtle}>{photos.length}</Text>
+        </View>
+        {!isPro && (
+          <Text style={styles.subtle}>
+            {t.photoLimitHint.replace('{max}', String(MAX_FREE_PHOTOS_PER_REPORT))}
+          </Text>
+        )}
+        <View style={styles.rowBetween}>
+          <Pressable onPress={() => handleAddPhotos('camera')} style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>{t.addFromCamera}</Text>
+          </Pressable>
+          <Pressable onPress={() => handleAddPhotos('library')} style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>{t.addFromLibrary}</Text>
+          </Pressable>
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.photoStrip}>
+          {photos.slice(0, 6).map((photo) => (
+            <Image key={photo.id} source={{ uri: photo.localUri }} style={styles.photoThumb} />
+          ))}
+          {photos.length === 0 && <Text style={styles.subtle}>{t.photoEmpty}</Text>}
+        </ScrollView>
       </View>
 
       <View style={styles.section}>
@@ -492,5 +596,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 15,
+  },
+  photoStrip: {
+    marginTop: 8,
+  },
+  photoThumb: {
+    width: 72,
+    height: 72,
+    borderRadius: 8,
+    marginRight: 8,
+    backgroundColor: '#eee',
   },
 });
