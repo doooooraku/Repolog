@@ -3,6 +3,8 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 import 'dotenv/config';
 
 const BILLING_PERMISSION = 'com.android.vending.BILLING';
+const ADMOB_TEST_APP_ID_ANDROID = 'ca-app-pub-3940256099942544~3347511713';
+const ADMOB_TEST_APP_ID_IOS = 'ca-app-pub-3940256099942544~1458002511';
 
 const SUPPORTED_LOCALES = [
   'en',
@@ -46,6 +48,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const supportsRTL = toBoolean(process.env.SUPPORTS_RTL);
   const forcesRTL = toBoolean(process.env.FORCES_RTL);
 
+  const admobAndroidAppId = process.env.ADMOB_ANDROID_APP_ID ?? ADMOB_TEST_APP_ID_ANDROID;
+  const admobIosAppId = process.env.ADMOB_IOS_APP_ID ?? ADMOB_TEST_APP_ID_IOS;
+
   const pluginsWithLocalization = ensurePlugin(
     config.plugins,
     'expo-localization',
@@ -54,6 +59,15 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         ios: SUPPORTED_LOCALES,
         android: SUPPORTED_LOCALES,
       },
+    },
+  );
+
+  const pluginsWithAdMob = ensurePlugin(
+    pluginsWithLocalization,
+    'react-native-google-mobile-ads',
+    {
+      androidAppId: admobAndroidAppId,
+      iosAppId: admobIosAppId,
     },
   );
 
@@ -68,9 +82,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       REVENUECAT_IOS_API_KEY: process.env.REVENUECAT_IOS_API_KEY ?? '',
       REVENUECAT_ANDROID_API_KEY: process.env.REVENUECAT_ANDROID_API_KEY ?? '',
       IAP_DEBUG: process.env.IAP_DEBUG ?? '0',
+      ADMOB_ANDROID_BANNER_ID: process.env.ADMOB_ANDROID_BANNER_ID ?? '',
+      ADMOB_IOS_BANNER_ID: process.env.ADMOB_IOS_BANNER_ID ?? '',
       supportsRTL,
       forcesRTL,
     },
-    plugins: pluginsWithLocalization,
+    plugins: pluginsWithAdMob,
   };
 };

@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 
+import { AdBanner } from '@/components/ad-banner';
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { deleteReport, listReports, searchReports, updateReport } from '@/src/db/reportRepository';
 import {
@@ -21,6 +22,7 @@ import {
 } from '@/src/db/photoRepository';
 import { buildTimelineSections } from '@/src/features/reports/reportListUtils';
 import { removeReportPhotos } from '@/src/services/photoService';
+import { useProStore } from '@/src/stores/proStore';
 import type { Report } from '@/src/types/models';
 
 type ReportMeta = {
@@ -31,6 +33,9 @@ type ReportMeta = {
 export default function HomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const isPro = useProStore((s) => s.isPro);
+  const proInitialized = useProStore((s) => s.initialized);
+  const initPro = useProStore((s) => s.init);
   const [query, setQuery] = useState('');
   const [reports, setReports] = useState<Report[]>([]);
   const [meta, setMeta] = useState<Record<string, ReportMeta>>({});
@@ -57,6 +62,10 @@ export default function HomeScreen() {
   useEffect(() => {
     void loadReports();
   }, [loadReports]);
+
+  useEffect(() => {
+    void initPro();
+  }, [initPro]);
 
   const sections = useMemo(
     () => buildTimelineSections(reports, query, t.homePinnedSection),
@@ -152,8 +161,10 @@ export default function HomeScreen() {
             <Text style={styles.sectionHeader}>{section.title}</Text>
           )}
           contentContainerStyle={styles.listContent}
+          style={styles.list}
         />
       )}
+      {proInitialized && !isPro && <AdBanner />}
     </View>
   );
 }
@@ -163,6 +174,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#f6f6f6',
+  },
+  list: {
+    flex: 1,
   },
   center: {
     flex: 1,
