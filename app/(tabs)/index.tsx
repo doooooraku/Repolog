@@ -1,107 +1,273 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  SectionList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { useTranslation } from '@/src/core/i18n/i18n';
+import { deleteReport, listReports, searchReports, updateReport } from '@/src/db/reportRepository';
+import {
+  countPhotosByReportIds,
+  deletePhotosByReport,
+  getFirstPhotosByReportIds,
+} from '@/src/db/photoRepository';
+import { buildTimelineSections } from '@/src/features/reports/reportListUtils';
+import { removeReportPhotos } from '@/src/services/photoService';
+import type { Report } from '@/src/types/models';
+
+type ReportMeta = {
+  firstPhotoUri?: string;
+  photoCount?: number;
+};
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/reports/new">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Create a report</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-        </Link>
-        <ThemedText>Open the report editor to enter metadata and location.</ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const router = useRouter();
+  const { t } = useTranslation();
+  const [query, setQuery] = useState('');
+  const [reports, setReports] = useState<Report[]>([]);
+  const [meta, setMeta] = useState<Record<string, ReportMeta>>({});
+  const [loading, setLoading] = useState(true);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const loadReports = useCallback(async () => {
+    setLoading(true);
+    const data = query.trim() ? await searchReports(query) : await listReports();
+    setReports(data);
+    const ids = data.map((report) => report.id);
+    const firstPhotos = await getFirstPhotosByReportIds(ids);
+    const counts = await countPhotosByReportIds(ids);
+    const nextMeta: Record<string, ReportMeta> = {};
+    ids.forEach((id) => {
+      nextMeta[id] = {
+        firstPhotoUri: firstPhotos[id]?.localUri,
+        photoCount: counts[id] ?? 0,
+      };
+    });
+    setMeta(nextMeta);
+    setLoading(false);
+  }, [query]);
+
+  useEffect(() => {
+    void loadReports();
+  }, [loadReports]);
+
+  const sections = useMemo(
+    () => buildTimelineSections(reports, query, t.homePinnedSection),
+    [reports, query, t.homePinnedSection],
+  );
+
+  const handleTogglePin = async (report: Report) => {
+    await updateReport({ id: report.id, pinned: !report.pinned });
+    await loadReports();
+  };
+
+  const handleDelete = async (report: Report) => {
+    Alert.alert(t.deleteConfirmTitle, t.deleteConfirmBody, [
+      { text: t.cancelAction, style: 'cancel' },
+      {
+        text: t.deleteAction,
+        style: 'destructive',
+        onPress: async () => {
+          await removeReportPhotos(report.id);
+          await deletePhotosByReport(report.id);
+          await deleteReport(report.id);
+          await loadReports();
+        },
+      },
+    ]);
+  };
+
+  const renderItem = ({ item }: { item: Report }) => {
+    const summary = meta[item.id] ?? {};
+    return (
+      <Pressable
+        style={styles.card}
+        onPress={() => router.push(`/reports/${item.id}`)}>
+        {summary.firstPhotoUri ? (
+          <Image source={{ uri: summary.firstPhotoUri }} style={styles.thumb} />
+        ) : (
+          <View style={[styles.thumb, styles.thumbPlaceholder]} />
+        )}
+        <View style={styles.cardBody}>
+          <View style={styles.cardRow}>
+            <Text style={styles.cardTitle} numberOfLines={1}>
+              {item.reportName ?? t.reportUnnamed}
+            </Text>
+            <Pressable onPress={() => handleTogglePin(item)}>
+              <Text style={styles.pinText}>{item.pinned ? '★' : '☆'}</Text>
+            </Pressable>
+          </View>
+          <Text style={styles.cardSub}>{item.createdAt.replace('T', ' ').slice(0, 16)}</Text>
+          <View style={styles.cardRow}>
+            <Text style={styles.cardMeta}>
+              {summary.photoCount ?? 0} {t.reportPhotosLabel}
+            </Text>
+            <Pressable onPress={() => handleDelete(item)}>
+              <Text style={styles.deleteText}>{t.deleteAction}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Pressable>
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{t.homeTitle}</Text>
+      <TextInput
+        placeholder={t.homeSearchPlaceholder}
+        value={query}
+        onChangeText={setQuery}
+        style={styles.search}
+      />
+      {sections.length === 0 ? (
+        <View style={styles.empty}>
+          <Text style={styles.emptyTitle}>{t.homeEmptyTitle}</Text>
+          <Text style={styles.emptyBody}>{t.homeEmptyBody}</Text>
+          <Pressable style={styles.newButton} onPress={() => router.push('/reports/new')}>
+            <Text style={styles.newButtonText}>{t.homeCreateReport}</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <SectionList
+          sections={sections}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          renderSectionHeader={({ section }) => (
+            <Text style={styles.sectionHeader}>{section.title}</Text>
+          )}
+          contentContainerStyle={styles.listContent}
+        />
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#f6f6f6',
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111',
+  },
+  search: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+  },
+  listContent: {
+    paddingTop: 12,
+    paddingBottom: 24,
+  },
+  sectionHeader: {
+    marginTop: 16,
+    marginBottom: 8,
+    fontSize: 13,
+    color: '#666',
+    fontWeight: '600',
+  },
+  card: {
+    flexDirection: 'row',
+    gap: 12,
+    padding: 12,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#eee',
+    marginBottom: 12,
+  },
+  thumb: {
+    width: 72,
+    height: 72,
+    borderRadius: 10,
+  },
+  thumbPlaceholder: {
+    backgroundColor: '#e9e9e9',
+  },
+  cardBody: {
+    flex: 1,
+    gap: 6,
+  },
+  cardRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  cardTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111',
+    flex: 1,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  cardSub: {
+    fontSize: 12,
+    color: '#777',
+  },
+  cardMeta: {
+    fontSize: 12,
+    color: '#666',
+  },
+  pinText: {
+    fontSize: 18,
+    color: '#f59e0b',
+  },
+  deleteText: {
+    fontSize: 12,
+    color: '#ef4444',
+  },
+  empty: {
+    marginTop: 40,
+    alignItems: 'center',
+    gap: 10,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#222',
+  },
+  emptyBody: {
+    fontSize: 13,
+    color: '#666',
+    textAlign: 'center',
+  },
+  newButton: {
+    marginTop: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#111',
+  },
+  newButtonText: {
+    color: '#fff',
+    fontWeight: '600',
   },
 });

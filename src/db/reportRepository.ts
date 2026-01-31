@@ -82,6 +82,23 @@ export async function listReports(): Promise<Report[]> {
   return rows.map(toReport);
 }
 
+export async function searchReports(query: string): Promise<Report[]> {
+  const db = await getDb();
+  const text = `%${query.trim()}%`;
+  if (!query.trim()) {
+    return listReports();
+  }
+  const rows = await db.getAllAsync<ReportRow>(
+    `SELECT ${REPORT_COLUMNS.join(', ')} FROM reports
+     WHERE report_name LIKE ? COLLATE NOCASE
+        OR comment LIKE ? COLLATE NOCASE
+     ORDER BY pinned DESC, updated_at DESC`,
+    text,
+    text,
+  );
+  return rows.map(toReport);
+}
+
 export async function getReportById(id: string): Promise<Report | null> {
   const db = await getDb();
   const row = await db.getFirstAsync<ReportRow>(

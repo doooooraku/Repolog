@@ -207,6 +207,18 @@ const dict = {
   photoPermissionDenied: 'Photo permission denied',
   photoAddFailed: 'Failed to add photo',
   photoEmpty: 'No photos yet.',
+  homeTitle: 'Home',
+  homeSearchPlaceholder: 'Search reports...',
+  homePinnedSection: 'Pinned',
+  homeEmptyTitle: 'No reports yet',
+  homeEmptyBody: 'Create your first report.',
+  homeCreateReport: 'Create report',
+  deleteConfirmTitle: 'Delete report?',
+  deleteConfirmBody: 'This action cannot be undone.',
+  deleteAction: 'Delete',
+  cancelAction: 'Cancel',
+  reportUnnamed: 'Untitled report',
+  reportPhotosLabel: 'photos',
 };
 
 export default dict;
