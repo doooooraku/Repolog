@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -120,8 +121,11 @@ const useI18nStore = create<I18nState>()(
 export function useTranslation() {
   const lang = useI18nStore((s) => s.lang);
   const setLang = useI18nStore((s) => s.setLang);
-  const t = (key: TranslationKey) => dictionaries[lang][key] ?? baseEn[key] ?? key;
-  return { t, lang, setLang };
+  const dict = useMemo(
+    () => ({ ...baseEn, ...dictionaries[lang] }),
+    [lang],
+  );
+  return { t: dict, lang, setLang };
 }
 
 export function setLang(lang: Lang) {
