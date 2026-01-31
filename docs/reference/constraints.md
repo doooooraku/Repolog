@@ -51,7 +51,8 @@
 
 ### 1-2. データ保存の原則（端末内のみ）
 - Report / Photo / Export 履歴：SQLite に保存する
-- Settings / ProState：SecureStore（端末の暗号化ストレージ）に保存する
+- Settings（言語・UIなど非機密）：AsyncStorage（端末ローカルストレージ）に保存する
+- ProState（課金状態・購読IDなど機密）：SecureStore（端末の暗号化ストレージ）に保存する
 - 写真実体（画像ファイル）：アプリ管理領域に保存する（OSの管理領域を尊重）
 
 ### 1-3. 個人情報（PII）をアプリとして取得しない
@@ -138,6 +139,7 @@
 
 ## 8. 参照リンク（一次情報）
 - Expo SecureStore: https://docs.expo.dev/versions/latest/sdk/securestore/
+- AsyncStorage: https://react-native-async-storage.github.io/async-storage/docs/usage/
 - Expo SQLite: https://docs.expo.dev/versions/latest/sdk/sqlite/
 - RevenueCat Restore Purchases: https://www.revenuecat.com/docs/getting-started/restoring-purchases
 - react-native-google-mobile-ads（テストID等）: https://docs.page/invertase/react-native-google-mobile-ads/displaying-ads
