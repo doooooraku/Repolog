@@ -574,6 +574,7 @@ html, body {
 }
 
 /* 多言語フォント：Noto中心＋OS標準フォールバック
+   PDF出力は Noto Sans 系を埋め込みで固定（ADR-0002 / assets/fonts）
    ※本気で崩れゼロを狙うなら、woff2を同梱して@font-faceで固定推奨（本文で説明） */
 body {
   font-family:
