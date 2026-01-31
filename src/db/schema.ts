@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export const schemaV1 = `
 PRAGMA foreign_keys = ON;
@@ -34,4 +34,21 @@ CREATE TABLE IF NOT EXISTS photos (
 
 CREATE INDEX IF NOT EXISTS idx_reports_updated_at ON reports(updated_at);
 CREATE INDEX IF NOT EXISTS idx_photos_report_order ON photos(report_id, order_index);
+`;
+
+export const schemaV2 = `
+CREATE TABLE IF NOT EXISTS exports (
+  id TEXT PRIMARY KEY NOT NULL,
+  report_id TEXT NOT NULL,
+  exported_at TEXT NOT NULL,
+  layout_mode TEXT NOT NULL,
+  page_count INTEGER NOT NULL,
+  photo_count INTEGER NOT NULL,
+  paper_size TEXT NOT NULL,
+  plan_at_export TEXT NOT NULL,
+  FOREIGN KEY (report_id) REFERENCES reports(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_exports_report ON exports(report_id);
+CREATE INDEX IF NOT EXISTS idx_exports_exported_at ON exports(exported_at);
 `;
