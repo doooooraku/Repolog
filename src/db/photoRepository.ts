@@ -46,6 +46,46 @@ export async function listPhotosByReport(reportId: string): Promise<Photo[]> {
   return rows.map(toPhoto);
 }
 
+export async function getFirstPhotosByReportIds(
+  reportIds: string[],
+): Promise<Record<string, Photo>> {
+  if (reportIds.length === 0) return {};
+  const db = await getDb();
+  const placeholders = reportIds.map(() => '?').join(', ');
+  const rows = await db.getAllAsync<PhotoRow>(
+    `SELECT ${PHOTO_COLUMNS.join(', ')} FROM photos
+     WHERE report_id IN (${placeholders})
+     ORDER BY report_id ASC, order_index ASC`,
+    ...reportIds,
+  );
+  const map: Record<string, Photo> = {};
+  rows.forEach((row) => {
+    if (!map[row.report_id]) {
+      map[row.report_id] = toPhoto(row);
+    }
+  });
+  return map;
+}
+
+export async function countPhotosByReportIds(
+  reportIds: string[],
+): Promise<Record<string, number>> {
+  if (reportIds.length === 0) return {};
+  const db = await getDb();
+  const placeholders = reportIds.map(() => '?').join(', ');
+  const rows = await db.getAllAsync<{ report_id: string; count: number }>(
+    `SELECT report_id, COUNT(*) as count FROM photos
+     WHERE report_id IN (${placeholders})
+     GROUP BY report_id`,
+    ...reportIds,
+  );
+  const map: Record<string, number> = {};
+  rows.forEach((row) => {
+    map[row.report_id] = row.count;
+  });
+  return map;
+}
+
 export async function createPhoto(input: NewPhotoInput): Promise<Photo> {
   const id = createId();
   const createdAt = input.createdAt ?? new Date().toISOString();

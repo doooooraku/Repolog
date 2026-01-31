@@ -30,6 +30,12 @@ const ensureReportPhotoDir = async (reportId: string) => {
   return dir;
 };
 
+const getReportPhotoDir = (reportId: string) => {
+  const documentDirectory = getDocumentDirectory();
+  if (!documentDirectory) return null;
+  return `${documentDirectory}${PHOTO_DIR_ROOT}/${reportId}/photos/`;
+};
+
 const buildTargetPath = (dir: string, name: string) => `${dir}${name}.jpg`;
 
 const resizeIfNeeded = async (asset: ImagePicker.ImagePickerAsset) => {
@@ -153,4 +159,17 @@ export async function addPhotosFromLibrary(
   }
 
   return addAssetsToReport(reportId, result.assets ?? [], isPro);
+}
+
+export async function removeReportPhotos(reportId: string, cached?: Photo[]) {
+  const photos = cached ?? (await listPhotosByReport(reportId));
+  await Promise.all(
+    photos.map((photo) =>
+      FileSystem.deleteAsync(photo.localUri, { idempotent: true }),
+    ),
+  );
+  const dir = getReportPhotoDir(reportId);
+  if (dir) {
+    await FileSystem.deleteAsync(dir, { idempotent: true });
+  }
 }
