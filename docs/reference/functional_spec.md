@@ -3,7 +3,7 @@
 - 対象アプリ：**Repolog**
 - 版：v0.1（MVP〜v1.0想定）
 - 更新日：2026-01-24（JST）
-- 前提：React Native（Expo想定） / 18言語対応 / 端末ローカル完結（サーバーなし）
+- 前提：React Native（Expo想定） / 19言語対応 / 端末ローカル完結（サーバーなし）
 
 ---
 
@@ -15,8 +15,8 @@
 - 参照元：添付テンプレの構成をベースに再構成（機能ID・UI・DoDの考え方など）  
 - 参照すべき上位文書：product_strategy.md / basic_spec.md
 
-## 対応言語（固定・18言語）
-en（英語） / ja（日本語） / fr（フランス語） / es（スペイン語） / de（ドイツ語） / it（イタリア語） / pt（ポルトガル語） / ru（ロシア語） / zhHans（中国語・簡体字） / zhHant（中国語・繁体字） / ko（韓国語） / th（タイ語） / id（インドネシア語） / vi（ベトナム語） / hi（ヒンディー語） / tr（トルコ語） / pl（ポーランド語） / sv（スウェーデン語）
+## 対応言語（固定・19言語）
+en（英語） / ja（日本語） / fr（フランス語） / es（スペイン語） / de（ドイツ語） / it（イタリア語） / pt（ポルトガル語） / ru（ロシア語） / zhHans（中国語・簡体字） / zhHant（中国語・繁体字） / ko（韓国語） / th（タイ語） / id（インドネシア語） / vi（ベトナム語） / hi（ヒンディー語） / tr（トルコ語） / nl（オランダ語） / pl（ポーランド語） / sv（スウェーデン語）
 
 ---
 
@@ -849,7 +849,7 @@ body {
 
 # F-08 設定（Settings）
 
-- 言語：端末言語に追従（18言語）
+- 言語：端末言語に追従（19言語）
 - 位置情報をPDFに含める：ON/OFF
 - 購入復元
 - バックアップ：Export / Import
@@ -857,7 +857,7 @@ body {
 
 ---
 
-## 6. 多言語（18言語）設計の注意点（PDF含む）
+## 6. 多言語（19言語）設計の注意点（PDF含む）
 
 ### 6.1 翻訳対象（PDFの固定ラベル）
 - Repolog Report / Report Name / Created / Address / Location / Lat/Lng / Weather / Photos / Pages / Created by Repolog / Photo

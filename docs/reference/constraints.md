@@ -89,11 +89,11 @@
 ## 3. 言語・レイアウト（i18n）
 
 ### 3-1. 対応言語（v1.x）
-- v1.x は **18言語対応**（アラビア語は除外）
+- v1.x は **19言語対応**（アラビア語は除外）
 - レイアウトは **LTR のみ**（RTL はサポート外）
 
 対象言語（v1.0 ベース）：
-- en, ja, fr, es, de, it, pt, ru, zhHans, zhHant, ko, th, id, vi, hi, tr, pl, sv
+- en, ja, fr, es, de, it, pt, ru, zhHans, zhHant, ko, th, id, vi, hi, tr, nl, pl, sv
 
 ### 3-2. 言語コードの正（規格準拠）
 - 言語タグは **BCP 47 / IANA Language Subtag Registry** を正とする

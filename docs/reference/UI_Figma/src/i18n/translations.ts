@@ -1,8 +1,8 @@
-// 18 Language Translations for Repolog
-// Languages: en, ja, fr, es, de, it, pt, ru, zhHans, zhHant, ko, th, id, vi, hi, tr, pl, sv
+// 19 Language Translations for Repolog
+// Languages: en, ja, fr, es, de, it, pt, ru, zhHans, zhHant, ko, th, id, vi, hi, tr, nl, pl, sv
 
 export type LanguageCode = 'en' | 'ja' | 'fr' | 'es' | 'de' | 'it' | 'pt' | 'ru' | 
-  'zhHans' | 'zhHant' | 'ko' | 'th' | 'id' | 'vi' | 'hi' | 'tr' | 'pl' | 'sv';
+  'zhHans' | 'zhHant' | 'ko' | 'th' | 'id' | 'vi' | 'hi' | 'tr' | 'nl' | 'pl' | 'sv';
 
 export interface Translations {
   appName: string;
@@ -389,11 +389,12 @@ const id: Translations = { ...en, appName: 'Repolog', sunny: 'Cerah', cloudy: 'B
 const vi: Translations = { ...en, appName: 'Repolog', sunny: 'Nắng', cloudy: 'Nhiều mây', rainy: 'Mưa', snowy: 'Tuyết', pin: 'Ghim', unpin: 'Bỏ ghim', includeLocationInPDF: 'Sử dụng vị trí', sunday: 'Chủ nhật', monday: 'Thứ hai', tuesday: 'Thứ ba', wednesday: 'Thứ tư', thursday: 'Thứ năm', friday: 'Thứ sáu', saturday: 'Thứ bảy' };
 const hi: Translations = { ...en, appName: 'Repolog', sunny: 'धूप', cloudy: 'बादल', rainy: 'बारिश', snowy: 'बर्फ़', pin: 'पिन करें', unpin: 'अनपिन करें', includeLocationInPDF: 'स्थान का उपयोग करें', sunday: 'रविवार', monday: 'सोमवार', tuesday: 'मंगलवार', wednesday: 'बुधवार', thursday: 'गुरुवार', friday: 'शुक्रवार', saturday: 'शनिवार' };
 const tr: Translations = { ...en, appName: 'Repolog', sunny: 'Güneşli', cloudy: 'Bulutlu', rainy: 'Yağmurlu', snowy: 'Karlı', pin: 'Sabitle', unpin: 'Sabitlemeyi Kaldır', includeLocationInPDF: 'Konumu Kullan', sunday: 'Pazar', monday: 'Pazartesi', tuesday: 'Salı', wednesday: 'Çarşamba', thursday: 'Perşembe', friday: 'Cuma', saturday: 'Cumartesi' };
+const nl: Translations = { ...en, appName: 'Repolog' };
 const pl: Translations = { ...en, appName: 'Repolog', sunny: 'Słonecznie', cloudy: 'Pochmurnie', rainy: 'Deszczowo', snowy: 'Śnieżnie', pin: 'Przypnij', unpin: 'Odepnij', includeLocationInPDF: 'Użyj lokalizacji', sunday: 'Niedziela', monday: 'Poniedziałek', tuesday: 'Wtorek', wednesday: 'Środa', thursday: 'Czwartek', friday: 'Piątek', saturday: 'Sobota' };
 const sv: Translations = { ...en, appName: 'Repolog', sunny: 'Soligt', cloudy: 'Molnigt', rainy: 'Regnigt', snowy: 'Snöigt', pin: 'Fäst', unpin: 'Ta bort fästning', includeLocationInPDF: 'Använd plats', sunday: 'Söndag', monday: 'Måndag', tuesday: 'Tisdag', wednesday: 'Onsdag', thursday: 'Torsdag', friday: 'Fredag', saturday: 'Lördag' };
 
 export const translations: Record<LanguageCode, Translations> = {
-  en, ja, fr, es, de, it, pt, ru, zhHans, zhHant, ko, th, id, vi, hi, tr, pl, sv
+  en, ja, fr, es, de, it, pt, ru, zhHans, zhHant, ko, th, id, vi, hi, tr, nl, pl, sv
 };
 
 export const getTranslations = (lang: LanguageCode): Translations => {
