@@ -22,7 +22,7 @@ import { getCurrentLocationWithAddress } from '@/src/services/locationService';
 import { listPhotosByReport } from '@/src/db/photoRepository';
 import { addPhotosFromCamera, addPhotosFromLibrary } from '@/src/services/photoService';
 import { resolvePhotoAddLimit, MAX_FREE_PHOTOS_PER_REPORT } from '@/src/features/photos/photoUtils';
-import { proService } from '@/src/services/proService';
+import { useProStore } from '@/src/stores/proStore';
 
 type LocationState = {
   lat: number | null;
@@ -66,7 +66,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [saving, setSaving] = useState(false);
   const [report, setReport] = useState<Report | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [isPro, setIsPro] = useState(false);
+  const isPro = useProStore((s) => s.isPro);
+  const initPro = useProStore((s) => s.init);
 
   const [reportName, setReportName] = useState('');
   const [comment, setComment] = useState('');
@@ -118,20 +119,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   }, [reportId, t.errorLoadFailed]);
 
   useEffect(() => {
-    let mounted = true;
-    proService
-      .loadLocalState()
-      .then((state) => {
-        if (!mounted) return;
-        setIsPro(Boolean(state?.isPro));
-      })
-      .catch(() => {
-        if (mounted) setIsPro(false);
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    void initPro();
+  }, [initPro]);
 
   const handleFetchLocation = useCallback(async () => {
     if (!includeLocation || locationLoading) return;
@@ -226,6 +215,17 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     setPhotos(list);
   }, []);
 
+  const showPhotoLimitAlert = useCallback(() => {
+    Alert.alert(
+      t.photoLimitTitle,
+      t.photoLimitBody.replace('{max}', String(MAX_FREE_PHOTOS_PER_REPORT)),
+      [
+        { text: t.cancel, style: 'cancel' },
+        { text: t.openPro, onPress: () => router.push('/pro') },
+      ],
+    );
+  }, [router, t]);
+
   const handleSave = async () => {
     if (saving) return;
     setSaving(true);
@@ -258,10 +258,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         const existingCount = photos.length;
         const limitStatus = resolvePhotoAddLimit(isPro, existingCount, 1);
         if (limitStatus.blocked && !isPro && limitStatus.allowedCount === 0) {
-          Alert.alert(
-            t.photoLimitTitle,
-            t.photoLimitBody.replace('{max}', String(MAX_FREE_PHOTOS_PER_REPORT)),
-          );
+          showPhotoLimitAlert();
           return;
         }
 
@@ -276,17 +273,14 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         }
         if (result.canceled) return;
         if (result.blocked && !isPro) {
-          Alert.alert(
-            t.photoLimitTitle,
-            t.photoLimitBody.replace('{max}', String(MAX_FREE_PHOTOS_PER_REPORT)),
-          );
+          showPhotoLimitAlert();
         }
         await refreshPhotos(current.id);
       } catch {
         Alert.alert(t.photoAddFailed);
       }
     },
-    [ensureReport, photos.length, isPro, refreshPhotos, t],
+    [ensureReport, photos.length, isPro, refreshPhotos, showPhotoLimitAlert, t],
   );
 
   const remaining = remainingCommentChars(comment);
