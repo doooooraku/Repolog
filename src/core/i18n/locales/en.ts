@@ -76,6 +76,30 @@ const baseEn = {
   openPro: 'View Pro Plan',
   cancel: 'Cancel',
 
+  // --- Backup ---
+  backupTitle: 'Backup',
+  backupExportTitle: 'Export backup',
+  backupExportDesc: 'Creates a zip with manifest.json and photos/. PDFs are not included.',
+  backupExportAction: 'Export',
+  backupExportSuccess: 'Backup exported.',
+  backupExportFailed: 'Failed to export backup.',
+  backupShareUnavailableTitle: 'Sharing unavailable',
+  backupShareUnavailableBody: 'This device cannot open the share sheet.',
+  backupImportTitle: 'Import backup',
+  backupImportDesc: 'Import a backup zip. This replaces current reports and photos.',
+  backupImportAction: 'Import',
+  backupImportSuccess: 'Backup imported.',
+  backupImportSuccessDetail: 'Imported {reports} reports and {photos} photos.',
+  backupImportFailed: 'Failed to import backup.',
+  backupImportWarningTitle: 'Replace current data?',
+  backupImportWarningBody: 'Import replaces existing reports and photos. This cannot be undone.',
+  backupInvalidTitle: 'Invalid backup',
+  backupInvalidBody: 'The file does not contain a valid manifest.',
+  backupSchemaMismatchTitle: 'Unsupported backup',
+  backupSchemaMismatchBody: 'This backup uses a different schema version.',
+  backupUnsupportedTitle: 'Not supported',
+  backupUnsupportedBody: 'Backup is not supported on this device.',
+
   // --- Settings (Appearance) ---
   flowEffectTitle: 'Electric flow animation',
   flowEffectHelp:
