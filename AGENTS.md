@@ -50,7 +50,7 @@ Codex は `AGENTS.md` を最初に読みます。空ファイルは無視され�
    - `--frozen-lockfile` は lockfile と違えば失敗する安全モード。
 2. `pnpm lint`
    - ESLint でコードの書き方ルール違反を検出する。
-3. `pnpm test -- --passWithNoTests`
+3. `pnpm test`
    - Jest を実行する（テストが無い場合も失敗しない設定）。
 
 補足（必要なときだけ）:
