@@ -7,14 +7,14 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import Pdf from 'react-native-pdf';
 
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { getReportById } from '@/src/db/reportRepository';
 import { listPhotosByReport } from '@/src/db/photoRepository';
 import { recordExport, countExportsSince } from '@/src/db/exportRepository';
-import { proService } from '@/src/services/proService';
+import { useProStore } from '@/src/stores/proStore';
 import { exportPdfFile, generatePdfFile } from '@/src/features/pdf/pdfService';
 import { calculatePageCount, type PdfLayout, type PaperSize } from '@/src/features/pdf/pdfUtils';
 
@@ -24,12 +24,14 @@ const FREE_MONTHLY_EXPORT_LIMIT = 5;
 export default function PdfPreviewScreen() {
   const { id } = useLocalSearchParams<{ id?: string | string[] }>();
   const reportId = Array.isArray(id) ? id[0] : id;
+  const router = useRouter();
   const { t } = useTranslation();
   const [layout, setLayout] = useState<PdfLayout>('standard');
   const [paperSize, setPaperSize] = useState<PaperSize>('A4');
   const [loading, setLoading] = useState(true);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
-  const [isPro, setIsPro] = useState(false);
+  const isPro = useProStore((s) => s.isPro);
+  const initPro = useProStore((s) => s.init);
   const [exporting, setExporting] = useState(false);
 
   const labelMap = useMemo(
@@ -84,20 +86,8 @@ export default function PdfPreviewScreen() {
   }, [reportId, layout, paperSize, isPro, labelMap, weatherLabelMap, t.errorLoadFailed]);
 
   useEffect(() => {
-    let mounted = true;
-    proService
-      .loadLocalState()
-      .then((state) => {
-        if (!mounted) return;
-        setIsPro(Boolean(state?.isPro));
-      })
-      .catch(() => {
-        if (mounted) setIsPro(false);
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    void initPro();
+  }, [initPro]);
 
   useEffect(() => {
     void loadPdf();
@@ -128,7 +118,14 @@ export default function PdfPreviewScreen() {
               resolve(false);
             },
           },
-          { text: t.pdfLargeUpgrade, style: 'cancel', onPress: () => resolve(false) },
+          {
+            text: t.pdfLargeUpgrade,
+            style: 'cancel',
+            onPress: () => {
+              router.push('/pro');
+              resolve(false);
+            },
+          },
         ],
       );
     });
@@ -156,7 +153,10 @@ export default function PdfPreviewScreen() {
         monthStart.setHours(0, 0, 0, 0);
         const count = await countExportsSince(monthStart.toISOString());
         if (count >= FREE_MONTHLY_EXPORT_LIMIT) {
-          Alert.alert(t.pdfExportLimitTitle, t.pdfExportLimitBody);
+          Alert.alert(t.pdfExportLimitTitle, t.pdfExportLimitBody, [
+            { text: t.cancel, style: 'cancel' },
+            { text: t.openPro, onPress: () => router.push('/pro') },
+          ]);
           return;
         }
       }
