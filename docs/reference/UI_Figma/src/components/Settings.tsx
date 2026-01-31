@@ -31,6 +31,7 @@ const languages = [
   { code: 'vi', name: 'Tiếng Việt' },
   { code: 'hi', name: 'हिन्दी' },
   { code: 'tr', name: 'Türkçe' },
+  { code: 'nl', name: 'Nederlands' },
   { code: 'pl', name: 'Polski' },
   { code: 'sv', name: 'Svenska' },
 ];

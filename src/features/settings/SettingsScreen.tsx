@@ -33,6 +33,7 @@ const LANGUAGE_OPTIONS: { code: Lang; labelKey: TranslationKey }[] = [
   { code: 'hi', labelKey: 'languageNameHi' },
   { code: 'tr', labelKey: 'languageNameTr' },
   { code: 'nl', labelKey: 'languageNameNl' },
+  { code: 'pl', labelKey: 'languageNamePl' },
   { code: 'sv', labelKey: 'languageNameSv' },
 ];
 

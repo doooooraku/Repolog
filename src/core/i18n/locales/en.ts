@@ -220,6 +220,7 @@ const baseEn = {
   languageNameVi: 'Vietnamese',
   languageNameTr: 'Turkish',
   languageNameNl: 'Dutch',
+  languageNamePl: 'Polish',
   languageNameSv: 'Swedish',
 
   // --- Tutorial ---
