@@ -21,6 +21,33 @@ type PdfTemplateInput = {
   isPro: boolean;
   appName?: string;
   weatherLabel?: string;
+  labels?: Partial<PdfLabels>;
+};
+
+type PdfLabels = {
+  createdAt: string;
+  reportName: string;
+  address: string;
+  location: string;
+  weather: string;
+  photoCount: string;
+  pageCount: string;
+  photos: string;
+  pages: string;
+  comment: string;
+};
+
+const DEFAULT_LABELS: PdfLabels = {
+  createdAt: 'Created at',
+  reportName: 'Report name',
+  address: 'Address',
+  location: 'Location',
+  weather: 'Weather',
+  photoCount: 'Photo count',
+  pageCount: 'Page count',
+  photos: 'Photos',
+  pages: 'Pages',
+  comment: 'Comment',
 };
 
 const escapeHtml = (value: string) =>
@@ -44,10 +71,14 @@ const fileToDataUri = async (uri: string) => {
   return `data:${mime};base64,${base64}`;
 };
 
-const buildCover = (input: PdfTemplateInput) => {
+const getLabel = (input: PdfTemplateInput, key: keyof PdfLabels) =>
+  input.labels?.[key] ?? DEFAULT_LABELS[key];
+
+const buildCover = (input: PdfTemplateInput, pageCount: number) => {
   const title = escapeHtml(reportTitle(input.report));
   const createdAt = escapeHtml(formatDateTime(input.report.createdAt));
   const weather = escapeHtml(input.weatherLabel ?? input.report.weather ?? '');
+  const reportName = escapeHtml(input.report.reportName ?? '-');
   const location =
     input.report.lat != null && input.report.lng != null
       ? `${input.report.lat}, ${input.report.lng}`
@@ -60,15 +91,18 @@ const buildCover = (input: PdfTemplateInput) => {
         <div class="page-main">
           <h1 class="title">${title}</h1>
           <div class="meta">
-            <div><span class="label">Date</span><span>${createdAt}</span></div>
-            <div><span class="label">Weather</span><span>${weather || '-'}</span></div>
-            <div><span class="label">Location</span><span>${escapeHtml(location)}</span></div>
-            <div><span class="label">Address</span><span>${escapeHtml(address)}</span></div>
+            <div><span class="label">${escapeHtml(getLabel(input, 'createdAt'))}</span><span>${createdAt}</span></div>
+            <div><span class="label">${escapeHtml(getLabel(input, 'reportName'))}</span><span>${reportName}</span></div>
+            <div><span class="label">${escapeHtml(getLabel(input, 'address'))}</span><span>${escapeHtml(address)}</span></div>
+            <div><span class="label">${escapeHtml(getLabel(input, 'location'))}</span><span>${escapeHtml(location)}</span></div>
+            <div><span class="label">${escapeHtml(getLabel(input, 'weather'))}</span><span>${weather || '-'}</span></div>
+            <div><span class="label">${escapeHtml(getLabel(input, 'photoCount'))}</span><span>${input.photos.length} ${escapeHtml(getLabel(input, 'photos'))}</span></div>
+            <div><span class="label">${escapeHtml(getLabel(input, 'pageCount'))}</span><span>${pageCount} ${escapeHtml(getLabel(input, 'pages'))}</span></div>
           </div>
         </div>
         <div class="page-footer">
           <span>${escapeHtml(input.appName ?? 'Repolog')}</span>
-          <span>1</span>
+          <span>1/${pageCount}</span>
         </div>
         ${input.isPro ? '' : '<div class="watermark">Created by Repolog</div>'}
       </div>
@@ -76,7 +110,7 @@ const buildCover = (input: PdfTemplateInput) => {
   `;
 };
 
-const buildCommentPages = (input: PdfTemplateInput, startIndex: number) => {
+const buildCommentPages = (input: PdfTemplateInput, startIndex: number, pageCount: number) => {
   const pages = splitCommentIntoPages(input.report.comment ?? '');
   const out: string[] = [];
   pages.forEach((text, index) => {
@@ -85,12 +119,12 @@ const buildCommentPages = (input: PdfTemplateInput, startIndex: number) => {
       <section class="page">
         <div class="page-inner">
           <div class="page-main">
-            <h2 class="section-title">Comment</h2>
+            <h2 class="section-title">${escapeHtml(getLabel(input, 'comment'))}</h2>
             <div class="comment">${escapeHtml(text || '-')}</div>
           </div>
           <div class="page-footer">
             <span></span>
-            <span>${pageNumber}</span>
+            <span>${pageNumber}/${pageCount}</span>
           </div>
         </div>
       </section>
@@ -103,6 +137,7 @@ const buildPhotoPages = async (
   input: PdfTemplateInput,
   startIndex: number,
   perPage: number,
+  pageCount: number,
 ) => {
   const chunks = chunkPhotos(input.photos, perPage);
   const out: string[] = [];
@@ -133,7 +168,7 @@ const buildPhotoPages = async (
           </div>
           <div class="page-footer">
             <span></span>
-            <span>${pageNumber}</span>
+            <span>${pageNumber}/${pageCount}</span>
           </div>
         </div>
       </section>
@@ -266,10 +301,13 @@ export async function buildPdfHtml(input: PdfTemplateInput) {
   const layout = input.layout === 'large' ? 'large' : 'standard';
   const perPage = layout === 'large' ? 1 : 2;
   const css = await buildCss(input.paperSize);
-  const cover = buildCover(input);
-  const commentPages = buildCommentPages(input, 2);
-  const photoStartIndex = 2 + commentPages.length;
-  const photoPages = await buildPhotoPages(input, photoStartIndex, perPage);
+  const commentPages = splitCommentIntoPages(input.report.comment ?? '');
+  const photoPageCount = Math.ceil(input.photos.length / perPage);
+  const pageCount = 1 + commentPages.length + photoPageCount;
+  const cover = buildCover(input, pageCount);
+  const commentPageHtml = buildCommentPages(input, 2, pageCount);
+  const photoStartIndex = 2 + commentPageHtml.length;
+  const photoPages = await buildPhotoPages(input, photoStartIndex, perPage, pageCount);
 
   return `
   <!DOCTYPE html>
@@ -283,7 +321,7 @@ export async function buildPdfHtml(input: PdfTemplateInput) {
     </head>
     <body>
       ${cover}
-      ${commentPages.join('')}
+      ${commentPageHtml.join('')}
       ${photoPages.join('')}
     </body>
   </html>
