@@ -141,6 +141,7 @@
 - Expo SQLite: https://docs.expo.dev/versions/latest/sdk/sqlite/
 - RevenueCat Restore Purchases: https://www.revenuecat.com/docs/getting-started/restoring-purchases
 - react-native-google-mobile-ads（テストID等）: https://docs.page/invertase/react-native-google-mobile-ads/displaying-ads
+- react-native-zip-archive（バックアップzip）: https://github.com/mockingbot/react-native-zip-archive
 - GitHub Branch protection: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule
 - IANA Language Subtag Registry: https://www.iana.org/assignments/language-subtag-registry
 - RFC 5646 (BCP47): https://datatracker.ietf.org/doc/html/rfc5646

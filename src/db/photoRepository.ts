@@ -46,6 +46,14 @@ export async function listPhotosByReport(reportId: string): Promise<Photo[]> {
   return rows.map(toPhoto);
 }
 
+export async function listAllPhotos(): Promise<Photo[]> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<PhotoRow>(
+    `SELECT ${PHOTO_COLUMNS.join(', ')} FROM photos ORDER BY report_id ASC, order_index ASC`,
+  );
+  return rows.map(toPhoto);
+}
+
 export async function getFirstPhotosByReportIds(
   reportIds: string[],
 ): Promise<Record<string, Photo>> {

@@ -62,8 +62,18 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
   );
 
-  const pluginsWithAdMob = ensurePlugin(
+  const pluginsWithBuildProps = ensurePlugin(
     pluginsWithLocalization,
+    'expo-build-properties',
+    {
+      ios: {
+        deploymentTarget: '15.5',
+      },
+    },
+  );
+
+  const pluginsWithAdMob = ensurePlugin(
+    pluginsWithBuildProps,
     'react-native-google-mobile-ads',
     {
       androidAppId: admobAndroidAppId,
