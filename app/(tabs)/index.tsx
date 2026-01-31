@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 
 import { AdBanner } from '@/components/ad-banner';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { deleteReport, listReports, searchReports, updateReport } from '@/src/db/reportRepository';
 import {
@@ -137,7 +138,14 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t.homeTitle}</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>{t.homeTitle}</Text>
+        <Pressable
+          onPress={() => router.push('/settings')}
+          style={styles.iconButton}>
+          <IconSymbol name="gearshape.fill" size={20} color="#111" />
+        </Pressable>
+      </View>
       <TextInput
         placeholder={t.homeSearchPlaceholder}
         value={query}
@@ -183,10 +191,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
   title: {
     fontSize: 20,
     fontWeight: '700',
     color: '#111',
+  },
+  iconButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#eee',
   },
   search: {
     marginTop: 12,

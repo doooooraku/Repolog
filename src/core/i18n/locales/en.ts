@@ -13,6 +13,12 @@ const baseEn = {
   sound: 'Sound',
   haptics: 'Haptics',
   theme: 'Theme',
+  settingsSectionGeneral: 'General',
+  settingsSectionPrivacy: 'Privacy',
+  settingsSectionPurchases: 'Purchases',
+  settingsSectionBackup: 'Backup',
+  settingsBackupDesc: 'Export or import a backup zip (manifest.json + photos/).',
+  settingsBackupOpen: 'Open Backup',
 
   // --- Purchase / Restore ---
   restore: 'Restore Purchases',
