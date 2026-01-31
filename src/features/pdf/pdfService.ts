@@ -16,6 +16,18 @@ export type PdfGenerateInput = {
   isPro: boolean;
   appName?: string;
   weatherLabel?: string;
+  labels?: {
+    createdAt?: string;
+    reportName?: string;
+    address?: string;
+    location?: string;
+    weather?: string;
+    photoCount?: string;
+    pageCount?: string;
+    photos?: string;
+    pages?: string;
+    comment?: string;
+  };
 };
 
 export async function generatePdfFile(input: PdfGenerateInput) {

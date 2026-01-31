@@ -45,3 +45,10 @@ export const normalizeLayout = (layout: PdfLayout) => layout;
 export const photoLabel = (index: number) => `Photo ${index + 1}`;
 
 export const reportTitle = (report: Report) => report.reportName ?? 'Untitled Report';
+
+export const calculatePageCount = (comment: string, photoCount: number, layout: PdfLayout) => {
+  const commentPages = splitCommentIntoPages(comment);
+  const perPage = layout === 'large' ? 1 : 2;
+  const photoPages = Math.ceil(photoCount / perPage);
+  return 1 + commentPages.length + photoPages;
+};

@@ -246,6 +246,11 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     }
   };
 
+  const handlePreviewPdf = async () => {
+    const current = await ensureReport();
+    router.push(`/reports/${current.id}/pdf`);
+  };
+
   const handleAddPhotos = useCallback(
     async (source: 'camera' | 'library') => {
       try {
@@ -441,6 +446,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           <Text style={styles.saveButtonText}>{t.save}</Text>
         )}
       </Pressable>
+      <Pressable onPress={handlePreviewPdf} style={styles.secondaryAction}>
+        <Text style={styles.secondaryActionText}>{t.pdfPreviewTitle}</Text>
+      </Pressable>
     </ScrollView>
   );
 }
@@ -596,6 +604,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 15,
+  },
+  secondaryAction: {
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#111',
+    alignItems: 'center',
+  },
+  secondaryActionText: {
+    color: '#111',
+    fontWeight: '600',
   },
   photoStrip: {
     marginTop: 8,
