@@ -24,6 +24,7 @@ const SUPPORTED_LOCALES = [
   'vi',
   'tr',
   'nl',
+  'pl',
   'sv',
 ];
 
@@ -94,6 +95,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       IAP_DEBUG: process.env.IAP_DEBUG ?? '0',
       ADMOB_ANDROID_BANNER_ID: process.env.ADMOB_ANDROID_BANNER_ID ?? '',
       ADMOB_IOS_BANNER_ID: process.env.ADMOB_IOS_BANNER_ID ?? '',
+      LEGAL_PRIVACY_URL:
+        process.env.LEGAL_PRIVACY_URL ?? 'https://doooooraku.github.io/Repolog/privacy/',
+      LEGAL_TERMS_URL:
+        process.env.LEGAL_TERMS_URL ?? 'https://doooooraku.github.io/Repolog/terms/',
       supportsRTL,
       forcesRTL,
     },
