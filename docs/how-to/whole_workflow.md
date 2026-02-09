@@ -240,6 +240,32 @@ gh api repos/doooooraku/Repolog/issues/<Issue番号>
 gh api repos/doooooraku/Repolog/issues/<Issue番号>/comments
 ```
 
+#### W-11.5 補足：Milestoneの締め処理（毎サイクル）
+
+Milestoneは「未完了Issueが0になった時点」でクローズする。  
+同時に次サイクルのMilestoneを作り、残課題を移す。
+
+```bash
+# 1) 現在のMilestone状態を確認
+gh api repos/doooooraku/Repolog/milestones?state=all
+
+# 2) 次サイクルMilestoneを作成（必要なら）
+gh api repos/doooooraku/Repolog/milestones --method POST \
+  -f title='v1.0 release stabilization (2026-03)' \
+  -f description='Post-RC stabilization items' \
+  -f due_on='2026-03-31T00:00:00Z'
+
+# 3) 未完了Issueを次Milestoneへ移す
+gh issue edit <Issue番号> --repo doooooraku/Repolog --milestone 'v1.0 release stabilization (2026-03)'
+
+# 4) 旧Milestoneをクローズ
+gh api repos/doooooraku/Repolog/milestones/<旧番号> --method PATCH -f state='closed'
+```
+
+判断基準:
+- 旧Milestoneの `open_issues` が 0 ならクローズ
+- 1件でも未完了がある場合は、翌Milestoneへ移してからクローズ
+
 ### 工程W-12：リリース（EAS/Store手順に従う）
 
 * **トリガーキー**：mainが安定 / 仕様書から作成するIssue/バグが無くなった
