@@ -70,7 +70,6 @@ export default function BackupScreen() {
       { text: t.cancel, style: 'cancel' },
       {
         text: t.backupImportAction,
-        style: 'destructive',
         onPress: () => {
           void executeImport();
         },

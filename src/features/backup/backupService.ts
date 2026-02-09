@@ -17,6 +17,7 @@ import {
   normalizeWeather,
   roundCoordinate,
 } from '@/src/features/reports/reportUtils';
+import { buildAppendImportPlan } from '@/src/features/backup/backupImportPlanner';
 import type { AddressSource, WeatherType } from '@/src/types/models';
 
 const BACKUP_SCHEMA_VERSION = 1;
@@ -247,108 +248,128 @@ export async function importBackup(): Promise<BackupImportResult | null> {
   const importRoot = `${cacheDirectory}repolog-import-${Date.now()}/`;
   await ensureDir(importRoot);
 
-  await unzip(stripFileScheme(asset.uri), stripFileScheme(importRoot));
+  try {
+    await unzip(stripFileScheme(asset.uri), stripFileScheme(importRoot));
 
-  const manifestRoot = await findManifestRoot(importRoot);
-  if (!manifestRoot) {
-    throw new BackupError('invalid');
-  }
-
-  const manifestPath = `${manifestRoot}${BACKUP_MANIFEST}`;
-  const raw = await FileSystem.readAsStringAsync(manifestPath);
-  const manifest = JSON.parse(raw) as BackupManifest;
-
-  if (manifest.schemaVersion !== BACKUP_SCHEMA_VERSION) {
-    throw new BackupError('schema');
-  }
-
-  const photosDir = `${manifestRoot}${BACKUP_PHOTOS_DIR}/`;
-  const photosDirInfo = await FileSystem.getInfoAsync(photosDir);
-  if (!photosDirInfo.exists) {
-    throw new BackupError('invalid');
-  }
-
-  for (const photo of manifest.photos ?? []) {
-    const sourcePath = `${photosDir}${photo.fileName}`;
-    const sourceInfo = await FileSystem.getInfoAsync(sourcePath);
-    if (!sourceInfo.exists) {
+    const manifestRoot = await findManifestRoot(importRoot);
+    if (!manifestRoot) {
       throw new BackupError('invalid');
     }
-  }
 
-  const documentDirectory = getDocumentDirectory();
-  if (!documentDirectory) {
-    throw new BackupError('unsupported');
-  }
+    const manifestPath = `${manifestRoot}${BACKUP_MANIFEST}`;
+    const raw = await FileSystem.readAsStringAsync(manifestPath);
+    const manifest = JSON.parse(raw) as BackupManifest;
 
-  const reportRoot = `${documentDirectory}${PHOTO_ROOT}/`;
-  await FileSystem.deleteAsync(reportRoot, { idempotent: true });
-
-  const db = await getDb();
-  await db.withTransactionAsync(async () => {
-    await db.runAsync('DELETE FROM reports');
-
-    for (const report of manifest.reports ?? []) {
-      const weather = normalizeWeather(report.weather ?? 'none');
-      const addressSource = normalizeAddressSource(report.addressSource ?? null);
-      const tags = normalizeTags(report.tags ?? []);
-      await db.runAsync(
-        `INSERT INTO reports (
-          id, created_at, updated_at, report_name, weather, location_enabled,
-          lat, lng, lat_lng_captured_at, address, address_source, address_locale,
-          comment, tags_json, pinned
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        report.id,
-        report.createdAt,
-        report.updatedAt,
-        report.reportName ?? null,
-        weather,
-        report.locationEnabledAtCreation ? 1 : 0,
-        roundCoordinate(report.lat ?? null),
-        roundCoordinate(report.lng ?? null),
-        report.latLngCapturedAt ?? null,
-        report.address ?? null,
-        addressSource,
-        report.addressLocale ?? null,
-        clampComment(report.comment ?? ''),
-        JSON.stringify(tags),
-        report.pinned ? 1 : 0,
-      );
+    if (manifest.schemaVersion !== BACKUP_SCHEMA_VERSION) {
+      throw new BackupError('schema');
+    }
+    if (!Array.isArray(manifest.reports) || !Array.isArray(manifest.photos)) {
+      throw new BackupError('invalid');
     }
 
-    for (const photo of manifest.photos ?? []) {
-      const targetDir = getReportPhotoDir(photo.reportId);
-      if (!targetDir) {
-        throw new BackupError('unsupported');
-      }
-      await ensureDir(targetDir);
-      const targetPath = `${targetDir}${photo.fileName}`;
+    const photosDir = `${manifestRoot}${BACKUP_PHOTOS_DIR}/`;
+    const photosDirInfo = await FileSystem.getInfoAsync(photosDir);
+    if (!photosDirInfo.exists) {
+      throw new BackupError('invalid');
+    }
+
+    const db = await getDb();
+    const existingReportRows = await db.getAllAsync<{ id: string }>('SELECT id FROM reports');
+    const existingPhotoRows = await db.getAllAsync<{ id: string }>('SELECT id FROM photos');
+
+    const plan = buildAppendImportPlan({
+      reports: manifest.reports,
+      photos: manifest.photos,
+      existingReportIds: new Set(existingReportRows.map((row) => row.id)),
+      existingPhotoIds: new Set(existingPhotoRows.map((row) => row.id)),
+    });
+    if (plan.invalidPhotoRefs.length > 0) {
+      throw new BackupError('invalid');
+    }
+
+    for (const photo of plan.photosToInsert) {
       const sourcePath = `${photosDir}${photo.fileName}`;
-      await FileSystem.copyAsync({ from: sourcePath, to: targetPath });
-      await db.runAsync(
-        `INSERT INTO photos (
-          id, report_id, local_uri, width, height, created_at, order_index
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        photo.id,
-        photo.reportId,
-        targetPath,
-        photo.width ?? null,
-        photo.height ?? null,
-        photo.createdAt,
-        photo.orderIndex,
-      );
+      const sourceInfo = await FileSystem.getInfoAsync(sourcePath);
+      if (!sourceInfo.exists) {
+        throw new BackupError('invalid');
+      }
     }
-  });
 
-  if (manifest.settings?.includeLocation !== undefined) {
-    useSettingsStore.getState().setIncludeLocation(Boolean(manifest.settings.includeLocation));
-  }
-  if (manifest.settings?.language) {
-    setLang(manifest.settings.language as any);
-  }
+    const copiedPhotoPaths: string[] = [];
+    try {
+      await db.withTransactionAsync(async () => {
+        for (const report of plan.reportsToInsert) {
+          const weather = normalizeWeather(report.weather ?? 'none');
+          const addressSource = normalizeAddressSource(report.addressSource ?? null);
+          const tags = normalizeTags(report.tags ?? []);
+          await db.runAsync(
+            `INSERT INTO reports (
+              id, created_at, updated_at, report_name, weather, location_enabled,
+              lat, lng, lat_lng_captured_at, address, address_source, address_locale,
+              comment, tags_json, pinned
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            report.id,
+            report.createdAt,
+            report.updatedAt,
+            report.reportName ?? null,
+            weather,
+            report.locationEnabledAtCreation ? 1 : 0,
+            roundCoordinate(report.lat ?? null),
+            roundCoordinate(report.lng ?? null),
+            report.latLngCapturedAt ?? null,
+            report.address ?? null,
+            addressSource,
+            report.addressLocale ?? null,
+            clampComment(report.comment ?? ''),
+            JSON.stringify(tags),
+            report.pinned ? 1 : 0,
+          );
+        }
 
-  return {
-    reports: manifest.reports?.length ?? 0,
-    photos: manifest.photos?.length ?? 0,
-  };
+        for (const photo of plan.photosToInsert) {
+          const targetDir = getReportPhotoDir(photo.reportId);
+          if (!targetDir) {
+            throw new BackupError('unsupported');
+          }
+          await ensureDir(targetDir);
+          const targetPath = `${targetDir}${photo.fileName}`;
+          const sourcePath = `${photosDir}${photo.fileName}`;
+          await FileSystem.deleteAsync(targetPath, { idempotent: true });
+          await FileSystem.copyAsync({ from: sourcePath, to: targetPath });
+          copiedPhotoPaths.push(targetPath);
+          await db.runAsync(
+            `INSERT INTO photos (
+              id, report_id, local_uri, width, height, created_at, order_index
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            photo.id,
+            photo.reportId,
+            targetPath,
+            photo.width ?? null,
+            photo.height ?? null,
+            photo.createdAt,
+            photo.orderIndex,
+          );
+        }
+      });
+    } catch (error) {
+      for (const path of copiedPhotoPaths) {
+        await FileSystem.deleteAsync(path, { idempotent: true });
+      }
+      throw error;
+    }
+
+    if (manifest.settings?.includeLocation !== undefined) {
+      useSettingsStore.getState().setIncludeLocation(Boolean(manifest.settings.includeLocation));
+    }
+    if (manifest.settings?.language) {
+      setLang(manifest.settings.language as any);
+    }
+
+    return {
+      reports: plan.reportsToInsert.length,
+      photos: plan.photosToInsert.length,
+    };
+  } finally {
+    await FileSystem.deleteAsync(importRoot, { idempotent: true });
+  }
 }

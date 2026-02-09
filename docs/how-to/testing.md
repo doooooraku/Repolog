@@ -210,6 +210,10 @@ CIが落ちたステップだけを、まずローカルで叩く：
 * `__tests__/reportUtils.test.ts`
   - タグ入力の分割（`,` / 改行）
   - trim・重複排除（大文字小文字違いを同一扱い）
+* `__tests__/backupImportPlanner.test.ts`
+  - Import append時の「追加/スキップ」判定
+  - 不正な `reportId` 参照を含む写真の検知
+  - 同一バックアップ再Import時の冪等性（重複しない）
 
 ---
 
