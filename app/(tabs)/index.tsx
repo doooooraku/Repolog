@@ -5,6 +5,7 @@ import {
   Pressable,
   SectionList,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View,
@@ -15,13 +16,14 @@ import { Image } from 'expo-image';
 import { AdBanner } from '@/components/ad-banner';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useTranslation } from '@/src/core/i18n/i18n';
-import { deleteReport, listReports, searchReports, updateReport } from '@/src/db/reportRepository';
+import { deleteReport, searchReportsWithFilters, updateReport } from '@/src/db/reportRepository';
 import {
   countPhotosByReportIds,
   deletePhotosByReport,
   getFirstPhotosByReportIds,
 } from '@/src/db/photoRepository';
 import { buildTimelineSections } from '@/src/features/reports/reportListUtils';
+import { normalizeTags, splitTagInput } from '@/src/features/reports/reportUtils';
 import { removeReportPhotos } from '@/src/services/photoService';
 import { useProStore } from '@/src/stores/proStore';
 import type { Report } from '@/src/types/models';
@@ -31,6 +33,13 @@ type ReportMeta = {
   photoCount?: number;
 };
 
+const sanitizeTestIdToken = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/\.[a-z0-9]+$/i, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
 export default function HomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
@@ -38,27 +47,45 @@ export default function HomeScreen() {
   const proInitialized = useProStore((s) => s.initialized);
   const initPro = useProStore((s) => s.init);
   const [query, setQuery] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [pinnedOnly, setPinnedOnly] = useState(false);
+  const [filterTags, setFilterTags] = useState<string[]>([]);
+  const [filterTagInput, setFilterTagInput] = useState('');
   const [reports, setReports] = useState<Report[]>([]);
   const [meta, setMeta] = useState<Record<string, ReportMeta>>({});
   const [loading, setLoading] = useState(true);
 
   const loadReports = useCallback(async () => {
     setLoading(true);
-    const data = query.trim() ? await searchReports(query) : await listReports();
-    setReports(data);
-    const ids = data.map((report) => report.id);
-    const firstPhotos = await getFirstPhotosByReportIds(ids);
-    const counts = await countPhotosByReportIds(ids);
-    const nextMeta: Record<string, ReportMeta> = {};
-    ids.forEach((id) => {
-      nextMeta[id] = {
-        firstPhotoUri: firstPhotos[id]?.localUri,
-        photoCount: counts[id] ?? 0,
-      };
-    });
-    setMeta(nextMeta);
-    setLoading(false);
-  }, [query]);
+    try {
+      const data = await searchReportsWithFilters({
+        query,
+        fromDate,
+        toDate,
+        tags: filterTags,
+        pinnedOnly,
+      });
+      setReports(data);
+      const ids = data.map((report) => report.id);
+      const firstPhotos = await getFirstPhotosByReportIds(ids);
+      const counts = await countPhotosByReportIds(ids);
+      const nextMeta: Record<string, ReportMeta> = {};
+      ids.forEach((id) => {
+        nextMeta[id] = {
+          firstPhotoUri: firstPhotos[id]?.localUri,
+          photoCount: counts[id] ?? 0,
+        };
+      });
+      setMeta(nextMeta);
+    } catch {
+      setReports([]);
+      setMeta({});
+      Alert.alert(t.errorLoadFailed);
+    } finally {
+      setLoading(false);
+    }
+  }, [query, fromDate, toDate, filterTags, pinnedOnly, t.errorLoadFailed]);
 
   useEffect(() => {
     void loadReports();
@@ -69,9 +96,38 @@ export default function HomeScreen() {
   }, [initPro]);
 
   const sections = useMemo(
-    () => buildTimelineSections(reports, query, t.homePinnedSection),
-    [reports, query, t.homePinnedSection],
+    () => buildTimelineSections(reports, '', t.homePinnedSection),
+    [reports, t.homePinnedSection],
   );
+
+  const hasActiveFilters =
+    fromDate.trim().length > 0 ||
+    toDate.trim().length > 0 ||
+    pinnedOnly ||
+    filterTags.length > 0;
+
+  const handleAddFilterTags = useCallback(() => {
+    const next = normalizeTags([...filterTags, ...splitTagInput(filterTagInput)]);
+    if (next.length === filterTags.length) {
+      setFilterTagInput('');
+      return;
+    }
+    setFilterTags(next);
+    setFilterTagInput('');
+  }, [filterTagInput, filterTags]);
+
+  const handleRemoveFilterTag = useCallback((tag: string) => {
+    const target = tag.trim().toLowerCase();
+    setFilterTags((current) => current.filter((item) => item.trim().toLowerCase() !== target));
+  }, []);
+
+  const handleResetFilters = useCallback(() => {
+    setFromDate('');
+    setToDate('');
+    setPinnedOnly(false);
+    setFilterTags([]);
+    setFilterTagInput('');
+  }, []);
 
   const handleTogglePin = async (report: Report) => {
     await updateReport({ id: report.id, pinned: !report.pinned });
@@ -156,6 +212,74 @@ export default function HomeScreen() {
         onChangeText={setQuery}
         style={styles.search}
       />
+      <View style={styles.filterPanel}>
+        <Text style={styles.filterTitle}>{t.homeFiltersTitle}</Text>
+        <View style={styles.filterRow}>
+          <View style={styles.filterColumn}>
+            <Text style={styles.filterLabel}>{t.homeFilterFromLabel}</Text>
+            <TextInput
+              testID="e2e_home_filter_from"
+              value={fromDate}
+              onChangeText={setFromDate}
+              placeholder={t.homeFilterDatePlaceholder}
+              style={styles.filterInput}
+            />
+          </View>
+          <View style={styles.filterColumn}>
+            <Text style={styles.filterLabel}>{t.homeFilterToLabel}</Text>
+            <TextInput
+              testID="e2e_home_filter_to"
+              value={toDate}
+              onChangeText={setToDate}
+              placeholder={t.homeFilterDatePlaceholder}
+              style={styles.filterInput}
+            />
+          </View>
+        </View>
+        <View style={styles.filterTagInputRow}>
+          <TextInput
+            testID="e2e_home_filter_tags_input"
+            value={filterTagInput}
+            onChangeText={setFilterTagInput}
+            onSubmitEditing={handleAddFilterTags}
+            placeholder={t.homeFilterTagPlaceholder}
+            style={[styles.filterInput, styles.filterTagInput]}
+            returnKeyType="done"
+          />
+          <Pressable
+            testID="e2e_home_filter_tags_add"
+            onPress={handleAddFilterTags}
+            style={styles.filterTagAddButton}>
+            <Text style={styles.filterTagAddText}>{t.addTagAction}</Text>
+          </Pressable>
+        </View>
+        {filterTags.length > 0 && (
+          <View style={styles.filterTagsWrap}>
+            {filterTags.map((tag) => (
+              <Pressable
+                key={tag}
+                testID={`e2e_home_filter_tag_${sanitizeTestIdToken(tag)}`}
+                onPress={() => handleRemoveFilterTag(tag)}
+                style={styles.filterTagChip}>
+                <Text style={styles.filterTagChipText}>{tag}</Text>
+                <Text style={styles.filterTagChipRemove}>×</Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
+        <View style={styles.filterSwitchRow}>
+          <Text style={styles.filterLabel}>{t.homeFilterPinnedOnlyLabel}</Text>
+          <Switch testID="e2e_home_filter_pinned_only" value={pinnedOnly} onValueChange={setPinnedOnly} />
+        </View>
+        {hasActiveFilters && (
+          <Pressable
+            testID="e2e_home_filter_reset"
+            onPress={handleResetFilters}
+            style={styles.filterResetButton}>
+            <Text style={styles.filterResetText}>{t.homeFilterResetAction}</Text>
+          </Pressable>
+        )}
+      </View>
       {sections.length === 0 ? (
         <View style={styles.empty}>
           <Text style={styles.emptyTitle}>{t.homeEmptyTitle}</Text>
@@ -227,6 +351,104 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     backgroundColor: '#fff',
+  },
+  filterPanel: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 12,
+    padding: 12,
+    gap: 10,
+    backgroundColor: '#fff',
+  },
+  filterTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#111',
+  },
+  filterRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  filterColumn: {
+    flex: 1,
+    gap: 6,
+  },
+  filterLabel: {
+    fontSize: 12,
+    color: '#4b5563',
+  },
+  filterInput: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 13,
+    backgroundColor: '#f9fafb',
+    color: '#111',
+  },
+  filterTagInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  filterTagInput: {
+    flex: 1,
+  },
+  filterTagAddButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 10,
+    backgroundColor: '#111827',
+  },
+  filterTagAddText: {
+    fontSize: 12,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  filterTagsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  filterTagChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: '#f3f4f6',
+  },
+  filterTagChipText: {
+    fontSize: 12,
+    color: '#111827',
+  },
+  filterTagChipRemove: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#374151',
+  },
+  filterSwitchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  filterResetButton: {
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  filterResetText: {
+    fontSize: 12,
+    color: '#374151',
   },
   listContent: {
     paddingTop: 12,

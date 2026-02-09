@@ -23,7 +23,12 @@ import {
   getReportById,
   updateReport,
 } from '@/src/db/reportRepository';
-import { clampComment, remainingCommentChars } from '@/src/features/reports/reportUtils';
+import {
+  clampComment,
+  normalizeTags,
+  remainingCommentChars,
+  splitTagInput,
+} from '@/src/features/reports/reportUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
 import { createPhoto, listPhotosByReport, updatePhotoOrderByIds } from '@/src/db/photoRepository';
@@ -111,6 +116,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
 
   const [reportName, setReportName] = useState('');
   const [comment, setComment] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState('');
   const [weather, setWeather] = useState<WeatherType>('none');
   const [createdAt, setCreatedAt] = useState<string>(new Date().toISOString());
   const [locationState, setLocationState] = useState<LocationState>(emptyLocation);
@@ -140,6 +147,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         setReport(existing);
         setReportName(existing.reportName ?? '');
         setComment(existing.comment ?? '');
+        setTags(existing.tags ?? []);
         setWeather(existing.weather);
         setCreatedAt(existing.createdAt);
         setLocationState({
@@ -237,6 +245,21 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     }));
   };
 
+  const handleAddTags = useCallback(() => {
+    const next = normalizeTags([...tags, ...splitTagInput(tagInput)]);
+    if (next.length === tags.length) {
+      setTagInput('');
+      return;
+    }
+    setTags(next);
+    setTagInput('');
+  }, [tagInput, tags]);
+
+  const handleRemoveTag = useCallback((tag: string) => {
+    const target = tag.trim().toLowerCase();
+    setTags((current) => current.filter((item) => item.trim().toLowerCase() !== target));
+  }, []);
+
   const weatherLabelMap = useMemo(
     () => ({
       sunny: t.weatherSunny,
@@ -248,18 +271,22 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     [t],
   );
 
-  const buildPayload = useCallback(() => ({
-    reportName: reportName.trim() || null,
-    comment,
-    weather,
-    locationEnabledAtCreation: report?.locationEnabledAtCreation ?? includeLocation,
-    lat: includeLocation ? locationState.lat : null,
-    lng: includeLocation ? locationState.lng : null,
-    latLngCapturedAt: includeLocation ? locationState.latLngCapturedAt : null,
-    address: includeLocation ? locationState.address : null,
-    addressSource: includeLocation ? locationState.addressSource : null,
-    addressLocale: includeLocation ? locationState.addressLocale : null,
-  }), [report, reportName, comment, weather, includeLocation, locationState]);
+  const buildPayload = useCallback(() => {
+    const nextTags = normalizeTags([...tags, ...splitTagInput(tagInput)]);
+    return {
+      reportName: reportName.trim() || null,
+      comment,
+      tags: nextTags,
+      weather,
+      locationEnabledAtCreation: report?.locationEnabledAtCreation ?? includeLocation,
+      lat: includeLocation ? locationState.lat : null,
+      lng: includeLocation ? locationState.lng : null,
+      latLngCapturedAt: includeLocation ? locationState.latLngCapturedAt : null,
+      address: includeLocation ? locationState.address : null,
+      addressSource: includeLocation ? locationState.addressSource : null,
+      addressLocale: includeLocation ? locationState.addressLocale : null,
+    };
+  }, [report, reportName, comment, tags, tagInput, weather, includeLocation, locationState]);
 
   const ensureReport = useCallback(async () => {
     if (report) return report;
@@ -645,6 +672,38 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             </Pressable>
           ))}
         </View>
+
+        <Text style={[styles.sectionTitle, styles.sectionTitleSpacing]}>{t.tagsLabel}</Text>
+        <View style={styles.tagInputRow}>
+          <TextInput
+            testID="e2e_report_tags_input"
+            style={[styles.input, styles.tagInput]}
+            value={tagInput}
+            onChangeText={setTagInput}
+            onSubmitEditing={handleAddTags}
+            placeholder={t.tagInputPlaceholder}
+            returnKeyType="done"
+          />
+          <Pressable testID="e2e_report_tags_add" onPress={handleAddTags} style={styles.tagAddButton}>
+            <Text style={styles.tagAddButtonText}>{t.addTagAction}</Text>
+          </Pressable>
+        </View>
+        {tags.length === 0 ? (
+          <Text style={styles.subtle}>{t.tagsEmpty}</Text>
+        ) : (
+          <View style={styles.tagsWrap}>
+            {tags.map((tag) => (
+              <Pressable
+                key={tag}
+                testID={`e2e_report_tag_chip_${sanitizeTestIdToken(tag)}`}
+                onPress={() => handleRemoveTag(tag)}
+                style={styles.tagChip}>
+                <Text style={styles.tagChipText}>{tag}</Text>
+                <Text style={styles.tagChipRemove}>×</Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
       </View>
 
       <View style={styles.section}>
@@ -869,6 +928,52 @@ const styles = StyleSheet.create({
   },
   textarea: {
     minHeight: 120,
+  },
+  tagInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  tagInput: {
+    flex: 1,
+  },
+  tagAddButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#111',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tagAddButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  tagsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  tagChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    backgroundColor: '#f3f4f6',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  tagChipText: {
+    fontSize: 12,
+    color: '#111827',
+  },
+  tagChipRemove: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#374151',
   },
   rowBetween: {
     flexDirection: 'row',

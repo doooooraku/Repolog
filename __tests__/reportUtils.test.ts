@@ -2,8 +2,10 @@ import {
   clampComment,
   countCommentChars,
   MAX_COMMENT_CHARS,
+  normalizeTags,
   remainingCommentChars,
   roundCoordinate,
+  splitTagInput,
 } from '@/src/features/reports/reportUtils';
 
 describe('reportUtils', () => {
@@ -33,5 +35,16 @@ describe('reportUtils', () => {
     expect(roundCoordinate(35.689567)).toBe(35.68957);
     expect(roundCoordinate(139.691745)).toBe(139.69175);
     expect(roundCoordinate(null)).toBeNull();
+  });
+
+  test('splitTagInput splits by comma/newline and trims', () => {
+    expect(splitTagInput(' bridge, rooftop\nurgent  ')).toEqual(['bridge', 'rooftop', 'urgent']);
+  });
+
+  test('normalizeTags trims and removes duplicates case-insensitively', () => {
+    expect(normalizeTags(['  Bridge ', 'bridge', 'urgent', 'URGENT', ''])).toEqual([
+      'Bridge',
+      'urgent',
+    ]);
   });
 });
