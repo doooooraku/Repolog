@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
+import * as FileSystem from 'expo-file-system';
 import DraggableFlatList, { type RenderItemParams } from 'react-native-draggable-flatlist';
 
 import type { AddressSource, Photo, Report, WeatherType } from '@/src/types/models';
@@ -20,7 +21,7 @@ import { createReport, getReportById, updateReport } from '@/src/db/reportReposi
 import { clampComment, remainingCommentChars } from '@/src/features/reports/reportUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
-import { listPhotosByReport, updatePhotoOrderByIds } from '@/src/db/photoRepository';
+import { createPhoto, listPhotosByReport, updatePhotoOrderByIds } from '@/src/db/photoRepository';
 import {
   addPhotosFromCamera,
   addPhotosFromLibrary,
@@ -57,6 +58,21 @@ const weatherOptions: WeatherOption[] = [
   { type: 'snowy', emoji: '❄️' },
   { type: 'none', emoji: '—' },
 ];
+
+const E2E_SEED_JPEG_BASE64 =
+  '/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAQEBAPEA8PEA8PDw8PDw8PDw8PDw8PFREWFhURFRUYHSggGBolGxUVITEhJSorLi4uFx8zODMtNygtLisBCgoKDg0OFRAQFS0dHR0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIABQAFAMBIgACEQEDEQH/xAAaAAEAAgMBAAAAAAAAAAAAAAAABQYDBEcB/8QAJxAAAQMDAgQHAAAAAAAAAAAAAQIDEQQABSEGEjFBURMiMmFxkqH/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgME/8QAHREAAgMBAQEAAAAAAAAAAAAAAAECEQMhEjFBcf/aAAwDAQACEQMRAD8An2dbfW6WJ6PSp2w4VNrSRJfT2c5iQfWAZxV+6wWJ7LFR6jSxF7VlC4xQ62J1z7fI4xS0Qx3EJ6u6+6fB2cQfSE4qz9SZ0w6k0G5WnkhqfWGrvC4m2JJmKzFKBv6qCQ2f/Z';
+
+const sanitizeTestIdToken = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/\.[a-z0-9]+$/i, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+const extractPhotoMarker = (uri: string) => {
+  const fileName = uri.split('/').pop() ?? 'photo';
+  return sanitizeTestIdToken(fileName);
+};
 
 type ReportEditorScreenProps = {
   reportId?: string | null;
@@ -221,6 +237,53 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     setPhotos(list);
   }, []);
 
+  const handleSeedPhotosForE2E = useCallback(async () => {
+    try {
+      const current = await ensureReport();
+      const existing = await listPhotosByReport(current.id);
+      if (existing.length >= 3) {
+        setPhotos(existing);
+        return;
+      }
+
+      const baseRoot = FileSystem.Paths?.cache?.uri ?? FileSystem.Paths?.document?.uri;
+      if (!baseRoot) {
+        throw new Error('FileSystem path unavailable for E2E seed photos.');
+      }
+      const baseDir = `${baseRoot}repolog/e2e/${current.id}/`;
+      await FileSystem.makeDirectoryAsync(baseDir, { intermediates: true });
+
+      const seedCount = 3;
+      for (let i = 1; i <= seedCount; i += 1) {
+        const seedUri = `${baseDir}seed-${i}.jpg`;
+        const info = await FileSystem.getInfoAsync(seedUri);
+        if (!info.exists) {
+          await FileSystem.writeAsStringAsync(seedUri, E2E_SEED_JPEG_BASE64, {
+            encoding: 'base64',
+          });
+        }
+      }
+
+      const refreshed = await listPhotosByReport(current.id);
+      let order = refreshed.length;
+      for (let i = refreshed.length + 1; i <= seedCount; i += 1) {
+        const seedUri = `${baseDir}seed-${i}.jpg`;
+        await createPhoto({
+          reportId: current.id,
+          localUri: seedUri,
+          width: 1,
+          height: 1,
+          orderIndex: order,
+        });
+        order += 1;
+      }
+
+      await refreshPhotos(current.id);
+    } catch {
+      Alert.alert(t.photoAddFailed);
+    }
+  }, [ensureReport, refreshPhotos, t.photoAddFailed]);
+
   const showPhotoLimitAlert = useCallback(() => {
     Alert.alert(
       t.photoLimitTitle,
@@ -365,21 +428,38 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   );
 
   const renderPhotoItem = useCallback(
-    ({ item, drag, isActive }: RenderItemParams<Photo>) => (
-      <Pressable
-        onLongPress={drag}
-        delayLongPress={160}
-        style={[styles.photoCard, isActive && styles.photoCardActive]}>
-        <Image source={{ uri: item.localUri }} style={styles.photoThumb} />
+    ({ item, drag, isActive, getIndex }: RenderItemParams<Photo>) => {
+      const index = getIndex() ?? item.orderIndex;
+      const marker = extractPhotoMarker(item.localUri);
+      return (
         <Pressable
-          onPress={() => confirmDeletePhoto(item)}
-          hitSlop={8}
-          style={styles.photoDeleteButton}>
-          <Text style={styles.photoDeleteButtonText}>×</Text>
+          testID={`e2e_photo_slot_${index}_${marker}`}
+          onLongPress={drag}
+          delayLongPress={160}
+          style={[styles.photoCard, isActive && styles.photoCardActive]}>
+          <Image source={{ uri: item.localUri }} style={styles.photoThumb} />
+          <Text style={styles.photoIndexLabel}>{index + 1}</Text>
+          <Pressable
+            testID={`e2e_photo_delete_${index}`}
+            onPress={() => confirmDeletePhoto(item)}
+            hitSlop={8}
+            style={styles.photoDeleteButton}>
+            <Text style={styles.photoDeleteButtonText}>×</Text>
+          </Pressable>
+          {__DEV__ && (
+            <Pressable
+              testID={`e2e_photo_delete_now_${index}`}
+              onPress={() => {
+                void handleDeletePhoto(item);
+              }}
+              style={styles.photoDeleteNowButton}>
+              <Text style={styles.photoDeleteNowText}>-</Text>
+            </Pressable>
+          )}
         </Pressable>
-      </Pressable>
-    ),
-    [confirmDeletePhoto],
+      );
+    },
+    [confirmDeletePhoto, handleDeletePhoto],
   );
 
   const remaining = remainingCommentChars(comment);
@@ -393,9 +473,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} testID="e2e_report_editor_screen">
       <View style={styles.headerRow}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <Pressable testID="e2e_report_back" onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backText}>{'‹'}</Text>
         </Pressable>
         <Text style={styles.headerTitle}>{t.reportEditorTitle}</Text>
@@ -492,7 +572,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       <View style={styles.section}>
         <View style={styles.rowBetween}>
           <Text style={styles.sectionTitle}>{t.photosLabel}</Text>
-          <Text style={styles.subtle}>{photos.length}</Text>
+          <Text testID={`e2e_photo_count_${photos.length}`} style={styles.subtle}>
+            {photos.length}
+          </Text>
         </View>
         {!isPro && (
           <Text style={styles.subtle}>
@@ -500,13 +582,29 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           </Text>
         )}
         <View style={styles.rowBetween}>
-          <Pressable onPress={() => handleAddPhotos('camera')} style={styles.secondaryButton}>
+          <Pressable
+            testID="e2e_add_photo_camera"
+            onPress={() => handleAddPhotos('camera')}
+            style={styles.secondaryButton}>
             <Text style={styles.secondaryButtonText}>{t.addFromCamera}</Text>
           </Pressable>
-          <Pressable onPress={() => handleAddPhotos('library')} style={styles.secondaryButton}>
+          <Pressable
+            testID="e2e_add_photo_library"
+            onPress={() => handleAddPhotos('library')}
+            style={styles.secondaryButton}>
             <Text style={styles.secondaryButtonText}>{t.addFromLibrary}</Text>
           </Pressable>
         </View>
+        {__DEV__ && (
+          <Pressable
+            testID="e2e_seed_photos"
+            onPress={() => {
+              void handleSeedPhotosForE2E();
+            }}
+            style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>Seed photos (E2E)</Text>
+          </Pressable>
+        )}
         {photos.length > 0 && <Text style={styles.subtle}>{t.photoReorderHint}</Text>}
         {photos.length === 0 ? (
           <Text style={styles.subtle}>{t.photoEmpty}</Text>
@@ -759,5 +857,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     lineHeight: 16,
+  },
+  photoDeleteNowButton: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'rgba(59,130,246,0.8)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoDeleteNowText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  photoIndexLabel: {
+    position: 'absolute',
+    left: 6,
+    bottom: 4,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#fff',
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    paddingHorizontal: 4,
+    borderRadius: 4,
   },
 });

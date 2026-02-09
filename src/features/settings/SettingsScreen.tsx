@@ -38,6 +38,8 @@ const LANGUAGE_OPTIONS: { code: Lang; labelKey: TranslationKey }[] = [
   { code: 'sv', labelKey: 'languageNameSv' },
 ];
 
+const toLangTestId = (code: string) => code.toLowerCase().replace(/-/g, '_');
+
 export default function SettingsScreen() {
   const router = useRouter();
   const { t, lang, setLang } = useTranslation();
@@ -76,9 +78,9 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} testID="e2e_settings_screen">
       <View style={styles.headerRow}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <Pressable testID="e2e_back_home" onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backText}>{'‹'}</Text>
         </Pressable>
         <Text style={styles.headerTitle}>{t.settings}</Text>
@@ -88,9 +90,12 @@ export default function SettingsScreen() {
         <Text style={styles.sectionTitle}>{t.settingsSectionGeneral}</Text>
         <Text style={styles.sectionBody}>{t.languageChange}</Text>
         <Pressable
+          testID="e2e_language_toggle"
           onPress={() => setShowLanguages((prev) => !prev)}
           style={styles.rowBetween}>
-          <Text style={styles.valueText}>{`${t.currentLanguage}: ${currentLanguageLabel}`}</Text>
+          <Text
+            style={styles.valueText}
+            testID={`e2e_current_language_${toLangTestId(lang)}`}>{`${t.currentLanguage}: ${currentLanguageLabel}`}</Text>
           <Text style={styles.chevron}>{showLanguages ? '▲' : '▼'}</Text>
         </Pressable>
         {showLanguages && (
@@ -100,12 +105,19 @@ export default function SettingsScreen() {
               return (
                 <Pressable
                   key={option.code}
+                  testID={`e2e_language_option_${toLangTestId(option.code)}`}
                   onPress={() => setLang(option.code)}
                   style={[styles.optionRow, active && styles.optionRowActive]}>
                   <Text style={[styles.optionText, active && styles.optionTextActive]}>
                     {t[option.labelKey] ?? option.code}
                   </Text>
-                  {active && <Text style={styles.optionCheck}>✓</Text>}
+                  {active && (
+                    <Text
+                      style={styles.optionCheck}
+                      testID={`e2e_language_selected_${toLangTestId(option.code)}`}>
+                      ✓
+                    </Text>
+                  )}
                 </Pressable>
               );
             })}
