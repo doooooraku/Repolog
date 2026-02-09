@@ -45,7 +45,7 @@ export const getAddressFromCoordinates = async (
 ): Promise<string | null> => {
   try {
     // 言語コードを変換（BigDataCloud APIの形式に合わせる）
-    // 'ja' → 'ja', 'zhHans' → 'zh', 'zhHant' → 'zh-TW' など
+    // 'ja' → 'ja', 'zh-Hans' → 'zh', 'zh-Hant' → 'zh-TW' など
     const apiLanguage = convertToApiLanguage(language);
     
     // APIのURL（インターネット上の住所を教えてくれるサービスのアドレス）
@@ -116,8 +116,8 @@ const convertToApiLanguage = (language: LanguageCode): string => {
     'it': 'it',      // イタリア語
     'pt': 'pt',      // ポルトガル語
     'ru': 'ru',      // ロシア語
-    'zhHans': 'zh',  // 中国語（簡体字）
-    'zhHant': 'zh-TW', // 中国語（繁体字）
+    'zh-Hans': 'zh',  // 中国語（簡体字）
+    'zh-Hant': 'zh-TW', // 中国語（繁体字）
     'ko': 'ko',      // 韓国語
     'th': 'th',      // タイ語
     'id': 'id',      // インドネシア語

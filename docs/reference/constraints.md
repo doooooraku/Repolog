@@ -94,7 +94,7 @@
 - レイアウトは **LTR のみ**（RTL はサポート外）
 
 対象言語（v1.0 ベース）：
-- en, ja, fr, es, de, it, pt, ru, zhHans, zhHant, ko, th, id, vi, hi, tr, nl, pl, sv
+- en, ja, fr, es, de, it, pt, ru, zh-Hans, zh-Hant, ko, th, id, vi, hi, tr, nl, pl, sv
 
 ### 3-2. 言語コードの正（規格準拠）
 - 言語タグは **BCP 47 / IANA Language Subtag Registry** を正とする

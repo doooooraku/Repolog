@@ -23,6 +23,7 @@ import tr from './locales/tr';
 import nl from './locales/nl';
 import pl from './locales/pl';
 import sv from './locales/sv';
+import { normalizeLangCode, type LangCode } from './langCode';
 
 const dictionaries = {
   en: baseEn,
@@ -33,8 +34,8 @@ const dictionaries = {
   it,
   pt,
   ru,
-  zhHans,
-  zhHant,
+  'zh-Hans': zhHans,
+  'zh-Hant': zhHant,
   ko,
   hi,
   id,
@@ -44,47 +45,15 @@ const dictionaries = {
   nl,
   pl,
   sv,
-} satisfies Record<string, Partial<Record<TranslationKey, string>>>;
+} satisfies Record<LangCode, Partial<Record<TranslationKey, string>>>;
 
-export type Lang = keyof typeof dictionaries;
-
-const isSupportedLang = (code?: string): code is Lang => {
-  if (!code) return false;
-  return code in dictionaries;
-};
-
-const normalizeLang = (
-  rawCode?: string,
-  tag?: string,
-  script?: string | null,
-  region?: string | null,
-): Lang => {
-  if (rawCode && isSupportedLang(rawCode)) return rawCode;
-
-  const code = rawCode?.toLowerCase();
-  const tagLower = tag?.toLowerCase();
-  const regionUpper = region?.toUpperCase();
-
-  if (code === 'zh' || tagLower?.startsWith('zh')) {
-    const isHant =
-      tagLower?.includes('hant') ||
-      script === 'Hant' ||
-      (regionUpper != null && ['TW', 'HK', 'MO'].includes(regionUpper));
-    return isHant ? 'zhHant' : 'zhHans';
-  }
-
-  if (code === 'ms') return 'zhHans';
-
-  if (code && isSupportedLang(code)) return code;
-
-  return 'en';
-};
+export type Lang = LangCode;
 
 const detectInitialLang = (): Lang => {
   try {
     const locales = Localization.getLocales();
     const primary = locales?.[0];
-    return normalizeLang(
+    return normalizeLangCode(
       primary?.languageCode,
       primary?.languageTag,
       primary?.languageScriptCode,
@@ -104,14 +73,14 @@ const useI18nStore = create<I18nState>()(
   persist(
     (set) => ({
       lang: detectInitialLang(),
-      setLang: (lang) => set({ lang: normalizeLang(lang) }),
+      setLang: (lang) => set({ lang: normalizeLangCode(lang) }),
     }),
     {
       name: 'app-template-i18n',
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
-        const normalized = normalizeLang(state.lang);
+        const normalized = normalizeLangCode(state.lang);
         if (state.lang !== normalized) {
           state.setLang(normalized);
         }
