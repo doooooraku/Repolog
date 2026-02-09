@@ -199,12 +199,20 @@ export default function HomeScreen() {
     <View style={styles.container} testID="e2e_home_screen">
       <View style={styles.headerRow}>
         <Text style={styles.title}>{t.homeTitle}</Text>
-        <Pressable
-          testID="e2e_open_settings"
-          onPress={() => router.push('/settings')}
-          style={styles.iconButton}>
-          <IconSymbol name="gearshape.fill" size={20} color="#111" />
-        </Pressable>
+        <View style={styles.headerActions}>
+          <Pressable
+            testID="e2e_home_create_report_fab"
+            onPress={() => router.push('/reports/new')}
+            style={styles.iconButton}>
+            <IconSymbol name="plus" size={20} color="#111" />
+          </Pressable>
+          <Pressable
+            testID="e2e_open_settings"
+            onPress={() => router.push('/settings')}
+            style={styles.iconButton}>
+            <IconSymbol name="gearshape.fill" size={20} color="#111" />
+          </Pressable>
+        </View>
       </View>
       <TextInput
         placeholder={t.homeSearchPlaceholder}
@@ -327,6 +335,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   title: {
     fontSize: 20,
