@@ -1,0 +1,70 @@
+name: Maestro Smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 18 * * *" # 03:15 JST every day
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+        with:
+          version: "10"
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Setup Java
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Prebuild Android
+        run: npx expo prebuild --platform android --non-interactive
+
+      - name: Build debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Run Maestro smoke flow
+        uses: reactivecircus/android-emulator-runner@b530d96654c385303d652368551fb075bc2f0b6b # v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_7
+          disable-animations: true
+          script: |
+            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+            maestro test maestro/flows/smoke.yml --format junit --output .maestro
+
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: maestro-smoke-artifacts
+          path: |
+            .maestro
+            android/app/build/outputs/apk/debug/app-debug.apk
