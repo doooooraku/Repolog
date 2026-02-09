@@ -31,13 +31,20 @@ const SUPPORTED_LOCALES = [
 const toBoolean = (value?: string) =>
   value === '1' || value === 'true' || value === 'TRUE';
 
-const ensurePlugin = (plugins: ExpoConfig['plugins'] = [], name: string, config?: unknown) => {
+type ExpoPluginList = NonNullable<ExpoConfig['plugins']>;
+type ExpoPluginEntry = ExpoPluginList[number];
+
+const ensurePlugin = (plugins: ExpoPluginList = [], name: string, config?: unknown): ExpoPluginList => {
   const exists = plugins.some((plugin) => {
     if (Array.isArray(plugin)) return plugin[0] === name;
     return plugin === name;
   });
   if (exists) return plugins;
-  return config ? [...plugins, [name, config]] : [...plugins, name];
+  if (config === undefined) {
+    return [...plugins, name];
+  }
+  const pluginWithConfig: ExpoPluginEntry = [name, config];
+  return [...plugins, pluginWithConfig];
 };
 
 export default ({ config }: ConfigContext): ExpoConfig => {
@@ -84,6 +91,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   return {
     ...config,
+    name: config.name ?? 'Repolog',
+    slug: config.slug ?? 'repolog',
     android: {
       ...config.android,
       permissions: nextPermissions,

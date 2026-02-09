@@ -24,29 +24,28 @@
 
 Repolog の scripts（例）：
 - `pnpm lint`
+- `pnpm type-check`
 - `pnpm test`
 - `pnpm test:e2e`（Maestro smoke）
-※ 型チェックを使う場合は `type-check` を scripts に追加する
 
 > How-to は「コマンド暗記」より  
 > **“ここを見れば最新版”** を固定してリンクする方がズレません。
 
 ---
 
-## 2. 最短ルート：まずは「CIと同じ3つ」
+## 2. 最短ルート：まずは「CIと同じ4つ」
 PR前に最低限これを通します（CIでも必ず走る）。
 
 ```bash
 pnpm install --frozen-lockfile
 pnpm lint
 pnpm test
-````
-
-（型チェックを運用している場合）
-
-```bash
 pnpm type-check
 ```
+
+> `pnpm type-check` はアプリ本体を対象にします。  
+> `docs/reference/UI_Figma` は「Figma由来の別コード束」なので、ルートの型検査から除外しています。  
+> UI_Figma 側を編集したときは `docs/reference/UI_Figma` で個別に `npm run build` して確認します。
 
 > もし「まだテストが1本も無い」状態なら  
 > まずは **最低限のテストを1本追加**するのが本筋。  
@@ -64,7 +63,7 @@ pnpm type-check
 * `pnpm lint`
 
   * ESLintで「書き方のルール違反」を見つける（早い・安い）
-* `pnpm type-check`（scriptsにある場合）
+* `pnpm type-check`
 
   * TypeScriptの型チェック（実行しなくてもバグを見つける）
 * `pnpm test`
@@ -112,7 +111,7 @@ pnpm test:e2e
 CIが落ちたステップだけを、まずローカルで叩く：
 
 * Lintで落ちた → `pnpm lint`
-* 型で落ちた → `pnpm type-check`（運用している場合）
+* 型で落ちた → `pnpm type-check`
 * Jestで落ちた → `pnpm test`
 * E2Eで落ちた → `pnpm test:e2e`
 
@@ -145,7 +144,7 @@ CIが落ちたステップだけを、まずローカルで叩く：
 * 対処
 
  1. 最初のエラーから直す（連鎖するから）
- 2. 直したら `pnpm type-check`（運用している場合）
+ 2. 直したら `pnpm type-check`
 
 ---
 
@@ -203,7 +202,7 @@ CIが落ちたステップだけを、まずローカルで叩く：
 ## 8. 最後のチェックリスト（PR前）
 
 * [ ] `pnpm lint` OK
-* [ ] `pnpm type-check` OK（運用している場合）
+* [ ] `pnpm type-check` OK
 * [ ] `pnpm test` OK
 * [ ] 必要なら `pnpm test:e2e` OK
 * [ ] 受け入れ条件が満たされた（PR本文に証拠を書く）
