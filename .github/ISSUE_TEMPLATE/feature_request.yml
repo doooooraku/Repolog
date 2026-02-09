@@ -1,7 +1,7 @@
 name: "Feature request（機能要望）"
 description: "新機能/改善を提案する（目的・範囲・ACまで）"
 title: "[Feat]: "
-labels: ["enhancement", "triage"]
+labels: ["enhancement"]
 type: "feature"
 body:
   - type: markdown
