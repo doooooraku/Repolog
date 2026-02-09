@@ -169,3 +169,43 @@ export async function deletePhotosByReport(reportId: string): Promise<void> {
   const db = await getDb();
   await db.runAsync('DELETE FROM photos WHERE report_id = ?', reportId);
 }
+
+export async function updatePhotoOrderByIds(
+  reportId: string,
+  orderedPhotoIds: string[],
+): Promise<void> {
+  if (orderedPhotoIds.length === 0) return;
+
+  const db = await getDb();
+  const rows = await db.getAllAsync<{ id: string }>(
+    'SELECT id FROM photos WHERE report_id = ?',
+    reportId,
+  );
+  if (rows.length !== orderedPhotoIds.length) {
+    throw new Error('Photo order update rejected: count mismatch.');
+  }
+
+  const existing = new Set(rows.map((row) => row.id));
+  const visited = new Set<string>();
+  orderedPhotoIds.forEach((id) => {
+    if (!existing.has(id)) {
+      throw new Error(`Photo order update rejected: unknown id "${id}".`);
+    }
+    if (visited.has(id)) {
+      throw new Error(`Photo order update rejected: duplicate id "${id}".`);
+    }
+    visited.add(id);
+  });
+
+  await db.withTransactionAsync(async () => {
+    for (let index = 0; index < orderedPhotoIds.length; index += 1) {
+      const id = orderedPhotoIds[index];
+      await db.runAsync(
+        'UPDATE photos SET order_index = ? WHERE id = ? AND report_id = ?',
+        index,
+        id,
+        reportId,
+      );
+    }
+  });
+}

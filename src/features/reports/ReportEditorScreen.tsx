@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
+import DraggableFlatList, { type RenderItemParams } from 'react-native-draggable-flatlist';
 
 import type { AddressSource, Photo, Report, WeatherType } from '@/src/types/models';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -19,10 +20,15 @@ import { createReport, getReportById, updateReport } from '@/src/db/reportReposi
 import { clampComment, remainingCommentChars } from '@/src/features/reports/reportUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
-import { listPhotosByReport } from '@/src/db/photoRepository';
-import { addPhotosFromCamera, addPhotosFromLibrary } from '@/src/services/photoService';
+import { listPhotosByReport, updatePhotoOrderByIds } from '@/src/db/photoRepository';
+import {
+  addPhotosFromCamera,
+  addPhotosFromLibrary,
+  removePhotoFromReport,
+} from '@/src/services/photoService';
 import { resolvePhotoAddLimit, MAX_FREE_PHOTOS_PER_REPORT } from '@/src/features/photos/photoUtils';
 import { useProStore } from '@/src/stores/proStore';
+import { normalizePhotoOrder, removePhotoAndNormalize } from '@/src/features/reports/photoOrderUtils';
 
 type LocationState = {
   lat: number | null;
@@ -283,6 +289,99 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     [ensureReport, photos.length, isPro, refreshPhotos, showPhotoLimitAlert, t],
   );
 
+  const handlePhotoReorder = useCallback(
+    async (reordered: Photo[]) => {
+      const current = await ensureReport();
+      const previous = photos;
+      const normalized = normalizePhotoOrder(reordered);
+      setPhotos(normalized);
+      try {
+        await updatePhotoOrderByIds(
+          current.id,
+          normalized.map((photo) => photo.id),
+        );
+      } catch {
+        setPhotos(previous);
+        try {
+          await refreshPhotos(current.id);
+        } catch {
+          // Keep local fallback state when refresh also fails.
+        }
+        Alert.alert(t.photoReorderFailed);
+      }
+    },
+    [ensureReport, photos, refreshPhotos, t.photoReorderFailed],
+  );
+
+  const handleDeletePhoto = useCallback(
+    async (photo: Photo) => {
+      const current = await ensureReport();
+      const previous = photos;
+      const next = removePhotoAndNormalize(previous, photo.id);
+      setPhotos(next);
+      try {
+        await removePhotoFromReport(current.id, photo);
+        await updatePhotoOrderByIds(
+          current.id,
+          next.map((item) => item.id),
+        );
+      } catch {
+        setPhotos(previous);
+        try {
+          await refreshPhotos(current.id);
+        } catch {
+          // Keep local fallback state when refresh also fails.
+        }
+        Alert.alert(t.photoDeleteFailed);
+      }
+    },
+    [ensureReport, photos, refreshPhotos, t.photoDeleteFailed],
+  );
+
+  const confirmDeletePhoto = useCallback(
+    (photo: Photo) => {
+      Alert.alert(
+        t.photoDeleteConfirmTitle,
+        t.photoDeleteConfirmBody,
+        [
+          { text: t.cancel, style: 'cancel' },
+          {
+            text: t.deleteAction,
+            style: 'destructive',
+            onPress: () => {
+              void handleDeletePhoto(photo);
+            },
+          },
+        ],
+      );
+    },
+    [
+      handleDeletePhoto,
+      t.photoDeleteConfirmBody,
+      t.photoDeleteConfirmTitle,
+      t.cancel,
+      t.deleteAction,
+    ],
+  );
+
+  const renderPhotoItem = useCallback(
+    ({ item, drag, isActive }: RenderItemParams<Photo>) => (
+      <Pressable
+        onLongPress={drag}
+        delayLongPress={160}
+        style={[styles.photoCard, isActive && styles.photoCardActive]}>
+        <Image source={{ uri: item.localUri }} style={styles.photoThumb} />
+        <Pressable
+          onPress={() => confirmDeletePhoto(item)}
+          hitSlop={8}
+          style={styles.photoDeleteButton}>
+          <Text style={styles.photoDeleteButtonText}>×</Text>
+        </Pressable>
+      </Pressable>
+    ),
+    [confirmDeletePhoto],
+  );
+
   const remaining = remainingCommentChars(comment);
 
   if (loading) {
@@ -408,12 +507,24 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             <Text style={styles.secondaryButtonText}>{t.addFromLibrary}</Text>
           </Pressable>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.photoStrip}>
-          {photos.slice(0, 6).map((photo) => (
-            <Image key={photo.id} source={{ uri: photo.localUri }} style={styles.photoThumb} />
-          ))}
-          {photos.length === 0 && <Text style={styles.subtle}>{t.photoEmpty}</Text>}
-        </ScrollView>
+        {photos.length > 0 && <Text style={styles.subtle}>{t.photoReorderHint}</Text>}
+        {photos.length === 0 ? (
+          <Text style={styles.subtle}>{t.photoEmpty}</Text>
+        ) : (
+          <DraggableFlatList
+            horizontal
+            data={photos}
+            keyExtractor={(item) => item.id}
+            renderItem={renderPhotoItem}
+            activationDistance={12}
+            onDragEnd={({ data }) => {
+              void handlePhotoReorder(data);
+            }}
+            containerStyle={styles.photoStrip}
+            contentContainerStyle={styles.photoListContent}
+            showsHorizontalScrollIndicator={false}
+          />
+        )}
       </View>
 
       <View style={styles.section}>
@@ -613,11 +724,40 @@ const styles = StyleSheet.create({
   photoStrip: {
     marginTop: 8,
   },
-  photoThumb: {
+  photoListContent: {
+    paddingRight: 8,
+  },
+  photoCard: {
     width: 72,
     height: 72,
     borderRadius: 8,
     marginRight: 8,
+    overflow: 'hidden',
     backgroundColor: '#eee',
+  },
+  photoCardActive: {
+    opacity: 0.85,
+  },
+  photoThumb: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#eee',
+  },
+  photoDeleteButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.65)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoDeleteButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 16,
   },
 });
