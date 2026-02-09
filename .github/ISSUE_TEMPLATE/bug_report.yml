@@ -1,7 +1,7 @@
 name: "Bug report（不具合）"
 description: "不具合を報告する（再現手順＋合否条件まで）"
 title: "[Bug]: "
-labels: ["bug", "triage"]
+labels: ["bug"]
 type: "bug"
 body:
   - type: markdown

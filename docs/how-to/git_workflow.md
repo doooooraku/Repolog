@@ -28,6 +28,8 @@ How-to はコマンドを書き散らすより、**“正しい場所”を固�
   - 型チェックを入れるなら `type-check` を scripts に追加して運用
 - **PRで確認すべき観点**：`.github/pull_request_template.md`
 - **Issueで必須入力を強制する**：`.github/ISSUE_TEMPLATE/*.yml`（Issue Forms）
+- **Issue自動ラベルの正**：`gh label list --repo doooooraku/Repolog`
+  - Issue Forms の `labels` に書いた値は、必ずリポジトリ側に同名ラベルが存在している必要がある
 - **誰がレビュー責任者か**：`.github/CODEOWNERS`
 - **前提/制約の一枚岩**：`docs/reference/constraints.md`
 - **意思決定の理由**：`docs/adr/ADR-*.md`
