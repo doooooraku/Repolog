@@ -101,25 +101,25 @@ export default function PaywallScreen() {
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backText}>{'‹'}</Text>
         </Pressable>
-        <Text style={styles.headerTitle}>{t.proHeaderTitle}</Text>
+        <Text style={styles.headerTitle}>{t.paywallHeaderTitle}</Text>
       </View>
 
       <View style={styles.hero}>
-        <Text style={styles.heroTitle}>{t.proHeaderTitle}</Text>
-        <Text style={styles.heroSubtitle}>{t.proCompareSubtitle}</Text>
+        <Text style={styles.heroTitle}>{t.paywallHeaderTitle}</Text>
+        <Text style={styles.heroSubtitle}>{t.paywallHeroSubtitle}</Text>
         {isPro && (
           <View style={styles.activeBadge}>
-            <Text style={styles.activeBadgeText}>{t.proBadgeShort}</Text>
+            <Text style={styles.activeBadgeText}>{t.paywallBadgeShort}</Text>
             <Text style={styles.activeBadgeSub}>{t.purchaseSuccess}</Text>
           </View>
         )}
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.proCompareTitle}</Text>
+        <Text style={styles.sectionTitle}>{t.paywallPlansTitle}</Text>
         <View style={styles.planCard}>
           <View style={styles.planRow}>
-            <Text style={styles.planTitle}>{t.proPlanMonthlyTitle}</Text>
+            <Text style={styles.planTitle}>{t.paywallPlanMonthlyTitle}</Text>
             <Text style={styles.planPrice}>{monthlyPriceLabel}</Text>
           </View>
           <Pressable
@@ -132,23 +132,23 @@ export default function PaywallScreen() {
             {action === 'monthly' ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.ctaText}>{t.proCtaMonthly}</Text>
+              <Text style={styles.ctaText}>{t.paywallCtaMonthly}</Text>
             )}
           </Pressable>
         </View>
 
         <View style={[styles.planCard, styles.planHighlight]}>
           <View style={styles.planRow}>
-            <Text style={styles.planTitle}>{t.proPlanYearlyTitle}</Text>
+            <Text style={styles.planTitle}>{t.paywallPlanYearlyTitle}</Text>
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{t.proPlanYearlyBadge}</Text>
+              <Text style={styles.badgeText}>{t.paywallBestValueBadge}</Text>
             </View>
           </View>
           <Text style={styles.planPrice}>{yearlyPriceLabel}</Text>
           {yearlyPerMonth && (
-            <Text style={styles.planSub}>{`${t.subscriptionDetailsPerMonthLabel}: ${yearlyPerMonth}`}</Text>
+            <Text style={styles.planSub}>{`${t.paywallPricePerMonthLabel}: ${yearlyPerMonth}`}</Text>
           )}
-          <Text style={styles.planSub}>{t.proYearlySavingShort}</Text>
+          <Text style={styles.planSub}>{t.paywallYearlySavings}</Text>
           <Pressable
             onPress={() => handlePurchase('yearly')}
             style={[
@@ -159,15 +159,15 @@ export default function PaywallScreen() {
             {action === 'yearly' ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.ctaText}>{t.proCtaYearly}</Text>
+              <Text style={styles.ctaText}>{t.paywallCtaYearly}</Text>
             )}
           </Pressable>
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.restore}</Text>
-        <Text style={styles.sectionSub}>{t.restoreDesc}</Text>
+        <Text style={styles.sectionTitle}>{t.paywallRestoreTitle}</Text>
+        <Text style={styles.sectionSub}>{t.paywallRestoreDesc}</Text>
         <Pressable
           onPress={handleRestore}
           style={[styles.secondaryButton, action === 'restore' && styles.disabledButton]}
@@ -180,10 +180,10 @@ export default function PaywallScreen() {
         </Pressable>
       </View>
 
-      <Text style={styles.finePrint}>{t.proFinePrint}</Text>
+      <Text style={styles.finePrint}>{t.paywallFinePrint}</Text>
 
       <Pressable onPress={() => router.back()} style={styles.stayFreeButton}>
-        <Text style={styles.stayFreeText}>{t.proCtaStayFree}</Text>
+        <Text style={styles.stayFreeText}>{t.paywallCtaStayFree}</Text>
       </Pressable>
     </ScrollView>
   );
