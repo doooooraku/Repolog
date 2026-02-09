@@ -3,7 +3,7 @@ import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 import type { Photo } from '@/src/types/models';
-import { listPhotosByReport, createPhoto } from '@/src/db/photoRepository';
+import { listPhotosByReport, createPhoto, deletePhoto } from '@/src/db/photoRepository';
 import { resolvePhotoAddLimit } from '@/src/features/photos/photoUtils';
 
 const PHOTO_DIR_ROOT = 'repolog/reports';
@@ -172,4 +172,13 @@ export async function removeReportPhotos(reportId: string, cached?: Photo[]) {
   if (dir) {
     await FileSystem.deleteAsync(dir, { idempotent: true });
   }
+}
+
+export async function removePhotoFromReport(reportId: string, photo: Photo) {
+  if (photo.reportId !== reportId) {
+    throw new Error('Photo delete rejected: report mismatch.');
+  }
+
+  await FileSystem.deleteAsync(photo.localUri, { idempotent: true });
+  await deletePhoto(photo.id);
 }
