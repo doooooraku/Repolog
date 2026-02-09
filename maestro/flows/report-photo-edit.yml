@@ -55,6 +55,9 @@ steps:
   - assertVisible:
       id: "e2e_home_report_0_photo_count_2"
       label: "Home上でも写真枚数を確認"
+  - assertVisible:
+      id: "e2e_home_report_0_weather_none"
+      label: "Home上で天気状態を確認"
   - tapOn:
       id: "e2e_home_create_report_fab"
       label: "既存レポートあり状態で新規作成導線を確認"

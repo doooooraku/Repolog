@@ -40,6 +40,14 @@ const sanitizeTestIdToken = (value: string) =>
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
 
+const weatherSymbolMap: Record<Report['weather'], string> = {
+  sunny: '☀️',
+  cloudy: '☁️',
+  rainy: '🌧️',
+  snowy: '❄️',
+  none: '—',
+};
+
 export default function HomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
@@ -171,7 +179,14 @@ export default function HomeScreen() {
               <Text style={styles.pinText}>{item.pinned ? '★' : '☆'}</Text>
             </Pressable>
           </View>
-          <Text style={styles.cardSub}>{item.createdAt.replace('T', ' ').slice(0, 16)}</Text>
+          <View style={styles.cardRow}>
+            <Text style={styles.cardSub}>{item.createdAt.replace('T', ' ').slice(0, 16)}</Text>
+            <Text
+              testID={`e2e_home_report_${index}_weather_${item.weather}`}
+              style={styles.cardWeather}>
+              {weatherSymbolMap[item.weather]}
+            </Text>
+          </View>
           <View style={styles.cardRow}>
             <Text style={styles.cardMeta}>
               {/* Keep count explicit for E2E assertions. */}
@@ -511,6 +526,10 @@ const styles = StyleSheet.create({
   cardSub: {
     fontSize: 12,
     color: '#777',
+  },
+  cardWeather: {
+    fontSize: 14,
+    color: '#333',
   },
   cardMeta: {
     fontSize: 12,
