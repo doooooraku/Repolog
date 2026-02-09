@@ -244,10 +244,12 @@ gh api repos/doooooraku/Repolog/issues/<Issue番号>/comments
 
 * **トリガーキー**：mainが安定 / 仕様書から作成するIssue/バグが無くなった
 * **作業内容**：
+  * `docs/how-to/release_notes_template.md` に沿ってリリースノートを作成
+  * `vX.Y.Z-rc.N` または `vX.Y.Z` のタグを作成し、`gh release create` で公開
   * `docs/how-to/android_ビルド手順.md`の実施
   * `docs/how-to/ios_ビルド手順.md`の実施
 * **INPUT**：main、リリースノート、Storeメタ情報
-* **OUTPUT**：TestFlight / Play内部テスト / 本番リリース
+* **OUTPUT**：GitHub Release / TestFlight / Play内部テスト / 本番リリース
 * **完了条件**：ストアの審査/配信が通る。
 * **担当**：人間
 
