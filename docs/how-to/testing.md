@@ -99,6 +99,32 @@ pnpm test:e2e
   - 例: `curl -Ls \"https://get.maestro.mobile.dev\" | bash`
 * CIでは条件付きで走る設定になっている場合がある（SecretsやAPKの有無）
 
+### 3.3 GitHub Actions での自動実行（Maestro Smoke）
+
+Repolog では `.github/workflows/maestro-smoke.yml` を用意し、  
+毎日（JST 03:15）と手動実行で smoke フローを回せる。
+
+```bash
+# 手動でMaestro Smokeを起動
+gh workflow run maestro-smoke.yml --repo doooooraku/Repolog
+
+# 直近のMaestro Smoke実行を確認
+gh run list --repo doooooraku/Repolog --workflow "Maestro Smoke" --limit 5
+
+# 1件の詳細ログを確認
+gh run view <run-id> --repo doooooraku/Repolog --log
+```
+
+コマンドの意味:
+- `gh workflow run`: 指定workflowを手動起動
+- `gh run list`: 実行履歴一覧を取得
+- `gh run view --log`: ステップ単位のログを表示
+
+補足:
+- workflow は `expo prebuild --platform android` で一時的に `android/` を生成
+- `assembleDebug` で APK を作成し、Android Emulator 上で `maestro/flows/smoke.yml` を実行
+- 成果物（`.maestro` ログと APK）は Actions Artifact に保存
+
 ---
 
 ## 4. CIが落ちたときの「調査の順番」
