@@ -3,6 +3,7 @@ import {
   isPhotoOrderNormalized,
   normalizePhotoOrder,
   removePhotoAndNormalize,
+  restorePhotoAtIndexAndNormalize,
 } from '@/src/features/reports/photoOrderUtils';
 
 const buildPhoto = (id: string, orderIndex: number): Photo => ({
@@ -32,6 +33,15 @@ describe('photoOrderUtils', () => {
 
     expect(result.map((photo) => photo.id)).toEqual(['p1', 'p3']);
     expect(result.map((photo) => photo.orderIndex)).toEqual([0, 1]);
+  });
+
+  test('restorePhotoAtIndexAndNormalize inserts photo at given position', () => {
+    const photos = [buildPhoto('p1', 0), buildPhoto('p3', 1)];
+
+    const result = restorePhotoAtIndexAndNormalize(photos, buildPhoto('p2', 99), 1);
+
+    expect(result.map((photo) => photo.id)).toEqual(['p1', 'p2', 'p3']);
+    expect(result.map((photo) => photo.orderIndex)).toEqual([0, 1, 2]);
   });
 
   test('isPhotoOrderNormalized validates index continuity', () => {
