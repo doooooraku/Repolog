@@ -1,6 +1,33 @@
 # Android_ビルド手順（Debug運用 / Release提出）
 最終更新: 2026-01-19（JST）
 
+## 1. タグ運用（リリース可視化）
+リリース前に必ずタグとノートを作成する。  
+正は `docs/how-to/release_notes_template.md`。
+
+### 1-1. 候補版タグ（RC）を作る
+git switch main
+git pull --ff-only origin main
+git tag -a v1.0.0-rc.1 -m "Repolog v1.0.0-rc.1"
+git push origin v1.0.0-rc.1
+
+意味：
+- git tag -a：注釈付きタグを作る（履歴として残る）
+- v1.0.0-rc.1：候補版（release candidate）
+- git push origin <tag>：タグをGitHubへ公開
+
+### 1-2. GitHub Release を作る
+gh release create v1.0.0-rc.1 \
+  --repo doooooraku/Repolog \
+  --title "Repolog v1.0.0-rc.1" \
+  --notes-file docs/how-to/release_notes_template.md \
+  --prerelease
+
+意味：
+- gh release create：Releaseを作る
+- --prerelease：候補版として扱う（本番版ではない）
+- --notes-file：テンプレから本文を読み込む
+
 ## 2. Debug（開発用）: ExpoGoを活用しエミュレータでデバッグ
 ### 2-1. 全体の流れ（一本道）
 1) エミュレータ起動（Android Studioなど）
