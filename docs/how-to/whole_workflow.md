@@ -169,6 +169,10 @@ Repolog を **「仕様→Issue→実装→テスト→PR→マージ→リリ�
 * **INPUT**：Issue、差分、CI結果、PRテンプレ
 * **OUTPUT**：PR
 * **完了条件**：Required checks が全部通る（ブランチ保護で強制）
+* **確認コマンド（GitHub CLI）**：
+  `gh api repos/doooooraku/Repolog/branches/main/protection`
+  - `required_status_checks.contexts` に `test` が含まれる
+  - `required_pull_request_reviews` が有効（PR経由必須）
 * **担当**：Codex
 
 ### 工程W-11：マージ（mainに反映）

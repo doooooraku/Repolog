@@ -328,6 +328,22 @@ git push
 
 ---
 
+### 5.3 ブランチ保護が効いているか不安
+
+* 設定確認（GitHub CLI）
+
+```bash
+gh api repos/doooooraku/Repolog/branches/main/protection
+```
+
+* 期待する状態
+  * `required_status_checks.contexts` に `test` がある
+  * `required_pull_request_reviews` が存在する（mainへ直接pushせずPR経由）
+  * `allow_force_pushes.enabled` が `false`
+  * `allow_deletions.enabled` が `false`
+
+---
+
 ## 6. 付録：コマンド辞典（超ざっくり）
 
 * `git status`：いまの状態を見る
