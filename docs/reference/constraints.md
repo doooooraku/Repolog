@@ -138,6 +138,7 @@
 ---
 
 ## 8. 参照リンク（一次情報）
+- Expo app config (name/slug/scheme): https://docs.expo.dev/versions/latest/config/app/
 - Expo SecureStore: https://docs.expo.dev/versions/latest/sdk/securestore/
 - AsyncStorage: https://react-native-async-storage.github.io/async-storage/docs/usage/
 - Expo SQLite: https://docs.expo.dev/versions/latest/sdk/sqlite/
@@ -148,3 +149,12 @@
 - IANA Language Subtag Registry: https://www.iana.org/assignments/language-subtag-registry
 - RFC 5646 (BCP47): https://datatracker.ietf.org/doc/html/rfc5646
 - Diátaxis: https://diataxis.fr/
+
+---
+
+## 9. 配布メタデータ（固定値）
+- アプリ表示名（`expo.name`）：`Repolog`
+- Expo slug（`expo.slug`）：`repolog`
+- Deep link scheme（`expo.scheme`）：`repolog`
+- iOS bundle identifier（`expo.ios.bundleIdentifier`）：`com.dooooraku.repolog`
+- Android package（`expo.android.package`）：`com.dooooraku.repolog`
