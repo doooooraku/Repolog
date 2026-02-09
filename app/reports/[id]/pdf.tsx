@@ -16,7 +16,12 @@ import { listPhotosByReport } from '@/src/db/photoRepository';
 import { recordExport, countExportsSince } from '@/src/db/exportRepository';
 import { useProStore } from '@/src/stores/proStore';
 import { exportPdfFile, generatePdfFile } from '@/src/features/pdf/pdfService';
-import { calculatePageCount, type PdfLayout, type PaperSize } from '@/src/features/pdf/pdfUtils';
+import {
+  buildPdfExportFileName,
+  calculatePageCount,
+  type PdfLayout,
+  type PaperSize,
+} from '@/src/features/pdf/pdfUtils';
 
 const PHOTO_WARNING_THRESHOLD = 50;
 const FREE_MONTHLY_EXPORT_LIMIT = 5;
@@ -166,7 +171,11 @@ export default function PdfPreviewScreen() {
         if (!proceed) return;
       }
 
-      const fileName = `${report.createdAt.replace(/[:]/g, '').slice(0, 16)}_Repolog.pdf`;
+      const fileName = buildPdfExportFileName({
+        createdAt: report.createdAt,
+        reportName: report.reportName,
+        appName: 'Repolog',
+      });
       const success = await exportPdfFile(pdfUri, fileName);
       if (!success) {
         Alert.alert(t.pdfExportFailed);
@@ -184,7 +193,6 @@ export default function PdfPreviewScreen() {
         planAtExport: isPro ? 'pro' : 'free',
       });
 
-      Alert.alert(t.pdfExportSuccess);
     } catch {
       Alert.alert(t.pdfExportFailed);
     } finally {
