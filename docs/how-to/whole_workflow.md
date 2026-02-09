@@ -172,8 +172,27 @@ Repolog を **「仕様→Issue→実装→テスト→PR→マージ→リリ�
 * **確認コマンド（GitHub CLI）**：
   `gh api repos/doooooraku/Repolog/branches/main/protection`
   - `required_status_checks.contexts` に `test` が含まれる
-  - `required_pull_request_reviews` が有効（PR経由必須）
+  - `required_pull_request_reviews.required_approving_review_count` が `1` 以上
+  - `enforce_admins.enabled` が `true`
+  - `allow_force_pushes.enabled` が `false`
+  - `allow_deletions.enabled` が `false`
 * **担当**：Codex
+
+#### W-10 補足：承認レビューを満たす運用（Repolog）
+
+最低1件の承認レビューを通すため、**write権限のレビュアー**を用意しておく。
+
+```bash
+# レビュアー権限確認（期待: "role_name":"write"）
+gh api repos/doooooraku/Repolog/collaborators/husen21000/permission
+
+# レビュアー側で承認
+gh auth switch -u husen21000
+gh pr review <PR番号> --approve --body "Reviewed and approved."
+
+# 作業者アカウントへ戻す
+gh auth switch -u doooooraku
+```
 
 ### 工程W-11：マージ（mainに反映）
 
@@ -194,6 +213,18 @@ Repolog を **「仕様→Issue→実装→テスト→PR→マージ→リリ�
 * **OUTPUT**：追加Issue（必要な場合）
 * **完了条件**：Issue化の漏れが無い／無ければ次工程へ
 * **担当**：人間（あなた）＋ Codex
+
+#### W-11.5 補足：Project監査の前提
+
+Project v2 を `gh project` で監査するには `read:project` スコープが必要。
+
+```bash
+# トークンスコープを追加
+gh auth refresh -s read:project
+
+# 取得確認
+gh project list --owner doooooraku --format json
+```
 
 ### 工程W-12：リリース（EAS/Store手順に従う）
 

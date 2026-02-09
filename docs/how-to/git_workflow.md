@@ -338,9 +338,32 @@ gh api repos/doooooraku/Repolog/branches/main/protection
 
 * 期待する状態
   * `required_status_checks.contexts` に `test` がある
-  * `required_pull_request_reviews` が存在する（mainへ直接pushせずPR経由）
+  * `required_pull_request_reviews.required_approving_review_count` が `1` 以上
+  * `enforce_admins.enabled` が `true`
+  * `required_linear_history.enabled` が `true`
   * `allow_force_pushes.enabled` が `false`
   * `allow_deletions.enabled` が `false`
+
+### 5.3.1 レビュアー権限の確認（承認レビューが詰まる時）
+
+```bash
+# 期待: role_name が write / maintain / admin のいずれか
+gh api repos/doooooraku/Repolog/collaborators/husen21000/permission
+```
+
+* `role_name: read` だと承認レビュー要件を満たせない
+* 必要なら管理者アカウントで collaborator 招待を行う
+
+```bash
+gh api --method PUT repos/doooooraku/Repolog/collaborators/husen21000 -f permission=push
+```
+
+### 5.3.2 Project監査で `read:project` が必要な場合
+
+```bash
+gh auth refresh -s read:project
+gh project list --owner doooooraku --format json
+```
 
 ---
 
