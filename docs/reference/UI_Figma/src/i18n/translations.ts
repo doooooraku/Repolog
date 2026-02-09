@@ -1,8 +1,8 @@
 // 19 Language Translations for Repolog
-// Languages: en, ja, fr, es, de, it, pt, ru, zhHans, zhHant, ko, th, id, vi, hi, tr, nl, pl, sv
+// Languages: en, ja, fr, es, de, it, pt, ru, zh-Hans, zh-Hant, ko, th, id, vi, hi, tr, nl, pl, sv
 
 export type LanguageCode = 'en' | 'ja' | 'fr' | 'es' | 'de' | 'it' | 'pt' | 'ru' | 
-  'zhHans' | 'zhHant' | 'ko' | 'th' | 'id' | 'vi' | 'hi' | 'tr' | 'nl' | 'pl' | 'sv';
+  'zh-Hans' | 'zh-Hant' | 'ko' | 'th' | 'id' | 'vi' | 'hi' | 'tr' | 'nl' | 'pl' | 'sv';
 
 export interface Translations {
   appName: string;
@@ -394,7 +394,7 @@ const pl: Translations = { ...en, appName: 'Repolog', sunny: 'Słonecznie', clou
 const sv: Translations = { ...en, appName: 'Repolog', sunny: 'Soligt', cloudy: 'Molnigt', rainy: 'Regnigt', snowy: 'Snöigt', pin: 'Fäst', unpin: 'Ta bort fästning', includeLocationInPDF: 'Använd plats', sunday: 'Söndag', monday: 'Måndag', tuesday: 'Tisdag', wednesday: 'Onsdag', thursday: 'Torsdag', friday: 'Fredag', saturday: 'Lördag' };
 
 export const translations: Record<LanguageCode, Translations> = {
-  en, ja, fr, es, de, it, pt, ru, zhHans, zhHant, ko, th, id, vi, hi, tr, nl, pl, sv
+  en, ja, fr, es, de, it, pt, ru, 'zh-Hans': zhHans, 'zh-Hant': zhHant, ko, th, id, vi, hi, tr, nl, pl, sv
 };
 
 export const getTranslations = (lang: LanguageCode): Translations => {
