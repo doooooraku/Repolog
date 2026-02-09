@@ -18,9 +18,26 @@ export const roundCoordinate = (value: number | null, digits = 5) => {
   return Math.round(value * factor) / factor;
 };
 
+export const splitTagInput = (value: string) =>
+  value
+    .split(/[\n,]/)
+    .map((token) => token.trim())
+    .filter((token) => token.length > 0);
+
 export const normalizeTags = (tags?: string[]) => {
   if (!tags) return [];
-  return tags.filter((tag) => typeof tag === 'string' && tag.trim().length > 0);
+  const seen = new Set<string>();
+  const normalized: string[] = [];
+  tags.forEach((tag) => {
+    if (typeof tag !== 'string') return;
+    const token = tag.trim();
+    if (token.length === 0) return;
+    const key = token.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    normalized.push(token);
+  });
+  return normalized;
 };
 
 const weatherValues: WeatherType[] = ['none', 'sunny', 'cloudy', 'rainy', 'snowy'];

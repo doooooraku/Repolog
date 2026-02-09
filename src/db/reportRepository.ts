@@ -1,6 +1,10 @@
 import { getDb } from './db';
 import type { NewReportInput, Report, UpdateReportInput, AddressSource, WeatherType } from '@/src/types/models';
 import { clampComment, normalizeTags, roundCoordinate, normalizeWeather, normalizeAddressSource } from '@/src/features/reports/reportUtils';
+import {
+  matchesReportFilters,
+  type ReportSearchFilters,
+} from '@/src/features/reports/reportListUtils';
 
 const REPORT_COLUMNS = [
   'id',
@@ -83,20 +87,17 @@ export async function listReports(): Promise<Report[]> {
 }
 
 export async function searchReports(query: string): Promise<Report[]> {
+  return searchReportsWithFilters({ query });
+}
+
+export async function searchReportsWithFilters(
+  filters: ReportSearchFilters = {},
+): Promise<Report[]> {
   const db = await getDb();
-  const text = `%${query.trim()}%`;
-  if (!query.trim()) {
-    return listReports();
-  }
   const rows = await db.getAllAsync<ReportRow>(
-    `SELECT ${REPORT_COLUMNS.join(', ')} FROM reports
-     WHERE report_name LIKE ? COLLATE NOCASE
-        OR comment LIKE ? COLLATE NOCASE
-     ORDER BY pinned DESC, updated_at DESC`,
-    text,
-    text,
+    `SELECT ${REPORT_COLUMNS.join(', ')} FROM reports ORDER BY pinned DESC, updated_at DESC`,
   );
-  return rows.map(toReport);
+  return rows.map(toReport).filter((report) => matchesReportFilters(report, filters));
 }
 
 export async function getLatestReportName(): Promise<string | null> {
