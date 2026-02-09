@@ -56,6 +56,17 @@ steps:
       id: "e2e_home_report_0_photo_count_2"
       label: "Home上でも写真枚数を確認"
   - tapOn:
+      id: "e2e_home_create_report_fab"
+      label: "既存レポートあり状態で新規作成導線を確認"
+  - assertVisible:
+      id: "e2e_report_editor_screen"
+      label: "新規作成画面へ遷移できる"
+  - tapOn:
+      id: "e2e_report_back"
+      label: "Homeへ戻る（既存レポート確認へ）"
+  - assertVisible:
+      id: "e2e_home_screen"
+  - tapOn:
       id: "e2e_home_report_card_0"
       label: "再度レポートを開く"
   - assertVisible:
