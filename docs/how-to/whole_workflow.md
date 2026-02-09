@@ -176,6 +176,11 @@ Repolog を **「仕様→Issue→実装→テスト→PR→マージ→リリ�
   - `enforce_admins.enabled` が `true`
   - `allow_force_pushes.enabled` が `false`
   - `allow_deletions.enabled` が `false`
+* **供給網チェック（GitHub Actions）**：
+  `gh api repos/doooooraku/Repolog/actions/permissions`
+  - `sha_pinning_required` が `true`（full-length SHA固定を強制）
+  - `allowed_actions` が運用方針に一致（`all` か `selected`）
+  - `.github/workflows/*.yml` の `uses:` が `@<40桁SHA>` で固定されている
 * **担当**：Codex
 
 #### W-10 補足：承認レビューを満たす運用（Repolog）
@@ -192,6 +197,22 @@ gh pr review <PR番号> --approve --body "Reviewed and approved."
 
 # 作業者アカウントへ戻す
 gh auth switch -u doooooraku
+```
+
+#### W-10 補足：Actions SHA固定ポリシー確認（Repolog）
+
+```bash
+# 現在のActionsポリシー確認
+gh api repos/doooooraku/Repolog/actions/permissions
+
+# 例: SHA固定を必須化する（管理者のみ）
+gh api repos/doooooraku/Repolog/actions/permissions --method PUT \
+  -f enabled=true \
+  -f allowed_actions=all \
+  -f sha_pinning_required=true
+
+# workflow内の uses: を確認
+rg -n \"uses:\" .github/workflows
 ```
 
 ### 工程W-11：マージ（mainに反映）
