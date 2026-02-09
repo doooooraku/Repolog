@@ -28,6 +28,7 @@
 ### How-to（手順）
 - `docs/how-to/*`
   - Issue -> PR -> CI -> Release の「やり方」
+  - 例：`docs/how-to/legal_pages_github_pages.md`（法務ページ公開とリンク運用）
 
 ---
 
@@ -115,4 +116,3 @@
 - その変更は「前提/制約」を壊していない？
 - 合否はテストで判定できる？
 - PRテンプレに必要なリンクは貼った？
-

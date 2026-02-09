@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation, type Lang, type TranslationKey } from '@/src/core/i18n/i18n';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { useProStore } from '@/src/stores/proStore';
+import { getLegalLinks, openExternalLink } from '@/src/services/legalService';
 
 const LANGUAGE_OPTIONS: { code: Lang; labelKey: TranslationKey }[] = [
   { code: 'en', labelKey: 'languageNameEn' },
@@ -52,6 +53,7 @@ export default function SettingsScreen() {
     if (!matched) return lang;
     return t[matched.labelKey] ?? matched.code;
   }, [lang, t]);
+  const legalLinks = useMemo(() => getLegalLinks(), []);
 
   const handleRestore = async () => {
     if (restoring) return;
@@ -63,6 +65,13 @@ export default function SettingsScreen() {
       Alert.alert(t.restoreFailed);
     } finally {
       setRestoring(false);
+    }
+  };
+
+  const handleOpenLegal = async (url: string) => {
+    const opened = await openExternalLink(url);
+    if (!opened) {
+      Alert.alert(t.legalOpenFailed);
     }
   };
 
@@ -133,6 +142,25 @@ export default function SettingsScreen() {
         <Text style={styles.sectionBody}>{t.settingsBackupDesc}</Text>
         <Pressable onPress={() => router.push('/backup')} style={styles.secondaryButton}>
           <Text style={styles.secondaryButtonText}>{t.settingsBackupOpen}</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t.legalSectionTitle}</Text>
+        <Text style={styles.sectionBody}>{t.settingsLegalDesc}</Text>
+        <Pressable
+          onPress={() => {
+            void handleOpenLegal(legalLinks.privacyUrl);
+          }}
+          style={styles.secondaryButton}>
+          <Text style={styles.secondaryButtonText}>{t.legalPrivacyPolicyLabel}</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            void handleOpenLegal(legalLinks.termsUrl);
+          }}
+          style={styles.secondaryButton}>
+          <Text style={styles.secondaryButtonText}>{t.legalTermsOfUseLabel}</Text>
         </Pressable>
       </View>
     </ScrollView>

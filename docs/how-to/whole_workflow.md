@@ -20,6 +20,7 @@
   * `docs/how-to/testing.md`（テストの回し方。正はCI/package.jsonにリンク）
   * `docs/how-to/android_ビルド手順.md`（Androidビルド手順）
   * `docs/how-to/ios_ビルド手順.md`（iOSビルド手順）
+  * `docs/how-to/legal_pages_github_pages.md`（法務ページ公開と運用）
 * **合否（Acceptance Criteria）**：基本は **自動テスト（Jest）** ＋ 必要なら E2E（Maestro）
   → 「合格/不合格」を人の文章から機械に寄せる。
 * **強制装置（Docs-as-code）**：Issue Forms / PRテンプレ / Required checks / CODEOWNERS

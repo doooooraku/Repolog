@@ -17,8 +17,10 @@ const baseEn = {
   settingsSectionPrivacy: 'Privacy',
   settingsSectionPurchases: 'Purchases',
   settingsSectionBackup: 'Backup',
+  settingsSectionLegal: 'Legal',
   settingsBackupDesc: 'Export or import a backup zip (manifest.json + photos/).',
   settingsBackupOpen: 'Open Backup',
+  settingsLegalDesc: 'Open the Privacy Policy and Terms of Use pages.',
 
   // --- Purchase / Restore ---
   restore: 'Restore Purchases',
@@ -183,6 +185,7 @@ const baseEn = {
   errorSaveFailed: 'Failed to save.',
   errorDeleteFailed: 'Failed to delete.',
   errorToggleFailed: 'Failed to update record.',
+  legalOpenFailed: 'Failed to open the legal link.',
   habitLimitTitle: 'Free plan limit',
   habitLimitBody: 'On the free plan you can create up to 3 habits.',
 
