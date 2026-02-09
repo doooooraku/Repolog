@@ -9,6 +9,11 @@ export const PAPER_SIZES = {
 } as const;
 
 export const DEFAULT_TIME_FORMAT = 'YYYY-MM-DD HH:mm';
+const FILE_NAME_FORBIDDEN_CHARS = /[\/\\:*?"<>|]/g;
+const FILE_NAME_SPACES = /\s+/g;
+const FILE_NAME_DUPLICATED_UNDERSCORES = /_+/g;
+const FILE_NAME_EDGE_UNDERSCORES = /^_+|_+$/g;
+const MAX_FILE_NAME_REPORT_PART_LENGTH = 30;
 
 export const formatDateTime = (iso: string) => {
   const date = new Date(iso);
@@ -51,4 +56,44 @@ export const calculatePageCount = (comment: string, photoCount: number, layout: 
   const perPage = layout === 'large' ? 1 : 2;
   const photoPages = Math.ceil(photoCount / perPage);
   return 1 + commentPages.length + photoPages;
+};
+
+const normalizeFileNamePart = (value: string, maxLength?: number) => {
+  const normalized = value
+    .trim()
+    .replace(FILE_NAME_FORBIDDEN_CHARS, '_')
+    .replace(FILE_NAME_SPACES, '_')
+    .replace(FILE_NAME_DUPLICATED_UNDERSCORES, '_')
+    .replace(FILE_NAME_EDGE_UNDERSCORES, '');
+  if (!maxLength) return normalized;
+  return normalized.slice(0, maxLength);
+};
+
+const formatFileNameTimestamp = (iso: string) => {
+  const date = new Date(iso);
+  const safeDate = Number.isNaN(date.getTime()) ? new Date() : date;
+  const pad = (value: number) => String(value).padStart(2, '0');
+  const year = safeDate.getFullYear();
+  const month = pad(safeDate.getMonth() + 1);
+  const day = pad(safeDate.getDate());
+  const hours = pad(safeDate.getHours());
+  const minutes = pad(safeDate.getMinutes());
+  return `${year}${month}${day}_${hours}${minutes}`;
+};
+
+export const buildPdfExportFileName = (params: {
+  createdAt: string;
+  reportName?: string | null;
+  appName?: string;
+}) => {
+  const appPart = normalizeFileNamePart(params.appName ?? 'Repolog') || 'Repolog';
+  const reportPart = normalizeFileNamePart(
+    params.reportName ?? '',
+    MAX_FILE_NAME_REPORT_PART_LENGTH,
+  );
+  const timestamp = formatFileNameTimestamp(params.createdAt);
+  if (reportPart.length === 0) {
+    return `${timestamp}_${appPart}.pdf`;
+  }
+  return `${timestamp}_${reportPart}_${appPart}.pdf`;
 };
