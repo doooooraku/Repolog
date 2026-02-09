@@ -219,11 +219,25 @@ gh auth switch -u doooooraku
 Project v2 を `gh project` で監査するには `read:project` スコープが必要。
 
 ```bash
-# トークンスコープを追加
-gh auth refresh -s read:project
+# 1) 現在の認証状態を確認
+gh auth status
+
+# 2) 対象アカウントへ切り替え（複数アカウント運用時）
+gh auth switch -u doooooraku
+
+# 3) github.com ホストに read:project を追加
+gh auth refresh -h github.com -s read:project
 
 # 取得確認
 gh project list --owner doooooraku --format json
+```
+
+`gh issue view` が `projectCards` 関連エラーで失敗する場合は、gh CLI を更新する。  
+更新が難しい環境では、次の API コマンドで Issue 本文/コメントを取得できる。
+
+```bash
+gh api repos/doooooraku/Repolog/issues/<Issue番号>
+gh api repos/doooooraku/Repolog/issues/<Issue番号>/comments
 ```
 
 ### 工程W-12：リリース（EAS/Store手順に従う）

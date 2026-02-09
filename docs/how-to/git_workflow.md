@@ -361,8 +361,32 @@ gh api --method PUT repos/doooooraku/Repolog/collaborators/husen21000 -f permiss
 ### 5.3.2 Project監査で `read:project` が必要な場合
 
 ```bash
-gh auth refresh -s read:project
+# 1) 認証状態の確認（active account と scope を見る）
+gh auth status
+
+# 2) 複数アカウント運用時は対象アカウントへ切替
+gh auth switch -u doooooraku
+
+# 3) github.com に read:project を追加
+gh auth refresh -h github.com -s read:project
+
+# 4) 取得確認
 gh project list --owner doooooraku --format json
+```
+
+### 5.3.3 `gh issue view` が失敗する場合（Projects classic 廃止影響）
+
+一部の gh バージョンでは、Issue取得時に `projectCards` 関連エラーで失敗する。  
+まず gh を更新する（目安: 2.82.1 以降）。
+
+更新できない環境では API で代替する。
+
+```bash
+# Issue本文
+gh api repos/doooooraku/Repolog/issues/<Issue番号>
+
+# Issueコメント一覧
+gh api repos/doooooraku/Repolog/issues/<Issue番号>/comments
 ```
 
 ---
@@ -389,6 +413,12 @@ gh project list --owner doooooraku --format json
   https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-pull-request-templates
 - Issue Forms：GitHub公式の “About issue forms”  
   https://docs.github.com/en/issues/building-community/using-issues-and-pull-requests/about-issue-forms
+- Projectコマンド前提：GitHub CLI Manual “gh project”  
+  https://cli.github.com/manual/gh_project
+- 認証スコープ追加：GitHub CLI Manual “gh auth refresh”  
+  https://cli.github.com/manual/gh_auth_refresh
+- gh CLI リリース（Projects classic 廃止対応の修正履歴）  
+  https://github.com/cli/cli/releases/tag/v2.82.1
 - Diátaxis：公式サイト  
   https://diataxis.fr/
 - ADR：Adr GitHub（テンプレ/背景のまとめ）  
