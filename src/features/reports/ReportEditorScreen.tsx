@@ -17,7 +17,12 @@ import DraggableFlatList, { type RenderItemParams } from 'react-native-draggable
 
 import type { AddressSource, Photo, Report, WeatherType } from '@/src/types/models';
 import { useTranslation } from '@/src/core/i18n/i18n';
-import { createReport, getReportById, updateReport } from '@/src/db/reportRepository';
+import {
+  createReport,
+  getLatestReportName,
+  getReportById,
+  updateReport,
+} from '@/src/db/reportRepository';
 import { clampComment, remainingCommentChars } from '@/src/features/reports/reportUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
@@ -29,7 +34,11 @@ import {
 } from '@/src/services/photoService';
 import { resolvePhotoAddLimit, MAX_FREE_PHOTOS_PER_REPORT } from '@/src/features/photos/photoUtils';
 import { useProStore } from '@/src/stores/proStore';
-import { normalizePhotoOrder, removePhotoAndNormalize } from '@/src/features/reports/photoOrderUtils';
+import {
+  normalizePhotoOrder,
+  removePhotoAndNormalize,
+  restorePhotoAtIndexAndNormalize,
+} from '@/src/features/reports/photoOrderUtils';
 
 type LocationState = {
   lat: number | null;
@@ -61,6 +70,7 @@ const weatherOptions: WeatherOption[] = [
 
 const E2E_SEED_JPEG_BASE64 =
   '/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAQEBAPEA8PEA8PDw8PDw8PDw8PDw8PFREWFhURFRUYHSggGBolGxUVITEhJSorLi4uFx8zODMtNygtLisBCgoKDg0OFRAQFS0dHR0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIABQAFAMBIgACEQEDEQH/xAAaAAEAAgMBAAAAAAAAAAAAAAAABQYDBEcB/8QAJxAAAQMDAgQHAAAAAAAAAAAAAQIDEQQABSEGEjFBURMiMmFxkqH/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgME/8QAHREAAgMBAQEAAAAAAAAAAAAAAAECEQMhEjFBcf/aAAwDAQACEQMRAD8An2dbfW6WJ6PSp2w4VNrSRJfT2c5iQfWAZxV+6wWJ7LFR6jSxF7VlC4xQ62J1z7fI4xS0Qx3EJ6u6+6fB2cQfSE4qz9SZ0w6k0G5WnkhqfWGrvC4m2JJmKzFKBv6qCQ2f/Z';
+const PHOTO_DELETE_UNDO_MS = 4000;
 
 const sanitizeTestIdToken = (value: string) =>
   value
@@ -76,6 +86,14 @@ const extractPhotoMarker = (uri: string) => {
 
 type ReportEditorScreenProps = {
   reportId?: string | null;
+};
+
+type PendingPhotoDeletion = {
+  reportId: string;
+  photo: Photo;
+  previous: Photo[];
+  next: Photo[];
+  removedIndex: number;
 };
 
 export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps) {
@@ -97,8 +115,12 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [createdAt, setCreatedAt] = useState<string>(new Date().toISOString());
   const [locationState, setLocationState] = useState<LocationState>(emptyLocation);
   const [locationLoading, setLocationLoading] = useState(false);
+  const [undoVisible, setUndoVisible] = useState(false);
 
   const autoLocationRequested = useRef(false);
+  const reportNameSeeded = useRef(false);
+  const pendingDeletionRef = useRef<PendingPhotoDeletion | null>(null);
+  const pendingDeletionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -143,6 +165,21 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   useEffect(() => {
     void initPro();
   }, [initPro]);
+
+  useEffect(() => {
+    if (reportId || loading || report || reportNameSeeded.current) return;
+    reportNameSeeded.current = true;
+    let mounted = true;
+    const seedReportName = async () => {
+      const latestReportName = await getLatestReportName();
+      if (!mounted || !latestReportName) return;
+      setReportName((current) => (current.trim().length > 0 ? current : latestReportName));
+    };
+    void seedReportName();
+    return () => {
+      mounted = false;
+    };
+  }, [loading, report, reportId]);
 
   const handleFetchLocation = useCallback(async () => {
     if (!includeLocation || locationLoading) return;
@@ -284,6 +321,76 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     }
   }, [ensureReport, refreshPhotos, t.photoAddFailed]);
 
+  const clearPendingDeletionTimer = useCallback(() => {
+    if (pendingDeletionTimerRef.current) {
+      clearTimeout(pendingDeletionTimerRef.current);
+      pendingDeletionTimerRef.current = null;
+    }
+  }, []);
+
+  const finalizePendingDeletion = useCallback(
+    async (options: { showAlert?: boolean; updateUi?: boolean } = {}) => {
+      const pending = pendingDeletionRef.current;
+      if (!pending) return true;
+
+      const showAlert = options.showAlert ?? true;
+      const updateUi = options.updateUi ?? true;
+
+      clearPendingDeletionTimer();
+      pendingDeletionRef.current = null;
+      if (updateUi) {
+        setUndoVisible(false);
+      }
+
+      try {
+        await removePhotoFromReport(pending.reportId, pending.photo);
+        await updatePhotoOrderByIds(
+          pending.reportId,
+          pending.next.map((item) => item.id),
+        );
+        return true;
+      } catch {
+        if (updateUi) {
+          setPhotos(pending.previous);
+          setUndoVisible(false);
+        }
+        try {
+          await refreshPhotos(pending.reportId);
+        } catch {
+          // Keep local fallback state when refresh also fails.
+        }
+        if (showAlert) {
+          Alert.alert(t.photoDeleteFailed);
+        }
+        return false;
+      }
+    },
+    [clearPendingDeletionTimer, refreshPhotos, t.photoDeleteFailed],
+  );
+
+  const handleUndoDeletePhoto = useCallback(() => {
+    const pending = pendingDeletionRef.current;
+    if (!pending) return;
+
+    clearPendingDeletionTimer();
+    pendingDeletionRef.current = null;
+    setPhotos(
+      restorePhotoAtIndexAndNormalize(
+        pending.next,
+        { ...pending.photo, orderIndex: pending.removedIndex },
+        pending.removedIndex,
+      ),
+    );
+    setUndoVisible(false);
+  }, [clearPendingDeletionTimer]);
+
+  useEffect(
+    () => () => {
+      void finalizePendingDeletion({ showAlert: false, updateUi: false });
+    },
+    [finalizePendingDeletion],
+  );
+
   const showPhotoLimitAlert = useCallback(() => {
     Alert.alert(
       t.photoLimitTitle,
@@ -299,6 +406,11 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     if (saving) return;
     setSaving(true);
     try {
+      const finalized = await finalizePendingDeletion();
+      if (!finalized) {
+        setSaving(false);
+        return;
+      }
       const payload = buildPayload();
       if (reportId) {
         await updateReport({ id: reportId, ...payload });
@@ -316,13 +428,25 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   };
 
   const handlePreviewPdf = async () => {
+    const finalized = await finalizePendingDeletion();
+    if (!finalized) return;
     const current = await ensureReport();
     router.push(`/reports/${current.id}/pdf`);
   };
 
+  const handleBack = useCallback(() => {
+    void (async () => {
+      const finalized = await finalizePendingDeletion();
+      if (!finalized) return;
+      router.back();
+    })();
+  }, [finalizePendingDeletion, router]);
+
   const handleAddPhotos = useCallback(
     async (source: 'camera' | 'library') => {
       try {
+        const finalized = await finalizePendingDeletion();
+        if (!finalized) return;
         const current = await ensureReport();
         const existingCount = photos.length;
         const limitStatus = resolvePhotoAddLimit(isPro, existingCount, 1);
@@ -349,11 +473,13 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         Alert.alert(t.photoAddFailed);
       }
     },
-    [ensureReport, photos.length, isPro, refreshPhotos, showPhotoLimitAlert, t],
+    [ensureReport, finalizePendingDeletion, photos.length, isPro, refreshPhotos, showPhotoLimitAlert, t],
   );
 
   const handlePhotoReorder = useCallback(
     async (reordered: Photo[]) => {
+      const finalized = await finalizePendingDeletion();
+      if (!finalized) return;
       const current = await ensureReport();
       const previous = photos;
       const normalized = normalizePhotoOrder(reordered);
@@ -373,32 +499,41 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         Alert.alert(t.photoReorderFailed);
       }
     },
-    [ensureReport, photos, refreshPhotos, t.photoReorderFailed],
+    [ensureReport, finalizePendingDeletion, photos, refreshPhotos, t.photoReorderFailed],
   );
 
   const handleDeletePhoto = useCallback(
     async (photo: Photo) => {
-      const current = await ensureReport();
-      const previous = photos;
-      const next = removePhotoAndNormalize(previous, photo.id);
-      setPhotos(next);
       try {
-        await removePhotoFromReport(current.id, photo);
-        await updatePhotoOrderByIds(
-          current.id,
-          next.map((item) => item.id),
-        );
+        const finalized = await finalizePendingDeletion();
+        if (!finalized) return;
+
+        const current = await ensureReport();
+        const previous = photos;
+        const removedIndex = previous.findIndex((item) => item.id === photo.id);
+        if (removedIndex < 0) return;
+
+        const next = removePhotoAndNormalize(previous, photo.id);
+        if (next.length === previous.length) return;
+
+        setPhotos(next);
+        pendingDeletionRef.current = {
+          reportId: current.id,
+          photo: { ...photo, orderIndex: removedIndex },
+          previous,
+          next,
+          removedIndex,
+        };
+        setUndoVisible(true);
+        clearPendingDeletionTimer();
+        pendingDeletionTimerRef.current = setTimeout(() => {
+          void finalizePendingDeletion();
+        }, PHOTO_DELETE_UNDO_MS);
       } catch {
-        setPhotos(previous);
-        try {
-          await refreshPhotos(current.id);
-        } catch {
-          // Keep local fallback state when refresh also fails.
-        }
         Alert.alert(t.photoDeleteFailed);
       }
     },
-    [ensureReport, photos, refreshPhotos, t.photoDeleteFailed],
+    [clearPendingDeletionTimer, ensureReport, finalizePendingDeletion, photos, t.photoDeleteFailed],
   );
 
   const confirmDeletePhoto = useCallback(
@@ -475,7 +610,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   return (
     <ScrollView contentContainerStyle={styles.container} testID="e2e_report_editor_screen">
       <View style={styles.headerRow}>
-        <Pressable testID="e2e_report_back" onPress={() => router.back()} style={styles.backButton}>
+        <Pressable testID="e2e_report_back" onPress={handleBack} style={styles.backButton}>
           <Text style={styles.backText}>{'‹'}</Text>
         </Pressable>
         <Text style={styles.headerTitle}>{t.reportEditorTitle}</Text>
@@ -622,6 +757,14 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             contentContainerStyle={styles.photoListContent}
             showsHorizontalScrollIndicator={false}
           />
+        )}
+        {undoVisible && (
+          <View style={styles.undoBanner} testID="e2e_photo_delete_undo_bar">
+            <Text style={styles.undoBannerText}>{t.photoDeletedNotice}</Text>
+            <Pressable testID="e2e_photo_delete_undo" onPress={handleUndoDeletePhoto}>
+              <Text style={styles.undoActionText}>{t.undoAction}</Text>
+            </Pressable>
+          </View>
         )}
       </View>
 
@@ -824,6 +967,29 @@ const styles = StyleSheet.create({
   },
   photoListContent: {
     paddingRight: 8,
+  },
+  undoBanner: {
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#dbeafe',
+    borderRadius: 10,
+    backgroundColor: '#eff6ff',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  undoBannerText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#1e3a8a',
+  },
+  undoActionText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1d4ed8',
   },
   photoCard: {
     width: 72,

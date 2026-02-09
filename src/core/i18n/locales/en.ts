@@ -286,6 +286,8 @@ const baseEn = {
   photoDeleteConfirmTitle: 'Delete photo?',
   photoDeleteConfirmBody: 'This photo will be removed from this report.',
   photoDeleteFailed: 'Failed to delete photo.',
+  photoDeletedNotice: 'Photo removed.',
+  undoAction: 'Undo',
   homeTitle: 'Home',
   homeSearchPlaceholder: 'Search reports...',
   homePinnedSection: 'Pinned',

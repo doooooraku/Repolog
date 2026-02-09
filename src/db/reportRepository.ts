@@ -99,6 +99,20 @@ export async function searchReports(query: string): Promise<Report[]> {
   return rows.map(toReport);
 }
 
+export async function getLatestReportName(): Promise<string | null> {
+  const db = await getDb();
+  const row = await db.getFirstAsync<{ report_name: string | null }>(
+    `SELECT report_name
+       FROM reports
+      WHERE report_name IS NOT NULL
+        AND TRIM(report_name) != ''
+      ORDER BY updated_at DESC
+      LIMIT 1`,
+  );
+  const reportName = row?.report_name?.trim() ?? '';
+  return reportName.length > 0 ? reportName : null;
+}
+
 export async function getReportById(id: string): Promise<Report | null> {
   const db = await getDb();
   const row = await db.getFirstAsync<ReportRow>(
