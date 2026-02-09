@@ -1,0 +1,44 @@
+appId: "com.dooooraku.repolog"
+name: "E2E - language persistence"
+tags:
+  - e2e
+  - settings
+
+steps:
+  - launchApp:
+      clearState: true
+      label: "クリーン起動"
+  - assertVisible:
+      id: "e2e_home_screen"
+  - tapOn:
+      id: "e2e_open_settings"
+      label: "設定を開く"
+  - assertVisible:
+      id: "e2e_settings_screen"
+  - tapOn:
+      id: "e2e_language_toggle"
+      label: "言語リストを開く"
+  - tapOn:
+      id: "e2e_language_option_zh_hans"
+      label: "中国語(簡体)を選択"
+  - assertVisible:
+      id: "e2e_current_language_zh_hans"
+      label: "設定直後の反映を確認"
+  - stopApp:
+      label: "アプリ終了"
+  - launchApp:
+      clearState: false
+      label: "状態維持で再起動"
+  - assertVisible:
+      id: "e2e_home_screen"
+  - tapOn:
+      id: "e2e_open_settings"
+  - assertVisible:
+      id: "e2e_settings_screen"
+  - tapOn:
+      id: "e2e_language_toggle"
+  - assertVisible:
+      id: "e2e_current_language_zh_hans"
+      label: "再起動後も保持される"
+  - assertVisible:
+      id: "e2e_language_selected_zh_hans"

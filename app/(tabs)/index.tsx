@@ -94,10 +94,11 @@ export default function HomeScreen() {
     ]);
   };
 
-  const renderItem = ({ item }: { item: Report }) => {
+  const renderItem = ({ item, index }: { item: Report; index: number }) => {
     const summary = meta[item.id] ?? {};
     return (
       <Pressable
+        testID={`e2e_home_report_card_${index}`}
         style={styles.card}
         onPress={() => router.push(`/reports/${item.id}`)}>
         {summary.firstPhotoUri ? (
@@ -117,8 +118,10 @@ export default function HomeScreen() {
           <Text style={styles.cardSub}>{item.createdAt.replace('T', ' ').slice(0, 16)}</Text>
           <View style={styles.cardRow}>
             <Text style={styles.cardMeta}>
+              {/* Keep count explicit for E2E assertions. */}
               {summary.photoCount ?? 0} {t.reportPhotosLabel}
             </Text>
+            <Text testID={`e2e_home_report_${index}_photo_count_${summary.photoCount ?? 0}`} />
             <Pressable onPress={() => handleDelete(item)}>
               <Text style={styles.deleteText}>{t.deleteAction}</Text>
             </Pressable>
@@ -137,10 +140,11 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="e2e_home_screen">
       <View style={styles.headerRow}>
         <Text style={styles.title}>{t.homeTitle}</Text>
         <Pressable
+          testID="e2e_open_settings"
           onPress={() => router.push('/settings')}
           style={styles.iconButton}>
           <IconSymbol name="gearshape.fill" size={20} color="#111" />
@@ -156,7 +160,10 @@ export default function HomeScreen() {
         <View style={styles.empty}>
           <Text style={styles.emptyTitle}>{t.homeEmptyTitle}</Text>
           <Text style={styles.emptyBody}>{t.homeEmptyBody}</Text>
-          <Pressable style={styles.newButton} onPress={() => router.push('/reports/new')}>
+          <Pressable
+            testID="e2e_home_create_report"
+            style={styles.newButton}
+            onPress={() => router.push('/reports/new')}>
             <Text style={styles.newButtonText}>{t.homeCreateReport}</Text>
           </Pressable>
         </View>

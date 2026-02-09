@@ -82,17 +82,21 @@ pnpm test:e2e
 
 ### 3.1 何が起きる？
 
-* Maestro が `maestro/flows/smoke.yml` を実行
-* アプリを起動して、最低限の操作ができるかを確認する（スモークテスト）
+* Maestro が `maestro/flows/*.yml` を順番に実行する
+  - `smoke.yml`（Home↔Settings）
+  - `report-photo-edit.yml`（写真追加/並び替え/削除/再表示）
+  - `settings-language-persistence.yml`（言語保持）
+* アプリを起動して、主要導線の回帰を確認する
 
 ### 3.1.1 まず最初に直すべきこと（重要）
-* `maestro/flows/smoke.yml` の `appId: "CHANGE_ME_APP_ID"` を **実アプリのID**に書き換える
+* `maestro/flows/*.yml` の `appId` が実アプリID（`com.dooooraku.repolog`）と一致しているか確認する
 * E2Eで使う `testID` が実装側にあるか確認する（無ければ追加）
 
 ### 3.2 ここが注意（詰まりやすい）
 
 * 端末/エミュレータが必要
-* 初回は Maestro のインストールが必要になることがある
+* 初回は Maestro CLI のインストールが必要
+  - 例: `curl -Ls \"https://get.maestro.mobile.dev\" | bash`
 * CIでは条件付きで走る設定になっている場合がある（SecretsやAPKの有無）
 
 ---

@@ -1,0 +1,67 @@
+appId: "com.dooooraku.repolog"
+name: "E2E - report photo edit flow"
+tags:
+  - e2e
+  - report
+
+steps:
+  - launchApp:
+      clearState: true
+      label: "クリーン起動"
+  - assertVisible:
+      id: "e2e_home_screen"
+      label: "Homeを表示"
+  - tapOn:
+      id: "e2e_home_create_report"
+      label: "新規レポートを作成"
+  - assertVisible:
+      id: "e2e_report_editor_screen"
+      label: "編集画面を表示"
+  - tapOn:
+      id: "e2e_seed_photos"
+      label: "E2E用サンプル写真を追加"
+  - assertVisible:
+      id: "e2e_photo_count_3"
+      label: "写真3枚を確認"
+  - assertVisible:
+      id: "e2e_photo_slot_0_seed_1"
+  - assertVisible:
+      id: "e2e_photo_slot_1_seed_2"
+  - assertVisible:
+      id: "e2e_photo_slot_2_seed_3"
+  - dragAndDrop:
+      from:
+        id: "e2e_photo_slot_0_seed_1"
+      to:
+        id: "e2e_photo_slot_2_seed_3"
+      label: "seed-1 を末尾へ移動"
+  - assertVisible:
+      id: "e2e_photo_slot_0_seed_2"
+      label: "並び替え後の先頭を確認"
+  - assertVisible:
+      id: "e2e_photo_slot_2_seed_1"
+      label: "並び替え後の末尾を確認"
+  - tapOn:
+      id: "e2e_photo_delete_now_0"
+      label: "先頭写真を削除（E2E即時削除）"
+  - assertVisible:
+      id: "e2e_photo_count_2"
+      label: "削除後2枚を確認"
+  - tapOn:
+      id: "e2e_report_back"
+      label: "Homeへ戻る"
+  - assertVisible:
+      id: "e2e_home_screen"
+  - assertVisible:
+      id: "e2e_home_report_0_photo_count_2"
+      label: "Home上でも写真枚数を確認"
+  - tapOn:
+      id: "e2e_home_report_card_0"
+      label: "再度レポートを開く"
+  - assertVisible:
+      id: "e2e_report_editor_screen"
+  - assertVisible:
+      id: "e2e_photo_slot_0_seed_3"
+      label: "再表示で並びが維持される"
+  - assertVisible:
+      id: "e2e_photo_slot_1_seed_1"
