@@ -18,6 +18,8 @@ tags:
 - tapOn:
     id: "e2e_open_settings"
     label: "設定を開く"
+    retryTapIfNoChange: true
+    waitUntilVisible: true
 - extendedWaitUntil:
     visible:
       id: "e2e_settings_screen"

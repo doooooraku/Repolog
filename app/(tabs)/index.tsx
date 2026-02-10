@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AdBanner } from '@/components/ad-banner';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -211,129 +212,135 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={styles.container} testID="e2e_home_screen">
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>{t.homeTitle}</Text>
-        <View style={styles.headerActions}>
-          <Pressable
-            testID="e2e_home_create_report_fab"
-            onPress={() => router.push('/reports/new')}
-            hitSlop={12}
-            style={styles.iconButton}>
-            <IconSymbol name="plus" size={20} color="#111" />
-          </Pressable>
-          <Pressable
-            testID="e2e_open_settings"
-            onPress={() => router.push('/settings')}
-            hitSlop={12}
-            style={styles.iconButton}>
-            <IconSymbol name="gearshape.fill" size={20} color="#111" />
-          </Pressable>
-        </View>
-      </View>
-      <TextInput
-        placeholder={t.homeSearchPlaceholder}
-        value={query}
-        onChangeText={setQuery}
-        style={styles.search}
-      />
-      <View style={styles.filterPanel}>
-        <Text style={styles.filterTitle}>{t.homeFiltersTitle}</Text>
-        <View style={styles.filterRow}>
-          <View style={styles.filterColumn}>
-            <Text style={styles.filterLabel}>{t.homeFilterFromLabel}</Text>
-            <TextInput
-              testID="e2e_home_filter_from"
-              value={fromDate}
-              onChangeText={setFromDate}
-              placeholder={t.homeFilterDatePlaceholder}
-              style={styles.filterInput}
-            />
-          </View>
-          <View style={styles.filterColumn}>
-            <Text style={styles.filterLabel}>{t.homeFilterToLabel}</Text>
-            <TextInput
-              testID="e2e_home_filter_to"
-              value={toDate}
-              onChangeText={setToDate}
-              placeholder={t.homeFilterDatePlaceholder}
-              style={styles.filterInput}
-            />
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <View style={styles.container} testID="e2e_home_screen">
+        <View style={styles.headerRow}>
+          <Text style={styles.title}>{t.homeTitle}</Text>
+          <View style={styles.headerActions}>
+            <Pressable
+              testID="e2e_home_create_report_fab"
+              onPress={() => router.push('/reports/new')}
+              hitSlop={12}
+              style={styles.iconButton}>
+              <IconSymbol name="plus" size={20} color="#111" />
+            </Pressable>
+            <Pressable
+              testID="e2e_open_settings"
+              onPress={() => router.push('/settings')}
+              hitSlop={12}
+              style={styles.iconButton}>
+              <IconSymbol name="gearshape.fill" size={20} color="#111" />
+            </Pressable>
           </View>
         </View>
-        <View style={styles.filterTagInputRow}>
-          <TextInput
-            testID="e2e_home_filter_tags_input"
-            value={filterTagInput}
-            onChangeText={setFilterTagInput}
-            onSubmitEditing={handleAddFilterTags}
-            placeholder={t.homeFilterTagPlaceholder}
-            style={[styles.filterInput, styles.filterTagInput]}
-            returnKeyType="done"
-          />
-          <Pressable
-            testID="e2e_home_filter_tags_add"
-            onPress={handleAddFilterTags}
-            style={styles.filterTagAddButton}>
-            <Text style={styles.filterTagAddText}>{t.addTagAction}</Text>
-          </Pressable>
-        </View>
-        {filterTags.length > 0 && (
-          <View style={styles.filterTagsWrap}>
-            {filterTags.map((tag) => (
-              <Pressable
-                key={tag}
-                testID={`e2e_home_filter_tag_${sanitizeTestIdToken(tag)}`}
-                onPress={() => handleRemoveFilterTag(tag)}
-                style={styles.filterTagChip}>
-                <Text style={styles.filterTagChipText}>{tag}</Text>
-                <Text style={styles.filterTagChipRemove}>×</Text>
-              </Pressable>
-            ))}
-          </View>
-        )}
-        <View style={styles.filterSwitchRow}>
-          <Text style={styles.filterLabel}>{t.homeFilterPinnedOnlyLabel}</Text>
-          <Switch testID="e2e_home_filter_pinned_only" value={pinnedOnly} onValueChange={setPinnedOnly} />
-        </View>
-        {hasActiveFilters && (
-          <Pressable
-            testID="e2e_home_filter_reset"
-            onPress={handleResetFilters}
-            style={styles.filterResetButton}>
-            <Text style={styles.filterResetText}>{t.homeFilterResetAction}</Text>
-          </Pressable>
-        )}
-      </View>
-      {sections.length === 0 ? (
-        <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>{t.homeEmptyTitle}</Text>
-          <Text style={styles.emptyBody}>{t.homeEmptyBody}</Text>
-          <Pressable
-            testID="e2e_home_create_report"
-            style={styles.newButton}
-            onPress={() => router.push('/reports/new')}>
-            <Text style={styles.newButtonText}>{t.homeCreateReport}</Text>
-          </Pressable>
-        </View>
-      ) : (
-        <SectionList
-          sections={sections}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          renderSectionHeader={({ section }) => (
-            <Text style={styles.sectionHeader}>{section.title}</Text>
-          )}
-          contentContainerStyle={styles.listContent}
-          style={styles.list}
+        <TextInput
+          placeholder={t.homeSearchPlaceholder}
+          value={query}
+          onChangeText={setQuery}
+          style={styles.search}
         />
-      )}
-      {proInitialized && !isPro && <AdBanner />}
-    </View>
+        <View style={styles.filterPanel}>
+          <Text style={styles.filterTitle}>{t.homeFiltersTitle}</Text>
+          <View style={styles.filterRow}>
+            <View style={styles.filterColumn}>
+              <Text style={styles.filterLabel}>{t.homeFilterFromLabel}</Text>
+              <TextInput
+                testID="e2e_home_filter_from"
+                value={fromDate}
+                onChangeText={setFromDate}
+                placeholder={t.homeFilterDatePlaceholder}
+                style={styles.filterInput}
+              />
+            </View>
+            <View style={styles.filterColumn}>
+              <Text style={styles.filterLabel}>{t.homeFilterToLabel}</Text>
+              <TextInput
+                testID="e2e_home_filter_to"
+                value={toDate}
+                onChangeText={setToDate}
+                placeholder={t.homeFilterDatePlaceholder}
+                style={styles.filterInput}
+              />
+            </View>
+          </View>
+          <View style={styles.filterTagInputRow}>
+            <TextInput
+              testID="e2e_home_filter_tags_input"
+              value={filterTagInput}
+              onChangeText={setFilterTagInput}
+              onSubmitEditing={handleAddFilterTags}
+              placeholder={t.homeFilterTagPlaceholder}
+              style={[styles.filterInput, styles.filterTagInput]}
+              returnKeyType="done"
+            />
+            <Pressable
+              testID="e2e_home_filter_tags_add"
+              onPress={handleAddFilterTags}
+              style={styles.filterTagAddButton}>
+              <Text style={styles.filterTagAddText}>{t.addTagAction}</Text>
+            </Pressable>
+          </View>
+          {filterTags.length > 0 && (
+            <View style={styles.filterTagsWrap}>
+              {filterTags.map((tag) => (
+                <Pressable
+                  key={tag}
+                  testID={`e2e_home_filter_tag_${sanitizeTestIdToken(tag)}`}
+                  onPress={() => handleRemoveFilterTag(tag)}
+                  style={styles.filterTagChip}>
+                  <Text style={styles.filterTagChipText}>{tag}</Text>
+                  <Text style={styles.filterTagChipRemove}>×</Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+          <View style={styles.filterSwitchRow}>
+            <Text style={styles.filterLabel}>{t.homeFilterPinnedOnlyLabel}</Text>
+            <Switch testID="e2e_home_filter_pinned_only" value={pinnedOnly} onValueChange={setPinnedOnly} />
+          </View>
+          {hasActiveFilters && (
+            <Pressable
+              testID="e2e_home_filter_reset"
+              onPress={handleResetFilters}
+              style={styles.filterResetButton}>
+              <Text style={styles.filterResetText}>{t.homeFilterResetAction}</Text>
+            </Pressable>
+          )}
+        </View>
+        {sections.length === 0 ? (
+          <View style={styles.empty}>
+            <Text style={styles.emptyTitle}>{t.homeEmptyTitle}</Text>
+            <Text style={styles.emptyBody}>{t.homeEmptyBody}</Text>
+            <Pressable
+              testID="e2e_home_create_report"
+              style={styles.newButton}
+              onPress={() => router.push('/reports/new')}>
+              <Text style={styles.newButtonText}>{t.homeCreateReport}</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <SectionList
+            sections={sections}
+            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
+            renderSectionHeader={({ section }) => (
+              <Text style={styles.sectionHeader}>{section.title}</Text>
+            )}
+            contentContainerStyle={styles.listContent}
+            style={styles.list}
+          />
+        )}
+        {proInitialized && !isPro && <AdBanner />}
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f6f6f6',
+  },
   container: {
     flex: 1,
     padding: 16,
