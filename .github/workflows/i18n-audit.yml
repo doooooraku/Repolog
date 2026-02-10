@@ -1,0 +1,90 @@
+name: i18n Audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      locale:
+        description: "Locale code to audit (BCP47)"
+        required: true
+        default: "pl"
+        type: choice
+        options:
+          - en
+          - ja
+          - fr
+          - es
+          - de
+          - it
+          - pt
+          - ru
+          - zh-Hans
+          - zh-Hant
+          - ko
+          - th
+          - id
+          - vi
+          - hi
+          - tr
+          - nl
+          - pl
+          - sv
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_LOCALE: ${{ inputs.locale }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+        with:
+          version: "10"
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate i18n reports
+        run: |
+          mkdir -p i18n-artifacts
+          pnpm i18n:audit -- "$TARGET_LOCALE" --json > "i18n-artifacts/audit-${TARGET_LOCALE}.json"
+          pnpm i18n:audit -- "$TARGET_LOCALE" --out "i18n-artifacts/audit-${TARGET_LOCALE}.md"
+          pnpm i18n:audit -- "$TARGET_LOCALE" --inventory --out "i18n-artifacts/inventory-${TARGET_LOCALE}.md"
+
+      - name: Publish summary
+        run: |
+          node -e '
+          const fs = require("node:fs");
+          const report = JSON.parse(fs.readFileSync(`i18n-artifacts/audit-${process.env.TARGET_LOCALE}.json`, "utf8"));
+          const lines = [
+            "## i18n audit summary",
+            "",
+            `- locale: ${report.locale}`,
+            `- enTotalKeys: ${report.enTotalKeys}`,
+            `- localeOverrideKeys: ${report.localeOverrideKeys}`,
+            `- usedKeysInApp: ${report.usedKeysInApp}`,
+            `- usedKeysDirect: ${report.usedDirect.length}`,
+            `- usedKeysDynamic: ${report.usedDynamic.length}`,
+            `- missingUsedCount: ${report.missingUsed.length}`,
+            `- missingAllCount: ${report.missingAll.length}`,
+            `- unusedCandidateCount: ${report.unusedCandidates.length}`,
+          ];
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${lines.join("\n")}\n`);
+          '
+
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: i18n-audit-${{ inputs.locale }}-${{ github.run_id }}
+          path: i18n-artifacts

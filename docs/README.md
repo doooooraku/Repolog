@@ -31,6 +31,7 @@
   - 例：`docs/how-to/legal_pages_github_pages.md`（法務ページ公開とリンク運用）
   - 例：`docs/how-to/release_notes_template.md`（タグ命名規則とReleaseノート雛形）
   - 例：`docs/how-to/backup_restore.md`（バックアップ復元と障害切り分け）
+  - 例：`docs/how-to/i18n_key_inventory.md`（翻訳キーの使用中/未使用候補の棚卸し）
 
 ---
 
