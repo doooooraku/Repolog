@@ -85,14 +85,7 @@ jobs:
           script: |
             mkdir -p .maestro
             adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-            result=0
-            if ! maestro test maestro/flows/smoke.yml --format junit --output .maestro; then
-              echo "First run failed. Retrying once in 5 seconds..."
-              sleep 5
-              maestro test maestro/flows/smoke.yml --format junit --output .maestro || result=$?
-            fi
-            adb logcat -d > .maestro/logcat.txt || true
-            exit "$result"
+            bash -lc 'set +e; maestro test maestro/flows/smoke.yml --format junit --output .maestro; code=$?; if [ "$code" -ne 0 ]; then echo "First run failed. Retrying once in 5 seconds..."; sleep 5; maestro test maestro/flows/smoke.yml --format junit --output .maestro; code=$?; fi; adb logcat -d > .maestro/logcat.txt || true; exit "$code"'
 
       - name: Upload Maestro artifacts
         if: always()
