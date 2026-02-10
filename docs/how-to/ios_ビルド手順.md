@@ -152,3 +152,5 @@ ADMOB_USER_TRACKING_USAGE_DESCRIPTION=<追跡利用理由の文言>
 ### 6-3. 審査提出前の最終確認
 - App Store Connect の Privacy Policy URL が設定済みであること
 - 同意フロー変更時は `docs/adr/ADR-0008-admob-ump-consent-preflight.md` の差分を確認すること
+- 実行手順の正は `docs/how-to/testing.md` の「9. UMP EEA 同意検証（Issue #93）」を参照
+- GitHub Actionsで反復確認する場合は `ump-consent-validation.yml` を `workflow_dispatch` で実行

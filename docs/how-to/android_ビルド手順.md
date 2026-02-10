@@ -140,4 +140,6 @@ ADMOB_CONSENT_TEST_DEVICE_IDS=<テスト端末IDをカンマ区切り>
 
 ### 5-3. 事故防止の固定ルール
 - 同意関連の設定変更がある場合は `docs/adr/ADR-0008-admob-ump-consent-preflight.md` を参照
+- 実行手順の正は `docs/how-to/testing.md` の「9. UMP EEA 同意検証（Issue #93）」を参照
+- GitHub Actionsで反復確認する場合は `ump-consent-validation.yml` を `workflow_dispatch` で実行
 - どうしても同意フローが壊れた場合は、リリース前に広告表示を停止して提出する（審査優先）
