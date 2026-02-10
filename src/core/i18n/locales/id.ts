@@ -150,6 +150,7 @@ const dict = {
   languageNameVi: 'Vietnam',
   languageNameTr: 'Turki',
   languageNameNl: 'Belanda',
+  languageNamePl: 'Polandia',
   languageNameSv: 'Swedia',
 
   // --- Tutorial (チュートリアル) ---

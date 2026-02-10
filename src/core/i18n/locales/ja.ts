@@ -201,6 +201,7 @@ const dict = {
     languageNameVi: 'ベトナム語',
     languageNameTr: 'トルコ語',
     languageNameNl: 'オランダ語',
+    languageNamePl: 'ポーランド語',
     languageNameSv: 'スウェーデン語',
     soundSwitchLabel: 'サウンド効果',
     tapSoundLabel: 'タップ音の種類',

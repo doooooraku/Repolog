@@ -329,7 +329,8 @@ pnpm i18n:audit -- pl --inventory --out docs/how-to/i18n_key_inventory.md
 
 ### 6.5 判定時の注意
 - `missing used keys` は「その言語で未上書き」を示し、即バグ確定ではない
-- 例：`languageName*` は英語表記を許容する運用なら P2扱い
+- `languageName*` は全19言語キーを各localeで揃える（英語フォールバック運用はしない）
+- `languageName*` が `missing used keys` に出た場合は P1 で修正する
 - ただし、ユーザー表示で不自然な箇所は優先修正する
 
 ---
