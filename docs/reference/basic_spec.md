@@ -241,6 +241,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 
 ### F-10 広告（Free）
 - Freeは広告あり / Proは広告なし（明確な価値）
+- UMP同意（EEA想定）で `canRequestAds=true` になるまで広告は出さない
 - ポリシー対応は ADR + constraints で固定（配置・頻度・禁止画面など）
 
 ---

@@ -84,6 +84,8 @@
 - 次回リリース以降：Free に **バナー広告（AdMob）を必ず組み込む**（Pro は常に広告ゼロ）
 - 開発中は **テスト広告**を使う（本番広告を開発で表示しない）
 - 本番の広告ユニットIDは **ソースへ直書きしない**（ビルド設定/Secrets/環境注入）
+- UMP（Google User Messaging Platform）で **同意情報を毎回起動時に更新**し、`canRequestAds=true` を確認してから広告リクエストする
+- `privacyOptionsRequirementStatus=REQUIRED` の場合、ユーザーが再選択できる **Privacy options の入口** をアプリに用意する
 
 ---
 
@@ -144,6 +146,10 @@
 - Expo SQLite: https://docs.expo.dev/versions/latest/sdk/sqlite/
 - RevenueCat Restore Purchases: https://www.revenuecat.com/docs/getting-started/restoring-purchases
 - react-native-google-mobile-ads（テストID等）: https://docs.page/invertase/react-native-google-mobile-ads/displaying-ads
+- react-native-google-mobile-ads（EU同意）: https://docs.page/invertase/react-native-google-mobile-ads/european-user-consent
+- AdMob EU User Consent Policy: https://support.google.com/admob/answer/7666519?hl=en
+- UMP SDK (Android): https://developers.google.com/admob/android/next-gen/privacy
+- UMP SDK (iOS): https://developers.google.com/admob/ios/privacy
 - react-native-zip-archive（バックアップzip）: https://github.com/mockingbot/react-native-zip-archive
 - GitHub Branch protection: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule
 - IANA Language Subtag Registry: https://www.iana.org/assignments/language-subtag-registry
