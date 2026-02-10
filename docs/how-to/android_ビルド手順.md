@@ -1,5 +1,5 @@
 # Android_ビルド手順（Debug運用 / Release提出）
-最終更新: 2026-01-19（JST）
+最終更新: 2026-02-10（JST）
 
 ## 1. タグ運用（リリース可視化）
 リリース前に必ずタグとノートを作成する。  
@@ -111,3 +111,33 @@ keytool -printcert -jarfile app/build/outputs/bundle/release/app-release.aab
 
 成果物：
 android/app/build/outputs/bundle/release/app-release.aab
+
+## 5. AdMob / UMP 審査前チェック（Issue #73）
+目的：
+- EU/EEA 同意フローの不足で審査や配信が止まる事故を防ぐ
+
+### 5-1. 事前に環境変数を確認
+ADMOB_ANDROID_APP_ID=<本番App ID>
+ADMOB_ANDROID_BANNER_ID=<本番バナーID>
+ADMOB_CONSENT_DEBUG_GEOGRAPHY=EEA
+ADMOB_CONSENT_TEST_DEVICE_IDS=<テスト端末IDをカンマ区切り>
+
+意味：
+- `ADMOB_ANDROID_APP_ID`：Androidアプリ全体のAdMob ID（必須）
+- `ADMOB_ANDROID_BANNER_ID`：Free表示用バナー広告枠ID
+- `ADMOB_CONSENT_DEBUG_GEOGRAPHY=EEA`：EEA想定の同意ダイアログをテストする
+- `ADMOB_CONSENT_TEST_DEVICE_IDS`：本番端末にテスト設定を限定する
+
+### 5-2. EEA想定の同意フローを手動確認
+1) Free状態でアプリ起動  
+2) 同意フォームが出ることを確認  
+3) 同意後のみバナーが表示されることを確認  
+4) Pro状態でバナーが表示されないことを確認
+
+判定基準：
+- Free: `canRequestAds=true` の後にのみバナー表示
+- Pro: 常にバナー非表示
+
+### 5-3. 事故防止の固定ルール
+- 同意関連の設定変更がある場合は `docs/adr/ADR-0008-admob-ump-consent-preflight.md` を参照
+- どうしても同意フローが壊れた場合は、リリース前に広告表示を停止して提出する（審査優先）

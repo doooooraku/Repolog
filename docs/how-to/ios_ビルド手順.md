@@ -1,5 +1,5 @@
 # iOS_ビルド手順（Debug運用 / Release提出）
-最終更新: 2026-01-20（JST）
+最終更新: 2026-02-10（JST）
 
 > この文書は **最低限のたたき台** です。  
 > 正確な手順・必要要件は **EAS / Apple 公式ドキュメント** を正としてください。
@@ -118,3 +118,37 @@ eas submit -p ios --profile production
 - Expo EAS Build（iOS）: https://docs.expo.dev/build/introduction/
 - Expo EAS Submit（iOS）: https://docs.expo.dev/submit/introduction/
 - Apple Developer: https://developer.apple.com/
+
+---
+
+## 6. AdMob / UMP 審査前チェック（Issue #73）
+目的：
+- EU/EEA 同意フローの不足による審査差し戻しを防ぐ
+
+### 6-1. 事前に環境変数を確認
+ADMOB_IOS_APP_ID=<本番App ID>
+ADMOB_IOS_BANNER_ID=<本番バナーID>
+ADMOB_CONSENT_DEBUG_GEOGRAPHY=EEA
+ADMOB_CONSENT_TEST_DEVICE_IDS=<テスト端末IDをカンマ区切り>
+ADMOB_USER_TRACKING_USAGE_DESCRIPTION=<追跡利用理由の文言>
+
+意味：
+- `ADMOB_IOS_APP_ID`：iOSアプリ全体のAdMob ID（必須）
+- `ADMOB_IOS_BANNER_ID`：Free表示用バナー広告枠ID
+- `ADMOB_CONSENT_DEBUG_GEOGRAPHY=EEA`：EEA想定の同意フローをデバッグ
+- `ADMOB_CONSENT_TEST_DEVICE_IDS`：テスト対象端末を限定
+- `ADMOB_USER_TRACKING_USAGE_DESCRIPTION`：`NSUserTrackingUsageDescription` に反映する文言
+
+### 6-2. 手動確認（実機推奨）
+1) Free状態でアプリ起動  
+2) 同意フォームが必要な場合に表示されることを確認  
+3) 同意後のみバナーが表示されることを確認  
+4) Pro状態でバナーが表示されないことを確認
+
+判定基準：
+- Free: `canRequestAds=true` の後にのみバナー表示
+- Pro: 常にバナー非表示
+
+### 6-3. 審査提出前の最終確認
+- App Store Connect の Privacy Policy URL が設定済みであること
+- 同意フロー変更時は `docs/adr/ADR-0008-admob-ump-consent-preflight.md` の差分を確認すること
