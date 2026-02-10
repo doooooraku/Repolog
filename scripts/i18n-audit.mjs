@@ -9,6 +9,7 @@ function parseArgs(argv) {
   const args = {
     locale: 'pl',
     json: false,
+    inventory: false,
     out: null,
   };
 
@@ -20,6 +21,10 @@ function parseArgs(argv) {
     }
     if (token === '--json') {
       args.json = true;
+      continue;
+    }
+    if (token === '--inventory') {
+      args.inventory = true;
       continue;
     }
     if (token === '--out') {
@@ -83,9 +88,13 @@ function walkFiles(dirPath) {
   return files;
 }
 
-function extractUsedKeys(enKeySet) {
-  const used = new Set();
+function extractUsageFromCode(enKeySet) {
+  const directUsed = new Set();
+  const dynamicUsed = new Set();
   const keyPattern = /\bt\.([A-Za-z0-9_]+)/g;
+  const bracketPattern = /\bt\[['"]([A-Za-z0-9_]+)['"]\]/g;
+  const labelKeyPattern = /\blabelKey\s*:\s*['"]([A-Za-z0-9_]+)['"]/g;
+
   for (const dirPath of SCAN_DIRS) {
     if (!fs.existsSync(dirPath)) continue;
     for (const filePath of walkFiles(dirPath)) {
@@ -94,12 +103,33 @@ function extractUsedKeys(enKeySet) {
       while ((match = keyPattern.exec(text)) != null) {
         const key = match[1];
         if (enKeySet.has(key)) {
-          used.add(key);
+          directUsed.add(key);
+        }
+      }
+
+      while ((match = bracketPattern.exec(text)) != null) {
+        const key = match[1];
+        if (enKeySet.has(key)) {
+          dynamicUsed.add(key);
+        }
+      }
+
+      while ((match = labelKeyPattern.exec(text)) != null) {
+        const key = match[1];
+        if (enKeySet.has(key)) {
+          dynamicUsed.add(key);
         }
       }
     }
   }
-  return [...used].sort();
+
+  const usedKeys = new Set([...directUsed, ...dynamicUsed]);
+
+  return {
+    usedDirect: [...directUsed].sort(),
+    usedDynamic: [...dynamicUsed].sort(),
+    usedAll: [...usedKeys].sort(),
+  };
 }
 
 function toMarkdown(report) {
@@ -113,6 +143,8 @@ function toMarkdown(report) {
     `- localeOverrideKeys: ${report.localeOverrideKeys}`,
     `- missingAllCount: ${report.missingAll.length}`,
     `- usedKeysInApp: ${report.usedKeysInApp}`,
+    `- usedKeysDirect: ${report.usedDirect.length}`,
+    `- usedKeysDynamic: ${report.usedDynamic.length}`,
     `- missingUsedCount: ${report.missingUsed.length}`,
     '',
     '## Missing Keys Used In App',
@@ -135,6 +167,39 @@ function toMarkdown(report) {
     }
   }
 
+  if (report.inventoryEnabled) {
+    lines.push('', '## Key Inventory (en.ts)');
+    lines.push(`- usedInCodeCount: ${report.usedAll.length}`);
+    lines.push(`- unusedCandidateCount: ${report.unusedCandidates.length}`);
+
+    lines.push('', '### Used Keys (Direct: t.key)');
+    if (report.usedDirect.length === 0) {
+      lines.push('- none');
+    } else {
+      for (const key of report.usedDirect) {
+        lines.push(`- ${key}`);
+      }
+    }
+
+    lines.push('', '### Used Keys (Dynamic: labelKey/t[\'key\'])');
+    if (report.usedDynamic.length === 0) {
+      lines.push('- none');
+    } else {
+      for (const key of report.usedDynamic) {
+        lines.push(`- ${key}`);
+      }
+    }
+
+    lines.push('', '### Unused Candidates (No code reference found)');
+    if (report.unusedCandidates.length === 0) {
+      lines.push('- none');
+    } else {
+      for (const key of report.unusedCandidates) {
+        lines.push(`- ${key}`);
+      }
+    }
+  }
+
   return `${lines.join('\n')}\n`;
 }
 
@@ -154,17 +219,23 @@ function run() {
   const localeKeys = extractLocaleKeys(localeFile);
   const enKeySet = new Set(enKeys);
   const localeKeySet = new Set(localeKeys);
-  const usedKeys = extractUsedKeys(enKeySet);
-  const missingUsed = usedKeys.filter((key) => !localeKeySet.has(key));
+  const usage = extractUsageFromCode(enKeySet);
+  const missingUsed = usage.usedAll.filter((key) => !localeKeySet.has(key));
   const missingAll = enKeys.filter((key) => !localeKeySet.has(key));
+  const unusedCandidates = enKeys.filter((key) => !usage.usedAll.includes(key));
 
   const report = {
     locale: args.locale,
     enTotalKeys: enKeys.length,
     localeOverrideKeys: localeKeys.length,
-    usedKeysInApp: usedKeys.length,
+    usedKeysInApp: usage.usedAll.length,
+    usedDirect: usage.usedDirect,
+    usedDynamic: usage.usedDynamic,
+    usedAll: usage.usedAll,
+    unusedCandidates,
     missingUsed,
     missingAll,
+    inventoryEnabled: args.inventory,
   };
 
   if (args.out) {
@@ -182,6 +253,11 @@ function run() {
   console.log(`en total keys: ${report.enTotalKeys}`);
   console.log(`locale override keys: ${report.localeOverrideKeys}`);
   console.log(`used keys in app/src: ${report.usedKeysInApp}`);
+  console.log(`used keys (direct t.key): ${report.usedDirect.length}`);
+  console.log(`used keys (dynamic literals): ${report.usedDynamic.length}`);
+  if (args.inventory) {
+    console.log(`unused candidate keys: ${report.unusedCandidates.length}`);
+  }
   console.log(`missing used keys: ${report.missingUsed.length}`);
   console.log(`missing all keys: ${report.missingAll.length}`);
   if (report.missingUsed.length > 0) {

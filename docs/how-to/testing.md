@@ -275,31 +275,62 @@ CIが落ちたステップだけを、まずローカルで叩く：
 
 ---
 
-## 6. 翻訳レビュー（i18n）を回す（Issue #75）
+## 6. 翻訳レビュー（i18n）を回す（Issue #75 / #88）
 
-`pl`（ポーランド語）などで英語フォールバックが残っていないか、  
-以下の監査コマンドで一覧化できます。
-
+### 6.1 最短コマンド
 ```bash
+# 1) 対象言語のフォールバック監査（標準）
 pnpm i18n:audit -- pl
+
+# 2) 監査結果を保存（PR添付用）
+pnpm i18n:audit -- pl --out docs/how-to/i18n_pl_fallback_audit.md
+
+# 3) en.ts のキー棚卸し（使用中 / 未使用候補）
+pnpm i18n:inventory
 ```
 
-一覧を docs に保存したいとき:
-
+`pnpm i18n:inventory` は次と同じです。
 ```bash
-pnpm i18n:audit -- pl --out docs/how-to/i18n_pl_fallback_audit.md
+pnpm i18n:audit -- pl --inventory --out docs/how-to/i18n_key_inventory.md
 ```
 
 コマンドの意味:
 - `pnpm i18n:audit`: `scripts/i18n-audit.mjs` を実行する
 - `-- pl`: 監査対象の言語コード（例: `pl`, `ja`, `fr`）
-- `--out <path>`: 未翻訳キー一覧を Markdown ファイルへ出力
+- `--out <path>`: 監査結果を Markdown で保存する
+- `--inventory`: `en.ts` キーを「使用中 / 未使用候補」に分類して出力する
 
-この監査は次を自動で見る:
-- `en.ts` にある全キー数
-- 対象言語で上書きされているキー数
-- `app/` と `src/` で使われているキーのうち、未翻訳キー
-- 全キー基準での未翻訳キー
+### 6.2 監査成果物（正）
+- `docs/how-to/i18n_pl_fallback_audit.md`
+  - 対象言語で上書きされていないキー（フォールバック）を一覧化
+- `docs/how-to/i18n_key_inventory.md`
+  - `en.ts` の全キーを、次の3分類で一覧化
+  - `Used Keys (Direct)`：`t.key` 参照
+  - `Used Keys (Dynamic)`：`labelKey` / `t['key']` 参照
+  - `Unused Candidates`：コード参照が見つからないキー
+
+### 6.3 運用ルール（頻度 / 担当）
+- 実行頻度：
+  - i18n関連PRごと（必須）
+  - 毎週1回（目安：月曜）
+  - RCタグ作成前と本番タグ作成前
+- 担当：
+  - 実行者：該当PRの作者
+  - レビュー責任：リリース担当（またはPRレビュアー）
+- 記録：
+  - PR本文に `i18n_pl_fallback_audit.md` と `i18n_key_inventory.md` のリンクを貼る
+
+### 6.4 未使用候補キーの削除方針（段階削除）
+1. `Unused Candidates` に3回連続で出現し、かつ対応Issue/実装予定が無いキーを削除候補にする
+2. 削除は必ず専用Issueを立て、単独PRで実施する（機能変更PRと混ぜない）
+3. 削除PRで `pnpm lint` / `pnpm test` / `pnpm type-check` を通す
+4. 主要画面（Home / Report Editor / PDF / Settings / Backup / Paywall）を手動確認する
+5. 問題が出たら削除PRをrevertする
+
+### 6.5 判定時の注意
+- `missing used keys` は「その言語で未上書き」を示し、即バグ確定ではない
+- 例：`languageName*` は英語表記を許容する運用なら P2扱い
+- ただし、ユーザー表示で不自然な箇所は優先修正する
 
 ---
 

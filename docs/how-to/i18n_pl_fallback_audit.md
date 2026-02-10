@@ -1,15 +1,34 @@
 # i18n Audit Report
 
-- generatedAt: 2026-02-10T05:16:20.451Z
+- generatedAt: 2026-02-10T06:47:53.382Z
 - locale: pl
 - enTotalKeys: 318
 - localeOverrideKeys: 162
 - missingAllCount: 156
-- usedKeysInApp: 161
-- missingUsedCount: 0
+- usedKeysInApp: 180
+- usedKeysDirect: 161
+- usedKeysDynamic: 19
+- missingUsedCount: 18
 
 ## Missing Keys Used In App
-- none
+- languageNameDe
+- languageNameEn
+- languageNameEs
+- languageNameFr
+- languageNameHi
+- languageNameId
+- languageNameIt
+- languageNameJa
+- languageNameKo
+- languageNameNl
+- languageNamePt
+- languageNameRu
+- languageNameSv
+- languageNameTh
+- languageNameTr
+- languageNameVi
+- languageNameZhHans
+- languageNameZhHant
 
 ## Missing Keys In Locale (All)
 - daysStreak
