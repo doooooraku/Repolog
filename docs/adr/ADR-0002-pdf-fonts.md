@@ -64,8 +64,22 @@
 - PDF生成時のメモリ使用量が増える
 
 ### Follow-ups（後でやる宿題）
-- [ ] PDF生成時に「必要なスクリプトだけ埋め込む」最適化の検討
-- [ ] PDF生成パフォーマンス計測
+- [x] PDF生成時に「必要なスクリプトだけ埋め込む」最適化の検討（Issue #72）
+- [x] PDF生成パフォーマンス計測（Issue #72）
+
+### 2026-02-10 Follow-up結果（Issue #72）
+- 実測結果（`docs/how-to/benchmarks/pdf_font_benchmark.latest.md`）:
+  - 短文シナリオ：`all_fonts` 66.93MB → `script_subset` 2.61MB（font payload）
+  - 多言語シナリオ：`all_fonts` 66.93MB → `script_subset` 29.14MB
+  - warm中央値：短文で約96.8%短縮、多言語で約54.7%短縮
+- 判断（採用/非採用）:
+  - **v1.0.x では runtime の script subset 最適化は採用しない（保留）**
+  - 理由:
+    - CJKは文字集合の重なりが大きく、文字種推定だけで `JP/SC/TC` を誤判定するリスクがある
+    - 誤判定時は文字化け/豆腐化が発生し、Repologの最優先価値（提出品質）を損なう
+  - 継続方針:
+    - 現行の全フォント埋め込みを維持し、ベンチ基盤で継続測定する
+    - 実機の回帰テスト条件を満たせる段階で、段階導入を再検討する
 
 ---
 
@@ -89,7 +103,10 @@
 - constraints: `docs/reference/constraints.md`
 - reference: `docs/reference/basic_spec.md` / `docs/reference/functional_spec.md`
 - Issue: #5
+- Issue: #72
 - PR: #TBD
+- Benchmark runbook: `docs/how-to/pdf_font_benchmark.md`
+- Benchmark result: `docs/how-to/benchmarks/pdf_font_benchmark.latest.md`
 - External docs: https://scripts.sil.org/OFL
 
 ---
