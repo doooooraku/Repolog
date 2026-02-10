@@ -128,7 +128,8 @@ gh run view <run-id> --repo doooooraku/Repolog --log
 補足:
 - workflow は `expo prebuild --platform android` で一時的に `android/` を生成
 - `assembleDebug` で APK を作成し、Android Emulator 上で `maestro/flows/smoke.yml` を実行
-- 安定化のため、`prebuild` 後に Gradle キャッシュ（`actions/cache`）と1回リトライを有効化
+- 安定化のため、`setup-java` の Gradle キャッシュと1回リトライを有効化
+- `ORG_GRADLE_PROJECT_reactNativeArchitectures=x86_64` で、エミュレータ実行に不要なABIビルドを省略して時間を短縮
 - `concurrency` で同一refの古い実行を自動キャンセルし、詰まりを減らす
 - 成果物（`.maestro` ログ / `logcat.txt` / APK）は Actions Artifact に保存
 - schedule 実行はデフォルトブランチ上で走る（`main` を正にする）
@@ -158,6 +159,47 @@ gh workflow run maestro-smoke.yml --repo doooooraku/Repolog --ref main
 
 ```bash
 gh issue comment 77 --body "Run <run-id>: queued が15分以上継続。再実行時刻: <UTC/JST>。"
+```
+
+### 3.5 改善前後の所要時間を記録する（Issue #77 AC2）
+
+1. 直近の `Maestro Smoke` 実行を JSON で取得する
+
+```bash
+gh run list \
+  --repo doooooraku/Repolog \
+  --workflow "Maestro Smoke" \
+  --limit 10 \
+  --json databaseId,headBranch,event,status,conclusion,createdAt,updatedAt,url
+```
+
+2. 期間秒を自動計算して比較用に整形する
+
+```bash
+gh run list \
+  --repo doooooraku/Repolog \
+  --workflow "Maestro Smoke" \
+  --limit 10 \
+  --json databaseId,headBranch,event,status,conclusion,createdAt,updatedAt,url \
+  --jq '.[] | {
+    runId: .databaseId,
+    branch: .headBranch,
+    event,
+    status,
+    conclusion,
+    durationSec: ((.updatedAt | fromdateiso8601) - (.createdAt | fromdateiso8601)),
+    createdAt,
+    updatedAt,
+    url
+  }'
+```
+
+3. 改善前後で最低3件ずつ比較し、Issueコメントへ残す（例）
+
+```text
+- before: [run-id / duration / conclusion] x3
+- after : [run-id / duration / conclusion] x3
+- diff  : success率と中央値の差
 ```
 
 ---
