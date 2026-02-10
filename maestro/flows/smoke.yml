@@ -3,22 +3,22 @@ name: "Smoke - home and settings"
 tags:
   - smoke
 
-steps:
-  - launchApp:
-      clearState: true
-      label: "クリーン起動"
-  - assertVisible:
-      id: "e2e_home_screen"
-      label: "Homeを表示"
-  - tapOn:
-      id: "e2e_open_settings"
-      label: "設定を開く"
-  - assertVisible:
-      id: "e2e_settings_screen"
-      label: "Settingsを表示"
-  - tapOn:
-      id: "e2e_back_home"
-      label: "Homeへ戻る"
-  - assertVisible:
-      id: "e2e_home_screen"
-      label: "Homeへ復帰"
+---
+- launchApp:
+    clearState: true
+    label: "クリーン起動"
+- assertVisible:
+    id: "e2e_home_screen"
+    label: "Homeを表示"
+- tapOn:
+    id: "e2e_open_settings"
+    label: "設定を開く"
+- assertVisible:
+    id: "e2e_settings_screen"
+    label: "Settingsを表示"
+- tapOn:
+    id: "e2e_back_home"
+    label: "Homeへ戻る"
+- assertVisible:
+    id: "e2e_home_screen"
+    label: "Homeへ復帰"
