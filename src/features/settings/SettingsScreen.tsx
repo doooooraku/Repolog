@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTranslation, type Lang, type TranslationKey } from '@/src/core/i18n/i18n';
 import { useSettingsStore } from '@/src/stores/settingsStore';
@@ -95,122 +96,128 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container} testID="e2e_settings_screen">
-      <View style={styles.headerRow}>
-        <Pressable testID="e2e_back_home" onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>{'‹'}</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>{t.settings}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.settingsSectionGeneral}</Text>
-        <Text style={styles.sectionBody}>{t.languageChange}</Text>
-        <Pressable
-          testID="e2e_language_toggle"
-          onPress={() => setShowLanguages((prev) => !prev)}
-          style={styles.rowBetween}>
-          <Text
-            style={styles.valueText}
-            testID={`e2e_current_language_${toLangTestId(lang)}`}>{`${t.currentLanguage}: ${currentLanguageLabel}`}</Text>
-          <Text style={styles.chevron}>{showLanguages ? '▲' : '▼'}</Text>
-        </Pressable>
-        {showLanguages && (
-          <View style={styles.optionList}>
-            {LANGUAGE_OPTIONS.map((option) => {
-              const active = option.code === lang;
-              return (
-                <Pressable
-                  key={option.code}
-                  testID={`e2e_language_option_${toLangTestId(option.code)}`}
-                  onPress={() => setLang(option.code)}
-                  style={[styles.optionRow, active && styles.optionRowActive]}>
-                  <Text style={[styles.optionText, active && styles.optionTextActive]}>
-                    {t[option.labelKey] ?? option.code}
-                  </Text>
-                  {active && (
-                    <Text
-                      style={styles.optionCheck}
-                      testID={`e2e_language_selected_${toLangTestId(option.code)}`}>
-                      ✓
-                    </Text>
-                  )}
-                </Pressable>
-              );
-            })}
-          </View>
-        )}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.settingsSectionPrivacy}</Text>
-        <Text style={styles.sectionBody}>{t.includeLocationHelp}</Text>
-        <View style={styles.rowBetween}>
-          <Text style={styles.valueText}>{t.includeLocationLabel}</Text>
-          <Switch value={includeLocation} onValueChange={setIncludeLocation} />
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.container} testID="e2e_settings_screen">
+        <View style={styles.headerRow}>
+          <Pressable testID="e2e_back_home" onPress={() => router.back()} style={styles.backButton}>
+            <Text style={styles.backText}>{'‹'}</Text>
+          </Pressable>
+          <Text style={styles.headerTitle}>{t.settings}</Text>
         </View>
-        <Text style={styles.sectionBody}>{t.adPrivacyOptionsHelp}</Text>
-        <Pressable
-          testID="e2e_open_ad_privacy_options"
-          onPress={() => {
-            void handleOpenAdPrivacyOptions();
-          }}
-          style={[styles.secondaryButton, openingAdPrivacyOptions && styles.disabledButton]}
-          disabled={openingAdPrivacyOptions}>
-          {openingAdPrivacyOptions ? (
-            <ActivityIndicator />
-          ) : (
-            <Text style={styles.secondaryButtonText}>{t.adPrivacyOptionsAction}</Text>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t.settingsSectionGeneral}</Text>
+          <Text style={styles.sectionBody}>{t.languageChange}</Text>
+          <Pressable
+            testID="e2e_language_toggle"
+            onPress={() => setShowLanguages((prev) => !prev)}
+            style={styles.rowBetween}>
+            <Text
+              style={styles.valueText}
+              testID={`e2e_current_language_${toLangTestId(lang)}`}>{`${t.currentLanguage}: ${currentLanguageLabel}`}</Text>
+            <Text style={styles.chevron}>{showLanguages ? '▲' : '▼'}</Text>
+          </Pressable>
+          {showLanguages && (
+            <View style={styles.optionList}>
+              {LANGUAGE_OPTIONS.map((option) => {
+                const active = option.code === lang;
+                return (
+                  <Pressable
+                    key={option.code}
+                    testID={`e2e_language_option_${toLangTestId(option.code)}`}
+                    onPress={() => setLang(option.code)}
+                    style={[styles.optionRow, active && styles.optionRowActive]}>
+                    <Text style={[styles.optionText, active && styles.optionTextActive]}>
+                      {t[option.labelKey] ?? option.code}
+                    </Text>
+                    {active && (
+                      <Text
+                        style={styles.optionCheck}
+                        testID={`e2e_language_selected_${toLangTestId(option.code)}`}>
+                        ✓
+                      </Text>
+                    )}
+                  </Pressable>
+                );
+              })}
+            </View>
           )}
-        </Pressable>
-      </View>
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.settingsSectionPurchases}</Text>
-        <Text style={styles.sectionBody}>{t.restoreDesc}</Text>
-        <Pressable
-          onPress={handleRestore}
-          style={[styles.primaryButton, restoring && styles.disabledButton]}
-          disabled={restoring}>
-          {restoring ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.primaryButtonText}>{t.restore}</Text>
-          )}
-        </Pressable>
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t.settingsSectionPrivacy}</Text>
+          <Text style={styles.sectionBody}>{t.includeLocationHelp}</Text>
+          <View style={styles.rowBetween}>
+            <Text style={styles.valueText}>{t.includeLocationLabel}</Text>
+            <Switch value={includeLocation} onValueChange={setIncludeLocation} />
+          </View>
+          <Text style={styles.sectionBody}>{t.adPrivacyOptionsHelp}</Text>
+          <Pressable
+            testID="e2e_open_ad_privacy_options"
+            onPress={() => {
+              void handleOpenAdPrivacyOptions();
+            }}
+            style={[styles.secondaryButton, openingAdPrivacyOptions && styles.disabledButton]}
+            disabled={openingAdPrivacyOptions}>
+            {openingAdPrivacyOptions ? (
+              <ActivityIndicator />
+            ) : (
+              <Text style={styles.secondaryButtonText}>{t.adPrivacyOptionsAction}</Text>
+            )}
+          </Pressable>
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.settingsSectionBackup}</Text>
-        <Text style={styles.sectionBody}>{t.settingsBackupDesc}</Text>
-        <Pressable onPress={() => router.push('/backup')} style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>{t.settingsBackupOpen}</Text>
-        </Pressable>
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t.settingsSectionPurchases}</Text>
+          <Text style={styles.sectionBody}>{t.restoreDesc}</Text>
+          <Pressable
+            onPress={handleRestore}
+            style={[styles.primaryButton, restoring && styles.disabledButton]}
+            disabled={restoring}>
+            {restoring ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.primaryButtonText}>{t.restore}</Text>
+            )}
+          </Pressable>
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.legalSectionTitle}</Text>
-        <Text style={styles.sectionBody}>{t.settingsLegalDesc}</Text>
-        <Pressable
-          onPress={() => {
-            void handleOpenLegal(legalLinks.privacyUrl);
-          }}
-          style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>{t.legalPrivacyPolicyLabel}</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            void handleOpenLegal(legalLinks.termsUrl);
-          }}
-          style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>{t.legalTermsOfUseLabel}</Text>
-        </Pressable>
-      </View>
-    </ScrollView>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t.settingsSectionBackup}</Text>
+          <Text style={styles.sectionBody}>{t.settingsBackupDesc}</Text>
+          <Pressable onPress={() => router.push('/backup')} style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>{t.settingsBackupOpen}</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t.legalSectionTitle}</Text>
+          <Text style={styles.sectionBody}>{t.settingsLegalDesc}</Text>
+          <Pressable
+            onPress={() => {
+              void handleOpenLegal(legalLinks.privacyUrl);
+            }}
+            style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>{t.legalPrivacyPolicyLabel}</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              void handleOpenLegal(legalLinks.termsUrl);
+            }}
+            style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>{t.legalTermsOfUseLabel}</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f6f6f6',
+  },
   container: {
     padding: 16,
     paddingBottom: 40,
