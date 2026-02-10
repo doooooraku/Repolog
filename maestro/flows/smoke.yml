@@ -7,6 +7,11 @@ tags:
 - launchApp:
     clearState: true
     label: "クリーン起動"
+- extendedWaitUntil:
+    visible:
+      id: "e2e_home_screen"
+    timeout: 60000
+    label: "Homeの初期描画を待機"
 - assertVisible:
     id: "e2e_home_screen"
     label: "Homeを表示"

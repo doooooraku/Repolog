@@ -56,11 +56,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build debug APK
+      - name: Build release APK
         timeout-minutes: 35
         run: |
           cd android
-          ./gradlew --no-daemon --stacktrace assembleDebug
+          ./gradlew --no-daemon --stacktrace assembleRelease
 
       - name: Install Maestro CLI
         run: |
@@ -83,9 +83,9 @@ jobs:
           emulator-options: "-no-window -gpu swiftshader_indirect -noaudio -no-boot-anim"
           emulator-boot-timeout: 900
           script: |
-            mkdir -p .maestro
-            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-            bash -lc 'set +e; maestro test maestro/flows/smoke.yml --format junit --output .maestro; code=$?; if [ "$code" -ne 0 ]; then echo "First run failed. Retrying once in 5 seconds..."; sleep 5; maestro test maestro/flows/smoke.yml --format junit --output .maestro; code=$?; fi; adb logcat -d > .maestro/logcat.txt || true; exit "$code"'
+            mkdir -p maestro-artifacts
+            adb install -r android/app/build/outputs/apk/release/app-release.apk
+            bash -lc 'set +e; maestro test maestro/flows/smoke.yml --format junit --output maestro-artifacts/report.xml --test-output-dir maestro-artifacts; code=$?; if [ "$code" -ne 0 ]; then echo "First run failed. Retrying once in 5 seconds..."; sleep 5; maestro test maestro/flows/smoke.yml --format junit --output maestro-artifacts/report-retry.xml --test-output-dir maestro-artifacts; code=$?; fi; adb logcat -d > maestro-artifacts/logcat.txt || true; adb shell dumpsys window windows > maestro-artifacts/dumpsys-window.txt || true; exit "$code"'
 
       - name: Upload Maestro artifacts
         if: always()
@@ -93,5 +93,5 @@ jobs:
         with:
           name: maestro-smoke-artifacts-${{ github.run_id }}
           path: |
-            .maestro
-            android/app/build/outputs/apk/debug/app-debug.apk
+            maestro-artifacts
+            android/app/build/outputs/apk/release/app-release.apk
