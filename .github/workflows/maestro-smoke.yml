@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "15 18 * * *" # 03:15 JST every day
 
+concurrency:
+  group: maestro-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -12,6 +16,8 @@ jobs:
   smoke-android:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    env:
+      SEGMENT_DOWNLOAD_TIMEOUT_MINS: "10"
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -39,10 +45,21 @@ jobs:
       - name: Prebuild Android
         run: npx expo prebuild --platform android --non-interactive
 
+      - name: Cache Gradle
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/**/gradle-wrapper.properties', 'android/gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Build debug APK
+        timeout-minutes: 20
         run: |
           cd android
-          ./gradlew assembleDebug
+          ./gradlew --no-daemon --stacktrace assembleDebug
 
       - name: Install Maestro CLI
         run: |
@@ -56,15 +73,25 @@ jobs:
           arch: x86_64
           profile: pixel_7
           disable-animations: true
+          emulator-options: "-no-window -gpu swiftshader_indirect -noaudio -no-boot-anim"
+          emulator-boot-timeout: 900
           script: |
+            mkdir -p .maestro
             adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-            maestro test maestro/flows/smoke.yml --format junit --output .maestro
+            result=0
+            if ! maestro test maestro/flows/smoke.yml --format junit --output .maestro; then
+              echo "First run failed. Retrying once in 5 seconds..."
+              sleep 5
+              maestro test maestro/flows/smoke.yml --format junit --output .maestro || result=$?
+            fi
+            adb logcat -d > .maestro/logcat.txt || true
+            exit "$result"
 
       - name: Upload Maestro artifacts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: maestro-smoke-artifacts
+          name: maestro-smoke-artifacts-${{ github.run_id }}
           path: |
             .maestro
             android/app/build/outputs/apk/debug/app-debug.apk

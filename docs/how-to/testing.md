@@ -111,6 +111,9 @@ gh workflow run maestro-smoke.yml --repo doooooraku/Repolog
 # 直近のMaestro Smoke実行を確認
 gh run list --repo doooooraku/Repolog --workflow "Maestro Smoke" --limit 5
 
+# 状態（queued / in_progress / completed）をJSONで確認
+gh run view <run-id> --repo doooooraku/Repolog --json status,conclusion,createdAt,updatedAt,jobs
+
 # 1件の詳細ログを確認
 gh run view <run-id> --repo doooooraku/Repolog --log
 ```
@@ -118,12 +121,43 @@ gh run view <run-id> --repo doooooraku/Repolog --log
 コマンドの意味:
 - `gh workflow run`: 指定workflowを手動起動
 - `gh run list`: 実行履歴一覧を取得
+- `gh run view --json`: キュー滞留か実行中かを機械的に確認
 - `gh run view --log`: ステップ単位のログを表示
 
 補足:
 - workflow は `expo prebuild --platform android` で一時的に `android/` を生成
 - `assembleDebug` で APK を作成し、Android Emulator 上で `maestro/flows/smoke.yml` を実行
-- 成果物（`.maestro` ログと APK）は Actions Artifact に保存
+- 安定化のため、`prebuild` 後に Gradle キャッシュ（`actions/cache`）と1回リトライを有効化
+- `concurrency` で同一refの古い実行を自動キャンセルし、詰まりを減らす
+- 成果物（`.maestro` ログ / `logcat.txt` / APK）は Actions Artifact に保存
+- schedule 実行はデフォルトブランチ上で走る（`main` を正にする）
+
+### 3.4 キュー滞留・停滞時の運用手順（Runbook）
+
+1. まず状態確認（queued が長く続くか）
+
+```bash
+gh run list --repo doooooraku/Repolog --workflow "Maestro Smoke" --limit 10
+gh run view <run-id> --repo doooooraku/Repolog --json status,conclusion,createdAt,updatedAt,jobs
+```
+
+2. 15分以上 `queued` のままなら、古い実行を止める
+
+```bash
+gh run cancel <run-id>
+```
+
+3. `main` で手動再実行する
+
+```bash
+gh workflow run maestro-smoke.yml --repo doooooraku/Repolog --ref main
+```
+
+4. それでも停滞する場合は、同時間帯の負荷を避けて再実行し、Issueに記録する
+
+```bash
+gh issue comment 77 --body "Run <run-id>: queued が15分以上継続。再実行時刻: <UTC/JST>。"
+```
 
 ---
 

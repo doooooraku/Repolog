@@ -28,6 +28,16 @@ const SUPPORTED_LOCALES = [
   'sv',
 ];
 
+// Android aapt resource qualifiers cannot use raw script tags (e.g. zh-Hans).
+// Use BCP47 "b+..." qualifiers for script variants.
+const toAndroidLocaleQualifier = (locale: string): string => {
+  if (locale === 'zh-Hans') return 'b+zh+Hans';
+  if (locale === 'zh-Hant') return 'b+zh+Hant';
+  return locale;
+};
+
+const ANDROID_SUPPORTED_LOCALES = SUPPORTED_LOCALES.map(toAndroidLocaleQualifier);
+
 const toBoolean = (value?: string) =>
   value === '1' || value === 'true' || value === 'TRUE';
 
@@ -65,7 +75,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     {
       supportedLocales: {
         ios: SUPPORTED_LOCALES,
-        android: SUPPORTED_LOCALES,
+        android: ANDROID_SUPPORTED_LOCALES,
       },
     },
   );
