@@ -58,8 +58,8 @@
 - リリース時に広告IDの注入ミスが起きやすい
 
 ### Follow-ups（後でやる宿題）
-- [ ] EU/EEA向け同意フロー（UMP等）の検討
-- [ ] AdMob審査前チェックの整備（how-to）
+- [x] EU/EEA向け同意フロー（UMP等）の検討（Issue #73 / ADR-0008）
+- [x] AdMob審査前チェックの整備（Issue #73 / docs/how-to/android_ビルド手順.md / docs/how-to/ios_ビルド手順.md）
 
 ---
 

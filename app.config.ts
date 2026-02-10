@@ -68,6 +68,14 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   const admobAndroidAppId = process.env.ADMOB_ANDROID_APP_ID ?? ADMOB_TEST_APP_ID_ANDROID;
   const admobIosAppId = process.env.ADMOB_IOS_APP_ID ?? ADMOB_TEST_APP_ID_IOS;
+  const admobConsentDebugGeography = process.env.ADMOB_CONSENT_DEBUG_GEOGRAPHY ?? '';
+  const admobConsentTestDeviceIds = process.env.ADMOB_CONSENT_TEST_DEVICE_IDS ?? '';
+  const delayAppMeasurementInit = !toBoolean(
+    process.env.ADMOB_DISABLE_DELAY_APP_MEASUREMENT_INIT,
+  );
+  const userTrackingUsageDescription =
+    process.env.ADMOB_USER_TRACKING_USAGE_DESCRIPTION ??
+    'This identifier will be used to deliver relevant ads to Free plan users.';
 
   const pluginsWithLocalization = ensurePlugin(
     config.plugins,
@@ -96,6 +104,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     {
       androidAppId: admobAndroidAppId,
       iosAppId: admobIosAppId,
+      delayAppMeasurementInit,
+      userTrackingUsageDescription,
     },
   );
 
@@ -114,6 +124,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       IAP_DEBUG: process.env.IAP_DEBUG ?? '0',
       ADMOB_ANDROID_BANNER_ID: process.env.ADMOB_ANDROID_BANNER_ID ?? '',
       ADMOB_IOS_BANNER_ID: process.env.ADMOB_IOS_BANNER_ID ?? '',
+      ADMOB_CONSENT_DEBUG_GEOGRAPHY: admobConsentDebugGeography,
+      ADMOB_CONSENT_TEST_DEVICE_IDS: admobConsentTestDeviceIds,
       LEGAL_PRIVACY_URL:
         process.env.LEGAL_PRIVACY_URL ?? 'https://doooooraku.github.io/Repolog/privacy/',
       LEGAL_TERMS_URL:
