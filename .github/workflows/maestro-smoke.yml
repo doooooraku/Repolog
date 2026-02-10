@@ -6,7 +6,7 @@ on:
     - cron: "15 18 * * *" # 03:15 JST every day
 
 concurrency:
-  group: maestro-smoke-${{ github.ref }}
+  group: maestro-smoke-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -18,6 +18,7 @@ jobs:
     timeout-minutes: 60
     env:
       SEGMENT_DOWNLOAD_TIMEOUT_MINS: "10"
+      ORG_GRADLE_PROJECT_reactNativeArchitectures: x86_64
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -55,16 +56,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build debug APK
-        timeout-minutes: 20
+      - name: Build release APK
+        timeout-minutes: 35
         run: |
           cd android
-          ./gradlew --no-daemon --stacktrace assembleDebug
+          ./gradlew --no-daemon --stacktrace assembleRelease
 
       - name: Install Maestro CLI
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Run Maestro smoke flow
         uses: reactivecircus/android-emulator-runner@b530d96654c385303d652368551fb075bc2f0b6b # v2
@@ -76,16 +83,9 @@ jobs:
           emulator-options: "-no-window -gpu swiftshader_indirect -noaudio -no-boot-anim"
           emulator-boot-timeout: 900
           script: |
-            mkdir -p .maestro
-            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-            result=0
-            if ! maestro test maestro/flows/smoke.yml --format junit --output .maestro; then
-              echo "First run failed. Retrying once in 5 seconds..."
-              sleep 5
-              maestro test maestro/flows/smoke.yml --format junit --output .maestro || result=$?
-            fi
-            adb logcat -d > .maestro/logcat.txt || true
-            exit "$result"
+            mkdir -p maestro-artifacts
+            adb install -r android/app/build/outputs/apk/release/app-release.apk
+            bash -lc 'set +e; maestro test maestro/flows/smoke.yml --format junit --output maestro-artifacts/report.xml --test-output-dir maestro-artifacts; code=$?; if [ "$code" -ne 0 ]; then echo "First run failed. Retrying once in 5 seconds..."; sleep 5; maestro test maestro/flows/smoke.yml --format junit --output maestro-artifacts/report-retry.xml --test-output-dir maestro-artifacts; code=$?; fi; adb logcat -d > maestro-artifacts/logcat.txt || true; adb shell dumpsys window windows > maestro-artifacts/dumpsys-window.txt || true; exit "$code"'
 
       - name: Upload Maestro artifacts
         if: always()
@@ -93,5 +93,5 @@ jobs:
         with:
           name: maestro-smoke-artifacts-${{ github.run_id }}
           path: |
-            .maestro
-            android/app/build/outputs/apk/debug/app-debug.apk
+            maestro-artifacts
+            android/app/build/outputs/apk/release/app-release.apk
