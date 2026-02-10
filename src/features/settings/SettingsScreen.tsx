@@ -15,6 +15,7 @@ import { useTranslation, type Lang, type TranslationKey } from '@/src/core/i18n/
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { useProStore } from '@/src/stores/proStore';
 import { getLegalLinks, openExternalLink } from '@/src/services/legalService';
+import { showAdPrivacyOptionsForm } from '@/src/services/adService';
 
 const LANGUAGE_OPTIONS: { code: Lang; labelKey: TranslationKey }[] = [
   { code: 'en', labelKey: 'languageNameEn' },
@@ -49,6 +50,7 @@ export default function SettingsScreen() {
 
   const [showLanguages, setShowLanguages] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [openingAdPrivacyOptions, setOpeningAdPrivacyOptions] = useState(false);
 
   const currentLanguageLabel = useMemo(() => {
     const matched = LANGUAGE_OPTIONS.find((option) => option.code === lang);
@@ -74,6 +76,21 @@ export default function SettingsScreen() {
     const opened = await openExternalLink(url);
     if (!opened) {
       Alert.alert(t.legalOpenFailed);
+    }
+  };
+
+  const handleOpenAdPrivacyOptions = async () => {
+    if (openingAdPrivacyOptions) return;
+    setOpeningAdPrivacyOptions(true);
+    try {
+      const shown = await showAdPrivacyOptionsForm();
+      if (!shown) {
+        Alert.alert(t.adPrivacyOptionsUnavailable);
+      }
+    } catch {
+      Alert.alert(t.adPrivacyOptionsFailed);
+    } finally {
+      setOpeningAdPrivacyOptions(false);
     }
   };
 
@@ -132,6 +149,20 @@ export default function SettingsScreen() {
           <Text style={styles.valueText}>{t.includeLocationLabel}</Text>
           <Switch value={includeLocation} onValueChange={setIncludeLocation} />
         </View>
+        <Text style={styles.sectionBody}>{t.adPrivacyOptionsHelp}</Text>
+        <Pressable
+          testID="e2e_open_ad_privacy_options"
+          onPress={() => {
+            void handleOpenAdPrivacyOptions();
+          }}
+          style={[styles.secondaryButton, openingAdPrivacyOptions && styles.disabledButton]}
+          disabled={openingAdPrivacyOptions}>
+          {openingAdPrivacyOptions ? (
+            <ActivityIndicator />
+          ) : (
+            <Text style={styles.secondaryButtonText}>{t.adPrivacyOptionsAction}</Text>
+          )}
+        </Pressable>
       </View>
 
       <View style={styles.section}>
