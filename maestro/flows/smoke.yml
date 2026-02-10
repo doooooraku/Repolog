@@ -18,6 +18,11 @@ tags:
 - tapOn:
     id: "e2e_open_settings"
     label: "設定を開く"
+- extendedWaitUntil:
+    visible:
+      id: "e2e_settings_screen"
+    timeout: 30000
+    label: "Settings遷移の完了を待機"
 - assertVisible:
     id: "e2e_settings_screen"
     label: "Settingsを表示"

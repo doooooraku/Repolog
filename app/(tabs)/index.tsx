@@ -218,12 +218,14 @@ export default function HomeScreen() {
           <Pressable
             testID="e2e_home_create_report_fab"
             onPress={() => router.push('/reports/new')}
+            hitSlop={12}
             style={styles.iconButton}>
             <IconSymbol name="plus" size={20} color="#111" />
           </Pressable>
           <Pressable
             testID="e2e_open_settings"
             onPress={() => router.push('/settings')}
+            hitSlop={12}
             style={styles.iconButton}>
             <IconSymbol name="gearshape.fill" size={20} color="#111" />
           </Pressable>
@@ -362,9 +364,9 @@ const styles = StyleSheet.create({
     color: '#111',
   },
   iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#fff',
