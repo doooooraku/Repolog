@@ -12,6 +12,7 @@
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:e2e": "maestro test maestro/flows",
+    "i18n:audit": "node scripts/i18n-audit.mjs",
     "prebuild": "expo prebuild",
     "build:android": "expo prebuild --platform android && cd android && ./gradlew bundleRelease"
   },
