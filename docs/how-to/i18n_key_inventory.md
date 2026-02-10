@@ -1,34 +1,17 @@
 # i18n Audit Report
 
-- generatedAt: 2026-02-10T06:47:42.298Z
+- generatedAt: 2026-02-10T07:01:38.801Z
 - locale: pl
 - enTotalKeys: 318
-- localeOverrideKeys: 162
-- missingAllCount: 156
+- localeOverrideKeys: 180
+- missingAllCount: 138
 - usedKeysInApp: 180
 - usedKeysDirect: 161
 - usedKeysDynamic: 19
-- missingUsedCount: 18
+- missingUsedCount: 0
 
 ## Missing Keys Used In App
-- languageNameDe
-- languageNameEn
-- languageNameEs
-- languageNameFr
-- languageNameHi
-- languageNameId
-- languageNameIt
-- languageNameJa
-- languageNameKo
-- languageNameNl
-- languageNamePt
-- languageNameRu
-- languageNameSv
-- languageNameTh
-- languageNameTr
-- languageNameVi
-- languageNameZhHans
-- languageNameZhHant
+- none
 
 ## Missing Keys In Locale (All)
 - daysStreak
@@ -154,24 +137,6 @@
 - streak7Title
 - streak7Message
 - ok
-- languageNameEn
-- languageNameJa
-- languageNameFr
-- languageNameEs
-- languageNameDe
-- languageNameIt
-- languageNamePt
-- languageNameRu
-- languageNameZhHans
-- languageNameZhHant
-- languageNameKo
-- languageNameHi
-- languageNameId
-- languageNameTh
-- languageNameVi
-- languageNameTr
-- languageNameNl
-- languageNameSv
 - tutorialWelcomeBody
 - tutorialPressFabBody
 - tutorialPressHabitBody

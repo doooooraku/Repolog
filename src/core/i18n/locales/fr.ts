@@ -211,6 +211,7 @@ const dict = {
   languageNameVi: 'Vietnamien',
   languageNameTr: 'Turc',
   languageNameNl: 'Néerlandais',
+  languageNamePl: 'Polonais',
   languageNameSv: 'Suédois',
 
   // --- Sound labels ---

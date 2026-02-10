@@ -150,6 +150,7 @@ const dict = {
   languageNameVi: 'Vietnamita',
   languageNameTr: 'Turco',
   languageNameNl: 'Holandês',
+  languageNamePl: 'Polonês',
   languageNameSv: 'Sueco',
 
   // --- Tutorial (チュートリアル) ---

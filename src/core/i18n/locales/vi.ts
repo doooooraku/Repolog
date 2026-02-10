@@ -150,6 +150,7 @@ const dict = {
   languageNameVi: 'Tiếng Việt',
   languageNameTr: 'Tiếng Thổ Nhĩ Kỳ',
   languageNameNl: 'Tiếng Hà Lan',
+  languageNamePl: 'Tiếng Ba Lan',
   languageNameSv: 'Tiếng Thụy Điển',
 
   // --- Tutorial (チュートリアル) ---
