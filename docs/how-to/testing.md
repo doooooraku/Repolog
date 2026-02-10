@@ -401,7 +401,111 @@ pnpm test __tests__/backupImportPlanner.test.ts
 
 ---
 
-## 9. 最後のチェックリスト（PR前）
+## 9. UMP EEA 同意検証（Issue #93）
+
+目的：
+- EEA想定で同意フローが壊れていないかを、毎回同じ手順で確認する
+- 常時CIではなく、`workflow_dispatch` で必要なときに手動実行する
+
+### 9.1 ローカルで事前チェック（最短）
+
+```bash
+pnpm ump:consent:check -- \
+  --platform android \
+  --debug-geography EEA \
+  --test-device-ids "TEST_DEVICE_1,TEST_DEVICE_2" \
+  --out /tmp/ump-consent-checklist.md
+```
+
+コマンドの意味：
+- `pnpm ump:consent:check`：
+  - `scripts/ump-consent-check.mjs` を実行する
+- `--platform`：
+  - 検証対象プラットフォーム（`android` / `ios`）
+- `--debug-geography`：
+  - UMPのデバッグ地理（EEA検証では `EEA` を使う）
+- `--test-device-ids`：
+  - UMP検証対象の端末ID（カンマ区切り）
+- `--out`：
+  - チェックリストMarkdownの出力先
+
+### 9.2 GitHub Actionsで手動実行（workflow_dispatch）
+
+```bash
+gh workflow run ump-consent-validation.yml \
+  --repo doooooraku/Repolog \
+  --ref main \
+  --field platform=android \
+  --field debug_geography=EEA \
+  --field test_device_ids="TEST_DEVICE_1,TEST_DEVICE_2" \
+  --field notes="Pre-release consent check"
+```
+
+コマンドの意味：
+- `gh workflow run`：
+  - 指定workflowを手動起動する
+- `--repo`：
+  - 実行対象リポジトリ
+- `--ref main`：
+  - `main` のコードで実行する
+- `--field ...`：
+  - `workflow_dispatch` の入力値を渡す
+
+### 9.3 実行結果の確認
+
+```bash
+# 直近実行一覧
+gh run list --repo doooooraku/Repolog --workflow "UMP Consent Validation" --limit 5
+
+# 1件の詳細（JSON）
+gh run view <run-id> --repo doooooraku/Repolog --json status,conclusion,jobs,url
+
+# 1件のログ
+gh run view <run-id> --repo doooooraku/Repolog --log
+
+# artifact取得（必要時）
+gh run download <run-id> --repo doooooraku/Repolog -D /tmp/ump-validation
+```
+
+コマンドの意味：
+- `gh run list`：
+  - 実行履歴と成功/失敗を確認
+- `gh run view --json`：
+  - ステータスやURLを機械的に確認
+- `gh run view --log`：
+  - 失敗箇所のログを読む
+- `gh run download`：
+  - `ump-consent-checklist.md` / `ump-consent-checklist.json` を取得
+
+### 9.4 失敗時のログ確認ポイント（Runbook）
+
+1. workflow summary で `passed: no` になったチェック項目を確認する
+2. `ump-consent-checklist.json` の `failedChecks` を確認する
+3. 実機側ログで `canRequestAds` と `privacyOptionsRequirementStatus` を確認する
+
+Android（実機/エミュレータ）:
+```bash
+adb logcat -d | rg "AdsConsent|canRequestAds|privacyOptionsRequirementStatus|AdBanner"
+```
+
+iOS Simulator:
+```bash
+xcrun simctl spawn booted log stream \
+  --predicate 'eventMessage CONTAINS "AdsConsent" OR eventMessage CONTAINS "canRequestAds"'
+```
+
+### 9.5 合否基準（AC対応）
+
+- AC1（手順参照）：
+  - この節（9章）を `docs/how-to/testing.md` に置く
+- AC2（manual workflow）：
+  - `.github/workflows/ump-consent-validation.yml` を `workflow_dispatch` で実行可能
+- AC3（ログ確認ポイント）：
+  - 9.4 の確認手順を固定
+
+---
+
+## 10. 最後のチェックリスト（PR前）
 
 * [ ] `pnpm lint` OK
 * [ ] `pnpm type-check` OK

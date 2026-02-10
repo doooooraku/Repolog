@@ -61,8 +61,8 @@
 - Privacy options UI（ユーザー再選択導線）の画面実装は別途必要。
 
 ### Follow-ups
-- [ ] Settings画面に「広告のプライバシー設定」導線を追加する Issue を起票
-- [ ] 実機で EEA デバッグ地理 + テスト端末IDを使った確認を CI/Runbook に追加
+- [x] Settings画面に「広告のプライバシー設定」導線を追加する Issue を起票（Issue #82 / PR #83）
+- [x] 実機で EEA デバッグ地理 + テスト端末IDを使った確認を CI/Runbook に追加（Issue #93）
 
 ---
 
@@ -97,4 +97,3 @@
   - iOS: https://developers.google.com/admob/ios/privacy
 - AdMob EU User Consent Policy:
   - https://support.google.com/admob/answer/7666519?hl=en
-
