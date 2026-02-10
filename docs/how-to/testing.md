@@ -14,6 +14,7 @@
 - PRを出す前（最低限ここに書いてあるテストを通す）
 - CIが落ちたとき（どこを見て、どう再現するか）
 - 受け入れ条件を「実行できる仕様」に寄せたいとき（テストを追加したいとき）
+- バックアップImport/Export障害を切り分けるとき（`docs/how-to/backup_restore.md`）
 
 ---
 
@@ -274,6 +275,23 @@ CIが落ちたステップだけを、まずローカルで叩く：
   - Import append時の「追加/スキップ」判定
   - 不正な `reportId` 参照を含む写真の検知
   - 同一バックアップ再Import時の冪等性（重複しない）
+
+### 7.2 バックアップ運用の確認（#74）
+
+- 運用手順の正: `docs/how-to/backup_restore.md`
+- append戦略の正: `docs/adr/ADR-0007-backup-import-append-strategy.md`
+- 実装の正: `src/features/backup/backupService.ts`
+
+最小コマンド:
+
+```bash
+pnpm test __tests__/backupImportPlanner.test.ts
+```
+
+確認観点:
+- 既存データを削除しない
+- 重複IDをスキップする
+- 同一zip再Importで重複登録しない
 
 ---
 

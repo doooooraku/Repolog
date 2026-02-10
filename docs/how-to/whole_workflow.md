@@ -18,6 +18,7 @@
   * `docs/how-to/whole_workflow.md`（開発〜リリースの回し方）
   * `docs/how-to/git_workflow.md`（Issue~mergeの回し方）
   * `docs/how-to/testing.md`（テストの回し方。正はCI/package.jsonにリンク）
+  * `docs/how-to/backup_restore.md`（バックアップImport/Exportの運用と障害切り分け）
   * `docs/how-to/android_ビルド手順.md`（Androidビルド手順）
   * `docs/how-to/ios_ビルド手順.md`（iOSビルド手順）
   * `docs/how-to/legal_pages_github_pages.md`（法務ページ公開と運用）
@@ -229,6 +230,7 @@ rg -n \"uses:\" .github/workflows
 * **トリガーキー**：W-11 完了
 * **作業内容**：
   * 仕様書（product_strategy / constraints / *spec）をざっと読み直す
+  * 運用Runbook（testing / backup_restore / release）を読み直す
   * 「まだIssue化されていない作業」があれば Issue を追加する
 * **INPUT**：mainの最新仕様書
 * **OUTPUT**：追加Issue（必要な場合）
