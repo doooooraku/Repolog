@@ -505,7 +505,53 @@ xcrun simctl spawn booted log stream \
 
 ---
 
-## 10. 最後のチェックリスト（PR前）
+## 10. PDFフォント性能ベンチ（Issue #72）
+
+目的:
+- `ADR-0002` の Follow-up（フォント最適化検討 / 性能計測）を再実行可能にする
+- 3条件（短文/多写真/多言語）で比較結果を残す
+
+最短コマンド:
+```bash
+pnpm pdf:font:benchmark
+```
+
+コマンドの意味:
+- `pnpm`:
+  - `package.json` の scripts を実行する
+- `pdf:font:benchmark`:
+  - `node --expose-gc scripts/pdf-font-benchmark.mjs` を実行する
+- `--expose-gc`:
+  - NodeのGC呼び出しを有効化し、cold run計測のノイズを減らす
+
+成果物（デフォルト）:
+- `docs/how-to/benchmarks/pdf_font_benchmark.latest.json`
+- `docs/how-to/benchmarks/pdf_font_benchmark.latest.md`
+
+追加オプション例:
+```bash
+node --expose-gc scripts/pdf-font-benchmark.mjs \
+  --iterations 9 \
+  --sample-image assets/images/icon.png \
+  --out-json docs/how-to/benchmarks/pdf_font_benchmark.custom.json \
+  --out-md docs/how-to/benchmarks/pdf_font_benchmark.custom.md
+```
+
+オプションの意味:
+- `--iterations`:
+  - シナリオごとの実行回数（1回目がcold、残りがwarm集計）
+- `--sample-image`:
+  - 1枚あたりの画像payload推定に使うファイル
+- `--out-json` / `--out-md`:
+  - 出力先ファイルを指定
+
+補足:
+- 計測の読み方と最新結果は `docs/how-to/pdf_font_benchmark.md` を正とする
+- 採用/非採用の最終判断は `docs/adr/ADR-0002-pdf-fonts.md` を正とする
+
+---
+
+## 11. 最後のチェックリスト（PR前）
 
 * [ ] `pnpm lint` OK
 * [ ] `pnpm type-check` OK

@@ -1,0 +1,286 @@
+{
+  "benchmarkedAtUtc": "2026-02-10T09:11:44.784Z",
+  "environment": {
+    "node": "v18.20.8",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "settings": {
+    "iterations": 7,
+    "sampleImagePath": "assets/images/icon.png",
+    "sampleImageRawBytes": 393493,
+    "sampleImageDataUriBytes": 524682,
+    "baseTemplateBytes": 4096
+  },
+  "scenarios": [
+    {
+      "id": "short_text",
+      "label": "Short text / low photo count",
+      "localeHint": "en",
+      "photoCount": 4,
+      "textLength": 123,
+      "results": {
+        "all_fonts": {
+          "selectedFontKeys": [
+            "latin",
+            "jp",
+            "sc",
+            "tc",
+            "kr",
+            "thai",
+            "devanagari"
+          ],
+          "selectedFontFamilies": [
+            "Noto Sans",
+            "Noto Sans JP",
+            "Noto Sans SC",
+            "Noto Sans TC",
+            "Noto Sans KR",
+            "Noto Sans Thai",
+            "Noto Sans Devanagari"
+          ],
+          "bytes": {
+            "rawFontBytes": 52633648,
+            "base64FontBytes": 70178204,
+            "cssBytes": 70179246,
+            "textBytes": 123,
+            "samplePhotoDataUriBytes": 524682,
+            "estimatedPhotoBytes": 2098728,
+            "estimatedPdfInputBytes": 72282193
+          },
+          "cold": {
+            "timingsMs": {
+              "total": 91.369,
+              "select": 0.028,
+              "encode": 47.856,
+              "css": 36.026
+            },
+            "rssDeltaMb": 180.887
+          },
+          "warm": {
+            "runCount": 6,
+            "totalMedianMs": 32.779,
+            "totalP90Ms": 34.708,
+            "encodeMedianMs": 0.014,
+            "encodeP90Ms": 0.026
+          }
+        },
+        "script_subset": {
+          "selectedFontKeys": [
+            "latin"
+          ],
+          "selectedFontFamilies": [
+            "Noto Sans"
+          ],
+          "bytes": {
+            "rawFontBytes": 2049096,
+            "base64FontBytes": 2732128,
+            "cssBytes": 2732272,
+            "textBytes": 123,
+            "samplePhotoDataUriBytes": 524682,
+            "estimatedPhotoBytes": 2098728,
+            "estimatedPdfInputBytes": 4835219
+          },
+          "cold": {
+            "timingsMs": {
+              "total": 3.564,
+              "select": 0.138,
+              "encode": 2.395,
+              "css": 0.004
+            },
+            "rssDeltaMb": 6.938
+          },
+          "warm": {
+            "runCount": 6,
+            "totalMedianMs": 1.033,
+            "totalP90Ms": 1.133,
+            "encodeMedianMs": 0.003,
+            "encodeP90Ms": 0.005
+          }
+        }
+      }
+    },
+    {
+      "id": "photo_heavy",
+      "label": "Photo heavy / same language",
+      "localeHint": "en",
+      "photoCount": 80,
+      "textLength": 152,
+      "results": {
+        "all_fonts": {
+          "selectedFontKeys": [
+            "latin",
+            "jp",
+            "sc",
+            "tc",
+            "kr",
+            "thai",
+            "devanagari"
+          ],
+          "selectedFontFamilies": [
+            "Noto Sans",
+            "Noto Sans JP",
+            "Noto Sans SC",
+            "Noto Sans TC",
+            "Noto Sans KR",
+            "Noto Sans Thai",
+            "Noto Sans Devanagari"
+          ],
+          "bytes": {
+            "rawFontBytes": 52633648,
+            "base64FontBytes": 70178204,
+            "cssBytes": 70179246,
+            "textBytes": 152,
+            "samplePhotoDataUriBytes": 524682,
+            "estimatedPhotoBytes": 41974560,
+            "estimatedPdfInputBytes": 112158054
+          },
+          "cold": {
+            "timingsMs": {
+              "total": 61.295,
+              "select": 0.003,
+              "encode": 30.856,
+              "css": 24.637
+            },
+            "rssDeltaMb": 179.625
+          },
+          "warm": {
+            "runCount": 6,
+            "totalMedianMs": 33.159,
+            "totalP90Ms": 34.863,
+            "encodeMedianMs": 0.01,
+            "encodeP90Ms": 0.013
+          }
+        },
+        "script_subset": {
+          "selectedFontKeys": [
+            "latin"
+          ],
+          "selectedFontFamilies": [
+            "Noto Sans"
+          ],
+          "bytes": {
+            "rawFontBytes": 2049096,
+            "base64FontBytes": 2732128,
+            "cssBytes": 2732272,
+            "textBytes": 152,
+            "samplePhotoDataUriBytes": 524682,
+            "estimatedPhotoBytes": 41974560,
+            "estimatedPdfInputBytes": 44711080
+          },
+          "cold": {
+            "timingsMs": {
+              "total": 3.099,
+              "select": 0.129,
+              "encode": 1.902,
+              "css": 0.003
+            },
+            "rssDeltaMb": 6.563
+          },
+          "warm": {
+            "runCount": 6,
+            "totalMedianMs": 1.189,
+            "totalP90Ms": 1.311,
+            "encodeMedianMs": 0.003,
+            "encodeP90Ms": 0.004
+          }
+        }
+      }
+    },
+    {
+      "id": "multilingual",
+      "label": "Multilingual scripts / medium photo count",
+      "localeHint": "ja",
+      "photoCount": 12,
+      "textLength": 60,
+      "results": {
+        "all_fonts": {
+          "selectedFontKeys": [
+            "latin",
+            "jp",
+            "sc",
+            "tc",
+            "kr",
+            "thai",
+            "devanagari"
+          ],
+          "selectedFontFamilies": [
+            "Noto Sans",
+            "Noto Sans JP",
+            "Noto Sans SC",
+            "Noto Sans TC",
+            "Noto Sans KR",
+            "Noto Sans Thai",
+            "Noto Sans Devanagari"
+          ],
+          "bytes": {
+            "rawFontBytes": 52633648,
+            "base64FontBytes": 70178204,
+            "cssBytes": 70179246,
+            "textBytes": 164,
+            "samplePhotoDataUriBytes": 524682,
+            "estimatedPhotoBytes": 6296184,
+            "estimatedPdfInputBytes": 76479690
+          },
+          "cold": {
+            "timingsMs": {
+              "total": 61.242,
+              "select": 0.01,
+              "encode": 30.782,
+              "css": 24.202
+            },
+            "rssDeltaMb": 179.625
+          },
+          "warm": {
+            "runCount": 6,
+            "totalMedianMs": 31.641,
+            "totalP90Ms": 31.815,
+            "encodeMedianMs": 0.012,
+            "encodeP90Ms": 0.013
+          }
+        },
+        "script_subset": {
+          "selectedFontKeys": [
+            "latin",
+            "devanagari",
+            "thai",
+            "kr",
+            "jp"
+          ],
+          "selectedFontFamilies": [
+            "Noto Sans",
+            "Noto Sans Devanagari",
+            "Noto Sans Thai",
+            "Noto Sans KR",
+            "Noto Sans JP"
+          ],
+          "bytes": {
+            "rawFontBytes": 22919380,
+            "base64FontBytes": 30559180,
+            "cssBytes": 30559926,
+            "textBytes": 164,
+            "samplePhotoDataUriBytes": 524682,
+            "estimatedPhotoBytes": 6296184,
+            "estimatedPdfInputBytes": 36860370
+          },
+          "cold": {
+            "timingsMs": {
+              "total": 29.52,
+              "select": 0.141,
+              "encode": 15.117,
+              "css": 10.636
+            },
+            "rssDeltaMb": 79.875
+          },
+          "warm": {
+            "runCount": 6,
+            "totalMedianMs": 14.34,
+            "totalP90Ms": 15.886,
+            "encodeMedianMs": 0.009,
+            "encodeP90Ms": 0.011
+          }
+        }
+      }
+    }
+  ]
+}
