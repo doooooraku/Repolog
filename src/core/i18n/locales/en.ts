@@ -21,6 +21,10 @@ const baseEn = {
   settingsBackupDesc: 'Export or import a backup zip (manifest.json + photos/).',
   settingsBackupOpen: 'Open Backup',
   settingsLegalDesc: 'Open the Privacy Policy and Terms of Use pages.',
+  adPrivacyOptionsHelp: 'Review ad consent choices for ads shown in the Free plan.',
+  adPrivacyOptionsAction: 'Manage ad privacy settings',
+  adPrivacyOptionsUnavailable: 'No ad privacy options are required right now.',
+  adPrivacyOptionsFailed: 'Failed to open ad privacy settings.',
 
   // --- Purchase / Restore ---
   restore: 'Restore Purchases',

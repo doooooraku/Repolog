@@ -857,6 +857,9 @@ body {
 
 - 言語：端末言語に追従（19言語）
 - 位置情報をPDFに含める：ON/OFF
+- 広告のプライバシー設定（UMP Privacy options）：
+  - `privacyOptionsRequirementStatus=REQUIRED` のときにフォームを開ける
+  - `NOT_REQUIRED` の場合は「現在は変更不要」であることをユーザーに通知
 - 購入復元
 - バックアップ：Export / Import
 - 法的：プライバシーポリシー、利用規約

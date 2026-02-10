@@ -2,7 +2,12 @@ import {
   buildAdsConsentInfoOptions,
   parseConsentDebugGeography,
   parseConsentTestDeviceIdentifiers,
+  showAdPrivacyOptionsForm,
 } from '@/src/services/adService';
+import {
+  AdsConsent,
+  AdsConsentPrivacyOptionsRequirementStatus,
+} from 'react-native-google-mobile-ads';
 
 jest.mock('react-native-google-mobile-ads', () => {
   const mobileAds = jest.fn(() => ({
@@ -89,5 +94,38 @@ describe('adService consent helpers', () => {
         ADMOB_CONSENT_TEST_DEVICE_IDS: '',
       }),
     ).toEqual({});
+  });
+});
+
+describe('adService privacy options', () => {
+  const mockedAdsConsent = AdsConsent as unknown as {
+    getConsentInfo: jest.Mock;
+    showPrivacyOptionsForm: jest.Mock;
+  };
+
+  beforeEach(() => {
+    mockedAdsConsent.getConsentInfo.mockReset();
+    mockedAdsConsent.showPrivacyOptionsForm.mockReset();
+  });
+
+  test('returns false when privacy options are not required', async () => {
+    mockedAdsConsent.getConsentInfo.mockResolvedValue({
+      canRequestAds: true,
+      privacyOptionsRequirementStatus: AdsConsentPrivacyOptionsRequirementStatus.NOT_REQUIRED,
+    });
+
+    await expect(showAdPrivacyOptionsForm()).resolves.toBe(false);
+    expect(mockedAdsConsent.showPrivacyOptionsForm).not.toHaveBeenCalled();
+  });
+
+  test('shows privacy options form when requirement is REQUIRED', async () => {
+    mockedAdsConsent.getConsentInfo.mockResolvedValue({
+      canRequestAds: true,
+      privacyOptionsRequirementStatus: AdsConsentPrivacyOptionsRequirementStatus.REQUIRED,
+    });
+    mockedAdsConsent.showPrivacyOptionsForm.mockResolvedValue({});
+
+    await expect(showAdPrivacyOptionsForm()).resolves.toBe(true);
+    expect(mockedAdsConsent.showPrivacyOptionsForm).toHaveBeenCalledTimes(1);
   });
 });
