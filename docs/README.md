@@ -103,7 +103,7 @@
 
 ## 6. 具体例（1つだけ）
 
-「Freeでも習慣を5つまでにする」変更をする場合：
+「Freeでも1レポート写真上限を10枚から8枚に変更する」場合：
 - `constraints.md` を更新（Free/Pro差分が変わる）
 - ADR を追加（なぜ5にする？代案は？）
 - `basic_spec.md` と `functional_spec.md` を更新
