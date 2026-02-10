@@ -130,6 +130,7 @@ gh run view <run-id> --repo doooooraku/Repolog --log
 - `assembleDebug` で APK を作成し、Android Emulator 上で `maestro/flows/smoke.yml` を実行
 - 安定化のため、`prebuild` 後に Gradle キャッシュ（`actions/cache`）と1回リトライを有効化
 - `ORG_GRADLE_PROJECT_reactNativeArchitectures=x86_64` で、エミュレータ実行に不要なABIビルドを省略して時間を短縮
+- Linux runner では `Enable KVM` ステップで `/dev/kvm` 権限を付与し、エミュレータ起動の失敗率を下げる
 - `concurrency` で同一refの古い実行を自動キャンセルし、詰まりを減らす
 - 成果物（`.maestro` ログ / `logcat.txt` / APK）は Actions Artifact に保存
 - schedule 実行はデフォルトブランチ上で走る（`main` を正にする）
