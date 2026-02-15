@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -13,6 +13,19 @@ import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as FileSystem from 'expo-file-system';
 import DraggableFlatList, { type RenderItemParams } from 'react-native-draggable-flatlist';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Camera,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  FileText,
+  Images,
+  MapPin,
+  Sun,
+} from '@tamagui/lucide-icons';
+import type { IconProps } from '@tamagui/helpers-icon';
 
 import type { AddressSource, Photo, Report, WeatherType } from '@/src/types/models';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -63,19 +76,21 @@ const emptyLocation: LocationState = {
   addressLocale: null,
 };
 
-type WeatherOption = { type: WeatherType; emoji: string };
+type WeatherOption = { type: WeatherType; Icon: ComponentType<IconProps> };
 
 const weatherOptions: WeatherOption[] = [
-  { type: 'sunny', emoji: '☀️' },
-  { type: 'cloudy', emoji: '☁️' },
-  { type: 'rainy', emoji: '🌧️' },
-  { type: 'snowy', emoji: '❄️' },
-  { type: 'none', emoji: '—' },
+  { type: 'sunny', Icon: Sun },
+  { type: 'cloudy', Icon: Cloud },
+  { type: 'rainy', Icon: CloudRain },
+  { type: 'snowy', Icon: CloudSnow },
+  { type: 'none', Icon: Sun },
 ];
 
 const E2E_SEED_JPEG_BASE64 =
   '/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAQEBAPEA8PEA8PDw8PDw8PDw8PDw8PFREWFhURFRUYHSggGBolGxUVITEhJSorLi4uFx8zODMtNygtLisBCgoKDg0OFRAQFS0dHR0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIABQAFAMBIgACEQEDEQH/xAAaAAEAAgMBAAAAAAAAAAAAAAAABQYDBEcB/8QAJxAAAQMDAgQHAAAAAAAAAAAAAQIDEQQABSEGEjFBURMiMmFxkqH/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgME/8QAHREAAgMBAQEAAAAAAAAAAAAAAAECEQMhEjFBcf/aAAwDAQACEQMRAD8An2dbfW6WJ6PSp2w4VNrSRJfT2c5iQfWAZxV+6wWJ7LFR6jSxF7VlC4xQ62J1z7fI4xS0Qx3EJ6u6+6fB2cQfSE4qz9SZ0w6k0G5WnkhqfWGrvC4m2JJmKzFKBv6qCQ2f/Z';
 const PHOTO_DELETE_UNDO_MS = 4000;
+const TOUCH_HIT_SLOP = { top: 6, bottom: 6, left: 6, right: 6 } as const;
+const ICON_STROKE_WIDTH = 1.85;
 
 const sanitizeTestIdToken = (value: string) =>
   value
@@ -673,6 +688,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   );
 
   const remaining = remainingCommentChars(comment);
+  const visibleWeatherOptions = weatherOptions.filter((option) => option.type !== 'none');
+  const reportNameCount = `${Math.min(reportName.length, 30)}/30`;
+  const commentCount = `${comment.length}/4000`;
 
   if (loading) {
     return (
@@ -683,301 +701,449 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   }
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.container}
-      testID="e2e_report_editor_screen">
-      <View style={styles.headerRow}>
-        <Pressable testID="e2e_report_back" onPress={handleBack} style={styles.backButton}>
-          <Text style={styles.backText}>{'‹'}</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>{t.reportEditorTitle}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.reportNameLabel}</Text>
-        <TextInput
-          style={styles.input}
-          value={reportName}
-          onChangeText={setReportName}
-          placeholder={t.reportNamePlaceholder}
-        />
-
-        <View style={styles.rowBetween}>
-          <Text style={styles.label}>{t.createdAtLabel}</Text>
-          <Text style={styles.value}>{createdAt.replace('T', ' ').slice(0, 16)}</Text>
-        </View>
-
-        <Text style={[styles.sectionTitle, styles.sectionTitleSpacing]}>{t.weatherLabel}</Text>
-        <View style={styles.weatherRow}>
-          {weatherOptions.map((option) => (
-            <Pressable
-              key={option.type}
-              onPress={() => setWeather(option.type)}
-              style={[
-                styles.weatherChip,
-                weather === option.type && styles.weatherChipActive,
-              ]}>
-              <Text style={styles.weatherEmoji}>{option.emoji}</Text>
-              <Text style={styles.weatherText}>{weatherLabelMap[option.type]}</Text>
+    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <View style={styles.screen} testID="e2e_report_editor_screen">
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <Pressable testID="e2e_report_back" onPress={handleBack} style={styles.backButton} hitSlop={TOUCH_HIT_SLOP}>
+              <ArrowLeft size={18} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
             </Pressable>
-          ))}
-        </View>
-
-        <Text style={[styles.sectionTitle, styles.sectionTitleSpacing]}>{t.tagsLabel}</Text>
-        <View style={styles.tagInputRow}>
-          <TextInput
-            testID="e2e_report_tags_input"
-            style={[styles.input, styles.tagInput]}
-            value={tagInput}
-            onChangeText={setTagInput}
-            onSubmitEditing={handleAddTags}
-            placeholder={t.tagInputPlaceholder}
-            returnKeyType="done"
-          />
-          <Pressable testID="e2e_report_tags_add" onPress={handleAddTags} style={styles.tagAddButton}>
-            <Text style={styles.tagAddButtonText}>{t.addTagAction}</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>
+              {t.reportEditorTitle}
+            </Text>
+          </View>
+          <Pressable testID="e2e_report_pdf_preview" onPress={handlePreviewPdf} style={styles.pdfButton} hitSlop={TOUCH_HIT_SLOP}>
+            <FileText size={15} color="#ffffff" strokeWidth={ICON_STROKE_WIDTH} />
+            <Text style={styles.pdfButtonText}>PDF</Text>
           </Pressable>
         </View>
-        {tags.length === 0 ? (
-          <Text style={styles.subtle}>{t.tagsEmpty}</Text>
-        ) : (
-          <View style={styles.tagsWrap}>
-            {tags.map((tag) => (
-              <Pressable
-                key={tag}
-                testID={`e2e_report_tag_chip_${sanitizeTestIdToken(tag)}`}
-                onPress={() => handleRemoveTag(tag)}
-                style={styles.tagChip}>
-                <Text style={styles.tagChipText}>{tag}</Text>
-                <Text style={styles.tagChipRemove}>×</Text>
-              </Pressable>
-            ))}
-          </View>
-        )}
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.locationLabel}</Text>
-        {includeLocation ? (
-          <View style={styles.locationBlock}>
-            <View style={styles.rowBetween}>
-              <View style={styles.column}>
-                <Text style={styles.subtle}>{t.includeLocationHelp}</Text>
-              </View>
-              <Pressable
-                onPress={handleFetchLocation}
-                style={styles.locationButton}
-                disabled={locationLoading}>
-                <Text style={styles.locationButtonText}>
-                  {locationLoading ? t.obtaining : t.locationFetch}
-                </Text>
-              </Pressable>
+        <ScrollView style={styles.scrollArea} contentContainerStyle={styles.container}>
+          <View style={styles.section}>
+            <View style={styles.sectionTitleRow}>
+              <Text style={styles.sectionTitle}>{t.reportBasicInfoSection}</Text>
             </View>
-
-            <Text style={styles.value}>
-              {locationState.lat != null && locationState.lng != null
-                ? `${locationState.lat}, ${locationState.lng}`
-                : '-'}
-            </Text>
-
-            <Text style={[styles.sectionTitle, styles.sectionTitleSpacing]}>
-              {t.addressLabel}
-            </Text>
+            <View style={styles.sectionTitleRow}>
+              <Text style={styles.fieldLabel}>{`${t.reportNameLabel} *`}</Text>
+              <Text style={styles.counterText}>{reportNameCount}</Text>
+            </View>
             <TextInput
               style={styles.input}
-              value={locationState.address ?? ''}
-              onChangeText={handleAddressChange}
-              placeholder={t.addressPlaceholder}
+              value={reportName}
+              onChangeText={setReportName}
+              placeholder={t.reportNamePlaceholder}
+              placeholderTextColor="#717182"
             />
 
-            <View style={styles.rowBetween}>
+            <Text style={[styles.fieldLabel, styles.fieldSpacing]}>{t.createdAtLabel}</Text>
+            <Text style={styles.value}>{createdAt.replace('T', ' ').slice(0, 16)}</Text>
+
+            <Text style={[styles.fieldLabel, styles.fieldSpacing]}>{t.weatherLabel}</Text>
+            <View style={styles.weatherRow}>
+              {visibleWeatherOptions.map((option) => {
+                const active = weather === option.type;
+                const Icon = option.Icon;
+                return (
+                  <Pressable
+                    key={option.type}
+                    onPress={() => {
+                      setWeather((current) => (current === option.type ? 'none' : option.type));
+                    }}
+                    accessibilityLabel={weatherLabelMap[option.type]}
+                    hitSlop={TOUCH_HIT_SLOP}
+                    style={[styles.weatherChip, active && styles.weatherChipActive]}>
+                    <Icon size={16} color={active ? '#0a0a0a' : '#4a5565'} strokeWidth={ICON_STROKE_WIDTH} />
+                  </Pressable>
+                );
+              })}
+            </View>
+
+            <Text style={[styles.fieldLabel, styles.fieldSpacing]}>{t.locationLabel}</Text>
+            <Pressable
+              onPress={handleFetchLocation}
+              style={[styles.outlineButton, (!includeLocation || locationLoading) && styles.disabledButton]}
+              disabled={!includeLocation || locationLoading}>
+              {locationLoading ? (
+                <ActivityIndicator size="small" color="#0a0a0a" />
+              ) : (
+                <MapPin size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
+              )}
+              <Text style={styles.outlineButtonText}>{locationLoading ? t.obtaining : t.locationFetch}</Text>
+            </Pressable>
+
+            {includeLocation ? (
+              <View style={styles.locationBlock}>
+                <Text style={styles.value}>
+                  {locationState.lat != null && locationState.lng != null
+                    ? `${locationState.lat}, ${locationState.lng}`
+                    : '-'}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  value={locationState.address ?? ''}
+                  onChangeText={handleAddressChange}
+                  placeholder={t.addressPlaceholder}
+                  placeholderTextColor="#717182"
+                />
+                <View style={styles.rowBetween}>
+                  <Pressable
+                    onPress={handleFetchLocation}
+                    style={[styles.smallOutlineButton, locationLoading && styles.disabledButton]}
+                    disabled={locationLoading}
+                    hitSlop={TOUCH_HIT_SLOP}>
+                    <Text style={styles.smallOutlineButtonText}>{t.locationRefresh}</Text>
+                  </Pressable>
+                  <Pressable onPress={handleClearLocation} style={styles.smallOutlineButton} hitSlop={TOUCH_HIT_SLOP}>
+                    <Text style={styles.smallOutlineButtonText}>{t.locationClear}</Text>
+                  </Pressable>
+                </View>
+              </View>
+            ) : (
+              <Text style={styles.subtle}>{t.locationDisabledHint}</Text>
+            )}
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.sectionTitleRow}>
+              <Text style={styles.sectionTitle}>{t.commentLabel}</Text>
+              <Text style={styles.counterText}>{commentCount}</Text>
+            </View>
+            <TextInput
+              style={[styles.input, styles.textarea]}
+              value={comment}
+              onChangeText={(value) => setComment(clampComment(value))}
+              placeholder={t.commentPlaceholder}
+              placeholderTextColor="#717182"
+              multiline
+              textAlignVertical="top"
+            />
+            <Text style={styles.subtle}>
+              {t.commentRemainingLabel}: {remaining}
+            </Text>
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.sectionTitleRow}>
+              <Text style={styles.sectionTitle}>
+                {t.photosLabel} ({photos.length})
+              </Text>
+              {!isPro && (
+                <Text style={styles.counterText}>
+                  {t.photoLimitHint.replace('{max}', String(MAX_FREE_PHOTOS_PER_REPORT))}
+                </Text>
+              )}
+            </View>
+            <Text testID={`e2e_photo_count_${photos.length}`} style={styles.hiddenCount}>
+              {photos.length}
+            </Text>
+            <View style={styles.photoActionRow}>
               <Pressable
-                onPress={handleFetchLocation}
-                style={[styles.secondaryButton, locationLoading && styles.disabledButton]}
-                disabled={locationLoading}>
-                <Text style={styles.secondaryButtonText}>{t.locationRefresh}</Text>
+                testID="e2e_add_photo_camera"
+                onPress={() => handleAddPhotos('camera')}
+                hitSlop={TOUCH_HIT_SLOP}
+                style={styles.photoActionButton}>
+                <Camera size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
+                <Text style={styles.photoActionText}>{t.addFromCamera}</Text>
               </Pressable>
-              <Pressable onPress={handleClearLocation} style={styles.secondaryButton}>
-                <Text style={styles.secondaryButtonText}>{t.locationClear}</Text>
+              <Pressable
+                testID="e2e_add_photo_library"
+                onPress={() => handleAddPhotos('library')}
+                hitSlop={TOUCH_HIT_SLOP}
+                style={styles.photoActionButton}>
+                <Images size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
+                <Text style={styles.photoActionText}>{t.addFromLibrary}</Text>
               </Pressable>
             </View>
+            {__DEV__ && (
+              <Pressable
+                testID="e2e_seed_photos"
+                onPress={() => {
+                  void handleSeedPhotosForE2E();
+                }}
+                style={styles.smallOutlineButton}>
+                <Text style={styles.smallOutlineButtonText}>Seed photos (E2E)</Text>
+              </Pressable>
+            )}
+            {photos.length > 0 && <Text style={styles.subtle}>{t.photoReorderHint}</Text>}
+            {photos.length === 0 ? (
+              <Text style={styles.subtle}>{t.photoEmpty}</Text>
+            ) : (
+              <DraggableFlatList
+                horizontal
+                data={photos}
+                keyExtractor={(item) => item.id}
+                renderItem={renderPhotoItem}
+                activationDistance={12}
+                onDragEnd={({ data }) => {
+                  void handlePhotoReorder(data);
+                }}
+                containerStyle={styles.photoStrip}
+                contentContainerStyle={styles.photoListContent}
+                showsHorizontalScrollIndicator={false}
+              />
+            )}
+            {undoVisible && (
+              <View style={styles.undoBanner} testID="e2e_photo_delete_undo_bar">
+                <Text style={styles.undoBannerText}>{t.photoDeletedNotice}</Text>
+                <Pressable testID="e2e_photo_delete_undo" onPress={handleUndoDeletePhoto}>
+                  <Text style={styles.undoActionText}>{t.undoAction}</Text>
+                </Pressable>
+              </View>
+            )}
           </View>
-        ) : (
-          <Text style={styles.subtle}>{t.locationDisabledHint}</Text>
-        )}
-      </View>
 
-      <View style={styles.section}>
-        <View style={styles.rowBetween}>
-          <Text style={styles.sectionTitle}>{t.photosLabel}</Text>
-          <Text testID={`e2e_photo_count_${photos.length}`} style={styles.subtle}>
-            {photos.length}
-          </Text>
-        </View>
-        {!isPro && (
-          <Text style={styles.subtle}>
-            {t.photoLimitHint.replace('{max}', String(MAX_FREE_PHOTOS_PER_REPORT))}
-          </Text>
-        )}
-        <View style={styles.rowBetween}>
-          <Pressable
-            testID="e2e_add_photo_camera"
-            onPress={() => handleAddPhotos('camera')}
-            style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>{t.addFromCamera}</Text>
-          </Pressable>
-          <Pressable
-            testID="e2e_add_photo_library"
-            onPress={() => handleAddPhotos('library')}
-            style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>{t.addFromLibrary}</Text>
-          </Pressable>
-        </View>
-        {__DEV__ && (
-          <Pressable
-            testID="e2e_seed_photos"
-            onPress={() => {
-              void handleSeedPhotosForE2E();
-            }}
-            style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>Seed photos (E2E)</Text>
-          </Pressable>
-        )}
-        {photos.length > 0 && <Text style={styles.subtle}>{t.photoReorderHint}</Text>}
-        {photos.length === 0 ? (
-          <Text style={styles.subtle}>{t.photoEmpty}</Text>
-        ) : (
-          <DraggableFlatList
-            horizontal
-            data={photos}
-            keyExtractor={(item) => item.id}
-            renderItem={renderPhotoItem}
-            activationDistance={12}
-            onDragEnd={({ data }) => {
-              void handlePhotoReorder(data);
-            }}
-            containerStyle={styles.photoStrip}
-            contentContainerStyle={styles.photoListContent}
-            showsHorizontalScrollIndicator={false}
-          />
-        )}
-        {undoVisible && (
-          <View style={styles.undoBanner} testID="e2e_photo_delete_undo_bar">
-            <Text style={styles.undoBannerText}>{t.photoDeletedNotice}</Text>
-            <Pressable testID="e2e_photo_delete_undo" onPress={handleUndoDeletePhoto}>
-              <Text style={styles.undoActionText}>{t.undoAction}</Text>
-            </Pressable>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t.tagsLabel}</Text>
+            <View style={styles.tagInputRow}>
+              <TextInput
+                testID="e2e_report_tags_input"
+                style={[styles.input, styles.tagInput]}
+                value={tagInput}
+                onChangeText={setTagInput}
+                onSubmitEditing={handleAddTags}
+                placeholder={t.tagInputPlaceholder}
+                placeholderTextColor="#717182"
+                returnKeyType="done"
+              />
+              <Pressable testID="e2e_report_tags_add" onPress={handleAddTags} style={styles.tagAddButton} hitSlop={TOUCH_HIT_SLOP}>
+                <Text style={styles.tagAddButtonText}>{t.addTagAction}</Text>
+              </Pressable>
+            </View>
+            {tags.length === 0 ? (
+              <Text style={styles.subtle}>{t.tagsEmpty}</Text>
+            ) : (
+              <View style={styles.tagsWrap}>
+                {tags.map((tag) => (
+                  <Pressable
+                    key={tag}
+                    testID={`e2e_report_tag_chip_${sanitizeTestIdToken(tag)}`}
+                    onPress={() => handleRemoveTag(tag)}
+                    style={styles.tagChip}>
+                    <Text style={styles.tagChipText}>{tag}</Text>
+                    <Text style={styles.tagChipRemove}>×</Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
           </View>
-        )}
-      </View>
+        </ScrollView>
 
-      <View style={styles.section}>
-        <View style={styles.rowBetween}>
-          <Text style={styles.sectionTitle}>{t.commentLabel}</Text>
-          <Text style={styles.subtle}>
-            {t.commentRemainingLabel}: {remaining}
-          </Text>
+        <View style={styles.footerBar}>
+          <Pressable onPress={handleSave} style={[styles.saveButton, saving && styles.disabledButton]} disabled={saving} hitSlop={TOUCH_HIT_SLOP}>
+            {saving ? <ActivityIndicator color="#ffffff" /> : <Text style={styles.saveButtonText}>{t.save}</Text>}
+          </Pressable>
         </View>
-        <TextInput
-          style={[styles.input, styles.textarea]}
-          value={comment}
-          onChangeText={(value) => setComment(clampComment(value))}
-          placeholder={t.commentPlaceholder}
-          multiline
-          textAlignVertical="top"
-        />
       </View>
-
-      <Pressable onPress={handleSave} style={styles.saveButton} disabled={saving}>
-        {saving ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.saveButtonText}>{t.save}</Text>
-        )}
-      </Pressable>
-      <Pressable onPress={handlePreviewPdf} style={styles.secondaryAction}>
-        <Text style={styles.secondaryActionText}>{t.pdfPreviewTitle}</Text>
-      </Pressable>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#f6f6f6',
-  },
-  container: {
-    padding: 16,
-    paddingBottom: 40,
-    gap: 16,
+    backgroundColor: '#f9fafb',
   },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f6f6f6',
+    backgroundColor: '#f9fafb',
   },
-  headerRow: {
+  header: {
+    height: 61,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  headerLeft: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
   backButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backText: {
-    fontSize: 20,
-    color: '#333',
-  },
   headerTitle: {
+    flex: 1,
     fontSize: 18,
-    fontWeight: '600',
-    color: '#222',
+    fontWeight: '700',
+    color: '#0a0a0a',
+  },
+  pdfButton: {
+    minWidth: 70,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: '#030213',
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  pdfButtonText: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: '500',
+  },
+  scrollArea: {
+    flex: 1,
+  },
+  container: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 140,
+    gap: 24,
   },
   section: {
     borderWidth: 1,
-    borderColor: '#eee',
-    borderRadius: 12,
-    padding: 16,
-    backgroundColor: '#fff',
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 10,
+    paddingHorizontal: 17,
+    paddingTop: 17,
+    paddingBottom: 16,
+    backgroundColor: '#ffffff',
+    gap: 12,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     gap: 12,
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111',
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#101828',
   },
-  sectionTitleSpacing: {
-    marginTop: 8,
-  },
-  label: {
+  counterText: {
+    flex: 1,
     fontSize: 12,
-    color: '#666',
+    color: '#6a7282',
+    textAlign: 'right',
+  },
+  fieldLabel: {
+    fontSize: 14,
+    color: '#0a0a0a',
+  },
+  fieldSpacing: {
+    marginTop: 6,
   },
   value: {
-    fontSize: 13,
-    color: '#333',
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#4a5565',
   },
   input: {
+    minHeight: 36,
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
+    borderColor: 'rgba(0, 0, 0, 0)',
+    borderRadius: 8,
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: '#222',
-    backgroundColor: '#fafafa',
+    paddingVertical: 8,
+    fontSize: 16,
+    color: '#0a0a0a',
+    backgroundColor: '#f3f3f5',
   },
   textarea: {
-    minHeight: 120,
+    minHeight: 64,
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  weatherRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  weatherChip: {
+    flex: 1,
+    height: 32,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+  },
+  weatherChipActive: {
+    backgroundColor: '#f3f3f5',
+    borderColor: '#0a0a0a',
+  },
+  outlineButton: {
+    height: 36,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  outlineButtonText: {
+    fontSize: 14,
+    color: '#0a0a0a',
+  },
+  locationBlock: {
+    gap: 10,
+  },
+  smallOutlineButton: {
+    flex: 1,
+    height: 32,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  smallOutlineButtonText: {
+    fontSize: 12,
+    color: '#4a5565',
+  },
+  subtle: {
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#6a7282',
+  },
+  hiddenCount: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    opacity: 0,
+  },
+  photoActionRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  photoActionButton: {
+    flex: 1,
+    height: 36,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  photoActionText: {
+    fontSize: 14,
+    color: '#0a0a0a',
   },
   tagInputRow: {
     flexDirection: 'row',
@@ -988,17 +1154,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tagAddButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#111',
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: '#030213',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 12,
   },
   tagAddButtonText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#fff',
+    color: '#ffffff',
+    fontWeight: '500',
   },
   tagsWrap: {
     flexDirection: 'row',
@@ -1025,101 +1191,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#374151',
   },
-  rowBetween: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  column: {
-    flex: 1,
-    gap: 4,
-  },
-  subtle: {
-    fontSize: 12,
-    color: '#666',
-  },
-  weatherRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  weatherChip: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  weatherChipActive: {
-    borderColor: '#111',
-    backgroundColor: '#f0f0f0',
-  },
-  weatherEmoji: {
-    fontSize: 14,
-  },
-  weatherText: {
-    fontSize: 12,
-    color: '#333',
-  },
-  locationBlock: {
-    gap: 10,
-  },
-  locationButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#222',
-  },
-  locationButtonText: {
-    fontSize: 12,
-    color: '#222',
-  },
-  secondaryButton: {
-    flex: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
-    fontSize: 12,
-    color: '#333',
-  },
   disabledButton: {
     opacity: 0.6,
   },
-  saveButton: {
-    backgroundColor: '#111',
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 15,
-  },
-  secondaryAction: {
-    paddingVertical: 12,
-    borderRadius: 12,
-    backgroundColor: '#111',
-    alignItems: 'center',
-  },
-  secondaryActionText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
   photoStrip: {
-    marginTop: 8,
+    marginTop: 4,
   },
   photoListContent: {
+    paddingVertical: 2,
     paddingRight: 8,
   },
   undoBanner: {
@@ -1151,7 +1230,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 8,
     overflow: 'hidden',
-    backgroundColor: '#eee',
+    backgroundColor: '#e5e7eb',
   },
   photoCardActive: {
     opacity: 0.85,
@@ -1159,7 +1238,7 @@ const styles = StyleSheet.create({
   photoThumb: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#eee',
+    backgroundColor: '#e5e7eb',
   },
   photoDeleteButton: {
     position: 'absolute',
@@ -1168,12 +1247,12 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.65)',
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   photoDeleteButtonText: {
-    color: '#fff',
+    color: '#ffffff',
     fontSize: 14,
     fontWeight: '700',
     lineHeight: 16,
@@ -1185,12 +1264,12 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: 'rgba(59,130,246,0.8)',
+    backgroundColor: 'rgba(59, 130, 246, 0.8)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   photoDeleteNowText: {
-    color: '#fff',
+    color: '#ffffff',
     fontSize: 12,
     fontWeight: '700',
   },
@@ -1200,9 +1279,29 @@ const styles = StyleSheet.create({
     bottom: 4,
     fontSize: 10,
     fontWeight: '700',
-    color: '#fff',
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    color: '#ffffff',
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
     paddingHorizontal: 4,
     borderRadius: 4,
+  },
+  footerBar: {
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    paddingTop: 16,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+  },
+  saveButton: {
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: '#030213',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  saveButtonText: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: '500',
   },
 });

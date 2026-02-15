@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ComponentType } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  FlatList,
   Pressable,
-  SectionList,
   StyleSheet,
-  Switch,
   Text,
   TextInput,
   View,
@@ -13,9 +12,19 @@ import {
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  EllipsisVertical,
+  Plus,
+  Search,
+  Settings,
+  Sun,
+} from '@tamagui/lucide-icons';
+import type { IconProps } from '@tamagui/helpers-icon';
 
 import { AdBanner } from '@/components/ad-banner';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { deleteReport, searchReportsWithFilters, updateReport } from '@/src/db/reportRepository';
 import {
@@ -23,8 +32,6 @@ import {
   deletePhotosByReport,
   getFirstPhotosByReportIds,
 } from '@/src/db/photoRepository';
-import { buildTimelineSections } from '@/src/features/reports/reportListUtils';
-import { normalizeTags, splitTagInput } from '@/src/features/reports/reportUtils';
 import { removeReportPhotos } from '@/src/services/photoService';
 import { useProStore } from '@/src/stores/proStore';
 import type { Report } from '@/src/types/models';
@@ -34,19 +41,47 @@ type ReportMeta = {
   photoCount?: number;
 };
 
-const sanitizeTestIdToken = (value: string) =>
-  value
-    .toLowerCase()
-    .replace(/\.[a-z0-9]+$/i, '')
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '');
+type HomeFilter = 'all' | 'pinned' | 'week';
 
-const weatherSymbolMap: Record<Report['weather'], string> = {
-  sunny: '☀️',
-  cloudy: '☁️',
-  rainy: '🌧️',
-  snowy: '❄️',
-  none: '—',
+const TOUCH_HIT_SLOP = { top: 6, bottom: 6, left: 6, right: 6 } as const;
+const ICON_STROKE_WIDTH = 1.9;
+
+const formatLocalDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getCurrentWeekRange = () => {
+  const now = new Date();
+  const dayOffsetFromMonday = (now.getDay() + 6) % 7;
+  const weekStart = new Date(now);
+  weekStart.setHours(0, 0, 0, 0);
+  weekStart.setDate(now.getDate() - dayOffsetFromMonday);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekEnd.setHours(23, 59, 59, 999);
+  return {
+    fromDate: formatLocalDate(weekStart),
+    toDate: formatLocalDate(weekEnd),
+  };
+};
+
+const weatherIconMap: Record<Report['weather'], ComponentType<IconProps>> = {
+  sunny: Sun,
+  cloudy: Cloud,
+  rainy: CloudRain,
+  snowy: CloudSnow,
+  none: Sun,
+};
+
+const weatherIconOpacityMap: Record<Report['weather'], number> = {
+  sunny: 1,
+  cloudy: 1,
+  rainy: 1,
+  snowy: 1,
+  none: 0.45,
 };
 
 export default function HomeScreen() {
@@ -55,25 +90,24 @@ export default function HomeScreen() {
   const isPro = useProStore((s) => s.isPro);
   const proInitialized = useProStore((s) => s.initialized);
   const initPro = useProStore((s) => s.init);
+
   const [query, setQuery] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-  const [pinnedOnly, setPinnedOnly] = useState(false);
-  const [filterTags, setFilterTags] = useState<string[]>([]);
-  const [filterTagInput, setFilterTagInput] = useState('');
+  const [activeFilter, setActiveFilter] = useState<HomeFilter>('all');
   const [reports, setReports] = useState<Report[]>([]);
   const [meta, setMeta] = useState<Record<string, ReportMeta>>({});
   const [loading, setLoading] = useState(true);
+
+  const weekRange = useMemo(() => getCurrentWeekRange(), []);
 
   const loadReports = useCallback(async () => {
     setLoading(true);
     try {
       const data = await searchReportsWithFilters({
         query,
-        fromDate,
-        toDate,
-        tags: filterTags,
-        pinnedOnly,
+        fromDate: activeFilter === 'week' ? weekRange.fromDate : '',
+        toDate: activeFilter === 'week' ? weekRange.toDate : '',
+        tags: [],
+        pinnedOnly: activeFilter === 'pinned',
       });
       setReports(data);
       const ids = data.map((report) => report.id);
@@ -94,7 +128,7 @@ export default function HomeScreen() {
     } finally {
       setLoading(false);
     }
-  }, [query, fromDate, toDate, filterTags, pinnedOnly, t.errorLoadFailed]);
+  }, [activeFilter, query, t.errorLoadFailed, weekRange.fromDate, weekRange.toDate]);
 
   useEffect(() => {
     void loadReports();
@@ -104,104 +138,118 @@ export default function HomeScreen() {
     void initPro();
   }, [initPro]);
 
-  const sections = useMemo(
-    () => buildTimelineSections(reports, '', t.homePinnedSection),
-    [reports, t.homePinnedSection],
+  const handleTogglePin = useCallback(
+    async (report: Report) => {
+      try {
+        await updateReport({ id: report.id, pinned: !report.pinned });
+        await loadReports();
+      } catch {
+        Alert.alert(t.errorSaveFailed);
+      }
+    },
+    [loadReports, t.errorSaveFailed],
   );
 
-  const hasActiveFilters =
-    fromDate.trim().length > 0 ||
-    toDate.trim().length > 0 ||
-    pinnedOnly ||
-    filterTags.length > 0;
-
-  const handleAddFilterTags = useCallback(() => {
-    const next = normalizeTags([...filterTags, ...splitTagInput(filterTagInput)]);
-    if (next.length === filterTags.length) {
-      setFilterTagInput('');
-      return;
-    }
-    setFilterTags(next);
-    setFilterTagInput('');
-  }, [filterTagInput, filterTags]);
-
-  const handleRemoveFilterTag = useCallback((tag: string) => {
-    const target = tag.trim().toLowerCase();
-    setFilterTags((current) => current.filter((item) => item.trim().toLowerCase() !== target));
-  }, []);
-
-  const handleResetFilters = useCallback(() => {
-    setFromDate('');
-    setToDate('');
-    setPinnedOnly(false);
-    setFilterTags([]);
-    setFilterTagInput('');
-  }, []);
-
-  const handleTogglePin = async (report: Report) => {
-    await updateReport({ id: report.id, pinned: !report.pinned });
-    await loadReports();
-  };
-
-  const handleDelete = async (report: Report) => {
-    Alert.alert(t.deleteConfirmTitle, t.deleteConfirmBody, [
-      { text: t.cancelAction, style: 'cancel' },
-      {
-        text: t.deleteAction,
-        style: 'destructive',
-        onPress: async () => {
-          await removeReportPhotos(report.id);
-          await deletePhotosByReport(report.id);
-          await deleteReport(report.id);
-          await loadReports();
+  const handleDelete = useCallback(
+    async (report: Report) => {
+      Alert.alert(t.deleteConfirmTitle, t.deleteConfirmBody, [
+        { text: t.cancelAction, style: 'cancel' },
+        {
+          text: t.deleteAction,
+          style: 'destructive',
+          onPress: async () => {
+            await removeReportPhotos(report.id);
+            await deletePhotosByReport(report.id);
+            await deleteReport(report.id);
+            await loadReports();
+          },
         },
-      },
-    ]);
-  };
+      ]);
+    },
+    [loadReports, t.cancelAction, t.deleteAction, t.deleteConfirmBody, t.deleteConfirmTitle],
+  );
 
-  const renderItem = ({ item, index }: { item: Report; index: number }) => {
-    const summary = meta[item.id] ?? {};
-    return (
-      <Pressable
-        testID={`e2e_home_report_card_${index}`}
-        style={styles.card}
-        onPress={() => router.push(`/reports/${item.id}`)}>
-        {summary.firstPhotoUri ? (
-          <Image source={{ uri: summary.firstPhotoUri }} style={styles.thumb} />
-        ) : (
-          <View style={[styles.thumb, styles.thumbPlaceholder]} />
-        )}
-        <View style={styles.cardBody}>
-          <View style={styles.cardRow}>
-            <Text style={styles.cardTitle} numberOfLines={1}>
-              {item.reportName ?? t.reportUnnamed}
-            </Text>
-            <Pressable onPress={() => handleTogglePin(item)}>
-              <Text style={styles.pinText}>{item.pinned ? '★' : '☆'}</Text>
-            </Pressable>
+  const handleOpenCardMenu = useCallback(
+    (report: Report) => {
+      Alert.alert(report.reportName ?? t.reportUnnamed, undefined, [
+        {
+          text: t.homePinnedSection,
+          onPress: () => {
+            void handleTogglePin(report);
+          },
+        },
+        {
+          text: t.deleteAction,
+          style: 'destructive',
+          onPress: () => {
+            void handleDelete(report);
+          },
+        },
+        { text: t.cancelAction, style: 'cancel' },
+      ]);
+    },
+    [handleDelete, handleTogglePin, t.cancelAction, t.deleteAction, t.homePinnedSection, t.reportUnnamed],
+  );
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: Report; index: number }) => {
+      const summary = meta[item.id] ?? {};
+      const WeatherIcon = weatherIconMap[item.weather];
+      const commentText = item.comment?.trim().length ? item.comment.trim() : '-';
+      const photoCount = summary.photoCount ?? 0;
+
+      return (
+        <Pressable
+          testID={`e2e_home_report_card_${index}`}
+          style={styles.card}
+          onPress={() => router.push(`/reports/${item.id}`)}>
+          {summary.firstPhotoUri ? (
+            <Image source={{ uri: summary.firstPhotoUri }} style={styles.cardImage} contentFit="cover" />
+          ) : (
+            <View style={[styles.cardImage, styles.cardImagePlaceholder]} />
+          )}
+
+          <View style={styles.photoCountBadge}>
+            <Text style={styles.photoCountBadgeText}>{photoCount}</Text>
           </View>
-          <View style={styles.cardRow}>
-            <Text style={styles.cardSub}>{item.createdAt.replace('T', ' ').slice(0, 16)}</Text>
-            <Text
-              testID={`e2e_home_report_${index}_weather_${item.weather}`}
-              style={styles.cardWeather}>
-              {weatherSymbolMap[item.weather]}
+
+          <View style={styles.cardBody}>
+            <View style={styles.cardTitleRow}>
+              <Text style={styles.cardTitle} numberOfLines={1}>
+                {item.reportName ?? t.reportUnnamed}
+              </Text>
+              <Pressable
+                onPress={() => handleOpenCardMenu(item)}
+                hitSlop={TOUCH_HIT_SLOP}
+                style={styles.cardMenuButton}>
+                <EllipsisVertical size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
+              </Pressable>
+            </View>
+
+            <View style={styles.cardDateRow}>
+              <Text style={styles.cardDate}>{item.createdAt.replace('T', ' ').slice(0, 16)}</Text>
+              <WeatherIcon
+                testID={`e2e_home_report_${index}_weather_${item.weather}`}
+                size={16}
+                color="#6a7282"
+                strokeWidth={ICON_STROKE_WIDTH}
+                opacity={weatherIconOpacityMap[item.weather]}
+              />
+            </View>
+
+            <Text style={styles.cardComment} numberOfLines={1}>
+              {commentText}
+            </Text>
+
+            <Text testID={`e2e_home_report_${index}_photo_count_${photoCount}`} style={styles.hiddenText}>
+              {photoCount}
             </Text>
           </View>
-          <View style={styles.cardRow}>
-            <Text style={styles.cardMeta}>
-              {/* Keep count explicit for E2E assertions. */}
-              {summary.photoCount ?? 0} {t.reportPhotosLabel}
-            </Text>
-            <Text testID={`e2e_home_report_${index}_photo_count_${summary.photoCount ?? 0}`} />
-            <Pressable onPress={() => handleDelete(item)}>
-              <Text style={styles.deleteText}>{t.deleteAction}</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Pressable>
-    );
-  };
+        </Pressable>
+      );
+    },
+    [handleOpenCardMenu, meta, router, t.reportUnnamed],
+  );
 
   if (loading) {
     return (
@@ -213,124 +261,91 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <View style={styles.container} testID="e2e_home_screen">
-        <View style={styles.headerRow}>
-          <Text style={styles.title}>{t.homeTitle}</Text>
-          <View style={styles.headerActions}>
-            <Pressable
-              testID="e2e_home_create_report_fab"
-              onPress={() => router.push('/reports/new')}
-              hitSlop={12}
-              style={styles.iconButton}>
-              <IconSymbol name="plus" size={20} color="#111" />
-            </Pressable>
-            <Pressable
-              testID="e2e_open_settings"
-              onPress={() => router.push('/settings')}
-              hitSlop={12}
-              style={styles.iconButton}>
-              <IconSymbol name="gearshape.fill" size={20} color="#111" />
-            </Pressable>
-          </View>
+      <View style={styles.root} testID="e2e_home_screen">
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Repolog</Text>
+          <Pressable
+            testID="e2e_open_settings"
+            onPress={() => router.push('/settings')}
+            hitSlop={TOUCH_HIT_SLOP}
+            style={styles.headerIconButton}>
+            <Settings size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
+          </Pressable>
         </View>
-        <TextInput
-          placeholder={t.homeSearchPlaceholder}
-          value={query}
-          onChangeText={setQuery}
-          style={styles.search}
-        />
-        <View style={styles.filterPanel}>
-          <Text style={styles.filterTitle}>{t.homeFiltersTitle}</Text>
-          <View style={styles.filterRow}>
-            <View style={styles.filterColumn}>
-              <Text style={styles.filterLabel}>{t.homeFilterFromLabel}</Text>
-              <TextInput
-                testID="e2e_home_filter_from"
-                value={fromDate}
-                onChangeText={setFromDate}
-                placeholder={t.homeFilterDatePlaceholder}
-                style={styles.filterInput}
-              />
-            </View>
-            <View style={styles.filterColumn}>
-              <Text style={styles.filterLabel}>{t.homeFilterToLabel}</Text>
-              <TextInput
-                testID="e2e_home_filter_to"
-                value={toDate}
-                onChangeText={setToDate}
-                placeholder={t.homeFilterDatePlaceholder}
-                style={styles.filterInput}
-              />
-            </View>
-          </View>
-          <View style={styles.filterTagInputRow}>
+
+        <View style={styles.searchRow}>
+          <View style={styles.searchInputWrap}>
+            <Search size={16} color="#717182" strokeWidth={ICON_STROKE_WIDTH} />
             <TextInput
-              testID="e2e_home_filter_tags_input"
-              value={filterTagInput}
-              onChangeText={setFilterTagInput}
-              onSubmitEditing={handleAddFilterTags}
-              placeholder={t.homeFilterTagPlaceholder}
-              style={[styles.filterInput, styles.filterTagInput]}
-              returnKeyType="done"
+              value={query}
+              onChangeText={setQuery}
+              placeholder={t.homeSearchPlaceholder}
+              placeholderTextColor="#717182"
+              style={styles.searchInput}
             />
-            <Pressable
-              testID="e2e_home_filter_tags_add"
-              onPress={handleAddFilterTags}
-              style={styles.filterTagAddButton}>
-              <Text style={styles.filterTagAddText}>{t.addTagAction}</Text>
-            </Pressable>
           </View>
-          {filterTags.length > 0 && (
-            <View style={styles.filterTagsWrap}>
-              {filterTags.map((tag) => (
-                <Pressable
-                  key={tag}
-                  testID={`e2e_home_filter_tag_${sanitizeTestIdToken(tag)}`}
-                  onPress={() => handleRemoveFilterTag(tag)}
-                  style={styles.filterTagChip}>
-                  <Text style={styles.filterTagChipText}>{tag}</Text>
-                  <Text style={styles.filterTagChipRemove}>×</Text>
-                </Pressable>
-              ))}
+        </View>
+
+        <View style={styles.filterRow}>
+          <Pressable
+            testID="e2e_home_filter_all"
+            onPress={() => setActiveFilter('all')}
+            style={[styles.filterChip, activeFilter === 'all' && styles.filterChipActive]}>
+            <Text style={[styles.filterChipText, activeFilter === 'all' && styles.filterChipTextActive]}>
+              {t.homeFilterAll}
+            </Text>
+          </Pressable>
+          <Pressable
+            testID="e2e_home_filter_pinned"
+            onPress={() => setActiveFilter('pinned')}
+            style={[styles.filterChip, activeFilter === 'pinned' && styles.filterChipActive]}>
+            <Text style={[styles.filterChipText, activeFilter === 'pinned' && styles.filterChipTextActive]}>
+              {t.homeFilterPinned}
+            </Text>
+          </Pressable>
+          <Pressable
+            testID="e2e_home_filter_week"
+            onPress={() => setActiveFilter('week')}
+            style={[styles.filterChip, activeFilter === 'week' && styles.filterChipActive]}>
+            <Text style={[styles.filterChipText, activeFilter === 'week' && styles.filterChipTextActive]}>
+              {t.homeFilterThisWeek}
+            </Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.listWrap}>
+          {reports.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyTitle}>{t.homeEmptyTitle}</Text>
+              <Text style={styles.emptyBody}>{t.homeEmptyBody}</Text>
+              <Pressable testID="e2e_home_create_report" style={styles.emptyButton} onPress={() => router.push('/reports/new')}>
+                <Text style={styles.emptyButtonText}>{t.homeCreateReport}</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <FlatList
+              data={reports}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              contentContainerStyle={styles.listContent}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
+
+          {proInitialized && !isPro && (
+            <View style={styles.adBannerWrap}>
+              <AdBanner />
             </View>
           )}
-          <View style={styles.filterSwitchRow}>
-            <Text style={styles.filterLabel}>{t.homeFilterPinnedOnlyLabel}</Text>
-            <Switch testID="e2e_home_filter_pinned_only" value={pinnedOnly} onValueChange={setPinnedOnly} />
-          </View>
-          {hasActiveFilters && (
-            <Pressable
-              testID="e2e_home_filter_reset"
-              onPress={handleResetFilters}
-              style={styles.filterResetButton}>
-              <Text style={styles.filterResetText}>{t.homeFilterResetAction}</Text>
-            </Pressable>
-          )}
         </View>
-        {sections.length === 0 ? (
-          <View style={styles.empty}>
-            <Text style={styles.emptyTitle}>{t.homeEmptyTitle}</Text>
-            <Text style={styles.emptyBody}>{t.homeEmptyBody}</Text>
-            <Pressable
-              testID="e2e_home_create_report"
-              style={styles.newButton}
-              onPress={() => router.push('/reports/new')}>
-              <Text style={styles.newButtonText}>{t.homeCreateReport}</Text>
-            </Pressable>
-          </View>
-        ) : (
-          <SectionList
-            sections={sections}
-            keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            renderSectionHeader={({ section }) => (
-              <Text style={styles.sectionHeader}>{section.title}</Text>
-            )}
-            contentContainerStyle={styles.listContent}
-            style={styles.list}
-          />
-        )}
-        {proInitialized && !isPro && <AdBanner />}
+
+        <Pressable
+          testID="e2e_home_create_report_fab"
+          onPress={() => router.push('/reports/new')}
+          hitSlop={TOUCH_HIT_SLOP}
+          style={styles.fabButton}>
+          <Plus size={16} color="#ffffff" strokeWidth={ICON_STROKE_WIDTH} />
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -339,243 +354,242 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f6f6f6',
+    backgroundColor: '#f9fafb',
   },
-  container: {
+  root: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#f6f6f6',
-  },
-  list: {
-    flex: 1,
+    backgroundColor: '#f9fafb',
   },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f9fafb',
   },
-  headerRow: {
+  header: {
+    height: 61,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
   },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  title: {
+  headerTitle: {
     fontSize: 20,
+    lineHeight: 28,
     fontWeight: '700',
-    color: '#111',
+    color: '#0a0a0a',
   },
-  iconButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+  headerIconButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#eee',
   },
-  search: {
-    marginTop: 12,
+  searchRow: {
+    height: 61,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+  },
+  searchInputWrap: {
+    minHeight: 36,
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 12,
+    borderColor: 'rgba(0, 0, 0, 0)',
+    borderRadius: 8,
+    backgroundColor: '#f3f3f5',
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  filterPanel: {
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 12,
-    padding: 12,
-    gap: 10,
-    backgroundColor: '#fff',
-  },
-  filterTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#111',
+  searchInput: {
+    flex: 1,
+    minHeight: 36,
+    fontSize: 16,
+    color: '#0a0a0a',
+    paddingVertical: 8,
   },
   filterRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  filterColumn: {
-    flex: 1,
-    gap: 6,
-  },
-  filterLabel: {
-    fontSize: 12,
-    color: '#4b5563',
-  },
-  filterInput: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    fontSize: 13,
-    backgroundColor: '#f9fafb',
-    color: '#111',
-  },
-  filterTagInputRow: {
+    height: 57,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  filterTagInput: {
-    flex: 1,
-  },
-  filterTagAddButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 9,
-    borderRadius: 10,
-    backgroundColor: '#111827',
-  },
-  filterTagAddText: {
-    fontSize: 12,
-    color: '#fff',
-    fontWeight: '600',
-  },
-  filterTagsWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  filterTagChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+  filterChip: {
+    height: 32,
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: '#f3f4f6',
-  },
-  filterTagChipText: {
-    fontSize: 12,
-    color: '#111827',
-  },
-  filterTagChipRemove: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#374151',
-  },
-  filterSwitchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  filterResetButton: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
   },
-  filterResetText: {
-    fontSize: 12,
-    color: '#374151',
+  filterChipActive: {
+    borderColor: '#030213',
+    backgroundColor: '#030213',
+  },
+  filterChipText: {
+    fontSize: 14,
+    color: '#0a0a0a',
+  },
+  filterChipTextActive: {
+    color: '#ffffff',
+  },
+  listWrap: {
+    flex: 1,
+    paddingLeft: 16,
+    paddingRight: 32,
+    paddingTop: 16,
   },
   listContent: {
-    paddingTop: 12,
-    paddingBottom: 24,
-  },
-  sectionHeader: {
-    marginTop: 16,
-    marginBottom: 8,
-    fontSize: 13,
-    color: '#666',
-    fontWeight: '600',
+    paddingBottom: 120,
+    gap: 16,
   },
   card: {
-    flexDirection: 'row',
-    gap: 12,
-    padding: 12,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#eee',
-    marginBottom: 12,
+    borderRadius: 14,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff',
+    marginBottom: 16,
+    shadowColor: '#000000',
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 2,
   },
-  thumb: {
-    width: 72,
-    height: 72,
-    borderRadius: 10,
+  cardImage: {
+    width: '100%',
+    height: 258,
+    backgroundColor: '#d4d4d8',
   },
-  thumbPlaceholder: {
-    backgroundColor: '#e9e9e9',
+  cardImagePlaceholder: {
+    backgroundColor: '#d4d4d8',
+  },
+  photoCountBadge: {
+    position: 'absolute',
+    right: 12,
+    top: 206,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoCountBadgeText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#ffffff',
   },
   cardBody: {
-    flex: 1,
-    gap: 6,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
+    gap: 4,
   },
-  cardRow: {
+  cardTitleRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: 8,
   },
   cardTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#111',
     flex: 1,
-  },
-  cardSub: {
-    fontSize: 12,
-    color: '#777',
-  },
-  cardWeather: {
-    fontSize: 14,
-    color: '#333',
-  },
-  cardMeta: {
-    fontSize: 12,
-    color: '#666',
-  },
-  pinText: {
     fontSize: 18,
-    color: '#f59e0b',
+    lineHeight: 28,
+    fontWeight: '700',
+    color: '#101828',
   },
-  deleteText: {
-    fontSize: 12,
-    color: '#ef4444',
-  },
-  empty: {
-    marginTop: 40,
+  cardMenuButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     alignItems: 'center',
-    gap: 10,
+    justifyContent: 'center',
+    marginTop: -2,
+  },
+  cardDateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cardDate: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#6a7282',
+  },
+  cardComment: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#4a5565',
+  },
+  hiddenText: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    opacity: 0,
+  },
+  adBannerWrap: {
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    paddingHorizontal: 24,
   },
   emptyTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#222',
+    fontWeight: '700',
+    color: '#0a0a0a',
+    textAlign: 'center',
   },
   emptyBody: {
     fontSize: 13,
-    color: '#666',
+    color: '#6a7282',
     textAlign: 'center',
   },
-  newButton: {
-    marginTop: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#111',
+  emptyButton: {
+    marginTop: 4,
+    height: 36,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#030213',
   },
-  newButtonText: {
-    color: '#fff',
-    fontWeight: '600',
+  emptyButtonText: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: '500',
+  },
+  fabButton: {
+    position: 'absolute',
+    right: 24,
+    bottom: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#030213',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000000',
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
 });
