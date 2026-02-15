@@ -14,6 +14,7 @@ type AddPhotoResult = {
   photos: Photo[];
   blocked: boolean;
   canceled: boolean;
+  failedCount: number;
   reason?: 'permission' | 'error';
 };
 
@@ -36,7 +37,23 @@ const getReportPhotoDir = (reportId: string) => {
   return `${documentDirectory}${PHOTO_DIR_ROOT}/${reportId}/photos/`;
 };
 
-const buildTargetPath = (dir: string, name: string) => `${dir}${name}.jpg`;
+const buildTargetPath = (dir: string, name: string, extension = 'jpg') => `${dir}${name}.${extension}`;
+
+const deriveFileExtension = (uri: string, fallback = 'jpg') => {
+  const sanitized = uri.split('?')[0] ?? uri;
+  const ext = sanitized.split('.').pop()?.toLowerCase();
+  if (!ext || ext.length > 5) return fallback;
+  return ext;
+};
+
+const transferFileToPath = async (from: string, to: string) => {
+  try {
+    await FileSystem.copyAsync({ from, to });
+    return;
+  } catch {
+    await FileSystem.moveAsync({ from, to });
+  }
+};
 
 const resizeIfNeeded = async (asset: ImagePicker.ImagePickerAsset) => {
   const width = asset.width ?? null;
@@ -72,14 +89,26 @@ const resizeIfNeeded = async (asset: ImagePicker.ImagePickerAsset) => {
 
 const persistAsset = async (reportId: string, asset: ImagePicker.ImagePickerAsset) => {
   const dir = await ensureReportPhotoDir(reportId);
-  const result = await resizeIfNeeded(asset);
-  const targetPath = buildTargetPath(dir, `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`);
-  await FileSystem.moveAsync({ from: result.uri, to: targetPath });
-  return {
-    uri: targetPath,
-    width: result.width ?? asset.width ?? null,
-    height: result.height ?? asset.height ?? null,
-  };
+  const baseName = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const targetPath = buildTargetPath(dir, baseName, 'jpg');
+  try {
+    const result = await resizeIfNeeded(asset);
+    await transferFileToPath(result.uri, targetPath);
+    return {
+      uri: targetPath,
+      width: result.width ?? asset.width ?? null,
+      height: result.height ?? asset.height ?? null,
+    };
+  } catch {
+    const extension = deriveFileExtension(asset.uri);
+    const fallbackPath = buildTargetPath(dir, baseName, extension);
+    await transferFileToPath(asset.uri, fallbackPath);
+    return {
+      uri: fallbackPath,
+      width: asset.width ?? null,
+      height: asset.height ?? null,
+    };
+  }
 };
 
 const addAssetsToReport = async (
@@ -88,7 +117,7 @@ const addAssetsToReport = async (
   isPro: boolean,
 ): Promise<AddPhotoResult> => {
   if (assets.length === 0) {
-    return { photos: [], blocked: false, canceled: false };
+    return { photos: [], blocked: false, canceled: false, failedCount: 0 };
   }
 
   const existing = await listPhotosByReport(reportId);
@@ -96,25 +125,70 @@ const addAssetsToReport = async (
 
   const toAdd = assets.slice(0, allowedCount);
   const added: Photo[] = [];
+  let failedCount = 0;
   for (let i = 0; i < toAdd.length; i += 1) {
     const asset = toAdd[i];
-    const stored = await persistAsset(reportId, asset);
-    const photo = await createPhoto({
-      reportId,
-      localUri: stored.uri,
-      width: stored.width,
-      height: stored.height,
-      orderIndex: existing.length + i,
-    });
-    added.push(photo);
+    try {
+      const stored = await persistAsset(reportId, asset);
+      const photo = await createPhoto({
+        reportId,
+        localUri: stored.uri,
+        width: stored.width,
+        height: stored.height,
+        orderIndex: existing.length + added.length,
+      });
+      added.push(photo);
+    } catch {
+      failedCount += 1;
+    }
+  }
+
+  if (added.length === 0 && failedCount > 0) {
+    return {
+      photos: [],
+      blocked,
+      canceled: false,
+      failedCount,
+      reason: 'error',
+    };
   }
 
   return {
     photos: added,
     blocked,
     canceled: false,
+    failedCount,
   };
 };
+
+export async function consumePendingPhotoSelection(
+  reportId: string,
+  isPro: boolean,
+): Promise<AddPhotoResult | null> {
+  try {
+    const pending = await ImagePicker.getPendingResultAsync();
+    if (!pending) return null;
+    if ('code' in pending) {
+      return {
+        photos: [],
+        blocked: false,
+        canceled: false,
+        failedCount: 0,
+        reason: 'error',
+      };
+    }
+    if (pending.canceled) return null;
+    return addAssetsToReport(reportId, pending.assets ?? [], isPro);
+  } catch {
+    return {
+      photos: [],
+      blocked: false,
+      canceled: false,
+      failedCount: 0,
+      reason: 'error',
+    };
+  }
+}
 
 export async function addPhotosFromCamera(
   reportId: string,
@@ -122,7 +196,7 @@ export async function addPhotosFromCamera(
 ): Promise<AddPhotoResult> {
   const permission = await ImagePicker.requestCameraPermissionsAsync();
   if (!permission.granted) {
-    return { photos: [], blocked: false, canceled: false, reason: 'permission' };
+    return { photos: [], blocked: false, canceled: false, failedCount: 0, reason: 'permission' };
   }
 
   const result = await ImagePicker.launchCameraAsync({
@@ -132,7 +206,7 @@ export async function addPhotosFromCamera(
   });
 
   if (result.canceled) {
-    return { photos: [], blocked: false, canceled: true };
+    return { photos: [], blocked: false, canceled: true, failedCount: 0 };
   }
 
   return addAssetsToReport(reportId, result.assets ?? [], isPro);
@@ -144,7 +218,7 @@ export async function addPhotosFromLibrary(
 ): Promise<AddPhotoResult> {
   const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (!permission.granted) {
-    return { photos: [], blocked: false, canceled: false, reason: 'permission' };
+    return { photos: [], blocked: false, canceled: false, failedCount: 0, reason: 'permission' };
   }
 
   const result = await ImagePicker.launchImageLibraryAsync({
@@ -155,7 +229,7 @@ export async function addPhotosFromLibrary(
   });
 
   if (result.canceled) {
-    return { photos: [], blocked: false, canceled: true };
+    return { photos: [], blocked: false, canceled: true, failedCount: 0 };
   }
 
   return addAssetsToReport(reportId, result.assets ?? [], isPro);

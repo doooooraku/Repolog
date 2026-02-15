@@ -286,6 +286,7 @@ const baseEn = {
   commentRemainingLabel: 'Remaining',
   includeLocationLabel: 'Include location',
   includeLocationHelp: 'Adds location and address to this report.',
+  locationDisabledHint: 'Location is disabled in Settings. Enable it there to add location data.',
   locationLabel: 'Location',
   locationFetch: 'Get location',
   locationRefresh: 'Refresh location',

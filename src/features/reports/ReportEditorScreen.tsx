@@ -5,7 +5,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   TextInput,
   View,
@@ -35,6 +34,7 @@ import { createPhoto, listPhotosByReport, updatePhotoOrderByIds } from '@/src/db
 import {
   addPhotosFromCamera,
   addPhotosFromLibrary,
+  consumePendingPhotoSelection,
   removePhotoFromReport,
 } from '@/src/services/photoService';
 import { resolvePhotoAddLimit, MAX_FREE_PHOTOS_PER_REPORT } from '@/src/features/photos/photoUtils';
@@ -105,7 +105,6 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const router = useRouter();
   const { t } = useTranslation();
   const includeLocation = useSettingsStore((s) => s.includeLocation);
-  const setIncludeLocation = useSettingsStore((s) => s.setIncludeLocation);
 
   const [loading, setLoading] = useState<boolean>(Boolean(reportId));
   const [saving, setSaving] = useState(false);
@@ -429,6 +428,49 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     );
   }, [router, t]);
 
+  useEffect(() => {
+    if (!reportId) return;
+    let mounted = true;
+
+    const recoverPendingPhotoSelection = async () => {
+      try {
+        const result = await consumePendingPhotoSelection(reportId, isPro);
+        if (!mounted || !result) return;
+        if (result.reason === 'permission') {
+          Alert.alert(t.photoPermissionDenied);
+          return;
+        }
+        if (result.reason === 'error' && result.photos.length === 0) {
+          Alert.alert(t.photoAddFailed);
+          return;
+        }
+        if (result.blocked && !isPro) {
+          showPhotoLimitAlert();
+        }
+        if (result.photos.length > 0) {
+          await refreshPhotos(reportId);
+        }
+      } catch {
+        if (mounted) {
+          Alert.alert(t.photoAddFailed);
+        }
+      }
+    };
+
+    void recoverPendingPhotoSelection();
+
+    return () => {
+      mounted = false;
+    };
+  }, [
+    reportId,
+    isPro,
+    refreshPhotos,
+    showPhotoLimitAlert,
+    t.photoAddFailed,
+    t.photoPermissionDenied,
+  ]);
+
   const handleSave = async () => {
     if (saving) return;
     setSaving(true);
@@ -492,10 +534,16 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           return;
         }
         if (result.canceled) return;
+        if (result.reason === 'error' && result.photos.length === 0) {
+          Alert.alert(t.photoAddFailed);
+          return;
+        }
         if (result.blocked && !isPro) {
           showPhotoLimitAlert();
         }
-        await refreshPhotos(current.id);
+        if (result.photos.length > 0) {
+          await refreshPhotos(current.id);
+        }
       } catch {
         Alert.alert(t.photoAddFailed);
       }
@@ -635,7 +683,10 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container} testID="e2e_report_editor_screen">
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={styles.container}
+      testID="e2e_report_editor_screen">
       <View style={styles.headerRow}>
         <Pressable testID="e2e_report_back" onPress={handleBack} style={styles.backButton}>
           <Text style={styles.backText}>{'‹'}</Text>
@@ -707,21 +758,13 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       </View>
 
       <View style={styles.section}>
-        <View style={styles.rowBetween}>
-          <View style={styles.column}>
-            <Text style={styles.sectionTitle}>{t.includeLocationLabel}</Text>
-            <Text style={styles.subtle}>{t.includeLocationHelp}</Text>
-          </View>
-          <Switch
-            value={includeLocation}
-            onValueChange={(value) => setIncludeLocation(value)}
-          />
-        </View>
-
-        {includeLocation && (
+        <Text style={styles.sectionTitle}>{t.locationLabel}</Text>
+        {includeLocation ? (
           <View style={styles.locationBlock}>
             <View style={styles.rowBetween}>
-              <Text style={styles.sectionTitle}>{t.locationLabel}</Text>
+              <View style={styles.column}>
+                <Text style={styles.subtle}>{t.includeLocationHelp}</Text>
+              </View>
               <Pressable
                 onPress={handleFetchLocation}
                 style={styles.locationButton}
@@ -760,6 +803,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
               </Pressable>
             </View>
           </View>
+        ) : (
+          <Text style={styles.subtle}>{t.locationDisabledHint}</Text>
         )}
       </View>
 
@@ -859,6 +904,10 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#f6f6f6',
+  },
   container: {
     padding: 16,
     paddingBottom: 40,
@@ -868,6 +917,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f6f6f6',
   },
   headerRow: {
     flexDirection: 'row',
@@ -1059,12 +1109,11 @@ const styles = StyleSheet.create({
   secondaryAction: {
     paddingVertical: 12,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#111',
+    backgroundColor: '#111',
     alignItems: 'center',
   },
   secondaryActionText: {
-    color: '#111',
+    color: '#fff',
     fontWeight: '600',
   },
   photoStrip: {

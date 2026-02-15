@@ -265,6 +265,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    backgroundColor: '#f6f6f6',
   },
   title: {
     fontSize: 18,
