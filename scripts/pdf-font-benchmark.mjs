@@ -85,7 +85,31 @@ const SCRIPT_REGEX = {
   hangul: /[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7AF]/u,
   hiraganaKatakana: /[\u3040-\u30FF]/u,
   cjkUnified: /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/u,
+  fullwidthForms: /[\uFF00-\uFFEF]/u,
 };
+
+const SUPPORTED_CODEPOINT_RANGES = [
+  [0x0000, 0x024f],
+  [0x0300, 0x036f],
+  [0x0900, 0x097f],
+  [0x0e00, 0x0e7f],
+  [0x1100, 0x11ff],
+  [0x2000, 0x206f],
+  [0x20a0, 0x20cf],
+  [0x2100, 0x214f],
+  [0x2190, 0x21ff],
+  [0x2200, 0x22ff],
+  [0x2460, 0x24ff],
+  [0x3000, 0x303f],
+  [0x3040, 0x30ff],
+  [0x3130, 0x318f],
+  [0x3400, 0x4dbf],
+  [0x4e00, 0x9fff],
+  [0xac00, 0xd7af],
+  [0xf900, 0xfaff],
+  [0xff00, 0xffef],
+  [0x1e00, 0x1eff],
+];
 
 const DEFAULTS = {
   iterations: 7,
@@ -205,7 +229,7 @@ function detectScriptSubset(text, localeHint) {
   if (SCRIPT_REGEX.hiraganaKatakana.test(text)) {
     selected.add('jp');
   }
-  if (SCRIPT_REGEX.cjkUnified.test(text)) {
+  if (SCRIPT_REGEX.cjkUnified.test(text) || SCRIPT_REGEX.fullwidthForms.test(text)) {
     if (localeHint === 'ja') {
       selected.add('jp');
     } else if (localeHint === 'zh-Hans') {
@@ -222,12 +246,30 @@ function detectScriptSubset(text, localeHint) {
   return [...selected];
 }
 
+function inRanges(codePoint, ranges) {
+  return ranges.some(([start, end]) => codePoint >= start && codePoint <= end);
+}
+
+function containsUnsupportedScripts(text) {
+  for (const char of text) {
+    const codePoint = char.codePointAt(0);
+    if (codePoint == null) continue;
+    if (!inRanges(codePoint, SUPPORTED_CODEPOINT_RANGES)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function selectFontKeys(strategy, scenario) {
   if (strategy === 'all_fonts') {
     return FONT_CATALOG.map((font) => font.key);
   }
   if (strategy === 'script_subset') {
     const text = `${scenario.reportName}\n${scenario.comment}`;
+    if (containsUnsupportedScripts(text)) {
+      return FONT_CATALOG.map((font) => font.key);
+    }
     return detectScriptSubset(text, scenario.localeHint);
   }
   throw new Error(`Unknown strategy: ${strategy}`);
@@ -375,7 +417,7 @@ function summarizeRuns(runs) {
 
 function buildMarkdown(report) {
   const lines = [];
-  lines.push('# PDF Font Benchmark (Issue #72)');
+  lines.push('# PDF Font Benchmark (Issue #72 / #101)');
   lines.push('');
   lines.push(`- Benchmarked at (UTC): ${report.benchmarkedAtUtc}`);
   lines.push(`- Node: ${report.environment.node}`);

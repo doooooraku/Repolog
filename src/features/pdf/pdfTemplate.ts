@@ -19,6 +19,7 @@ type PdfTemplateInput = {
   layout: PdfLayout;
   paperSize: PaperSize;
   isPro: boolean;
+  localeHint?: string;
   appName?: string;
   weatherLabel?: string;
   labels?: Partial<PdfLabels>;
@@ -74,6 +75,31 @@ const fileToDataUri = async (uri: string) => {
 
 const getLabel = (input: PdfTemplateInput, key: keyof PdfLabels) =>
   input.labels?.[key] ?? DEFAULT_LABELS[key];
+
+const buildFontSelectionText = (input: PdfTemplateInput) => {
+  const labels = {
+    ...DEFAULT_LABELS,
+    ...input.labels,
+  };
+  const chunks = [
+    input.appName ?? 'Repolog',
+    input.report.reportName ?? '',
+    input.report.comment ?? '',
+    input.report.address ?? '',
+    input.weatherLabel ?? '',
+    labels.createdAt,
+    labels.reportName,
+    labels.address,
+    labels.location,
+    labels.weather,
+    labels.photoCount,
+    labels.pageCount,
+    labels.photos,
+    labels.pages,
+    labels.comment,
+  ];
+  return chunks.join('\n');
+};
 
 const buildCover = (input: PdfTemplateInput, pageCount: number) => {
   const title = escapeHtml(reportTitle(input.report));
@@ -179,12 +205,15 @@ const buildPhotoPages = async (
   return out;
 };
 
-const buildCss = async (paperSize: PaperSize) => {
-  const fontCss = await buildPdfFontCss();
-  const size = PAPER_SIZES[paperSize];
+const buildCss = async (input: PdfTemplateInput) => {
+  const fontCss = await buildPdfFontCss({
+    textForSubset: buildFontSelectionText(input),
+    localeHint: input.localeHint,
+  });
+  const size = PAPER_SIZES[input.paperSize];
   return `
   ${fontCss}
-  @page { size: ${paperSize} portrait; margin: 0; }
+  @page { size: ${input.paperSize} portrait; margin: 0; }
   :root {
     --page-w: ${size.widthMm}mm;
     --page-h: ${size.heightMm}mm;
@@ -301,7 +330,7 @@ const buildCss = async (paperSize: PaperSize) => {
 export async function buildPdfHtml(input: PdfTemplateInput) {
   const layout = input.layout === 'large' ? 'large' : 'standard';
   const perPage = layout === 'large' ? 1 : 2;
-  const css = await buildCss(input.paperSize);
+  const css = await buildCss(input);
   const commentPages = splitCommentIntoPages(input.report.comment ?? '');
   const photoPageCount = Math.ceil(input.photos.length / perPage);
   const pageCount = 1 + commentPages.length + photoPageCount;

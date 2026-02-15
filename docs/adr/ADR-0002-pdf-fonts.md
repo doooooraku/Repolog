@@ -81,6 +81,19 @@
     - 現行の全フォント埋め込みを維持し、ベンチ基盤で継続測定する
     - 実機の回帰テスト条件を満たせる段階で、段階導入を再検討する
 
+### 2026-02-15 Follow-up結果（Issue #101）
+- 実装:
+  - `PDF_FONT_SUBSET_EXPERIMENT` フラグを追加（`app.config.ts` の `extra`）
+  - フラグON時のみ runtime script subset を試行
+  - 未知スクリプト（判定対象外文字）が含まれる場合は all-fonts へ自動フォールバック
+- ベンチ再計測（`docs/how-to/benchmarks/pdf_font_benchmark.latest.md`）:
+  - 短文シナリオ: warm中央値 `all_fonts 33.19ms` → `script_subset 1.14ms`
+  - 多写真シナリオ: 推定入力 `all_fonts 106.96MB` → `script_subset 42.64MB`
+  - 多言語シナリオ: warm中央値 `all_fonts 32.69ms` → `script_subset 14.76ms`
+- 判断:
+  - **デフォルトは引き続き all-fonts（フラグOFF）を維持**
+  - subset は検証用途で段階運用し、実機品質が担保できるまで既定値は変更しない
+
 ---
 
 ## Acceptance / Tests（合否：テストに寄せる）

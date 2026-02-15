@@ -1,7 +1,7 @@
 {
-  "benchmarkedAtUtc": "2026-02-10T09:11:44.784Z",
+  "benchmarkedAtUtc": "2026-02-15T06:21:49.891Z",
   "environment": {
-    "node": "v18.20.8",
+    "node": "v20.19.6",
     "platform": "linux",
     "arch": "x64"
   },
@@ -50,19 +50,19 @@
           },
           "cold": {
             "timingsMs": {
-              "total": 91.369,
-              "select": 0.028,
-              "encode": 47.856,
-              "css": 36.026
+              "total": 83.938,
+              "select": 0.03,
+              "encode": 40.483,
+              "css": 35.695
             },
-            "rssDeltaMb": 180.887
+            "rssDeltaMb": 181.277
           },
           "warm": {
             "runCount": 6,
-            "totalMedianMs": 32.779,
-            "totalP90Ms": 34.708,
+            "totalMedianMs": 33.193,
+            "totalP90Ms": 35.891,
             "encodeMedianMs": 0.014,
-            "encodeP90Ms": 0.026
+            "encodeP90Ms": 0.023
           }
         },
         "script_subset": {
@@ -83,19 +83,19 @@
           },
           "cold": {
             "timingsMs": {
-              "total": 3.564,
-              "select": 0.138,
-              "encode": 2.395,
+              "total": 6.191,
+              "select": 0.174,
+              "encode": 4.847,
               "css": 0.004
             },
-            "rssDeltaMb": 6.938
+            "rssDeltaMb": -103.297
           },
           "warm": {
             "runCount": 6,
-            "totalMedianMs": 1.033,
-            "totalP90Ms": 1.133,
+            "totalMedianMs": 1.14,
+            "totalP90Ms": 1.171,
             "encodeMedianMs": 0.003,
-            "encodeP90Ms": 0.005
+            "encodeP90Ms": 0.006
           }
         }
       }
@@ -137,19 +137,19 @@
           },
           "cold": {
             "timingsMs": {
-              "total": 61.295,
+              "total": 63.349,
               "select": 0.003,
-              "encode": 30.856,
-              "css": 24.637
+              "encode": 33.174,
+              "css": 23.07
             },
-            "rssDeltaMb": 179.625
+            "rssDeltaMb": 161.332
           },
           "warm": {
             "runCount": 6,
-            "totalMedianMs": 33.159,
-            "totalP90Ms": 34.863,
-            "encodeMedianMs": 0.01,
-            "encodeP90Ms": 0.013
+            "totalMedianMs": 32.311,
+            "totalP90Ms": 33.11,
+            "encodeMedianMs": 0.012,
+            "encodeP90Ms": 0.012
           }
         },
         "script_subset": {
@@ -170,18 +170,18 @@
           },
           "cold": {
             "timingsMs": {
-              "total": 3.099,
-              "select": 0.129,
-              "encode": 1.902,
-              "css": 0.003
+              "total": 4.774,
+              "select": 0.032,
+              "encode": 3.648,
+              "css": 0.004
             },
-            "rssDeltaMb": 6.563
+            "rssDeltaMb": -61.109
           },
           "warm": {
             "runCount": 6,
-            "totalMedianMs": 1.189,
-            "totalP90Ms": 1.311,
-            "encodeMedianMs": 0.003,
+            "totalMedianMs": 1.116,
+            "totalP90Ms": 1.139,
+            "encodeMedianMs": 0.002,
             "encodeP90Ms": 0.004
           }
         }
@@ -224,17 +224,17 @@
           },
           "cold": {
             "timingsMs": {
-              "total": 61.242,
-              "select": 0.01,
-              "encode": 30.782,
-              "css": 24.202
+              "total": 64.621,
+              "select": 0.008,
+              "encode": 33.531,
+              "css": 24.014
             },
-            "rssDeltaMb": 179.625
+            "rssDeltaMb": 160.957
           },
           "warm": {
             "runCount": 6,
-            "totalMedianMs": 31.641,
-            "totalP90Ms": 31.815,
+            "totalMedianMs": 32.689,
+            "totalP90Ms": 33.781,
             "encodeMedianMs": 0.012,
             "encodeP90Ms": 0.013
           }
@@ -265,19 +265,19 @@
           },
           "cold": {
             "timingsMs": {
-              "total": 29.52,
-              "select": 0.141,
-              "encode": 15.117,
-              "css": 10.636
+              "total": 29.528,
+              "select": 0.26,
+              "encode": 15.37,
+              "css": 10.375
             },
-            "rssDeltaMb": 79.875
+            "rssDeltaMb": 18.578
           },
           "warm": {
             "runCount": 6,
-            "totalMedianMs": 14.34,
-            "totalP90Ms": 15.886,
+            "totalMedianMs": 14.759,
+            "totalP90Ms": 15.951,
             "encodeMedianMs": 0.009,
-            "encodeP90Ms": 0.011
+            "encodeP90Ms": 0.01
           }
         }
       }

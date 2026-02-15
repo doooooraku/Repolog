@@ -30,7 +30,7 @@ export default function PdfPreviewScreen() {
   const { id } = useLocalSearchParams<{ id?: string | string[] }>();
   const reportId = Array.isArray(id) ? id[0] : id;
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const [layout, setLayout] = useState<PdfLayout>('standard');
   const [paperSize, setPaperSize] = useState<PaperSize>('A4');
   const [loading, setLoading] = useState(true);
@@ -82,13 +82,14 @@ export default function PdfPreviewScreen() {
       layout,
       paperSize,
       isPro,
+      localeHint: lang,
       appName: 'Repolog',
       weatherLabel: weatherLabelMap[report.weather],
       labels: labelMap,
     });
     setPdfUri(uri);
     setLoading(false);
-  }, [reportId, layout, paperSize, isPro, labelMap, weatherLabelMap, t.errorLoadFailed]);
+  }, [reportId, layout, paperSize, isPro, lang, labelMap, weatherLabelMap, t.errorLoadFailed]);
 
   useEffect(() => {
     void initPro();
