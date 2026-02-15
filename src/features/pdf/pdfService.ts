@@ -13,6 +13,7 @@ export type PdfGenerateInput = {
   paperSize: PaperSize;
   layout: PdfLayout;
   isPro: boolean;
+  localeHint?: string;
   appName?: string;
   weatherLabel?: string;
   labels?: {

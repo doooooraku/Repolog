@@ -528,6 +528,13 @@ xcrun simctl spawn booted log stream \
 - `ADR-0002` の Follow-up（フォント最適化検討 / 性能計測）を再実行可能にする
 - 3条件（短文/多写真/多言語）で比較結果を残す
 
+実験フラグ（Issue #101）:
+- `PDF_FONT_SUBSET_EXPERIMENT=0`（既定）:
+  - 本番挙動。7フォントを常時埋め込み
+- `PDF_FONT_SUBSET_EXPERIMENT=1`:
+  - script subset を試行
+  - 未知スクリプト検出時は自動で all-fonts にフォールバック
+
 最短コマンド:
 ```bash
 pnpm pdf:font:benchmark
