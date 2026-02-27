@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 import type { Photo, Report } from '@/src/types/models';
 import { buildPdfFontCss, pdfFontStack } from './pdfFonts';

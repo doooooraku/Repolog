@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import DraggableFlatList, { type RenderItemParams } from 'react-native-draggable-flatlist';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -324,7 +324,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         return;
       }
 
-      const baseRoot = FileSystem.Paths?.cache?.uri ?? FileSystem.Paths?.document?.uri;
+      const baseRoot = FileSystem.cacheDirectory ?? FileSystem.documentDirectory;
       if (!baseRoot) {
         throw new Error('FileSystem path unavailable for E2E seed photos.');
       }
@@ -496,14 +496,15 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         return;
       }
       const payload = buildPayload();
-      if (reportId) {
-        await updateReport({ id: reportId, ...payload });
+      const existingId = report?.id ?? reportId;
+      if (existingId) {
+        await updateReport({ id: existingId, ...payload });
       } else {
         const created = await createReport(payload);
         setReport(created);
         setCreatedAt(created.createdAt);
       }
-      Alert.alert(t.save);
+      router.back();
     } catch {
       Alert.alert(t.errorSaveFailed);
     } finally {
