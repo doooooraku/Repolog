@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system/legacy';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 import type { Photo, Report } from '@/src/types/models';
 import { buildPdfFontCss, pdfFontStack } from './pdfFonts';
@@ -59,18 +60,19 @@ const escapeHtml = (value: string) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 
-const guessMime = (uri: string) => {
-  const lower = uri.toLowerCase();
-  if (lower.endsWith('.png')) return 'image/png';
-  if (lower.endsWith('.webp')) return 'image/webp';
-  if (lower.endsWith('.heic') || lower.endsWith('.heif')) return 'image/heic';
-  return 'image/jpeg';
-};
+const PDF_IMAGE_MAX_EDGE = 1400;
+const PDF_IMAGE_QUALITY = 0.8;
 
 const fileToDataUri = async (uri: string) => {
-  const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
-  const mime = guessMime(uri);
-  return `data:${mime};base64,${base64}`;
+  const compressed = await ImageManipulator.manipulateAsync(
+    uri,
+    [{ resize: { width: PDF_IMAGE_MAX_EDGE } }],
+    { compress: PDF_IMAGE_QUALITY, format: ImageManipulator.SaveFormat.JPEG },
+  );
+  const base64 = await FileSystem.readAsStringAsync(compressed.uri, {
+    encoding: 'base64',
+  });
+  return `data:image/jpeg;base64,${base64}`;
 };
 
 const getLabel = (input: PdfTemplateInput, key: keyof PdfLabels) =>
@@ -177,13 +179,22 @@ const buildPhotoPages = async (
       chunk.map(async (photo) => {
         const label = photoLabel(photoCounter);
         photoCounter += 1;
-        const src = await fileToDataUri(photo.localUri);
-        return `
-          <div class="photo-slot">
-            <div class="photo-label">${escapeHtml(label)}</div>
-            <img class="photo" src="${src}" alt="${escapeHtml(label)}" />
-          </div>
-        `;
+        try {
+          const src = await fileToDataUri(photo.localUri);
+          return `
+            <div class="photo-slot">
+              <div class="photo-label">${escapeHtml(label)}</div>
+              <img class="photo" src="${src}" alt="${escapeHtml(label)}" />
+            </div>
+          `;
+        } catch {
+          console.warn(`[PDF] Failed to load photo: ${photo.localUri}`);
+          return `
+            <div class="photo-slot">
+              <div class="photo-label">${escapeHtml(label)}</div>
+            </div>
+          `;
+        }
       }),
     );
 
