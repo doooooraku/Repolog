@@ -1,145 +1,262 @@
-# Android_ビルド手順（Debug運用 / Release提出）
-最終更新: 2026-02-10（JST）
+# Android_ビルド手順（自前Android実機にAPK導入）
+最終更新: 2026-02-27（JST）
 
-## 1. タグ運用（リリース可視化）
-リリース前に必ずタグとノートを作成する。  
-正は `docs/how-to/release_notes_template.md`。
+この手順は、`Repolog` を **EAS + ローカルGradle** で APK 化し、
+自前の Android スマホへインストールして確認するための運用です。
 
-### 1-1. 候補版タグ（RC）を作る
-git switch main
-git pull --ff-only origin main
-git tag -a v1.0.0-rc.1 -m "Repolog v1.0.0-rc.1"
-git push origin v1.0.0-rc.1
+想定:
+- WSL2 から Windows ADB 経由でスマホと通信
+- `adb install` でAPKを直接インストール（推奨）
+- 手動転送（Google Drive 等）はフォールバック
 
-意味：
-- git tag -a：注釈付きタグを作る（履歴として残る）
-- v1.0.0-rc.1：候補版（release candidate）
-- git push origin <tag>：タグをGitHubへ公開
+---
 
-### 1-2. GitHub Release を作る
-gh release create v1.0.0-rc.1 \
-  --repo doooooraku/Repolog \
-  --title "Repolog v1.0.0-rc.1" \
-  --notes-file docs/how-to/release_notes_template.md \
-  --prerelease
+## 0. 全体像（最短ルート）
+1. 依存関係と品質チェック（CIと同順）
+2. EAS 設定を準備（`eas.json`）
+3. `preview-local-apk` プロファイルでローカル APK ビルド
+4. `adb install` でスマホへ直接インストール（約20秒）
+5. 失敗時は `preview-cloud-apk` へ切替（EAS internal 配布）
 
-意味：
-- gh release create：Releaseを作る
-- --prerelease：候補版として扱う（本番版ではない）
-- --notes-file：テンプレから本文を読み込む
+---
 
-## 2. Debug（開発用）: ExpoGoを活用しエミュレータでデバッグ
-### 2-1. 全体の流れ（一本道）
-1) エミュレータ起動（Android Studioなど）
-2) adb devicesで接続確認
-3) Metro起動
-4) ExpoGoを用いてエミュレータで確認
+## 1. 事前準備（初回のみ）
 
-### 2-2. 手順（超具体）
-#### Step 0: ルートへ移動
-cd <project-root>
+### 1-1. 必要ツール
+- Node.js 20 以上（`eas-cli@18` が Node 20+ 必須）
+- Java 17
+- Android SDK（`platform-tools`, `build-tools`, `platforms`）
+- Expo アカウント
 
-意味：
-- cd：フォルダ移動
+### 1-2. 実行場所
+```bash
+cd /home/doooo/04_app-factory/apps/Repolog
+```
+意味:
+- `cd`: 作業ディレクトリを移動する
 
-#### Step 1: adb接続確認
-adb devices
+### 1-3. バージョン確認
+```bash
+node -v
+java -version
+pnpm -v
+```
+意味:
+- `node -v`: Node.js のバージョンを表示
+- `java -version`: Java のバージョンを表示
+- `pnpm -v`: pnpm のバージョンを表示
 
-意味：
-- adb：Android端末/エミュレータ操作ツール
-- devices：接続端末一覧を表示
+### 1-4. Android SDK パス確認
+```bash
+echo "$ANDROID_SDK_ROOT"
+echo "$ANDROID_HOME"
+```
+意味:
+- `echo`: 環境変数の中身を表示
+- `ANDROID_SDK_ROOT` / `ANDROID_HOME`: Android SDK の場所
 
-#### Step 2: Metro起動
-npx expo start --clear
+---
 
-意味：
-- npx：このプロジェクトのExpoを使って起動
-- expo start：開発サーバ開始
-- --clear：キャッシュ削除して起動
+## 2. 品質チェック（CIと同じ順番）
 
-#### Step 3: ExpoGoで確認
-- エミュレータ上でExpoGoを起動
-- MetroのQR/URLから対象プロジェクトを開いて動作確認
+```bash
+pnpm install --frozen-lockfile
+pnpm lint
+pnpm test
+pnpm type-check
+```
 
+意味:
+- `pnpm install --frozen-lockfile`: lockfile どおりに依存を厳密インストール
+- `pnpm lint`: ESLint で静的検査
+- `pnpm test`: Jest テスト実行
+- `pnpm type-check`: TypeScript の型検査
 
-## 3. Release（提出用）: EASで署名済みAABを作る
-### 3-1. “prebuildが必要か？”判定
-ネイティブに効く変更をしたら：
-npx expo prebuild --platform android
+補足:
+- CI は `pnpm install -> pnpm lint -> pnpm test -> pnpm type-check` 順です。
 
-意味：
-- expo prebuild：ネイティブ側（android/）を設定に合わせて更新
-- --platform android：Androidのみ対象
+---
 
-### 3-2. AAB作成（初回：鍵作成のため）
-（実行場所）プロジェクトルート
-eas build -p android --profile production --local --non-interactive --output=○○.aab
+## 3. EAS ログインと設定
 
-意味：
-- eas build：ビルド
-- -p android：Android向け
-- --profile production：提出用設定
-- --local：ローカルでビルド
-- --non-interactive：対話なし
-- --output：成果物名
+### 3-1. EAS にログイン
+```bash
+npx eas-cli@latest login
+```
+意味:
+- `npx`: ローカルに固定インストールせず一時実行
+- `eas-cli`: Expo Application Services の CLI
+- `login`: Expo アカウント認証
 
-### 3-3. 提出（EAS Submitを使う場合）
-- Google Playのサービスアカウントキーが必要（EAS Credentialsに登録して再利用）
+### 3-2. EAS プロジェクト連携（初回のみ）
+```bash
+npx eas-cli@latest init
+```
+意味:
+- `init`: Expo プロジェクトと EAS プロジェクトを紐付ける
+- 実行すると、必要に応じて `app.json` / `app.config.*` に EAS Project ID が保存される
 
+### 3-3. 設定ファイル確認
+`Repolog` では `eas.json` を利用します。
+主要プロファイル:
+- `preview-local-apk`: ローカルビルド用 APK
+- `preview-cloud-apk`: クラウドビルド用 APK
+- `production`: Play 提出用 AAB
 
-## 4. AAB作成（2回目以降）: GradleでAABファイル作成
-注意：
-- versionCodeを確実に増やす
+---
 
-### 4-1. AAB作成
-cd android
-./gradlew clean
-./gradlew bundleRelease
+## 4. ローカル APK ビルド（本命）
 
-意味：
-- cd android：Androidネイティブプロジェクトへ移動
-- ./gradlew：Gradle Wrapperでビルド実行
-- clean：前回成果物を削除
-- bundleRelease：Release用AABを生成
+### 4-1. 出力先フォルダ作成
+```bash
+mkdir -p dist
+```
+意味:
+- `mkdir`: フォルダを作る
+- `-p`: すでに存在してもエラーにしない
 
-### 4-2. 成果物確認
-ls -alht app/
-ls -ahlt app/build/outputs/bundle/release/
+### 4-2. APK ビルド実行
+```bash
+pnpm build:android:apk:local
+```
 
-### 4-3. 証明書情報の確認（必要時）
-keytool -printcert -jarfile app/build/outputs/bundle/release/app-release.aab
+実体コマンド:
+```bash
+npx eas-cli@latest build -p android --profile preview-local-apk --local --output dist/repolog-preview-local.apk
+```
 
-成果物：
-android/app/build/outputs/bundle/release/app-release.aab
+意味:
+- `eas build`: EAS ビルドを実行
+- `-p android`: Android 向け
+- `--profile preview-local-apk`: `eas.json` のビルド設定を指定
+- `--local`: EAS クラウドではなく、手元マシンでビルド（内部で Gradle 実行）
+- `--output ...apk`: 成果物 APK の保存先
 
-## 5. AdMob / UMP 審査前チェック（Issue #73）
-目的：
-- EU/EEA 同意フローの不足で審査や配信が止まる事故を防ぐ
+### 4-3. 生成物を確認
+```bash
+ls -lh dist/repolog-preview-local.apk
+```
+意味:
+- `ls`: ファイル一覧表示
+- `-l`: 詳細表示
+- `-h`: サイズを人間向け表示（KB/MB）
 
-### 5-1. 事前に環境変数を確認
-ADMOB_ANDROID_APP_ID=<本番App ID>
-ADMOB_ANDROID_BANNER_ID=<本番バナーID>
-ADMOB_CONSENT_DEBUG_GEOGRAPHY=EEA
-ADMOB_CONSENT_TEST_DEVICE_IDS=<テスト端末IDをカンマ区切り>
+---
 
-意味：
-- `ADMOB_ANDROID_APP_ID`：Androidアプリ全体のAdMob ID（必須）
-- `ADMOB_ANDROID_BANNER_ID`：Free表示用バナー広告枠ID
-- `ADMOB_CONSENT_DEBUG_GEOGRAPHY=EEA`：EEA想定の同意ダイアログをテストする
-- `ADMOB_CONSENT_TEST_DEVICE_IDS`：本番端末にテスト設定を限定する
+## 5. スマホへインストール
 
-### 5-2. EEA想定の同意フローを手動確認
-1) Free状態でアプリ起動  
-2) 同意フォームが出ることを確認  
-3) 同意後のみバナーが表示されることを確認  
-4) Pro状態でバナーが表示されないことを確認
+### 5-1. adb install（推奨・約20秒）
 
-判定基準：
-- Free: `canRequestAds=true` の後にのみバナー表示
-- Pro: 常にバナー非表示
+USB 接続＋USBデバッグ ON の状態で、WSL2 から直接インストールできる。
 
-### 5-3. 事故防止の固定ルール
-- 同意関連の設定変更がある場合は `docs/adr/ADR-0008-admob-ump-consent-preflight.md` を参照
-- 実行手順の正は `docs/how-to/testing.md` の「9. UMP EEA 同意検証（Issue #93）」を参照
-- GitHub Actionsで反復確認する場合は `ump-consent-validation.yml` を `workflow_dispatch` で実行
-- どうしても同意フローが壊れた場合は、リリース前に広告表示を停止して提出する（審査優先）
+```bash
+pnpm install:device
+```
+
+実体コマンド:
+```bash
+adb install -r "$(wslpath -w dist/repolog-preview-local.apk)"
+```
+
+意味:
+- `adb install`: USBケーブル経由でAPKを直接スマホにインストール
+- `-r`: 既にインストール済みでも上書き（replace）する
+- `wslpath -w`: WSL2のパスをWindows形式（`\\wsl.localhost\...`）に変換
+- `adb.exe` はWindowsバイナリのため、Windowsが理解できるパスが必要
+
+前提:
+- スマホがUSB接続されている
+- USBデバッグが ON（`android_デバッグ手順.md` 参照）
+- `adb devices` で `device` と表示される
+
+### 5-2. ビルド＆インストール一括実行
+
+```bash
+pnpm build:android:apk:local && pnpm install:device
+```
+
+意味:
+- APK ビルド後、自動的にスマホへインストールまで実行
+- `&&`: 前のコマンドが成功した場合のみ次を実行
+
+### 5-3. 手動転送（フォールバック）
+
+USB接続が使えない場合の代替手段:
+- Google Drive / OneDrive / Dropbox にAPKをアップロード
+- スマホでダウンロード → タップしてインストール
+- 初回は「提供元不明アプリのインストール許可」が必要
+
+### 5-4. 起動確認チェック
+- アプリ起動できる
+- レポート作成できる
+- 写真追加できる
+- PDF プレビューできる
+
+---
+
+## 6. 失敗時の切替（クラウド internal 配布）
+
+ローカルビルドで詰まったら、同じ `eas.json` でクラウドに切替。
+
+```bash
+pnpm build:android:apk:cloud
+```
+
+実体コマンド:
+```bash
+npx eas-cli@latest build -p android --profile preview-cloud-apk
+```
+
+意味:
+- `preview-cloud-apk`: EAS クラウドで APK を作成
+- 完了後に配布 URL が発行されるため、スマホから直接インストール可能
+
+---
+
+## 7. Play提出用（参考）
+
+スマホ確認用 APK と、Play 提出用 AAB は用途が違います。
+
+```bash
+pnpm build:android:aab:cloud
+```
+
+実体コマンド:
+```bash
+npx eas-cli@latest build -p android --profile production
+```
+
+意味:
+- `production` プロファイルは `app-bundle`（AAB）を生成
+- AAB は基本的に端末へ直接インストールせず、Play Console へ提出する
+
+---
+
+## 8. よくある詰まりポイント
+
+1. Node 18 で `eas-cli@18` を使っている
+- 対処: Node 20 以上へ上げる
+
+2. `ANDROID_SDK_ROOT` が空
+- 対処: Android SDK をインストールし、環境変数を設定
+
+3. AdMob / RevenueCat の環境変数が未設定
+- 対処: `.env` などで必要値を設定（秘密情報の直書き禁止）
+
+4. `prebuild` 反映漏れ
+- 対処: ネイティブ設定変更時は `npx expo prebuild --platform android` を実行
+
+5. AAB をスマホに入れようとしている
+- 対処: 実機確認は APK を使う
+
+---
+
+## 9. 参考（一次情報）
+- EAS local builds: https://docs.expo.dev/build-reference/local-builds/
+- Build APKs for Android emulators and devices: https://docs.expo.dev/build-reference/apk/
+- Internal distribution: https://docs.expo.dev/build/internal-distribution/
+- eas.json reference: https://docs.expo.dev/eas/json/
+- Set up EAS Build: https://docs.expo.dev/build/setup/
+- Environment variables in EAS: https://docs.expo.dev/eas/environment-variables/
+- Android App Bundle overview: https://developer.android.com/guide/app-bundle
+- Android adb command-line tool: https://developer.android.com/tools/adb
