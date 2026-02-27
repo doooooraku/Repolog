@@ -45,6 +45,25 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "REVENUECAT_IOS_API_KEY": "",
+      "REVENUECAT_ANDROID_API_KEY": "",
+      "IAP_DEBUG": "0",
+      "ADMOB_ANDROID_BANNER_ID": "",
+      "ADMOB_IOS_BANNER_ID": "",
+      "ADMOB_CONSENT_DEBUG_GEOGRAPHY": "",
+      "ADMOB_CONSENT_TEST_DEVICE_IDS": "",
+      "PDF_FONT_SUBSET_EXPERIMENT": "1",
+      "LEGAL_PRIVACY_URL": "https://doooooraku.github.io/Repolog/privacy/",
+      "LEGAL_TERMS_URL": "https://doooooraku.github.io/Repolog/terms/",
+      "supportsRTL": false,
+      "forcesRTL": false,
+      "router": {},
+      "eas": {
+        "projectId": "2cb88cda-dcda-4e7c-86ab-e8e5168d130e"
+      }
+    },
+    "owner": "dooraku"
   }
 }

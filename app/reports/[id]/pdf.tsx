@@ -69,27 +69,32 @@ export default function PdfPreviewScreen() {
   const loadPdf = useCallback(async () => {
     if (!reportId) return;
     setLoading(true);
-    const report = await getReportById(reportId);
-    if (!report) {
-      Alert.alert(t.errorLoadFailed);
+    try {
+      const report = await getReportById(reportId);
+      if (!report) {
+        Alert.alert(t.errorLoadFailed);
+        setLoading(false);
+        return;
+      }
+      const photos = await listPhotosByReport(reportId);
+      const uri = await generatePdfFile({
+        report,
+        photos,
+        layout,
+        paperSize,
+        isPro,
+        localeHint: lang,
+        appName: 'Repolog',
+        weatherLabel: weatherLabelMap[report.weather],
+        labels: labelMap,
+      });
+      setPdfUri(uri);
+    } catch {
+      Alert.alert(t.pdfExportFailed);
+    } finally {
       setLoading(false);
-      return;
     }
-    const photos = await listPhotosByReport(reportId);
-    const uri = await generatePdfFile({
-      report,
-      photos,
-      layout,
-      paperSize,
-      isPro,
-      localeHint: lang,
-      appName: 'Repolog',
-      weatherLabel: weatherLabelMap[report.weather],
-      labels: labelMap,
-    });
-    setPdfUri(uri);
-    setLoading(false);
-  }, [reportId, layout, paperSize, isPro, lang, labelMap, weatherLabelMap, t.errorLoadFailed]);
+  }, [reportId, layout, paperSize, isPro, lang, labelMap, weatherLabelMap, t.errorLoadFailed, t.pdfExportFailed]);
 
   useEffect(() => {
     void initPro();
