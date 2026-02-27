@@ -9,7 +9,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -130,9 +130,11 @@ export default function HomeScreen() {
     }
   }, [activeFilter, query, t.errorLoadFailed, weekRange.fromDate, weekRange.toDate]);
 
-  useEffect(() => {
-    void loadReports();
-  }, [loadReports]);
+  useFocusEffect(
+    useCallback(() => {
+      void loadReports();
+    }, [loadReports]),
+  );
 
   useEffect(() => {
     void initPro();
