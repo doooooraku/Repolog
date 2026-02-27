@@ -29,7 +29,7 @@ export default function RootLayout() {
             <Stack.Screen name="settings" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
           </Stack>
-          <StatusBar style="auto" />
+          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
         </ThemeProvider>
       </TamaguiProvider>
     </GestureHandlerRootView>

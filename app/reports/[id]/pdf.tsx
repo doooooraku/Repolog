@@ -89,7 +89,8 @@ export default function PdfPreviewScreen() {
         labels: labelMap,
       });
       setPdfUri(uri);
-    } catch {
+    } catch (e) {
+      console.error('[PDF] Generation failed:', e);
       Alert.alert(t.pdfExportFailed);
     } finally {
       setLoading(false);
@@ -199,7 +200,8 @@ export default function PdfPreviewScreen() {
         planAtExport: isPro ? 'pro' : 'free',
       });
 
-    } catch {
+    } catch (e) {
+      console.error('[PDF] Export failed:', e);
       Alert.alert(t.pdfExportFailed);
     } finally {
       setExporting(false);
