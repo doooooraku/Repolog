@@ -17,7 +17,11 @@
     "ump:consent:check": "node scripts/ump-consent-check.mjs",
     "pdf:font:benchmark": "node --expose-gc scripts/pdf-font-benchmark.mjs",
     "prebuild": "expo prebuild",
-    "build:android": "expo prebuild --platform android && cd android && ./gradlew bundleRelease"
+    "build:android": "expo prebuild --platform android && cd android && ./gradlew bundleRelease",
+    "build:android:apk:local": "npx eas-cli@latest build -p android --profile preview-local-apk --local --output dist/repolog-preview-local.apk",
+    "build:android:apk:cloud": "npx eas-cli@latest build -p android --profile preview-cloud-apk",
+    "build:android:aab:cloud": "npx eas-cli@latest build -p android --profile production",
+    "install:device": "adb install -r \"$(wslpath -w dist/repolog-preview-local.apk)\""
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
