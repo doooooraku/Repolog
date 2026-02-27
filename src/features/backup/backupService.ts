@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { unzip, zip } from 'react-native-zip-archive';
 
@@ -85,11 +85,9 @@ export class BackupError extends Error {
   }
 }
 
-const getDocumentDirectory = () =>
-  FileSystem.Paths?.document?.uri ?? (FileSystem as unknown as { documentDirectory?: string }).documentDirectory;
+const getDocumentDirectory = () => FileSystem.documentDirectory;
 
-const getCacheDirectory = () =>
-  FileSystem.Paths?.cache?.uri ?? (FileSystem as unknown as { cacheDirectory?: string }).cacheDirectory;
+const getCacheDirectory = () => FileSystem.cacheDirectory;
 
 const stripFileScheme = (uri: string) => uri.replace(/^file:\/\//, '');
 

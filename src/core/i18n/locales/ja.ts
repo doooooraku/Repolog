@@ -244,6 +244,7 @@ const dict = {
   photoPermissionDenied: '写真へのアクセス許可が必要です',
   photoAddFailed: '写真を追加できませんでした',
   photoEmpty: '写真がまだありません。',
+  tagInputPlaceholder: 'タグを追加（カンマ・改行で区切り）...',
   photoReorderHint: '長押しで並べ替え、×で削除できます。',
   photoReorderFailed: '写真の並び順を保存できませんでした。',
   photoDeleteConfirmTitle: '写真を削除しますか？',

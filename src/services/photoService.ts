@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 import type { Photo } from '@/src/types/models';
@@ -18,8 +18,7 @@ type AddPhotoResult = {
   reason?: 'permission' | 'error';
 };
 
-const getDocumentDirectory = () =>
-  FileSystem.Paths?.document?.uri ?? (FileSystem as unknown as { documentDirectory?: string }).documentDirectory;
+const getDocumentDirectory = () => FileSystem.documentDirectory;
 
 const ensureReportPhotoDir = async (reportId: string) => {
   const documentDirectory = getDocumentDirectory();
@@ -200,7 +199,7 @@ export async function addPhotosFromCamera(
   }
 
   const result = await ImagePicker.launchCameraAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    mediaTypes: ['images'],
     allowsEditing: false,
     quality: 1,
   });
@@ -222,7 +221,7 @@ export async function addPhotosFromLibrary(
   }
 
   const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    mediaTypes: ['images'],
     allowsMultipleSelection: true,
     selectionLimit: 0,
     quality: 1,
