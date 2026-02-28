@@ -33,6 +33,7 @@ import {
   getFirstPhotosByReportIds,
 } from '@/src/db/photoRepository';
 import { removeReportPhotos } from '@/src/services/photoService';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { useProStore } from '@/src/stores/proStore';
 import type { Report } from '@/src/types/models';
 
@@ -85,6 +86,7 @@ const weatherIconOpacityMap: Record<Report['weather'], number> = {
 };
 
 export default function HomeScreen() {
+  const { colors } = useAppTheme();
   const router = useRouter();
   const { t } = useTranslation();
   const isPro = useProStore((s) => s.isPro);
@@ -203,12 +205,12 @@ export default function HomeScreen() {
       return (
         <Pressable
           testID={`e2e_home_report_card_${index}`}
-          style={styles.card}
+          style={[styles.card, { backgroundColor: colors.surfaceBg }]}
           onPress={() => router.push(`/reports/${item.id}`)}>
           {summary.firstPhotoUri ? (
-            <Image source={{ uri: summary.firstPhotoUri }} style={styles.cardImage} contentFit="cover" />
+            <Image source={{ uri: summary.firstPhotoUri }} style={[styles.cardImage, { backgroundColor: colors.imagePlaceholder }]} contentFit="cover" />
           ) : (
-            <View style={[styles.cardImage, styles.cardImagePlaceholder]} />
+            <View style={[styles.cardImage, styles.cardImagePlaceholder, { backgroundColor: colors.imagePlaceholder }]} />
           )}
 
           <View style={styles.photoCountBadge}>
@@ -217,29 +219,29 @@ export default function HomeScreen() {
 
           <View style={styles.cardBody}>
             <View style={styles.cardTitleRow}>
-              <Text style={styles.cardTitle} numberOfLines={1}>
+              <Text style={[styles.cardTitle, { color: colors.textHeading }]} numberOfLines={1}>
                 {item.reportName ?? t.reportUnnamed}
               </Text>
               <Pressable
                 onPress={() => handleOpenCardMenu(item)}
                 hitSlop={TOUCH_HIT_SLOP}
                 style={styles.cardMenuButton}>
-                <EllipsisVertical size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
+                <EllipsisVertical size={16} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
               </Pressable>
             </View>
 
             <View style={styles.cardDateRow}>
-              <Text style={styles.cardDate}>{item.createdAt.replace('T', ' ').slice(0, 16)}</Text>
+              <Text style={[styles.cardDate, { color: colors.textMuted }]}>{item.createdAt.replace('T', ' ').slice(0, 16)}</Text>
               <WeatherIcon
                 testID={`e2e_home_report_${index}_weather_${item.weather}`}
                 size={16}
-                color="#6a7282"
+                color={colors.textMuted}
                 strokeWidth={ICON_STROKE_WIDTH}
                 opacity={weatherIconOpacityMap[item.weather]}
               />
             </View>
 
-            <Text style={styles.cardComment} numberOfLines={1}>
+            <Text style={[styles.cardComment, { color: colors.textSecondary }]} numberOfLines={1}>
               {commentText}
             </Text>
 
@@ -250,66 +252,66 @@ export default function HomeScreen() {
         </Pressable>
       );
     },
-    [handleOpenCardMenu, meta, router, t.reportUnnamed],
+    [handleOpenCardMenu, meta, router, t.reportUnnamed, colors.imagePlaceholder, colors.surfaceBg, colors.textHeading, colors.textMuted, colors.textPrimary, colors.textSecondary],
   );
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View style={[styles.center, { backgroundColor: colors.screenBg }]}>
         <ActivityIndicator />
       </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <View style={styles.root} testID="e2e_home_screen">
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Repolog</Text>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.screenBg }]} edges={['top']}>
+      <View style={[styles.root, { backgroundColor: colors.screenBg }]} testID="e2e_home_screen">
+        <View style={[styles.header, { backgroundColor: colors.surfaceBg, borderBottomColor: colors.borderDefault }]}>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Repolog</Text>
           <Pressable
             testID="e2e_open_settings"
             onPress={() => router.push('/settings')}
             hitSlop={TOUCH_HIT_SLOP}
             style={styles.headerIconButton}>
-            <Settings size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
+            <Settings size={16} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
           </Pressable>
         </View>
 
-        <View style={styles.searchRow}>
-          <View style={styles.searchInputWrap}>
-            <Search size={16} color="#717182" strokeWidth={ICON_STROKE_WIDTH} />
+        <View style={[styles.searchRow, { backgroundColor: colors.surfaceBg, borderBottomColor: colors.borderDefault }]}>
+          <View style={[styles.searchInputWrap, { backgroundColor: colors.surfaceHighlight }]}>
+            <Search size={16} color={colors.textPlaceholder} strokeWidth={ICON_STROKE_WIDTH} />
             <TextInput
               value={query}
               onChangeText={setQuery}
               placeholder={t.homeSearchPlaceholder}
-              placeholderTextColor="#717182"
-              style={styles.searchInput}
+              placeholderTextColor={colors.textPlaceholder}
+              style={[styles.searchInput, { color: colors.textPrimary }]}
             />
           </View>
         </View>
 
-        <View style={styles.filterRow}>
+        <View style={[styles.filterRow, { backgroundColor: colors.surfaceBg, borderBottomColor: colors.borderDefault }]}>
           <Pressable
             testID="e2e_home_filter_all"
             onPress={() => setActiveFilter('all')}
-            style={[styles.filterChip, activeFilter === 'all' && styles.filterChipActive]}>
-            <Text style={[styles.filterChipText, activeFilter === 'all' && styles.filterChipTextActive]}>
+            style={[styles.filterChip, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }, activeFilter === 'all' && { borderColor: colors.primaryBg, backgroundColor: colors.primaryBg }]}>
+            <Text style={[styles.filterChipText, { color: colors.textPrimary }, activeFilter === 'all' && { color: colors.textOnPrimary }]}>
               {t.homeFilterAll}
             </Text>
           </Pressable>
           <Pressable
             testID="e2e_home_filter_pinned"
             onPress={() => setActiveFilter('pinned')}
-            style={[styles.filterChip, activeFilter === 'pinned' && styles.filterChipActive]}>
-            <Text style={[styles.filterChipText, activeFilter === 'pinned' && styles.filterChipTextActive]}>
+            style={[styles.filterChip, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }, activeFilter === 'pinned' && { borderColor: colors.primaryBg, backgroundColor: colors.primaryBg }]}>
+            <Text style={[styles.filterChipText, { color: colors.textPrimary }, activeFilter === 'pinned' && { color: colors.textOnPrimary }]}>
               {t.homeFilterPinned}
             </Text>
           </Pressable>
           <Pressable
             testID="e2e_home_filter_week"
             onPress={() => setActiveFilter('week')}
-            style={[styles.filterChip, activeFilter === 'week' && styles.filterChipActive]}>
-            <Text style={[styles.filterChipText, activeFilter === 'week' && styles.filterChipTextActive]}>
+            style={[styles.filterChip, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }, activeFilter === 'week' && { borderColor: colors.primaryBg, backgroundColor: colors.primaryBg }]}>
+            <Text style={[styles.filterChipText, { color: colors.textPrimary }, activeFilter === 'week' && { color: colors.textOnPrimary }]}>
               {t.homeFilterThisWeek}
             </Text>
           </Pressable>
@@ -318,10 +320,10 @@ export default function HomeScreen() {
         <View style={styles.listWrap}>
           {reports.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyTitle}>{t.homeEmptyTitle}</Text>
-              <Text style={styles.emptyBody}>{t.homeEmptyBody}</Text>
-              <Pressable testID="e2e_home_create_report" style={styles.emptyButton} onPress={() => router.push('/reports/new')}>
-                <Text style={styles.emptyButtonText}>{t.homeCreateReport}</Text>
+              <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>{t.homeEmptyTitle}</Text>
+              <Text style={[styles.emptyBody, { color: colors.textMuted }]}>{t.homeEmptyBody}</Text>
+              <Pressable testID="e2e_home_create_report" style={[styles.emptyButton, { backgroundColor: colors.primaryBg }]} onPress={() => router.push('/reports/new')}>
+                <Text style={[styles.emptyButtonText, { color: colors.textOnPrimary }]}>{t.homeCreateReport}</Text>
               </Pressable>
             </View>
           ) : (
@@ -345,8 +347,8 @@ export default function HomeScreen() {
           testID="e2e_home_create_report_fab"
           onPress={() => router.push('/reports/new')}
           hitSlop={TOUCH_HIT_SLOP}
-          style={styles.fabButton}>
-          <Plus size={16} color="#ffffff" strokeWidth={ICON_STROKE_WIDTH} />
+          style={[styles.fabButton, { backgroundColor: colors.primaryBg }]}>
+          <Plus size={16} color={colors.textOnPrimary} strokeWidth={ICON_STROKE_WIDTH} />
         </Pressable>
       </View>
     </SafeAreaView>
@@ -356,23 +358,18 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f9fafb',
   },
   root: {
     flex: 1,
-    backgroundColor: '#f9fafb',
   },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f9fafb',
   },
   header: {
     height: 61,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#ffffff',
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
@@ -383,7 +380,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 28,
     fontWeight: '700',
-    color: '#0a0a0a',
   },
   headerIconButton: {
     width: 36,
@@ -395,8 +391,6 @@ const styles = StyleSheet.create({
   searchRow: {
     height: 61,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#ffffff',
     paddingHorizontal: 16,
     justifyContent: 'center',
   },
@@ -405,7 +399,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0)',
     borderRadius: 8,
-    backgroundColor: '#f3f3f5',
     paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -415,14 +408,11 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 36,
     fontSize: 16,
-    color: '#0a0a0a',
     paddingVertical: 8,
   },
   filterRow: {
     height: 57,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#ffffff',
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
@@ -431,23 +421,13 @@ const styles = StyleSheet.create({
   filterChip: {
     height: 32,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 8,
     paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
-  },
-  filterChipActive: {
-    borderColor: '#030213',
-    backgroundColor: '#030213',
   },
   filterChipText: {
     fontSize: 14,
-    color: '#0a0a0a',
-  },
-  filterChipTextActive: {
-    color: '#ffffff',
   },
   listWrap: {
     flex: 1,
@@ -462,7 +442,6 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 14,
     overflow: 'hidden',
-    backgroundColor: '#ffffff',
     marginBottom: 16,
     shadowColor: '#000000',
     shadowOpacity: 0.1,
@@ -473,11 +452,8 @@ const styles = StyleSheet.create({
   cardImage: {
     width: '100%',
     height: 258,
-    backgroundColor: '#d4d4d8',
   },
-  cardImagePlaceholder: {
-    backgroundColor: '#d4d4d8',
-  },
+  cardImagePlaceholder: {},
   photoCountBadge: {
     position: 'absolute',
     right: 12,
@@ -511,7 +487,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 28,
     fontWeight: '700',
-    color: '#101828',
   },
   cardMenuButton: {
     width: 36,
@@ -529,12 +504,10 @@ const styles = StyleSheet.create({
   cardDate: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#6a7282',
   },
   cardComment: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#4a5565',
   },
   hiddenText: {
     position: 'absolute',
@@ -556,12 +529,10 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#0a0a0a',
     textAlign: 'center',
   },
   emptyBody: {
     fontSize: 13,
-    color: '#6a7282',
     textAlign: 'center',
   },
   emptyButton: {
@@ -571,11 +542,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#030213',
   },
   emptyButtonText: {
     fontSize: 14,
-    color: '#ffffff',
     fontWeight: '500',
   },
   fabButton: {
@@ -585,7 +554,6 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#030213',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000000',

@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: 'ऐप का स्वरूप बदलें।',
   themeDarkLabel: 'डार्क',             // Dark
+  themeLightLabel: 'लाइट',             // Light
   themeNeonPinkLabel: 'नियन पिंक',
   themeCyberBlueLabel: 'साइबर ब्लू',
   freeThemeNote: 'फ्री: केवल डार्क / Pro में नियन पिंक और साइबर ब्लू अनलॉक होते हैं',

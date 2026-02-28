@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: '앱의 분위기를 바꿔보세요.',
   themeDarkLabel: '다크',            // Dark
+  themeLightLabel: '라이트',          // Light
   themeNeonPinkLabel: '네온 핑크',
   themeCyberBlueLabel: '사이버 블루',
   freeThemeNote: '무료: 다크만 사용 가능 / Pro: 네온 핑크, 사이버 블루 잠금 해제',

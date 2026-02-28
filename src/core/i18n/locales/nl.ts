@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: 'Verander het uiterlijk van de app.',
   themeDarkLabel: 'Donker',          // Dark
+  themeLightLabel: 'Licht',           // Light
   themeNeonPinkLabel: 'Neon Pink',
   themeCyberBlueLabel: 'Cyber Blue',
   freeThemeNote: 'Gratis: alleen Donker / Pro ontgrendelt Neon Pink & Cyber Blue',

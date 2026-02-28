@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: 'Измени внешний вид приложения.',
   themeDarkLabel: 'Темная',
+  themeLightLabel: 'Светлая',
   themeNeonPinkLabel: 'Неон Розовый',
   themeCyberBlueLabel: 'Кибер Синий',
   freeThemeNote: 'Free: Темная / Pro: Неон и Кибер',
