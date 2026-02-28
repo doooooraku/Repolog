@@ -10,11 +10,13 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { BackupError, exportBackup, importBackup } from '@/src/features/backup/backupService';
 
 export default function BackupScreen() {
   const router = useRouter();
+  const { colors } = useAppTheme();
   const { t } = useTranslation();
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -78,40 +80,40 @@ export default function BackupScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]}>
       <View style={styles.headerRow}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>{'‹'}</Text>
+        <Pressable onPress={() => router.back()} style={[styles.backButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
+          <Text style={[styles.backText, { color: colors.textSecondary }]}>{'‹'}</Text>
         </Pressable>
-        <Text style={styles.headerTitle}>{t.backupTitle}</Text>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>{t.backupTitle}</Text>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.backupExportTitle}</Text>
-        <Text style={styles.sectionBody}>{t.backupExportDesc}</Text>
+      <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.backupExportTitle}</Text>
+        <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.backupExportDesc}</Text>
         <Pressable
           onPress={handleExport}
-          style={[styles.primaryButton, exporting && styles.disabledButton]}
+          style={[styles.primaryButton, { backgroundColor: colors.primaryBg }, exporting && styles.disabledButton]}
           disabled={exporting || importing}>
           {exporting ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.primaryText} />
           ) : (
-            <Text style={styles.primaryButtonText}>{t.backupExportAction}</Text>
+            <Text style={[styles.primaryButtonText, { color: colors.primaryText }]}>{t.backupExportAction}</Text>
           )}
         </Pressable>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.backupImportTitle}</Text>
-        <Text style={styles.sectionBody}>{t.backupImportDesc}</Text>
+      <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.backupImportTitle}</Text>
+        <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.backupImportDesc}</Text>
         <Pressable
           onPress={handleImport}
-          style={[styles.secondaryButton, importing && styles.disabledButton]}
+          style={[styles.secondaryButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, importing && styles.disabledButton]}
           disabled={exporting || importing}>
           {importing ? (
             <ActivityIndicator />
           ) : (
-            <Text style={styles.secondaryButtonText}>{t.backupImportAction}</Text>
+            <Text style={[styles.secondaryButtonText, { color: colors.textPrimary }]}>{t.backupImportAction}</Text>
           )}
         </Pressable>
       </View>
@@ -124,7 +126,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 40,
     gap: 16,
-    backgroundColor: '#f6f6f6',
   },
   headerRow: {
     flexDirection: 'row',
@@ -136,47 +137,37 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#ddd',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
   },
   backText: {
     fontSize: 20,
-    color: '#333',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#222',
   },
   section: {
     padding: 16,
     borderRadius: 16,
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#eee',
     gap: 12,
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111',
   },
   sectionBody: {
     fontSize: 13,
-    color: '#666',
     lineHeight: 18,
   },
   primaryButton: {
     marginTop: 4,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: '#111',
     alignItems: 'center',
   },
   primaryButtonText: {
-    color: '#fff',
     fontWeight: '600',
   },
   secondaryButton: {
@@ -184,12 +175,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#ddd',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   secondaryButtonText: {
-    color: '#111',
     fontWeight: '600',
   },
   disabledButton: {

@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: 'Uygulama görünümünü değiştir.',
   themeDarkLabel: 'Koyu',            // Dark
+  themeLightLabel: 'Açık',            // Light
   themeNeonPinkLabel: 'Neon Pembe',
   themeCyberBlueLabel: 'Siber Mavi',
   freeThemeNote: 'Ücretsiz: Sadece Koyu / Pro: Neon Pembe ve Siber Mavi\'yi açar',

@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: 'Ubah tampilan aplikasi.',
   themeDarkLabel: 'Gelap',           // Dark
+  themeLightLabel: 'Terang',          // Light
   themeNeonPinkLabel: 'Neon Pink',
   themeCyberBlueLabel: 'Cyber Blue',
   freeThemeNote: 'Gratis: Hanya Gelap / Pro membuka Neon Pink & Cyber Blue',

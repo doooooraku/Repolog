@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: 'เปลี่ยนหน้าตาของแอป',
   themeDarkLabel: 'มืด',             // Dark
+  themeLightLabel: 'สว่าง',           // Light
   themeNeonPinkLabel: 'นีออนชมพู',
   themeCyberBlueLabel: 'ไซเบอร์บลู',
   freeThemeNote: 'ฟรี: ใช้ได้เฉพาะธีมมืด / Pro: ปลดล็อกนีออนชมพูและไซเบอร์บลู',

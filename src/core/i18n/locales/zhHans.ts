@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: '更改应用程序的外观。',
   themeDarkLabel: '深色',            // Dark
+  themeLightLabel: '浅色',            // Light
   themeNeonPinkLabel: '霓虹粉',      // Neon Pink
   themeCyberBlueLabel: '赛博蓝',     // Cyber Blue
   freeThemeNote: '免费：仅限深色 / Pro 解锁霓虹粉和赛博蓝',
