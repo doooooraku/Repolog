@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: '일반',
+  settingsSectionPrivacy: '개인정보',
+  settingsSectionPurchases: '구매',
+  settingsSectionBackup: '백업',
+  settingsBackupDesc: '백업 ZIP 파일(manifest.json + photos/)을 내보내거나 가져옵니다.',
+  settingsBackupOpen: '백업 열기',
+  tagsLabel: '태그',
+  addTagAction: '추가',
+  tagsEmpty: '태그가 없습니다.',
+  photoDeletedNotice: '사진이 삭제되었습니다.',
+  undoAction: '실행 취소',
 };
 
 export default dict;

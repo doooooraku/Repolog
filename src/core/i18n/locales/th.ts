@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: 'ทั่วไป',
+  settingsSectionPrivacy: 'ความเป็นส่วนตัว',
+  settingsSectionPurchases: 'การซื้อ',
+  settingsSectionBackup: 'สำรองข้อมูล',
+  settingsBackupDesc: 'ส่งออกหรือนำเข้าไฟล์ ZIP สำรอง (manifest.json + photos/)',
+  settingsBackupOpen: 'เปิดการสำรองข้อมูล',
+  tagsLabel: 'แท็ก',
+  addTagAction: 'เพิ่ม',
+  tagsEmpty: 'ยังไม่มีแท็ก',
+  photoDeletedNotice: 'ลบรูปภาพแล้ว',
+  undoAction: 'เลิกทำ',
 };
 
 export default dict;

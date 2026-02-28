@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: 'Genel',
+  settingsSectionPrivacy: 'Gizlilik',
+  settingsSectionPurchases: 'Satın Almalar',
+  settingsSectionBackup: 'Yedekleme',
+  settingsBackupDesc: 'Yedek ZIP dosyasını (manifest.json + photos/) dışa veya içe aktarın.',
+  settingsBackupOpen: 'Yedeği aç',
+  tagsLabel: 'Etiketler',
+  addTagAction: 'Ekle',
+  tagsEmpty: 'Henüz etiket yok.',
+  photoDeletedNotice: 'Fotoğraf kaldırıldı.',
+  undoAction: 'Geri al',
 };
 
 export default dict;

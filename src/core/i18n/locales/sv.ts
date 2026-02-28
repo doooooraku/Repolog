@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: 'Allmänt',
+  settingsSectionPrivacy: 'Integritet',
+  settingsSectionPurchases: 'Köp',
+  settingsSectionBackup: 'Säkerhetskopiering',
+  settingsBackupDesc: 'Exportera eller importera en säkerhetskopia (manifest.json + photos/).',
+  settingsBackupOpen: 'Öppna säkerhetskopia',
+  tagsLabel: 'Taggar',
+  addTagAction: 'Lägg till',
+  tagsEmpty: 'Inga taggar ännu.',
+  photoDeletedNotice: 'Foto borttaget.',
+  undoAction: 'Ångra',
 };
 
 export default dict;

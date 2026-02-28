@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: 'General',
+  settingsSectionPrivacy: 'Privacidad',
+  settingsSectionPurchases: 'Compras',
+  settingsSectionBackup: 'Respaldo',
+  settingsBackupDesc: 'Exporta o importa un ZIP de respaldo (manifest.json + photos/).',
+  settingsBackupOpen: 'Abrir respaldo',
+  tagsLabel: 'Etiquetas',
+  addTagAction: 'Añadir',
+  tagsEmpty: 'No hay etiquetas aún.',
+  photoDeletedNotice: 'Foto eliminada.',
+  undoAction: 'Deshacer',
 };
 
 export default dict;

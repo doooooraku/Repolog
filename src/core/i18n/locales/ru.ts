@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: 'Общие',
+  settingsSectionPrivacy: 'Конфиденциальность',
+  settingsSectionPurchases: 'Покупки',
+  settingsSectionBackup: 'Резервная копия',
+  settingsBackupDesc: 'Экспорт или импорт ZIP-архива (manifest.json + photos/).',
+  settingsBackupOpen: 'Открыть резервную копию',
+  tagsLabel: 'Теги',
+  addTagAction: 'Добавить',
+  tagsEmpty: 'Тегов пока нет.',
+  photoDeletedNotice: 'Фото удалено.',
+  undoAction: 'Отменить',
 };
 
 export default dict;

@@ -1,6 +1,5 @@
 import Constants from 'expo-constants';
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system/legacy';
 
 import { selectPdfFontKeys } from './pdfFontSelection';
 
@@ -47,23 +46,32 @@ const fontAssets = [
 type FontAsset = (typeof fontAssets)[number];
 type FontAssetKey = FontAsset['key'];
 
-const fontCache = new Map<FontAsset['source'], string>();
+const fontUriCache = new Map<FontAsset['source'], string>();
 
-async function loadFontDataUri(source: FontAsset['source']) {
-  const cached = fontCache.get(source);
+/**
+ * Return a file:// URI pointing to the font on disk.
+ *
+ * Previous implementation read the whole font file into memory, base64-encoded
+ * it, and embedded it as a data-URI in the HTML string.  For CJK variable
+ * fonts this produced 10-17 MB of base64 **per font**, pushing the WebView
+ * renderer past Android's 256 MB heap limit (OOM).
+ *
+ * The new approach references the font directly via its local file path.
+ * Android's WebView can resolve `file://` URIs, so the font is loaded from
+ * disk on demand instead of being buffered in the JS heap.  This eliminates
+ * the ~15 MB base64 overhead for a typical Japanese-locale PDF.
+ */
+async function loadFontFileUri(source: FontAsset['source']) {
+  const cached = fontUriCache.get(source);
   if (cached) return cached;
 
   const asset = Asset.fromModule(source);
   if (!asset.localUri) {
     await asset.downloadAsync();
   }
-  const uri = asset.localUri ?? asset.uri;
-  const base64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: 'base64',
-  });
-  const dataUri = `data:font/ttf;base64,${base64}`;
-  fontCache.set(source, dataUri);
-  return dataUri;
+  const fileUri = asset.localUri ?? asset.uri;
+  fontUriCache.set(source, fileUri);
+  return fileUri;
 }
 
 function toBooleanFlag(value: unknown): boolean {
@@ -95,8 +103,8 @@ export async function buildPdfFontCss(options: BuildPdfFontCssOptions = {}) {
   const selectedFonts = fontAssets.filter((font) => selectedKeys.has(font.key));
   const rules = await Promise.all(
     selectedFonts.map(async (font) => {
-      const dataUri = await loadFontDataUri(font.source);
-      return `@font-face {\n  font-family: '${font.family}';\n  src: url('${dataUri}') format('truetype');\n  font-weight: 100 900;\n  font-style: normal;\n}`;
+      const uri = await loadFontFileUri(font.source);
+      return `@font-face {\n  font-family: '${font.family}';\n  src: url('${uri}') format('truetype');\n  font-weight: 100 900;\n  font-style: normal;\n}`;
     }),
   );
 

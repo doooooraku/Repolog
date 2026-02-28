@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: '通用',
+  settingsSectionPrivacy: '隐私',
+  settingsSectionPurchases: '购买',
+  settingsSectionBackup: '备份',
+  settingsBackupDesc: '导出或导入备份ZIP文件（manifest.json + photos/）。',
+  settingsBackupOpen: '打开备份',
+  tagsLabel: '标签',
+  addTagAction: '添加',
+  tagsEmpty: '暂无标签。',
+  photoDeletedNotice: '照片已删除。',
+  undoAction: '撤销',
 };
 
 export default dict;
