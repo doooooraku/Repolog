@@ -121,6 +121,17 @@ const animations = createAnimations({
 const config = createTamagui({
   tokens,
   themes: {
+    light: {
+      background: '#ffffff',
+      surface: '#f9fafb',
+      muted: '#6a7282',
+      neonGreen: '#39FF14',
+      neonPink: '#FF00FF',
+      gray: '#e5e7eb',
+      text: '#0a0a0a',
+      accent: '#39FF14',
+      shadow: '#39FF14',
+    },
     dark: {
       background: tokens.color.background,
       surface: tokens.color.surface,

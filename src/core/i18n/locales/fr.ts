@@ -89,6 +89,7 @@ const dict = {
 
   // --- Themes ---
   themeDarkLabel: 'Sombre',
+  themeLightLabel: 'Clair',
   themeNeonPinkLabel: 'Néon Rose',
   themeCyberBlueLabel: 'Cyber Bleu',
   themeDesc: 'Choisis ton ambiance. (Les thèmes Pro arriveront plus tard.)',

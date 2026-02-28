@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: 'Ändra appens utseende.',
   themeDarkLabel: 'Mörk',            // Dark
+  themeLightLabel: 'Ljus',            // Light
   themeNeonPinkLabel: 'Neonrosa',
   themeCyberBlueLabel: 'Cyberblå',
   freeThemeNote: 'Gratis: Endast Mörk / Pro låser upp Neonrosa och Cyberblå',

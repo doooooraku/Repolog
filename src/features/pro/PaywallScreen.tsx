@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { proService, type PlanType, type PriceDetails } from '@/src/services/proService';
 import { useProStore } from '@/src/stores/proStore';
@@ -18,6 +19,7 @@ const DEFAULT_BADGE = '#ffb800';
 
 export default function PaywallScreen() {
   const router = useRouter();
+  const { colors } = useAppTheme();
   const { t } = useTranslation();
   const isPro = useProStore((s) => s.isPro);
   const initPro = useProStore((s) => s.init);
@@ -96,94 +98,96 @@ export default function PaywallScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]}>
       <View style={styles.headerRow}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>{'‹'}</Text>
+        <Pressable onPress={() => router.back()} style={[styles.backButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
+          <Text style={[styles.backText, { color: colors.textSecondary }]}>{'‹'}</Text>
         </Pressable>
-        <Text style={styles.headerTitle}>{t.paywallHeaderTitle}</Text>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>{t.paywallHeaderTitle}</Text>
       </View>
 
-      <View style={styles.hero}>
-        <Text style={styles.heroTitle}>{t.paywallHeaderTitle}</Text>
-        <Text style={styles.heroSubtitle}>{t.paywallHeroSubtitle}</Text>
+      <View style={[styles.hero, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+        <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>{t.paywallHeaderTitle}</Text>
+        <Text style={[styles.heroSubtitle, { color: colors.textMuted }]}>{t.paywallHeroSubtitle}</Text>
         {isPro && (
-          <View style={styles.activeBadge}>
-            <Text style={styles.activeBadgeText}>{t.paywallBadgeShort}</Text>
-            <Text style={styles.activeBadgeSub}>{t.purchaseSuccess}</Text>
+          <View style={[styles.activeBadge, { backgroundColor: colors.activeBadgeBg, borderColor: colors.activeBadgeBorder }]}>
+            <Text style={[styles.activeBadgeText, { color: colors.activeBadgeText }]}>{t.paywallBadgeShort}</Text>
+            <Text style={[styles.activeBadgeSub, { color: colors.activeBadgeText }]}>{t.purchaseSuccess}</Text>
           </View>
         )}
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.paywallPlansTitle}</Text>
-        <View style={styles.planCard}>
+      <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.paywallPlansTitle}</Text>
+        <View style={[styles.planCard, { borderColor: colors.borderLight, backgroundColor: colors.surfaceBgAlt }]}>
           <View style={styles.planRow}>
-            <Text style={styles.planTitle}>{t.paywallPlanMonthlyTitle}</Text>
-            <Text style={styles.planPrice}>{monthlyPriceLabel}</Text>
+            <Text style={[styles.planTitle, { color: colors.textPrimary }]}>{t.paywallPlanMonthlyTitle}</Text>
+            <Text style={[styles.planPrice, { color: colors.textPrimary }]}>{monthlyPriceLabel}</Text>
           </View>
           <Pressable
             onPress={() => handlePurchase('monthly')}
             style={[
               styles.ctaButton,
+              { backgroundColor: colors.primaryBg },
               (!monthlyAvailable || isPro) && styles.disabledButton,
             ]}
             disabled={!monthlyAvailable || isPro || action !== null}>
             {action === 'monthly' ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.primaryText} />
             ) : (
-              <Text style={styles.ctaText}>{t.paywallCtaMonthly}</Text>
+              <Text style={[styles.ctaText, { color: colors.primaryText }]}>{t.paywallCtaMonthly}</Text>
             )}
           </Pressable>
         </View>
 
-        <View style={[styles.planCard, styles.planHighlight]}>
+        <View style={[styles.planCard, styles.planHighlight, { borderColor: colors.planHighlightBorder, backgroundColor: colors.planHighlightBg }]}>
           <View style={styles.planRow}>
-            <Text style={styles.planTitle}>{t.paywallPlanYearlyTitle}</Text>
+            <Text style={[styles.planTitle, { color: colors.textPrimary }]}>{t.paywallPlanYearlyTitle}</Text>
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{t.paywallBestValueBadge}</Text>
+              <Text style={[styles.badgeText, { color: colors.badgeText }]}>{t.paywallBestValueBadge}</Text>
             </View>
           </View>
-          <Text style={styles.planPrice}>{yearlyPriceLabel}</Text>
+          <Text style={[styles.planPrice, { color: colors.textPrimary }]}>{yearlyPriceLabel}</Text>
           {yearlyPerMonth && (
-            <Text style={styles.planSub}>{`${t.paywallPricePerMonthLabel}: ${yearlyPerMonth}`}</Text>
+            <Text style={[styles.planSub, { color: colors.textMuted }]}>{`${t.paywallPricePerMonthLabel}: ${yearlyPerMonth}`}</Text>
           )}
-          <Text style={styles.planSub}>{t.paywallYearlySavings}</Text>
+          <Text style={[styles.planSub, { color: colors.textMuted }]}>{t.paywallYearlySavings}</Text>
           <Pressable
             onPress={() => handlePurchase('yearly')}
             style={[
               styles.ctaButton,
+              { backgroundColor: colors.primaryBg },
               (!yearlyAvailable || isPro) && styles.disabledButton,
             ]}
             disabled={!yearlyAvailable || isPro || action !== null}>
             {action === 'yearly' ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.primaryText} />
             ) : (
-              <Text style={styles.ctaText}>{t.paywallCtaYearly}</Text>
+              <Text style={[styles.ctaText, { color: colors.primaryText }]}>{t.paywallCtaYearly}</Text>
             )}
           </Pressable>
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.paywallRestoreTitle}</Text>
-        <Text style={styles.sectionSub}>{t.paywallRestoreDesc}</Text>
+      <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.paywallRestoreTitle}</Text>
+        <Text style={[styles.sectionSub, { color: colors.textMuted }]}>{t.paywallRestoreDesc}</Text>
         <Pressable
           onPress={handleRestore}
-          style={[styles.secondaryButton, action === 'restore' && styles.disabledButton]}
+          style={[styles.secondaryButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, action === 'restore' && styles.disabledButton]}
           disabled={action !== null}>
           {action === 'restore' ? (
             <ActivityIndicator />
           ) : (
-            <Text style={styles.secondaryText}>{t.restore}</Text>
+            <Text style={[styles.secondaryText, { color: colors.textPrimary }]}>{t.restore}</Text>
           )}
         </Pressable>
       </View>
 
-      <Text style={styles.finePrint}>{t.paywallFinePrint}</Text>
+      <Text style={[styles.finePrint, { color: colors.textMuted }]}>{t.paywallFinePrint}</Text>
 
-      <Pressable onPress={() => router.back()} style={styles.stayFreeButton}>
-        <Text style={styles.stayFreeText}>{t.paywallCtaStayFree}</Text>
+      <Pressable onPress={() => router.back()} style={[styles.stayFreeButton, { backgroundColor: colors.surfaceBg, borderColor: colors.borderMedium }]}>
+        <Text style={[styles.stayFreeText, { color: colors.textSecondary }]}>{t.paywallCtaStayFree}</Text>
       </Pressable>
     </ScrollView>
   );
@@ -194,7 +198,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 40,
     gap: 16,
-    backgroundColor: '#f6f6f6',
   },
   headerRow: {
     flexDirection: 'row',
@@ -206,85 +209,64 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#ddd',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
   },
   backText: {
     fontSize: 20,
-    color: '#333',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#222',
   },
   hero: {
     padding: 16,
     borderRadius: 16,
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#eee',
     gap: 8,
   },
   heroTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#111',
   },
   heroSubtitle: {
     fontSize: 13,
-    color: '#666',
     lineHeight: 18,
   },
   activeBadge: {
     marginTop: 8,
     padding: 10,
     borderRadius: 12,
-    backgroundColor: '#e7f6ea',
     borderWidth: 1,
-    borderColor: '#b9e4c5',
     gap: 4,
   },
   activeBadgeText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#1f7a3e',
   },
   activeBadgeSub: {
     fontSize: 12,
-    color: '#1f7a3e',
   },
   section: {
     padding: 16,
     borderRadius: 16,
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#eee',
     gap: 12,
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111',
   },
   sectionSub: {
     fontSize: 12,
-    color: '#666',
   },
   planCard: {
     padding: 14,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    backgroundColor: '#fafafa',
     gap: 8,
   },
-  planHighlight: {
-    borderColor: DEFAULT_BADGE,
-    backgroundColor: '#fff7e0',
-  },
+  planHighlight: {},
   planRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -293,16 +275,13 @@ const styles = StyleSheet.create({
   planTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#222',
   },
   planPrice: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#111',
   },
   planSub: {
     fontSize: 12,
-    color: '#666',
   },
   badge: {
     paddingHorizontal: 8,
@@ -313,47 +292,37 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#4b2d00',
   },
   ctaButton: {
     marginTop: 6,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: '#111',
     alignItems: 'center',
   },
   ctaText: {
-    color: '#fff',
     fontWeight: '600',
   },
   secondaryButton: {
     paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#ddd',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   secondaryText: {
-    color: '#111',
     fontWeight: '600',
   },
   finePrint: {
     fontSize: 11,
-    color: '#777',
     lineHeight: 16,
   },
   stayFreeButton: {
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#ddd',
     alignItems: 'center',
   },
   stayFreeText: {
     fontWeight: '600',
-    color: '#333',
   },
   disabledButton: {
     opacity: 0.5,

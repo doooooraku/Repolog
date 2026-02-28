@@ -6,19 +6,19 @@ import { TamaguiProvider } from 'tamagui';
 import 'react-native-reanimated';
 
 import tamaguiConfig from '@/tamagui.config';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const { colorScheme, isDark } = useAppTheme();
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme}>
+        <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="reports/new" options={{ headerShown: false }} />
@@ -29,7 +29,7 @@ export default function RootLayout() {
             <Stack.Screen name="settings" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
           </Stack>
-          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
         </ThemeProvider>
       </TamaguiProvider>
     </GestureHandlerRootView>

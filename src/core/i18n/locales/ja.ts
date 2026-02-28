@@ -102,6 +102,7 @@ const dict = {
     paywallMonthlySub: '毎月の請求。いつでも解約できます。',
     comingSoonTitle: '近日対応',
     themeDarkLabel: 'ダーク',
+    themeLightLabel: 'ライト',
     themeNeonPinkLabel: 'ネオンピンク',
     themeCyberBlueLabel: 'サイバーブルー',
     themeDesc: 'アプリ全体の雰囲気を選べます。（Pro テーマは後から）',

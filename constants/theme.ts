@@ -1,31 +1,117 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
 import { Platform } from 'react-native';
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    // Backgrounds
+    screenBg: '#f9fafb',
+    screenBgAlt: '#f6f6f6',
+    surfaceBg: '#ffffff',
+    surfaceBgAlt: '#fafafa',
+    surfaceHighlight: '#f3f3f5',
+
+    // Text
+    textPrimary: '#0a0a0a',
+    textHeading: '#101828',
+    textSecondary: '#4a5565',
+    textMuted: '#6a7282',
+    textPlaceholder: '#717182',
+    textOnPrimary: '#ffffff',
+
+    // Borders
+    borderDefault: 'rgba(0, 0, 0, 0.1)',
+    borderLight: '#eeeeee',
+    borderMedium: '#dddddd',
+
+    // Primary actions
+    primaryBg: '#030213',
+    primaryText: '#ffffff',
+
+    // Misc
+    imagePlaceholder: '#d4d4d8',
+    photoCardBg: '#e5e7eb',
+
+    // Tags
+    tagChipBg: '#f3f4f6',
+    tagChipBorder: '#d1d5db',
+    tagChipText: '#111827',
+    tagChipRemove: '#374151',
+
+    // Undo banner
+    undoBannerBg: '#eff6ff',
+    undoBannerBorder: '#dbeafe',
+    undoBannerText: '#1e3a8a',
+    undoActionText: '#1d4ed8',
+
+    // Pro badge
+    activeBadgeBg: '#e7f6ea',
+    activeBadgeBorder: '#b9e4c5',
+    activeBadgeText: '#1f7a3e',
+
+    // Paywall plan highlight
+    planHighlightBg: '#fff7e0',
+    planHighlightBorder: '#ffb800',
+    badgeText: '#4b2d00',
+
+    // PDF tab
+    tabActive: '#111111',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    // Backgrounds
+    screenBg: '#111214',
+    screenBgAlt: '#111214',
+    surfaceBg: '#1c1d20',
+    surfaceBgAlt: '#1c1d20',
+    surfaceHighlight: '#27282c',
+
+    // Text
+    textPrimary: '#ecedee',
+    textHeading: '#ecedee',
+    textSecondary: '#9ba1a6',
+    textMuted: '#6d7278',
+    textPlaceholder: '#6d7278',
+    textOnPrimary: '#ffffff',
+
+    // Borders
+    borderDefault: 'rgba(255, 255, 255, 0.1)',
+    borderLight: '#2a2b2f',
+    borderMedium: '#333537',
+
+    // Primary actions
+    primaryBg: '#ecedee',
+    primaryText: '#111214',
+
+    // Misc
+    imagePlaceholder: '#27282c',
+    photoCardBg: '#27282c',
+
+    // Tags
+    tagChipBg: '#27282c',
+    tagChipBorder: '#3f4146',
+    tagChipText: '#d1d5db',
+    tagChipRemove: '#9ba1a6',
+
+    // Undo banner
+    undoBannerBg: '#1a2744',
+    undoBannerBorder: '#1e3a5c',
+    undoBannerText: '#93bbfb',
+    undoActionText: '#60a5fa',
+
+    // Pro badge
+    activeBadgeBg: '#162e1c',
+    activeBadgeBorder: '#2a5c37',
+    activeBadgeText: '#6ee7a0',
+
+    // Paywall plan highlight
+    planHighlightBg: '#2a2210',
+    planHighlightBorder: '#ffb800',
+    badgeText: '#4b2d00',
+
+    // PDF tab
+    tabActive: '#ecedee',
   },
 };
+
+export type AppColors = typeof Colors.light;
 
 export const Fonts = Platform.select({
   ios: {
