@@ -45,3 +45,9 @@ app-example
 
 # Tamagui generated
 .tamagui/
+
+# Debug artifacts (screenshots, crash logs)
+docs/reference/Debug/
+
+# Windows Zone.Identifier metadata files
+*:Zone.Identifier

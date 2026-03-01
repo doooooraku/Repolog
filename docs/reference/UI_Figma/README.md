@@ -1,11 +1,29 @@
+# UI_Figma（Figma コードバンドル & 画面台帳）
 
-  # Product Strategy Document
+Figma の **Product Strategy Document** からエクスポートしたコードバンドルと、
+画面ごとの node-id を管理する台帳を置くディレクトリです。
 
-  This is a code bundle for Product Strategy Document. The original project is available at https://www.figma.com/design/AZcZdn3LnIugwZlDvHdwls/Product-Strategy-Document.
+- Figma file: `AZcZdn3LnIugwZlDvHdwls`
+- 正は常に Figma 側。このディレクトリの HTML/CSS は参考実装。
 
-  ## Running the code
+---
 
-  Run `npm i` to install the dependencies.
+## 主要ファイル
 
-  Run `npm run dev` to start the development server.
-  
+| ファイル | 内容 |
+|---------|------|
+| `screen_node_ledger.md` | 画面名 ↔ Figma node-id の対応表 |
+| `src/guidelines/Guidelines.md` | UIガイドライン（色・タイポ・間隔） |
+| `index.html` | Figma エクスポート HTML |
+
+---
+
+## 開発サーバー（UIプレビュー用）
+
+```bash
+cd docs/reference/UI_Figma
+npm install
+npm run dev
+```
+
+> このサーバーはアプリ本体とは独立です。Figma デザインの静的プレビューにのみ使います。

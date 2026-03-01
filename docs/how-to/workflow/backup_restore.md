@@ -144,11 +144,11 @@
 
 ### AC3: 導線リンク
 - 本文書から:
-  - `docs/how-to/testing.md`
-  - `docs/how-to/whole_workflow.md`
+  - `docs/how-to/testing/testing.md`
+  - `docs/how-to/workflow/whole_workflow.md`
 - 逆リンク:
-  - `docs/how-to/testing.md` から本Runbook
-  - `docs/how-to/whole_workflow.md` から本Runbook
+  - `docs/how-to/testing/testing.md` から本Runbook
+  - `docs/how-to/workflow/whole_workflow.md` から本Runbook
 
 ---
 

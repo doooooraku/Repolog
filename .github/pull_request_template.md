@@ -29,7 +29,7 @@ Repolog PR Template
   - constraints: docs/reference/constraints.md
   - basic_spec: docs/reference/basic_spec.md
   - functional_spec: docs/reference/functional_spec.md
-  - workflow: docs/how-to/whole_workflow.md
+  - workflow: docs/how-to/workflow/whole_workflow.md
   - figma: （URL）
   - spec/notes: （該当docsやIssueコメントURL）
 
@@ -123,8 +123,8 @@ Repolog PR Template
 
 - [ ] 仕様/前提/制約が変わる → docs/reference/constraints.md を更新（リンク：）
 - [ ] 用語が増える/意味が変わる → docs/reference/glossary.md を更新（リンク：）
-- [ ] 運用手順が変わる → docs/how-to/whole_workflow.md を更新（リンク：）
-- [ ] リリース手順に影響 → docs/how-to/android_ビルド手順.md / docs/how-to/ios_ビルド手順.md を更新（リンク：）
+- [ ] 運用手順が変わる → docs/how-to/workflow/whole_workflow.md を更新（リンク：）
+- [ ] リリース手順に影響 → docs/how-to/development/android_build.md / docs/how-to/development/ios_build.md を更新（リンク：）
 - [ ] 意思決定が増えた/変わった → docs/adr/ADR-XXXX.md を追加 or 更新（リンク：）
 - [ ] テスト観点が変わる → テスト（Jest/Maestro）を追加/更新（リンク or 該当ファイル：）
 - [ ] どれも不要（理由：外部仕様/運用/テスト観点に影響なし、内部リファクタのみ）

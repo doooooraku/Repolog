@@ -1,4 +1,4 @@
-# docs/how-to/pdf_font_benchmark.md
+# docs/how-to/testing/pdf_font_benchmark.md
 
 # PDFフォント性能ベンチマーク（Issue #72 / #101）
 
@@ -57,8 +57,8 @@ pnpm pdf:font:benchmark
 node --expose-gc scripts/pdf-font-benchmark.mjs \
   --iterations 9 \
   --sample-image assets/images/icon.png \
-  --out-json docs/how-to/benchmarks/pdf_font_benchmark.custom.json \
-  --out-md docs/how-to/benchmarks/pdf_font_benchmark.custom.md
+  --out-json docs/how-to/testing/benchmarks/pdf_font_benchmark.custom.json \
+  --out-md docs/how-to/testing/benchmarks/pdf_font_benchmark.custom.md
 ```
 
 各オプションの意味:
@@ -77,8 +77,8 @@ node --expose-gc scripts/pdf-font-benchmark.mjs \
 
 デフォルトでは次に保存されます。
 
-- `docs/how-to/benchmarks/pdf_font_benchmark.latest.json`
-- `docs/how-to/benchmarks/pdf_font_benchmark.latest.md`
+- `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.json`
+- `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.md`
 
 ---
 
@@ -108,4 +108,4 @@ node --expose-gc scripts/pdf-font-benchmark.mjs \
 - これは「フォント埋め込み経路」の比較ベンチです。
 - 実機の最終PDFサイズ/生成時間は、写真内容・端末性能・ネイティブ印刷エンジンで変動します。
 - そのため、最終採用判断は `ADR-0002` の追記を正とします。
-- 実験有効化時の実機確認は `docs/how-to/testing.md` のPDF実機チェックに従ってください。
+- 実験有効化時の実機確認は `docs/how-to/testing/testing.md` のPDF実機チェックに従ってください。

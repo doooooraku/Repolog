@@ -15,13 +15,13 @@
 * **ADR（なぜそう決めたか）**：`docs/adr/ADR-*.md`（本文から理由を追い出す）
 * **How-to（手順）**：
 
-  * `docs/how-to/whole_workflow.md`（開発〜リリースの回し方）
-  * `docs/how-to/git_workflow.md`（Issue~mergeの回し方）
-  * `docs/how-to/testing.md`（テストの回し方。正はCI/package.jsonにリンク）
-  * `docs/how-to/backup_restore.md`（バックアップImport/Exportの運用と障害切り分け）
-  * `docs/how-to/android_ビルド手順.md`（Androidビルド手順）
-  * `docs/how-to/ios_ビルド手順.md`（iOSビルド手順）
-  * `docs/how-to/legal_pages_github_pages.md`（法務ページ公開と運用）
+  * `docs/how-to/workflow/whole_workflow.md`（開発〜リリースの回し方）
+  * `docs/how-to/workflow/git_workflow.md`（Issue~mergeの回し方）
+  * `docs/how-to/testing/testing.md`（テストの回し方。正はCI/package.jsonにリンク）
+  * `docs/how-to/workflow/backup_restore.md`（バックアップImport/Exportの運用と障害切り分け）
+  * `docs/how-to/development/android_build.md`（Androidビルド手順）
+  * `docs/how-to/development/ios_build.md`（iOSビルド手順）
+  * `docs/how-to/archive/legal_pages_github_pages.md`（法務ページ公開と運用）
 * **合否（Acceptance Criteria）**：基本は **自動テスト（Jest）** ＋ 必要なら E2E（Maestro）
   → 「合格/不合格」を人の文章から機械に寄せる。
 * **強制装置（Docs-as-code）**：Issue Forms / PRテンプレ / Required checks / CODEOWNERS
@@ -29,7 +29,7 @@
 
 ---
 
-# `docs/how-to/whole_workflow.md`（提案：全文）
+# `docs/how-to/workflow/whole_workflow.md`（提案：全文）
 
 > ※ あなたの「工程カード（トリガー/INPUT/OUTPUT/完了条件/担当…）」形式で書きます
 > ※ “正を見る場所”を固定（package.json / CI / 公式Docs）して、写経を減らします
@@ -293,10 +293,10 @@ gh api repos/doooooraku/Repolog/milestones/<旧番号> --method PATCH -f state='
 
 * **トリガーキー**：mainが安定 / 仕様書から作成するIssue/バグが無くなった
 * **作業内容**：
-  * `docs/how-to/release_notes_template.md` に沿ってリリースノートを作成
+  * `docs/how-to/workflow/release_notes_template.md` に沿ってリリースノートを作成
   * `vX.Y.Z-rc.N` または `vX.Y.Z` のタグを作成し、`gh release create` で公開
-  * `docs/how-to/android_ビルド手順.md`の実施
-  * `docs/how-to/ios_ビルド手順.md`の実施
+  * `docs/how-to/development/android_build.md`の実施
+  * `docs/how-to/development/ios_build.md`の実施
 * **INPUT**：main、リリースノート、Storeメタ情報
 * **OUTPUT**：GitHub Release / TestFlight / Play内部テスト / 本番リリース
 * **完了条件**：ストアの審査/配信が通る。

@@ -47,7 +47,7 @@ git push origin v1.0.0-rc.1
 gh release create v1.0.0-rc.1 \
   --repo doooooraku/Repolog \
   --title "Repolog v1.0.0-rc.1" \
-  --notes-file docs/how-to/release_notes_template.md \
+  --notes-file docs/how-to/workflow/release_notes_template.md \
   --prerelease
 ```
 
@@ -56,7 +56,7 @@ gh release create v1.0.0-rc.1 \
 gh release create v1.0.0 \
   --repo doooooraku/Repolog \
   --title "Repolog v1.0.0" \
-  --notes-file docs/how-to/release_notes_template.md
+  --notes-file docs/how-to/workflow/release_notes_template.md
 ```
 
 コマンドの意味:

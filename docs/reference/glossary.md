@@ -181,7 +181,7 @@
 
 ### 未使用候補キー（Unused Candidate Key）
 - 定義：`en.ts` に存在するが、`app/` と `src/` のコード参照で検出されないi18nキー。
-- 運用：`docs/how-to/i18n_key_inventory.md` で棚卸しし、段階削除の対象を決める。
+- 運用：`docs/how-to/i18n/i18n_key_inventory.md` で棚卸しし、段階削除の対象を決める。
 
 ### 言語コード（Language Code）
 - 定義：BCP47/IANA準拠の言語タグ。

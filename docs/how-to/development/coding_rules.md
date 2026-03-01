@@ -5,7 +5,7 @@
 
 ## 0. この文書の使い方（超重要）
 この文書は「コードの交通ルール」です。  
-開発の流れ（Issue→ブランチ→PR→CI→マージ）は `docs/how-to/whole_workflow.md` を見てください。
+開発の流れ（Issue→ブランチ→PR→CI→マージ）は `docs/how-to/workflow/whole_workflow.md` を見てください。
 
 ### 0.1 いつ読む？
 - これから新しく機能を作るとき（迷子防止）
