@@ -5,7 +5,7 @@ import * as Sharing from 'expo-sharing';
 
 import type { Photo, Report } from '@/src/types/models';
 import { buildPdfHtml } from './pdfTemplate';
-import type { PaperSize, PdfLayout } from './pdfUtils';
+import { PAPER_SIZES, type PaperSize, type PdfLayout } from './pdfUtils';
 
 export type PdfGenerateInput = {
   report: Report;
@@ -30,9 +30,17 @@ export type PdfGenerateInput = {
   };
 };
 
+// 1mm = 72/25.4 points (PDF standard: 72 points per inch)
+const MM_TO_POINTS = 72 / 25.4;
+
 export async function generatePdfFile(input: PdfGenerateInput) {
   const html = await buildPdfHtml(input);
-  const file = await Print.printToFileAsync({ html });
+  const size = PAPER_SIZES[input.paperSize];
+  const file = await Print.printToFileAsync({
+    html,
+    width: Math.round(size.widthMm * MM_TO_POINTS),
+    height: Math.round(size.heightMm * MM_TO_POINTS),
+  });
   return file.uri;
 }
 

@@ -41,6 +41,7 @@ import {
   remainingCommentChars,
   splitTagInput,
 } from '@/src/features/reports/reportUtils';
+import { formatDateTime } from '@/src/features/pdf/pdfUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
@@ -739,7 +740,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             />
 
             <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.createdAtLabel}</Text>
-            <Text style={[styles.value, { color: colors.textSecondary }]}>{createdAt.replace('T', ' ').slice(0, 16)}</Text>
+            <Text style={[styles.value, { color: colors.textSecondary }]}>{formatDateTime(createdAt)}</Text>
 
             <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.weatherLabel}</Text>
             <View style={styles.weatherRow}>
