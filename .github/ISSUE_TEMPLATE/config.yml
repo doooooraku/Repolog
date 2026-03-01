@@ -4,7 +4,7 @@ contact_links:
     url: "https://github.com/doooooraku/Repolog/discussions"
     about: "不具合/機能要望ではない相談・質問はこちら（Issueをノイズで埋めない）"
   - name: "運用フロー（workflow）"
-    url: "https://github.com/doooooraku/Repolog/blob/main/docs/how-to/whole_workflow.md"
+    url: "https://github.com/doooooraku/Repolog/blob/main/docs/how-to/workflow/whole_workflow.md"
     about: "Issue→PR→CI→Releaseの運用ルール（迷ったら先に読む）"
   - name: "セキュリティ/法務/ライセンス（ポリシー）"
     url: "https://github.com/doooooraku/Repolog/blob/main/docs/reference/constraints.md"

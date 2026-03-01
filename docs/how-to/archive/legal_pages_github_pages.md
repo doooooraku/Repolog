@@ -1,4 +1,4 @@
-# docs/how-to/legal_pages_github_pages.md
+# docs/how-to/archive/legal_pages_github_pages.md
 
 # Legal Pages on GitHub Pages (Privacy / Terms)
 

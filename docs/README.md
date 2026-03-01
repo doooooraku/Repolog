@@ -1,122 +1,87 @@
-# docs/README.md
+# Repolog Documentation Index
 
-このディレクトリは「仕様を生かし続ける」ための docs-as-code の中核です。
-ドキュメントは **役割で分けて、更新ルールを固定** します。
-
----
-
-## 1. まず全体像（どれが何の文書？）
-
-### Explanation（なぜ/価値/境界）
-- `docs/explanation/product_strategy.md`
-  - 価値、やる/やらない、判断基準を固定する「地図」
-
-### Reference（変わりにくい事実）
-- `docs/reference/basic_spec.md`
-  - アプリが「何をするか」の基本仕様
-- `docs/reference/functional_spec.md`
-  - 機能が「どう動くか」の仕様
-- `docs/reference/glossary.md`
-  - 用語の意味の辞書
-- `docs/reference/constraints.md`
-  - 前提/制約/非ゴールの一枚岩（ルールブック）
-
-### ADR（なぜそうしたか）
-- `docs/adr/ADR-*.md`
-  - 意思決定の理由ログ（蒸し返し防止）
-
-### How-to（手順）
-- `docs/how-to/*`
-  - Issue -> PR -> CI -> Release の「やり方」
-  - 例：`docs/how-to/legal_pages_github_pages.md`（法務ページ公開とリンク運用）
-  - 例：`docs/how-to/release_notes_template.md`（タグ命名規則とReleaseノート雛形）
-  - 例：`docs/how-to/backup_restore.md`（バックアップ復元と障害切り分け）
-  - 例：`docs/how-to/i18n_key_inventory.md`（翻訳キーの使用中/未使用候補の棚卸し）
-  - 例：`docs/how-to/pdf_font_benchmark.md`（PDFフォント性能計測の再実行手順）
+> **docs-as-code**: ドキュメントは Git で管理し、PR + CI で品質を担保する。
 
 ---
 
-## 2. 「最初は固定」の考え方は正しい？
+## ファイルマップ
 
-結論：
-- **はい、原則は正しい**です。
-- ただし **「固定」ではなく「変えにくい」** が正確。
-
-### 2-1. 変えにくい（基盤になる）
-- `product_strategy.md`
-- `basic_spec.md`
-- `functional_spec.md`
-- `glossary.md`
-
-これらは **アプリ開発の土台** なので、
-変えると影響が大きい → だから **安定させる** のが狙いです。
-
-### 2-2. 進むほど増える/蓄積する
-- `constraints.md` は **1枚に集約して更新**（増えるが「追記型」ではない）
-- `docs/adr/ADR-*.md` は **履歴として増える**（決定ログが蓄積）
-
-### 2-3. “固定に見えるが動く” もの
-- 仕様書（basic/functional）は更新し得る
-  - ただし **「仕様変更の根拠（ADR）」と「テスト（合否）」が揃う時だけ** 変える
-
----
-
-## 3. 仕様が「生き続ける」条件（最小セット）
-
-1) **Issue Forms** で必須項目を強制する
-2) **PRテンプレ** で docs/ADR/テストの更新要否を毎回判断させる
-3) **CODEOWNERS + ブランチ保護** でレビューとCIを必須にする
-4) **テストが合否の正** になる（CIで必ず動く）
-
-この4つが揃うと「更新漏れ」が自然に止まります。
-
----
-
-## 4. ドキュメント更新の判断フロー（超簡単）
-
-### A. 仕様に影響する変更？
-- YES → `basic_spec` / `functional_spec` を更新
-- NO → 次へ
-
-### B. 前提/制約が変わる？
-- YES → `constraints.md` を更新
-- NO → 次へ
-
-### C. 用語の意味が変わる？
-- YES → `glossary.md` を更新
-- NO → 次へ
-
-### D. 「なぜそうしたか」が議論になる？
-- YES → ADR を追加
-- NO → 次へ
-
-### E. 合否条件が変わる？
-- YES → テストを追加/更新
-- NO → そのまま
-
----
-
-## 5. “仕様を生かし続ける” ための役割分担（人間 / AI）
-
-- 人間（あなた）：価値判断、境界決め、最終責任
-- AI（Codex）：文章整形、Issue起票補助、テスト/実装の反復
+```
+docs/
+├── README.md                 ← このファイル（ナビゲーション）
+│
+├── explanation/              ── なぜ / 価値 / 境界
+│   └── product_strategy.md        プロダクト戦略（地図）
+│
+├── reference/                ── 変わりにくい事実
+│   ├── basic_spec.md              基本仕様（何をするか）
+│   ├── functional_spec.md         機能仕様（どう動くか）
+│   ├── constraints.md             前提/制約/非ゴール
+│   ├── glossary.md                用語辞書
+│   ├── pdf_template.md            PDF HTML/CSS テンプレ（SSoT）
+│   ├── wireframes.md              画面設計ワイヤーフレーム
+│   └── UI_Figma/                  Figma 連携・画面ノード台帳
+│
+├── adr/                      ── なぜそうしたか（意思決定ログ）
+│   ├── ADR-0001  初期アーキテクチャ
+│   ├── ADR-0002  PDFフォント選定
+│   ├── ADR-0003  AdMob バナー配置
+│   ├── ADR-0004  バックアップ ZIP 形式
+│   ├── ADR-0005  19言語セット選定
+│   ├── ADR-0006  AsyncStorage/SecureStore 使い分け
+│   ├── ADR-0007  バックアップ Import 追記戦略
+│   └── ADR-0008  AdMob UMP 同意プリフライト
+│
+├── how-to/                   ── 手順・レシピ
+│   ├── development/               ビルド・実機・コーディング
+│   │   ├── android_build.md
+│   │   ├── android_debug.md
+│   │   ├── android_device.md
+│   │   ├── ios_build.md
+│   │   └── coding_rules.md
+│   ├── workflow/                  開発〜リリースの流れ
+│   │   ├── whole_workflow.md      Issue→PR→CI→Release 全体像
+│   │   ├── git_workflow.md        ブランチ/コミット規約
+│   │   ├── release_notes_template.md
+│   │   ├── backup_restore.md      バックアップ運用と障害対応
+│   │   └── figma_mcp_prompt.md
+│   ├── testing/                   テスト・ベンチマーク
+│   │   ├── testing.md             テスト戦略と実行手順
+│   │   ├── pdf_font_benchmark.md  フォント性能計測
+│   │   └── benchmarks/            計測結果 (JSON/MD)
+│   ├── i18n/                      多言語
+│   │   ├── i18n_key_inventory.md
+│   │   └── i18n_pl_fallback_audit.md
+│   └── archive/                   完了済み / 一時的
+│       ├── legal_pages_github_pages.md
+│       └── figma_ui_issue_pr_review.md
+│
+├── index.html                ── GitHub Pages: 利用規約ルーター
+├── privacy/index.html        ── GitHub Pages: プライバシーポリシー
+└── terms/index.html          ── GitHub Pages: 利用規約
+```
 
 ---
 
-## 6. 具体例（1つだけ）
+## 迷ったときのドキュメント更新フロー
 
-「Freeでも1レポート写真上限を10枚から8枚に変更する」場合：
-- `constraints.md` を更新（Free/Pro差分が変わる）
-- ADR を追加（なぜ5にする？代案は？）
-- `basic_spec.md` と `functional_spec.md` を更新
-- テスト（Jest/E2E）で合否条件を更新
-- PRテンプレで更新済みリンクを貼る
+| 変更の種類 | 更新先 |
+|-----------|--------|
+| アプリの仕様が変わる | `reference/basic_spec.md` or `functional_spec.md` |
+| 前提・制約が変わる | `reference/constraints.md` |
+| 用語が増える/意味が変わる | `reference/glossary.md` |
+| 「なぜそうしたか」が議論になる | `adr/ADR-XXXX.md` を追加 |
+| 合否条件が変わる | テスト (Jest / Maestro) を追加/更新 |
+| 運用手順が変わる | `how-to/` の該当ファイル |
+
+> PRテンプレ (`.github/pull_request_template.md`) のセクション8にも同じチェックリストがあります。
 
 ---
 
-## 7. 迷った時のチェックリスト
+## 安定度の目安
 
-- 仕様の正はどこ？（基本は docs + テスト + ADR）
-- その変更は「前提/制約」を壊していない？
-- 合否はテストで判定できる？
-- PRテンプレに必要なリンクは貼った？
+| レベル | ファイル | 変更頻度 |
+|--------|----------|----------|
+| 高（基盤） | product_strategy, basic_spec, functional_spec | 稀。ADR + テスト更新とセットで |
+| 中（蓄積） | constraints, glossary, ADR | 機能追加ごとに追記 |
+| 低（手順） | how-to/* | 運用が変わるたび更新 |

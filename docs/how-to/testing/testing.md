@@ -1,6 +1,6 @@
 
 
-# docs/how-to/testing.md
+# docs/how-to/testing/testing.md
 
 
 # Testing（CIと同じようにテストして、落ちたら直す）
@@ -14,7 +14,7 @@
 - PRを出す前（最低限ここに書いてあるテストを通す）
 - CIが落ちたとき（どこを見て、どう再現するか）
 - 受け入れ条件を「実行できる仕様」に寄せたいとき（テストを追加したいとき）
-- バックアップImport/Export障害を切り分けるとき（`docs/how-to/backup_restore.md`）
+- バックアップImport/Export障害を切り分けるとき（`docs/how-to/workflow/backup_restore.md`）
 
 ---
 
@@ -300,7 +300,7 @@ CIが落ちたステップだけを、まずローカルで叩く：
 pnpm i18n:audit -- pl
 
 # 2) 監査結果を保存（PR添付用）
-pnpm i18n:audit -- pl --out docs/how-to/i18n_pl_fallback_audit.md
+pnpm i18n:audit -- pl --out docs/how-to/i18n/i18n_pl_fallback_audit.md
 
 # 3) en.ts のキー棚卸し（使用中 / 未使用候補）
 pnpm i18n:inventory
@@ -308,7 +308,7 @@ pnpm i18n:inventory
 
 `pnpm i18n:inventory` は次と同じです。
 ```bash
-pnpm i18n:audit -- pl --inventory --out docs/how-to/i18n_key_inventory.md
+pnpm i18n:audit -- pl --inventory --out docs/how-to/i18n/i18n_key_inventory.md
 ```
 
 コマンドの意味:
@@ -318,9 +318,9 @@ pnpm i18n:audit -- pl --inventory --out docs/how-to/i18n_key_inventory.md
 - `--inventory`: `en.ts` キーを「使用中 / 未使用候補」に分類して出力する
 
 ### 6.2 監査成果物（正）
-- `docs/how-to/i18n_pl_fallback_audit.md`
+- `docs/how-to/i18n/i18n_pl_fallback_audit.md`
   - 対象言語で上書きされていないキー（フォールバック）を一覧化
-- `docs/how-to/i18n_key_inventory.md`
+- `docs/how-to/i18n/i18n_key_inventory.md`
   - `en.ts` の全キーを、次の3分類で一覧化
   - `Used Keys (Direct)`：`t.key` 参照
   - `Used Keys (Dynamic)`：`labelKey` / `t['key']` 参照
@@ -401,7 +401,7 @@ pnpm i18n:audit -- pl --inventory --out docs/how-to/i18n_key_inventory.md
 
 ### 8.2 バックアップ運用の確認（#74）
 
-- 運用手順の正: `docs/how-to/backup_restore.md`
+- 運用手順の正: `docs/how-to/workflow/backup_restore.md`
 - append戦略の正: `docs/adr/ADR-0007-backup-import-append-strategy.md`
 - 実装の正: `src/features/backup/backupService.ts`
 
@@ -514,7 +514,7 @@ xcrun simctl spawn booted log stream \
 ### 9.5 合否基準（AC対応）
 
 - AC1（手順参照）：
-  - この節（9章）を `docs/how-to/testing.md` に置く
+  - この節（9章）を `docs/how-to/testing/testing.md` に置く
 - AC2（manual workflow）：
   - `.github/workflows/ump-consent-validation.yml` を `workflow_dispatch` で実行可能
 - AC3（ログ確認ポイント）：
@@ -549,16 +549,16 @@ pnpm pdf:font:benchmark
   - NodeのGC呼び出しを有効化し、cold run計測のノイズを減らす
 
 成果物（デフォルト）:
-- `docs/how-to/benchmarks/pdf_font_benchmark.latest.json`
-- `docs/how-to/benchmarks/pdf_font_benchmark.latest.md`
+- `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.json`
+- `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.md`
 
 追加オプション例:
 ```bash
 node --expose-gc scripts/pdf-font-benchmark.mjs \
   --iterations 9 \
   --sample-image assets/images/icon.png \
-  --out-json docs/how-to/benchmarks/pdf_font_benchmark.custom.json \
-  --out-md docs/how-to/benchmarks/pdf_font_benchmark.custom.md
+  --out-json docs/how-to/testing/benchmarks/pdf_font_benchmark.custom.json \
+  --out-md docs/how-to/testing/benchmarks/pdf_font_benchmark.custom.md
 ```
 
 オプションの意味:
@@ -570,7 +570,7 @@ node --expose-gc scripts/pdf-font-benchmark.mjs \
   - 出力先ファイルを指定
 
 補足:
-- 計測の読み方と最新結果は `docs/how-to/pdf_font_benchmark.md` を正とする
+- 計測の読み方と最新結果は `docs/how-to/testing/pdf_font_benchmark.md` を正とする
 - 採用/非採用の最終判断は `docs/adr/ADR-0002-pdf-fonts.md` を正とする
 
 ---

@@ -13,7 +13,7 @@
     "test": "jest --passWithNoTests",
     "test:e2e": "maestro test maestro/flows",
     "i18n:audit": "node scripts/i18n-audit.mjs",
-    "i18n:inventory": "node scripts/i18n-audit.mjs --inventory --out docs/how-to/i18n_key_inventory.md",
+    "i18n:inventory": "node scripts/i18n-audit.mjs --inventory --out docs/how-to/i18n/i18n_key_inventory.md",
     "ump:consent:check": "node scripts/ump-consent-check.mjs",
     "pdf:font:benchmark": "node --expose-gc scripts/pdf-font-benchmark.mjs",
     "prebuild": "expo prebuild",

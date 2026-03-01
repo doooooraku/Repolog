@@ -8,7 +8,7 @@
 
 ## 1. タグ運用（リリース可視化）
 リリース前に必ずタグとノートを作成する。  
-正は `docs/how-to/release_notes_template.md`。
+正は `docs/how-to/workflow/release_notes_template.md`。
 
 ### 1-1. 候補版タグ（RC）を作る
 ```bash
@@ -28,7 +28,7 @@ git push origin v1.0.0-rc.1
 gh release create v1.0.0-rc.1 \
   --repo doooooraku/Repolog \
   --title "Repolog v1.0.0-rc.1" \
-  --notes-file docs/how-to/release_notes_template.md \
+  --notes-file docs/how-to/workflow/release_notes_template.md \
   --prerelease
 ```
 
@@ -152,5 +152,5 @@ ADMOB_USER_TRACKING_USAGE_DESCRIPTION=<追跡利用理由の文言>
 ### 6-3. 審査提出前の最終確認
 - App Store Connect の Privacy Policy URL が設定済みであること
 - 同意フロー変更時は `docs/adr/ADR-0008-admob-ump-consent-preflight.md` の差分を確認すること
-- 実行手順の正は `docs/how-to/testing.md` の「9. UMP EEA 同意検証（Issue #93）」を参照
+- 実行手順の正は `docs/how-to/testing/testing.md` の「9. UMP EEA 同意検証（Issue #93）」を参照
 - GitHub Actionsで反復確認する場合は `ump-consent-validation.yml` を `workflow_dispatch` で実行
