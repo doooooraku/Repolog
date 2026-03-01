@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: 'Chung',
+  settingsSectionPrivacy: 'Quyền riêng tư',
+  settingsSectionPurchases: 'Mua hàng',
+  settingsSectionBackup: 'Sao lưu',
+  settingsBackupDesc: 'Xuất hoặc nhập tệp ZIP sao lưu (manifest.json + photos/).',
+  settingsBackupOpen: 'Mở sao lưu',
+  tagsLabel: 'Thẻ',
+  addTagAction: 'Thêm',
+  tagsEmpty: 'Chưa có thẻ nào.',
+  photoDeletedNotice: 'Đã xóa ảnh.',
+  undoAction: 'Hoàn tác',
 };
 
 export default dict;

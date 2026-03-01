@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: 'सामान्य',
+  settingsSectionPrivacy: 'गोपनीयता',
+  settingsSectionPurchases: 'खरीदारी',
+  settingsSectionBackup: 'बैकअप',
+  settingsBackupDesc: 'बैकअप ZIP फ़ाइल (manifest.json + photos/) निर्यात या आयात करें।',
+  settingsBackupOpen: 'बैकअप खोलें',
+  tagsLabel: 'टैग',
+  addTagAction: 'जोड़ें',
+  tagsEmpty: 'अभी कोई टैग नहीं।',
+  photoDeletedNotice: 'फ़ोटो हटाई गई।',
+  undoAction: 'पूर्ववत करें',
 };
 
 export default dict;

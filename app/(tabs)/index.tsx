@@ -35,6 +35,7 @@ import {
 import { removeReportPhotos } from '@/src/services/photoService';
 import { useProStore } from '@/src/stores/proStore';
 import type { Report } from '@/src/types/models';
+import { formatDateTime } from '@/src/features/pdf/pdfUtils';
 
 type ReportMeta = {
   firstPhotoUri?: string;
@@ -229,7 +230,7 @@ export default function HomeScreen() {
             </View>
 
             <View style={styles.cardDateRow}>
-              <Text style={styles.cardDate}>{item.createdAt.replace('T', ' ').slice(0, 16)}</Text>
+              <Text style={styles.cardDate}>{formatDateTime(item.createdAt)}</Text>
               <WeatherIcon
                 testID={`e2e_home_report_${index}_weather_${item.weather}`}
                 size={16}

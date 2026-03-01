@@ -57,6 +57,7 @@ import {
   removePhotoAndNormalize,
   restorePhotoAtIndexAndNormalize,
 } from '@/src/features/reports/photoOrderUtils';
+import { formatDateTime } from '@/src/features/pdf/pdfUtils';
 
 type LocationState = {
   lat: number | null;
@@ -737,7 +738,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             />
 
             <Text style={[styles.fieldLabel, styles.fieldSpacing]}>{t.createdAtLabel}</Text>
-            <Text style={styles.value}>{createdAt.replace('T', ' ').slice(0, 16)}</Text>
+            <Text style={styles.value}>{formatDateTime(createdAt)}</Text>
 
             <Text style={[styles.fieldLabel, styles.fieldSpacing]}>{t.weatherLabel}</Text>
             <View style={styles.weatherRow}>

@@ -249,6 +249,17 @@ const dict = {
   pdfPhotos: 'Photos',
   pdfPages: 'Pages',
   pdfComment: 'Comment',
+  settingsSectionGeneral: 'Umum',
+  settingsSectionPrivacy: 'Privasi',
+  settingsSectionPurchases: 'Pembelian',
+  settingsSectionBackup: 'Cadangan',
+  settingsBackupDesc: 'Ekspor atau impor file ZIP cadangan (manifest.json + photos/).',
+  settingsBackupOpen: 'Buka cadangan',
+  tagsLabel: 'Tag',
+  addTagAction: 'Tambah',
+  tagsEmpty: 'Belum ada tag.',
+  photoDeletedNotice: 'Foto dihapus.',
+  undoAction: 'Urungkan',
 };
 
 export default dict;
