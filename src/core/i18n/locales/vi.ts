@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: 'Thay đổi giao diện ứng dụng.',
   themeDarkLabel: 'Tối',             // Dark
+  themeLightLabel: 'Sáng',            // Light
   themeNeonPinkLabel: 'Neon Hồng',
   themeCyberBlueLabel: 'Cyber Xanh',
   freeThemeNote: 'Miễn phí: Chỉ Giao diện Tối / Pro mở khóa Neon Hồng & Cyber Xanh',

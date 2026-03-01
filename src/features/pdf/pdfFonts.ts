@@ -66,6 +66,10 @@ async function loadFontDataUri(source: FontAsset['source']) {
   return dataUri;
 }
 
+export function clearFontCache() {
+  fontCache.clear();
+}
+
 function toBooleanFlag(value: unknown): boolean {
   if (value === true || value === 1) return true;
   if (typeof value !== 'string') return false;

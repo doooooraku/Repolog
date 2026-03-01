@@ -67,6 +67,7 @@ const dict = {
   // --- Themes (テーマ) ---
   themeDesc: 'Cambia l’aspetto dell’applicazione.',
   themeDarkLabel: 'Scuro',           // Dark
+  themeLightLabel: 'Chiaro',          // Light
   themeNeonPinkLabel: 'Neon Rosa',
   themeCyberBlueLabel: 'Cyber Blu',
   freeThemeNote: 'Gratis: Solo Scuro / Pro sblocca Neon Rosa e Cyber Blu',

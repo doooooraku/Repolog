@@ -41,7 +41,9 @@ import {
   remainingCommentChars,
   splitTagInput,
 } from '@/src/features/reports/reportUtils';
+import { formatDateTime } from '@/src/features/pdf/pdfUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
 import { createPhoto, listPhotosByReport, updatePhotoOrderByIds } from '@/src/db/photoRepository';
 import {
@@ -119,6 +121,7 @@ type PendingPhotoDeletion = {
 export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps) {
   const router = useRouter();
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const includeLocation = useSettingsStore((s) => s.includeLocation);
 
   const [loading, setLoading] = useState<boolean>(Boolean(reportId));
@@ -662,8 +665,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           testID={`e2e_photo_slot_${index}_${marker}`}
           onLongPress={drag}
           delayLongPress={160}
-          style={[styles.photoCard, isActive && styles.photoCardActive]}>
-          <Image source={{ uri: item.localUri }} style={styles.photoThumb} />
+          style={[styles.photoCard, { backgroundColor: colors.photoCardBg }, isActive && styles.photoCardActive]}>
+          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} />
           <Text style={styles.photoIndexLabel}>{index + 1}</Text>
           <Pressable
             testID={`e2e_photo_delete_${index}`}
@@ -685,7 +688,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         </Pressable>
       );
     },
-    [confirmDeletePhoto, handleDeletePhoto],
+    [colors.photoCardBg, confirmDeletePhoto, handleDeletePhoto],
   );
 
   const remaining = remainingCommentChars(comment);
@@ -695,51 +698,51 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View style={[styles.center, { backgroundColor: colors.screenBg }]}>
         <ActivityIndicator />
       </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <View style={styles.screen} testID="e2e_report_editor_screen">
-        <View style={styles.header}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: colors.screenBg }]} edges={['top', 'bottom']}>
+      <View style={[styles.screen, { backgroundColor: colors.screenBg }]} testID="e2e_report_editor_screen">
+        <View style={[styles.header, { borderBottomColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
           <View style={styles.headerLeft}>
             <Pressable testID="e2e_report_back" onPress={handleBack} style={styles.backButton} hitSlop={TOUCH_HIT_SLOP}>
-              <ArrowLeft size={18} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
+              <ArrowLeft size={18} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
             </Pressable>
-            <Text style={styles.headerTitle} numberOfLines={1}>
+            <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>
               {t.reportEditorTitle}
             </Text>
           </View>
-          <Pressable testID="e2e_report_pdf_preview" onPress={handlePreviewPdf} style={styles.pdfButton} hitSlop={TOUCH_HIT_SLOP}>
-            <FileText size={15} color="#ffffff" strokeWidth={ICON_STROKE_WIDTH} />
-            <Text style={styles.pdfButtonText}>PDF</Text>
+          <Pressable testID="e2e_report_pdf_preview" onPress={handlePreviewPdf} style={[styles.pdfButton, { backgroundColor: colors.primaryBg }]} hitSlop={TOUCH_HIT_SLOP}>
+            <FileText size={15} color={colors.textOnPrimary} strokeWidth={ICON_STROKE_WIDTH} />
+            <Text style={[styles.pdfButtonText, { color: colors.textOnPrimary }]}>PDF</Text>
           </Pressable>
         </View>
 
         <ScrollView style={styles.scrollArea} contentContainerStyle={styles.container}>
-          <View style={styles.section}>
+          <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderDefault }]}>
             <View style={styles.sectionTitleRow}>
-              <Text style={styles.sectionTitle}>{t.reportBasicInfoSection}</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{t.reportBasicInfoSection}</Text>
             </View>
             <View style={styles.sectionTitleRow}>
-              <Text style={styles.fieldLabel}>{`${t.reportNameLabel} *`}</Text>
-              <Text style={styles.counterText}>{reportNameCount}</Text>
+              <Text style={[styles.fieldLabel, { color: colors.textPrimary }]}>{`${t.reportNameLabel} *`}</Text>
+              <Text style={[styles.counterText, { color: colors.textMuted }]}>{reportNameCount}</Text>
             </View>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { color: colors.textPrimary, backgroundColor: colors.surfaceHighlight, borderColor: 'rgba(0, 0, 0, 0)' }]}
               value={reportName}
               onChangeText={setReportName}
               placeholder={t.reportNamePlaceholder}
-              placeholderTextColor="#717182"
+              placeholderTextColor={colors.textPlaceholder}
             />
 
-            <Text style={[styles.fieldLabel, styles.fieldSpacing]}>{t.createdAtLabel}</Text>
-            <Text style={styles.value}>{createdAt.replace('T', ' ').slice(0, 16)}</Text>
+            <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.createdAtLabel}</Text>
+            <Text style={[styles.value, { color: colors.textSecondary }]}>{formatDateTime(createdAt)}</Text>
 
-            <Text style={[styles.fieldLabel, styles.fieldSpacing]}>{t.weatherLabel}</Text>
+            <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.weatherLabel}</Text>
             <View style={styles.weatherRow}>
               {visibleWeatherOptions.map((option) => {
                 const active = weather === option.type;
@@ -752,84 +755,84 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                     }}
                     accessibilityLabel={weatherLabelMap[option.type]}
                     hitSlop={TOUCH_HIT_SLOP}
-                    style={[styles.weatherChip, active && styles.weatherChipActive]}>
-                    <Icon size={16} color={active ? '#0a0a0a' : '#4a5565'} strokeWidth={ICON_STROKE_WIDTH} />
+                    style={[styles.weatherChip, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }, active && [styles.weatherChipActive, { backgroundColor: colors.surfaceHighlight, borderColor: colors.textPrimary }]]}>
+                    <Icon size={16} color={active ? colors.textPrimary : colors.textSecondary} strokeWidth={ICON_STROKE_WIDTH} />
                   </Pressable>
                 );
               })}
             </View>
 
-            <Text style={[styles.fieldLabel, styles.fieldSpacing]}>{t.locationLabel}</Text>
+            <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.locationLabel}</Text>
             <Pressable
               onPress={handleFetchLocation}
-              style={[styles.outlineButton, (!includeLocation || locationLoading) && styles.disabledButton]}
+              style={[styles.outlineButton, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }, (!includeLocation || locationLoading) && styles.disabledButton]}
               disabled={!includeLocation || locationLoading}>
               {locationLoading ? (
-                <ActivityIndicator size="small" color="#0a0a0a" />
+                <ActivityIndicator size="small" color={colors.textPrimary} />
               ) : (
-                <MapPin size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
+                <MapPin size={16} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
               )}
-              <Text style={styles.outlineButtonText}>{locationLoading ? t.obtaining : t.locationFetch}</Text>
+              <Text style={[styles.outlineButtonText, { color: colors.textPrimary }]}>{locationLoading ? t.obtaining : t.locationFetch}</Text>
             </Pressable>
 
             {includeLocation ? (
               <View style={styles.locationBlock}>
-                <Text style={styles.value}>
+                <Text style={[styles.value, { color: colors.textSecondary }]}>
                   {locationState.lat != null && locationState.lng != null
                     ? `${locationState.lat}, ${locationState.lng}`
                     : '-'}
                 </Text>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { color: colors.textPrimary, backgroundColor: colors.surfaceHighlight, borderColor: 'rgba(0, 0, 0, 0)' }]}
                   value={locationState.address ?? ''}
                   onChangeText={handleAddressChange}
                   placeholder={t.addressPlaceholder}
-                  placeholderTextColor="#717182"
+                  placeholderTextColor={colors.textPlaceholder}
                 />
                 <View style={styles.rowBetween}>
                   <Pressable
                     onPress={handleFetchLocation}
-                    style={[styles.smallOutlineButton, locationLoading && styles.disabledButton]}
+                    style={[styles.smallOutlineButton, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }, locationLoading && styles.disabledButton]}
                     disabled={locationLoading}
                     hitSlop={TOUCH_HIT_SLOP}>
-                    <Text style={styles.smallOutlineButtonText}>{t.locationRefresh}</Text>
+                    <Text style={[styles.smallOutlineButtonText, { color: colors.textSecondary }]}>{t.locationRefresh}</Text>
                   </Pressable>
-                  <Pressable onPress={handleClearLocation} style={styles.smallOutlineButton} hitSlop={TOUCH_HIT_SLOP}>
-                    <Text style={styles.smallOutlineButtonText}>{t.locationClear}</Text>
+                  <Pressable onPress={handleClearLocation} style={[styles.smallOutlineButton, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]} hitSlop={TOUCH_HIT_SLOP}>
+                    <Text style={[styles.smallOutlineButtonText, { color: colors.textSecondary }]}>{t.locationClear}</Text>
                   </Pressable>
                 </View>
               </View>
             ) : (
-              <Text style={styles.subtle}>{t.locationDisabledHint}</Text>
+              <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.locationDisabledHint}</Text>
             )}
           </View>
 
-          <View style={styles.section}>
+          <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderDefault }]}>
             <View style={styles.sectionTitleRow}>
-              <Text style={styles.sectionTitle}>{t.commentLabel}</Text>
-              <Text style={styles.counterText}>{commentCount}</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{t.commentLabel}</Text>
+              <Text style={[styles.counterText, { color: colors.textMuted }]}>{commentCount}</Text>
             </View>
             <TextInput
-              style={[styles.input, styles.textarea]}
+              style={[styles.input, styles.textarea, { color: colors.textPrimary, backgroundColor: colors.surfaceHighlight, borderColor: 'rgba(0, 0, 0, 0)' }]}
               value={comment}
               onChangeText={(value) => setComment(clampComment(value))}
               placeholder={t.commentPlaceholder}
-              placeholderTextColor="#717182"
+              placeholderTextColor={colors.textPlaceholder}
               multiline
               textAlignVertical="top"
             />
-            <Text style={styles.subtle}>
+            <Text style={[styles.subtle, { color: colors.textMuted }]}>
               {t.commentRemainingLabel}: {remaining}
             </Text>
           </View>
 
-          <View style={styles.section}>
+          <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderDefault }]}>
             <View style={styles.sectionTitleRow}>
-              <Text style={styles.sectionTitle}>
+              <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>
                 {t.photosLabel} ({photos.length})
               </Text>
               {!isPro && (
-                <Text style={styles.counterText}>
+                <Text style={[styles.counterText, { color: colors.textMuted }]}>
                   {t.photoLimitHint.replace('{max}', String(MAX_FREE_PHOTOS_PER_REPORT))}
                 </Text>
               )}
@@ -842,17 +845,17 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 testID="e2e_add_photo_camera"
                 onPress={() => handleAddPhotos('camera')}
                 hitSlop={TOUCH_HIT_SLOP}
-                style={styles.photoActionButton}>
-                <Camera size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
-                <Text style={styles.photoActionText}>{t.addFromCamera}</Text>
+                style={[styles.photoActionButton, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
+                <Camera size={16} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
+                <Text style={[styles.photoActionText, { color: colors.textPrimary }]}>{t.addFromCamera}</Text>
               </Pressable>
               <Pressable
                 testID="e2e_add_photo_library"
                 onPress={() => handleAddPhotos('library')}
                 hitSlop={TOUCH_HIT_SLOP}
-                style={styles.photoActionButton}>
-                <Images size={16} color="#0a0a0a" strokeWidth={ICON_STROKE_WIDTH} />
-                <Text style={styles.photoActionText}>{t.addFromLibrary}</Text>
+                style={[styles.photoActionButton, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
+                <Images size={16} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
+                <Text style={[styles.photoActionText, { color: colors.textPrimary }]}>{t.addFromLibrary}</Text>
               </Pressable>
             </View>
             {__DEV__ && (
@@ -861,13 +864,13 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 onPress={() => {
                   void handleSeedPhotosForE2E();
                 }}
-                style={styles.smallOutlineButton}>
-                <Text style={styles.smallOutlineButtonText}>Seed photos (E2E)</Text>
+                style={[styles.smallOutlineButton, { borderColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
+                <Text style={[styles.smallOutlineButtonText, { color: colors.textSecondary }]}>Seed photos (E2E)</Text>
               </Pressable>
             )}
-            {photos.length > 0 && <Text style={styles.subtle}>{t.photoReorderHint}</Text>}
+            {photos.length > 0 && <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.photoReorderHint}</Text>}
             {photos.length === 0 ? (
-              <Text style={styles.subtle}>{t.photoEmpty}</Text>
+              <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.photoEmpty}</Text>
             ) : (
               <DraggableFlatList
                 horizontal
@@ -884,34 +887,34 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
               />
             )}
             {undoVisible && (
-              <View style={styles.undoBanner} testID="e2e_photo_delete_undo_bar">
-                <Text style={styles.undoBannerText}>{t.photoDeletedNotice}</Text>
+              <View style={[styles.undoBanner, { backgroundColor: colors.undoBannerBg, borderColor: colors.undoBannerBorder }]} testID="e2e_photo_delete_undo_bar">
+                <Text style={[styles.undoBannerText, { color: colors.undoBannerText }]}>{t.photoDeletedNotice}</Text>
                 <Pressable testID="e2e_photo_delete_undo" onPress={handleUndoDeletePhoto}>
-                  <Text style={styles.undoActionText}>{t.undoAction}</Text>
+                  <Text style={[styles.undoActionText, { color: colors.undoActionText }]}>{t.undoAction}</Text>
                 </Pressable>
               </View>
             )}
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t.tagsLabel}</Text>
+          <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderDefault }]}>
+            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{t.tagsLabel}</Text>
             <View style={styles.tagInputRow}>
               <TextInput
                 testID="e2e_report_tags_input"
-                style={[styles.input, styles.tagInput]}
+                style={[styles.input, styles.tagInput, { color: colors.textPrimary, backgroundColor: colors.surfaceHighlight, borderColor: 'rgba(0, 0, 0, 0)' }]}
                 value={tagInput}
                 onChangeText={setTagInput}
                 onSubmitEditing={handleAddTags}
                 placeholder={t.tagInputPlaceholder}
-                placeholderTextColor="#717182"
+                placeholderTextColor={colors.textPlaceholder}
                 returnKeyType="done"
               />
-              <Pressable testID="e2e_report_tags_add" onPress={handleAddTags} style={styles.tagAddButton} hitSlop={TOUCH_HIT_SLOP}>
-                <Text style={styles.tagAddButtonText}>{t.addTagAction}</Text>
+              <Pressable testID="e2e_report_tags_add" onPress={handleAddTags} style={[styles.tagAddButton, { backgroundColor: colors.primaryBg }]} hitSlop={TOUCH_HIT_SLOP}>
+                <Text style={[styles.tagAddButtonText, { color: colors.textOnPrimary }]}>{t.addTagAction}</Text>
               </Pressable>
             </View>
             {tags.length === 0 ? (
-              <Text style={styles.subtle}>{t.tagsEmpty}</Text>
+              <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.tagsEmpty}</Text>
             ) : (
               <View style={styles.tagsWrap}>
                 {tags.map((tag) => (
@@ -919,9 +922,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                     key={tag}
                     testID={`e2e_report_tag_chip_${sanitizeTestIdToken(tag)}`}
                     onPress={() => handleRemoveTag(tag)}
-                    style={styles.tagChip}>
-                    <Text style={styles.tagChipText}>{tag}</Text>
-                    <Text style={styles.tagChipRemove}>×</Text>
+                    style={[styles.tagChip, { borderColor: colors.tagChipBorder, backgroundColor: colors.tagChipBg }]}>
+                    <Text style={[styles.tagChipText, { color: colors.tagChipText }]}>{tag}</Text>
+                    <Text style={[styles.tagChipRemove, { color: colors.tagChipRemove }]}>×</Text>
                   </Pressable>
                 ))}
               </View>
@@ -929,9 +932,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           </View>
         </ScrollView>
 
-        <View style={styles.footerBar}>
-          <Pressable onPress={handleSave} style={[styles.saveButton, saving && styles.disabledButton]} disabled={saving} hitSlop={TOUCH_HIT_SLOP}>
-            {saving ? <ActivityIndicator color="#ffffff" /> : <Text style={styles.saveButtonText}>{t.save}</Text>}
+        <View style={[styles.footerBar, { borderTopColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
+          <Pressable onPress={handleSave} style={[styles.saveButton, { backgroundColor: colors.primaryBg }, saving && styles.disabledButton]} disabled={saving} hitSlop={TOUCH_HIT_SLOP}>
+            {saving ? <ActivityIndicator color={colors.primaryText} /> : <Text style={[styles.saveButtonText, { color: colors.textOnPrimary }]}>{t.save}</Text>}
           </Pressable>
         </View>
       </View>
@@ -942,20 +945,16 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#f9fafb',
   },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f9fafb',
   },
   header: {
     height: 61,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -978,13 +977,11 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
-    color: '#0a0a0a',
   },
   pdfButton: {
     minWidth: 70,
     height: 32,
     borderRadius: 8,
-    backgroundColor: '#030213',
     paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -993,7 +990,6 @@ const styles = StyleSheet.create({
   },
   pdfButtonText: {
     fontSize: 14,
-    color: '#ffffff',
     fontWeight: '500',
   },
   scrollArea: {
@@ -1007,12 +1003,10 @@ const styles = StyleSheet.create({
   },
   section: {
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 10,
     paddingHorizontal: 17,
     paddingTop: 17,
     paddingBottom: 16,
-    backgroundColor: '#ffffff',
     gap: 12,
   },
   sectionTitleRow: {
@@ -1024,17 +1018,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#101828',
   },
   counterText: {
     flex: 1,
     fontSize: 12,
-    color: '#6a7282',
     textAlign: 'right',
   },
   fieldLabel: {
     fontSize: 14,
-    color: '#0a0a0a',
   },
   fieldSpacing: {
     marginTop: 6,
@@ -1042,18 +1033,14 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#4a5565',
   },
   input: {
     minHeight: 36,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0)',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 16,
-    color: '#0a0a0a',
-    backgroundColor: '#f3f3f5',
   },
   textarea: {
     minHeight: 64,
@@ -1072,22 +1059,15 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 32,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
   },
-  weatherChipActive: {
-    backgroundColor: '#f3f3f5',
-    borderColor: '#0a0a0a',
-  },
+  weatherChipActive: {},
   outlineButton: {
     height: 36,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 8,
-    backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1095,7 +1075,6 @@ const styles = StyleSheet.create({
   },
   outlineButtonText: {
     fontSize: 14,
-    color: '#0a0a0a',
   },
   locationBlock: {
     gap: 10,
@@ -1104,21 +1083,17 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 32,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 8,
-    backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 10,
   },
   smallOutlineButtonText: {
     fontSize: 12,
-    color: '#4a5565',
   },
   subtle: {
     fontSize: 12,
     lineHeight: 16,
-    color: '#6a7282',
   },
   hiddenCount: {
     position: 'absolute',
@@ -1134,9 +1109,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 36,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 8,
-    backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1144,7 +1117,6 @@ const styles = StyleSheet.create({
   },
   photoActionText: {
     fontSize: 14,
-    color: '#0a0a0a',
   },
   tagInputRow: {
     flexDirection: 'row',
@@ -1157,14 +1129,12 @@ const styles = StyleSheet.create({
   tagAddButton: {
     height: 36,
     borderRadius: 8,
-    backgroundColor: '#030213',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 12,
   },
   tagAddButtonText: {
     fontSize: 12,
-    color: '#ffffff',
     fontWeight: '500',
   },
   tagsWrap: {
@@ -1178,19 +1148,15 @@ const styles = StyleSheet.create({
     gap: 6,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    backgroundColor: '#f3f4f6',
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
   tagChipText: {
     fontSize: 12,
-    color: '#111827',
   },
   tagChipRemove: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#374151',
   },
   disabledButton: {
     opacity: 0.6,
@@ -1205,9 +1171,7 @@ const styles = StyleSheet.create({
   undoBanner: {
     marginTop: 8,
     borderWidth: 1,
-    borderColor: '#dbeafe',
     borderRadius: 10,
-    backgroundColor: '#eff6ff',
     paddingHorizontal: 12,
     paddingVertical: 10,
     flexDirection: 'row',
@@ -1218,12 +1182,10 @@ const styles = StyleSheet.create({
   undoBannerText: {
     flex: 1,
     fontSize: 12,
-    color: '#1e3a8a',
   },
   undoActionText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#1d4ed8',
   },
   photoCard: {
     width: 72,
@@ -1231,7 +1193,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 8,
     overflow: 'hidden',
-    backgroundColor: '#e5e7eb',
   },
   photoCardActive: {
     opacity: 0.85,
@@ -1239,7 +1200,6 @@ const styles = StyleSheet.create({
   photoThumb: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#e5e7eb',
   },
   photoDeleteButton: {
     position: 'absolute',
@@ -1287,8 +1247,6 @@ const styles = StyleSheet.create({
   },
   footerBar: {
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#ffffff',
     paddingTop: 16,
     paddingBottom: 16,
     paddingHorizontal: 16,
@@ -1296,13 +1254,11 @@ const styles = StyleSheet.create({
   saveButton: {
     height: 36,
     borderRadius: 8,
-    backgroundColor: '#030213',
     alignItems: 'center',
     justifyContent: 'center',
   },
   saveButtonText: {
     fontSize: 14,
-    color: '#ffffff',
     fontWeight: '500',
   },
 });

@@ -151,6 +151,7 @@ const baseEn = {
   // --- Themes ---
   themeDesc: 'Change the appearance of the app.',
   themeDarkLabel: 'Dark',
+  themeLightLabel: 'Light',
   themeNeonPinkLabel: 'Neon Pink',
   themeCyberBlueLabel: 'Cyber Blue',
   freeThemeNote: 'Free: Dark only / Pro unlocks Neon Pink & Cyber Blue',
