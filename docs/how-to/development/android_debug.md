@@ -191,10 +191,38 @@ pidcat com.dooooraku.repolog
 
 ---
 
-## 参考: ログ保存先
+## 7. スクリーンショット・画面ミラーリング
+
+### 7-1. スクリーンショット撮影（ADB 直接）
+
+```bash
+# PNG で保存
+env -u ADB_SERVER_SOCKET adb exec-out screencap -p > screenshot.png
+
+# タイムスタンプ付き（Issue/PR 添付用）
+env -u ADB_SERVER_SOCKET adb exec-out screencap -p > docs/reference/Debug/screenshot_$(date +%Y%m%d_%H%M%S).png
+```
+
+### 7-2. 画面ミラーリング・録画（scrcpy）
+
+実機画面の PC リアルタイム表示・録画の詳細は **`docs/how-to/development/scrcpy_screen_mirror.md`** を参照。
+
+```bash
+# ミラーリング起動
+scrcpy
+
+# 録画
+scrcpy --record=demo.mp4 --max-fps=30
+```
+
+---
+
+## 参考: ログ・画像保存先
 
 | 種類 | 保存先 |
 |------|--------|
 | 自動保存（monitor_repolog.sh） | `docs/reference/Debug/` |
+| スクリーンショット | `docs/reference/Debug/` または任意 |
+| 画面録画（scrcpy） | コマンド引数で指定 |
 | 手動保存 | プロジェクトルート（任意） |
 | バグレポート | 指定したパス |
