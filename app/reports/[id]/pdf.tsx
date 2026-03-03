@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Pdf from 'react-native-pdf';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -212,59 +213,67 @@ export default function PdfPreviewScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.screenBgAlt }]}>
-        <ActivityIndicator />
-        <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.pdfGenerating}</Text>
-      </View>
+      <SafeAreaView edges={['top', 'bottom']} style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]}>
+        <View style={styles.center}>
+          <ActivityIndicator />
+          <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.pdfGenerating}</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View testID="e2e_pdf_preview_screen" style={[styles.container, { backgroundColor: colors.screenBgAlt }]}>
-      <Text style={[styles.title, { color: colors.textPrimary }]}>{t.pdfPreviewTitle}</Text>
-      <View style={styles.row}>
-        <Pressable
-          onPress={() => setLayout('standard')}
-          style={[styles.tab, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, layout === 'standard' && { borderColor: colors.tabActive, backgroundColor: colors.surfaceHighlight }]}>
-          <Text style={{ color: colors.textPrimary }}>{t.pdfLayoutStandard}</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => setLayout('large')}
-          style={[styles.tab, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, layout === 'large' && { borderColor: colors.tabActive, backgroundColor: colors.surfaceHighlight }]}>
-          <Text style={{ color: colors.textPrimary }}>{t.pdfLayoutLarge}</Text>
-        </Pressable>
-      </View>
-      <View style={styles.row}>
-        <Pressable
-          onPress={() => setPaperSize('A4')}
-          style={[styles.tab, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, paperSize === 'A4' && { borderColor: colors.tabActive, backgroundColor: colors.surfaceHighlight }]}>
-          <Text style={{ color: colors.textPrimary }}>{t.pdfPaperA4}</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => setPaperSize('Letter')}
-          style={[styles.tab, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, paperSize === 'Letter' && { borderColor: colors.tabActive, backgroundColor: colors.surfaceHighlight }]}>
-          <Text style={{ color: colors.textPrimary }}>{t.pdfPaperLetter}</Text>
-        </Pressable>
-      </View>
-      {pdfUri && (
-        <Pdf
-          source={{ uri: pdfUri }}
-          style={[styles.pdf, { backgroundColor: colors.surfaceBg }]}
-          trustAllCerts={false}
-        />
-      )}
-      <Pressable testID="e2e_pdf_export" style={[styles.exportButton, { backgroundColor: colors.primaryBg }]} onPress={handleExport} disabled={exporting}>
-        {exporting ? (
-          <ActivityIndicator color={colors.primaryText} />
-        ) : (
-          <Text style={[styles.exportText, { color: colors.primaryText }]}>{t.pdfExport}</Text>
+    <SafeAreaView edges={['top', 'bottom']} style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]}>
+      <View testID="e2e_pdf_preview_screen" style={styles.container}>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>{t.pdfPreviewTitle}</Text>
+        <View style={styles.row}>
+          <Pressable
+            onPress={() => setLayout('standard')}
+            style={[styles.tab, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, layout === 'standard' && { borderColor: colors.tabActive, backgroundColor: colors.surfaceHighlight }]}>
+            <Text style={{ color: colors.textPrimary }}>{t.pdfLayoutStandard}</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setLayout('large')}
+            style={[styles.tab, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, layout === 'large' && { borderColor: colors.tabActive, backgroundColor: colors.surfaceHighlight }]}>
+            <Text style={{ color: colors.textPrimary }}>{t.pdfLayoutLarge}</Text>
+          </Pressable>
+        </View>
+        <View style={styles.row}>
+          <Pressable
+            onPress={() => setPaperSize('A4')}
+            style={[styles.tab, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, paperSize === 'A4' && { borderColor: colors.tabActive, backgroundColor: colors.surfaceHighlight }]}>
+            <Text style={{ color: colors.textPrimary }}>{t.pdfPaperA4}</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setPaperSize('Letter')}
+            style={[styles.tab, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, paperSize === 'Letter' && { borderColor: colors.tabActive, backgroundColor: colors.surfaceHighlight }]}>
+            <Text style={{ color: colors.textPrimary }}>{t.pdfPaperLetter}</Text>
+          </Pressable>
+        </View>
+        {pdfUri && (
+          <Pdf
+            key={pdfUri}
+            source={{ uri: pdfUri }}
+            style={[styles.pdf, { backgroundColor: colors.surfaceBg }]}
+            trustAllCerts={false}
+          />
         )}
-      </Pressable>
-    </View>
+        <Pressable testID="e2e_pdf_export" style={[styles.exportButton, { backgroundColor: colors.primaryBg }]} onPress={handleExport} disabled={exporting}>
+          {exporting ? (
+            <ActivityIndicator color={colors.primaryText} />
+          ) : (
+            <Text style={[styles.exportText, { color: colors.primaryText }]}>{t.pdfExport}</Text>
+          )}
+        </Pressable>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 16,
