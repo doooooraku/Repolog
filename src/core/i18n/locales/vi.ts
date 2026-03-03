@@ -30,6 +30,7 @@ const dict = {
   themeDesc: 'Thay đổi giao diện ứng dụng.',
   themeDarkLabel: 'Tối',             // Dark
   themeLightLabel: 'Sáng',            // Light
+  themeSystemLabel: 'Hệ thống',
 
   // --- Habit Management (習慣管理) ---
   save: 'Lưu',

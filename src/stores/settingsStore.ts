@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type ThemeMode = 'light' | 'dark';
+type ThemeMode = 'light' | 'dark' | 'system';
 
 type SettingsState = {
   includeLocation: boolean;
@@ -16,7 +16,7 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       includeLocation: true,
       setIncludeLocation: (value) => set({ includeLocation: value }),
-      themeMode: 'light',
+      themeMode: 'system',
       setThemeMode: (mode) => set({ themeMode: mode }),
     }),
     {

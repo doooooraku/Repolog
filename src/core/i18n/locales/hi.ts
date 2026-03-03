@@ -30,6 +30,7 @@ const dict = {
   themeDesc: 'ऐप का स्वरूप बदलें।',
   themeDarkLabel: 'डार्क',             // Dark
   themeLightLabel: 'लाइट',             // Light
+  themeSystemLabel: 'सिस्टम',
 
   // --- Habit Management (習慣管理) ---
   save: 'सेव करें',
