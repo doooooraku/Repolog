@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -12,7 +11,11 @@ import {
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as FileSystem from 'expo-file-system/legacy';
-import DraggableFlatList, { type RenderItemParams } from 'react-native-draggable-flatlist';
+import {
+  NestableDraggableFlatList,
+  NestableScrollContainer,
+  type RenderItemParams,
+} from 'react-native-draggable-flatlist';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   ArrowLeft,
@@ -21,6 +24,7 @@ import {
   CloudRain,
   CloudSnow,
   FileText,
+  GripVertical,
   Images,
   MapPin,
   Sun,
@@ -661,20 +665,23 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       const index = getIndex() ?? item.orderIndex;
       const marker = extractPhotoMarker(item.localUri);
       return (
-        <Pressable
+        <View
           testID={`e2e_photo_slot_${index}_${marker}`}
-          onLongPress={drag}
-          delayLongPress={160}
           style={[styles.photoCard, { backgroundColor: colors.photoCardBg }, isActive && styles.photoCardActive]}>
-          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} />
-          <Text style={styles.photoIndexLabel}>{index + 1}</Text>
-          <Pressable
-            testID={`e2e_photo_delete_${index}`}
-            onPress={() => confirmDeletePhoto(item)}
-            hitSlop={8}
-            style={styles.photoDeleteButton}>
-            <Text style={styles.photoDeleteButtonText}>×</Text>
+          <Pressable onLongPress={drag} delayLongPress={160} style={styles.photoDragHandle}>
+            <GripVertical size={16} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
           </Pressable>
+          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} />
+          <View style={styles.photoInfo}>
+            <Text style={[styles.photoIndexLabel, { color: colors.textSecondary }]}>{index + 1}</Text>
+            <Pressable
+              testID={`e2e_photo_delete_${index}`}
+              onPress={() => confirmDeletePhoto(item)}
+              hitSlop={8}
+              style={styles.photoDeleteButton}>
+              <Text style={styles.photoDeleteButtonText}>×</Text>
+            </Pressable>
+          </View>
           {__DEV__ && (
             <Pressable
               testID={`e2e_photo_delete_now_${index}`}
@@ -685,10 +692,10 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
               <Text style={styles.photoDeleteNowText}>-</Text>
             </Pressable>
           )}
-        </Pressable>
+        </View>
       );
     },
-    [colors.photoCardBg, confirmDeletePhoto, handleDeletePhoto],
+    [colors.photoCardBg, colors.textMuted, colors.textSecondary, confirmDeletePhoto, handleDeletePhoto],
   );
 
   const remaining = remainingCommentChars(comment);
@@ -722,7 +729,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           </Pressable>
         </View>
 
-        <ScrollView style={styles.scrollArea} contentContainerStyle={styles.container}>
+        <NestableScrollContainer style={styles.scrollArea} contentContainerStyle={styles.container}>
           <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderDefault }]}>
             <View style={styles.sectionTitleRow}>
               <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{t.reportBasicInfoSection}</Text>
@@ -872,8 +879,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             {photos.length === 0 ? (
               <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.photoEmpty}</Text>
             ) : (
-              <DraggableFlatList
-                horizontal
+              <NestableDraggableFlatList
                 data={photos}
                 keyExtractor={(item) => item.id}
                 renderItem={renderPhotoItem}
@@ -882,8 +888,6 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                   void handlePhotoReorder(data);
                 }}
                 containerStyle={styles.photoStrip}
-                contentContainerStyle={styles.photoListContent}
-                showsHorizontalScrollIndicator={false}
               />
             )}
             {undoVisible && (
@@ -930,7 +934,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
               </View>
             )}
           </View>
-        </ScrollView>
+        </NestableScrollContainer>
 
         <View style={[styles.footerBar, { borderTopColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
           <Pressable accessibilityLabel={t.save} accessibilityRole="button" onPress={handleSave} style={[styles.saveButton, { backgroundColor: colors.primaryBg }, saving && styles.disabledButton]} disabled={saving} hitSlop={TOUCH_HIT_SLOP}>
@@ -1164,10 +1168,6 @@ const styles = StyleSheet.create({
   photoStrip: {
     marginTop: 4,
   },
-  photoListContent: {
-    paddingVertical: 2,
-    paddingRight: 8,
-  },
   undoBanner: {
     marginTop: 8,
     borderWidth: 1,
@@ -1188,40 +1188,57 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   photoCard: {
-    width: 72,
-    height: 72,
-    borderRadius: 8,
-    marginRight: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginBottom: 8,
     overflow: 'hidden',
+    height: 72,
   },
   photoCardActive: {
     opacity: 0.85,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  photoDragHandle: {
+    width: 32,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   photoThumb: {
-    width: '100%',
-    height: '100%',
+    width: 72,
+    height: 72,
+    borderRadius: 6,
+  },
+  photoInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
   },
   photoDeleteButton: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(0, 0, 0, 0.08)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   photoDeleteButtonText: {
-    color: '#ffffff',
-    fontSize: 14,
+    color: '#333333',
+    fontSize: 16,
     fontWeight: '700',
-    lineHeight: 16,
+    lineHeight: 18,
   },
   photoDeleteNowButton: {
     position: 'absolute',
     top: 4,
-    left: 4,
+    right: 44,
     width: 20,
     height: 20,
     borderRadius: 10,
@@ -1235,15 +1252,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   photoIndexLabel: {
-    position: 'absolute',
-    left: 6,
-    bottom: 4,
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#ffffff',
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-    paddingHorizontal: 4,
-    borderRadius: 4,
+    fontSize: 14,
+    fontWeight: '600',
   },
   footerBar: {
     borderTopWidth: 1,
