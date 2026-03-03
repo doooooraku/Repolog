@@ -25,6 +25,7 @@ USB 接続した Android 実機から、WSL2 環境でクラッシュログや
 | `adb logcat` | 全ログ/クラッシュ確認 | `adb logcat -b crash -v threadtime` |
 | `pidcat` | アプリ専用・色付きログ | `pidcat com.dooooraku.repolog` |
 | `monitor_repolog.sh` | クラッシュ自動検出・保存 | `bash scripts/monitor_repolog.sh` |
+| `debug_session.sh` | セッション一括管理 | `bash scripts/debug_session.sh start` |
 
 ---
 
@@ -217,11 +218,61 @@ scrcpy --record=demo.mp4 --max-fps=30
 
 ---
 
+## 8. デバッグセッション（一括管理）
+
+`debug_session.sh` を使うと、ログ・スクリーンショット・録画・メモリ情報を
+1 つのセッションフォルダに自動収集できる。
+
+### 8-1. 基本的な流れ
+
+```bash
+# 1. セッション開始（logcat + 画面録画を自動起動）
+bash scripts/debug_session.sh start
+
+# 2. スマホでアプリを操作する
+
+# 3. セッション終了（全成果物を自動収集）
+bash scripts/debug_session.sh stop
+```
+
+### 8-2. オプション
+
+```bash
+# 録画なしで開始（logcat + スクリーンショットのみ）
+bash scripts/debug_session.sh start --no-record
+
+# セッション状態の確認
+bash scripts/debug_session.sh status
+```
+
+### 8-3. 成果物
+
+stop 時に `docs/reference/Debug/session_YYYYMMDD_HHMMSS/` に自動生成:
+
+| ファイル | 内容 |
+|---------|------|
+| `before.png` | 操作前スクリーンショット |
+| `after.png` | 操作後スクリーンショット |
+| `logcat.log` | セッション中の全ログ |
+| `recording.mp4` | 画面録画（`--no-record` 時は省略） |
+| `meminfo.txt` | メモリ使用量 |
+| `summary.md` | セッション概要（エラー抽出付き） |
+
+### 8-4. Claude Code との連携
+
+```bash
+# セッション停止後、Claude Code にサマリーを読ませて分析
+# → summary.md のエラー抽出 + before/after 画像の差分確認
+```
+
+---
+
 ## 参考: ログ・画像保存先
 
 | 種類 | 保存先 |
 |------|--------|
 | 自動保存（monitor_repolog.sh） | `docs/reference/Debug/` |
+| デバッグセッション（debug_session.sh） | `docs/reference/Debug/session_YYYYMMDD_HHMMSS/` |
 | スクリーンショット | `docs/reference/Debug/` または任意 |
 | 画面録画（scrcpy） | コマンド引数で指定 |
 | 手動保存 | プロジェクトルート（任意） |
