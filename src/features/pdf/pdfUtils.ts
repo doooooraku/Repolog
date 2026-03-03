@@ -34,7 +34,7 @@ const getLocalParts = (date: Date) => {
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: false,
+      hourCycle: 'h23',
     };
     if (tz) opts.timeZone = tz;
     const parts = new Intl.DateTimeFormat('en-CA', opts).formatToParts(date);
