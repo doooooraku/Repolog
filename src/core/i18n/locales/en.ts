@@ -95,6 +95,7 @@ const baseEn = {
 
   // --- Accessibility ---
   a11yGoBack: 'Go back',
+  a11yReorderPhoto: 'Reorder photo',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'Failed to load data.',

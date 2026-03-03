@@ -175,6 +175,7 @@ const dict = {
   pdfPages: 'ページ',
   pdfComment: 'コメント',
   a11yGoBack: '戻る',
+  a11yReorderPhoto: '写真を並べ替え',
 };
 
 export default dict;

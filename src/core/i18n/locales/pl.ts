@@ -178,6 +178,7 @@ const dict = {
   backupUnsupportedTitle: 'Nieobsługiwane',
   backupUnsupportedBody: 'Kopia zapasowa nie jest obsługiwana na tym urządzeniu.',
   a11yGoBack: 'Wróć',
+  a11yReorderPhoto: 'Zmień kolejność zdjęcia',
 };
 
 export default dict;

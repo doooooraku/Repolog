@@ -181,6 +181,7 @@ const dict = {
   photoDeletedNotice: 'Photo supprimée.',
   undoAction: 'Annuler',
   a11yGoBack: 'Retour',
+  a11yReorderPhoto: 'Réorganiser la photo',
 };
 
 export default dict;
