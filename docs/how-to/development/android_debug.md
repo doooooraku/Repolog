@@ -267,6 +267,48 @@ stop 時に `docs/reference/Debug/session_YYYYMMDD_HHMMSS/` に自動生成:
 
 ---
 
+## 9. Dev Build + Metro ワークフロー
+
+日常の開発では **Dev Build**（expo-dev-client）を使い、ホットリロードで高速に開発します。
+
+### 9-1. ワンコマンド起動
+
+```bash
+# ADB 確認 → ポートフォワーディング → Metro 起動を一括実行
+bash scripts/dev-start.sh
+
+# キャッシュクリアして起動
+bash scripts/dev-start.sh --clean
+
+# カスタムポート
+bash scripts/dev-start.sh --port 8082
+```
+
+### 9-2. Dev Build APK のビルドとインストール
+
+```bash
+# EAS Cloud でビルド
+npx eas-cli@latest build -p android --profile development
+
+# ローカルビルド
+npx eas-cli@latest build -p android --profile development --local --output dist/repolog-dev.apk
+
+# デバイスにインストール
+env -u ADB_SERVER_SOCKET adb install -r dist/repolog-dev.apk
+```
+
+### 9-3. Dev Build vs Preview Build
+
+詳しくは `docs/how-to/development/dev_vs_preview_builds.md` を参照。
+
+| | Dev Build | Preview Build |
+|---|---|---|
+| ホットリロード | あり | なし |
+| 1 サイクル | 1〜3 秒 | 10〜20 分 |
+| 本番に近い動作 | いいえ | はい |
+
+---
+
 ## 参考: ログ・画像保存先
 
 | 種類 | 保存先 |
