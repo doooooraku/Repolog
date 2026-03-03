@@ -668,7 +668,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         <View
           testID={`e2e_photo_slot_${index}_${marker}`}
           style={[styles.photoCard, { backgroundColor: colors.photoCardBg }, isActive && styles.photoCardActive]}>
-          <Pressable onLongPress={drag} delayLongPress={160} style={styles.photoDragHandle}>
+          <Pressable onLongPress={drag} delayLongPress={160} style={styles.photoDragHandle} accessibilityLabel={t.a11yReorderPhoto} accessibilityRole="button">
             <GripVertical size={16} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
           </Pressable>
           <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} />
@@ -695,7 +695,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         </View>
       );
     },
-    [colors.photoCardBg, colors.textMuted, colors.textSecondary, confirmDeletePhoto, handleDeletePhoto],
+    [colors.photoCardBg, colors.textMuted, colors.textSecondary, confirmDeletePhoto, handleDeletePhoto, t.a11yReorderPhoto],
   );
 
   const remaining = remainingCommentChars(comment);

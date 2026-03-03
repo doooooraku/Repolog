@@ -154,6 +154,7 @@ const dict = {
   photoDeletedNotice: '照片已删除。',
   undoAction: '撤销',
   a11yGoBack: '返回',
+  a11yReorderPhoto: '重新排列照片',
 };
 
 export default dict;

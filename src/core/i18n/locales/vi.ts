@@ -154,6 +154,7 @@ const dict = {
   photoDeletedNotice: 'Đã xóa ảnh.',
   undoAction: 'Hoàn tác',
   a11yGoBack: 'Quay lại',
+  a11yReorderPhoto: 'Sắp xếp lại ảnh',
 };
 
 export default dict;

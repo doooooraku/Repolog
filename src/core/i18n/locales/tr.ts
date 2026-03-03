@@ -154,6 +154,7 @@ const dict = {
   photoDeletedNotice: 'Fotoğraf kaldırıldı.',
   undoAction: 'Geri al',
   a11yGoBack: 'Geri dön',
+  a11yReorderPhoto: 'Fotoğrafı yeniden sırala',
 };
 
 export default dict;

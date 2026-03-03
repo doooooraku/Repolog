@@ -154,6 +154,7 @@ const dict = {
   photoDeletedNotice: '사진이 삭제되었습니다.',
   undoAction: '실행 취소',
   a11yGoBack: '뒤로 가기',
+  a11yReorderPhoto: '사진 순서 변경',
 };
 
 export default dict;
