@@ -1,0 +1,38 @@
+Repolog turns field photos into submission-ready PDF reports in seconds.
+
+Snap photos on-site, add date, location, weather, and comments — then export a clean A4 or Letter PDF you can hand in right away. No cloud account needed. Everything stays on your device.
+
+KEY FEATURES
+- Create photo reports with metadata (date, location, weather, tags, comments)
+- Export polished A4/Letter PDFs with cover page, comment page, and photo pages
+- Photos are never cropped — displayed in original aspect ratio (contain mode)
+- Drag-and-drop photo reorder, camera or library import
+- Home timeline acts as a logbook of all your reports
+- Search, filter (All / Pinned / This week), and pin important reports
+- Backup and restore via ZIP (manifest.json + photos)
+- 19 languages supported
+- Dark mode with System (OS auto), Light, and Dark options
+
+FREE & PRO
+- Free: up to 10 photos per report, 5 PDF exports per month, Standard layout, ads
+- Pro: unlimited photos, unlimited exports, Large (1-per-page) layout, no ads
+
+PRICING
+- Monthly: $1.99
+- Yearly: $19.99 (save ~37%, best value)
+- Lifetime: $39.99
+
+WHO IS IT FOR?
+- Construction and inspection workers who need photo evidence reports
+- Facility and maintenance crews filing condition reports
+- Freelancers creating acceptance or delivery reports
+- Anyone who needs to turn phone photos into a professional PDF quickly
+
+PRIVACY
+- Local-first: no user accounts, no cloud sync, no data collection
+- Location and camera access are optional — only used when you choose
+- Ads (Free plan) use Google AdMob with UMP consent
+
+Learn more:
+Privacy Policy: https://doooooraku.github.io/Repolog/privacy/
+Terms of Use: https://doooooraku.github.io/Repolog/terms/
