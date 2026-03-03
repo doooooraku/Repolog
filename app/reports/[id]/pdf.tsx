@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Pdf from 'react-native-pdf';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -220,7 +221,8 @@ export default function PdfPreviewScreen() {
   }
 
   return (
-    <View testID="e2e_pdf_preview_screen" style={[styles.container, { backgroundColor: colors.screenBgAlt }]}>
+    <SafeAreaView edges={['top']} style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]}>
+    <View testID="e2e_pdf_preview_screen" style={styles.container}>
       <Text style={[styles.title, { color: colors.textPrimary }]}>{t.pdfPreviewTitle}</Text>
       <View style={styles.row}>
         <Pressable
@@ -248,6 +250,7 @@ export default function PdfPreviewScreen() {
       </View>
       {pdfUri && (
         <Pdf
+          key={pdfUri}
           source={{ uri: pdfUri }}
           style={[styles.pdf, { backgroundColor: colors.surfaceBg }]}
           trustAllCerts={false}
@@ -261,10 +264,14 @@ export default function PdfPreviewScreen() {
         )}
       </Pressable>
     </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 16,
