@@ -217,7 +217,7 @@ export default function SettingsScreen() {
         <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.settingsSectionBackup}</Text>
           <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.settingsBackupDesc}</Text>
-          <Pressable onPress={() => router.push('/backup')} style={[styles.secondaryButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
+          <Pressable testID="e2e_open_backup" onPress={() => router.push('/backup')} style={[styles.secondaryButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
             <Text style={[styles.secondaryButtonText, { color: colors.textPrimary }]}>{t.settingsBackupOpen}</Text>
           </Pressable>
         </View>

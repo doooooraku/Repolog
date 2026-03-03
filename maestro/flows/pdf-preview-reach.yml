@@ -1,0 +1,44 @@
+appId: "com.dooooraku.repolog"
+name: "E2E - PDF preview reach"
+tags:
+  - e2e
+  - pdf
+
+---
+- launchApp:
+    clearState: true
+    label: "クリーン起動"
+
+- extendedWaitUntil:
+    visible:
+      id: "e2e_home_screen"
+    timeout: 60000
+    label: "Homeの初期描画を待機"
+
+- tapOn:
+    id: "e2e_home_create_report"
+    label: "新規レポートを作成"
+
+- extendedWaitUntil:
+    visible:
+      id: "e2e_report_editor_screen"
+    timeout: 30000
+    label: "編集画面を待機"
+
+- tapOn:
+    id: "e2e_report_pdf_preview"
+    label: "PDFプレビューを開く"
+
+- extendedWaitUntil:
+    visible:
+      id: "e2e_pdf_preview_screen"
+    timeout: 30000
+    label: "PDFプレビュー画面を待機"
+
+- assertVisible:
+    id: "e2e_pdf_preview_screen"
+    label: "PDFプレビューに到達"
+
+- assertVisible:
+    id: "e2e_pdf_export"
+    label: "PDF出力ボタンが表示される"

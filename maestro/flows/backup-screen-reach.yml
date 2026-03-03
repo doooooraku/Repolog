@@ -1,0 +1,53 @@
+appId: "com.dooooraku.repolog"
+name: "E2E - backup screen reach"
+tags:
+  - e2e
+  - settings
+
+---
+- launchApp:
+    clearState: true
+    label: "クリーン起動"
+
+- extendedWaitUntil:
+    visible:
+      id: "e2e_home_screen"
+    timeout: 60000
+    label: "Homeの初期描画を待機"
+
+- tapOn:
+    id: "e2e_open_settings"
+    label: "設定を開く"
+
+- assertVisible:
+    id: "e2e_settings_screen"
+    label: "設定画面を確認"
+
+- scrollUntilVisible:
+    element:
+      id: "e2e_open_backup"
+    direction: DOWN
+    timeout: 10000
+    label: "バックアップボタンまでスクロール"
+
+- tapOn:
+    id: "e2e_open_backup"
+    label: "バックアップ画面を開く"
+
+- extendedWaitUntil:
+    visible:
+      id: "e2e_backup_screen"
+    timeout: 30000
+    label: "バックアップ画面を待機"
+
+- assertVisible:
+    id: "e2e_backup_screen"
+    label: "バックアップ画面に到達"
+
+- tapOn:
+    id: "e2e_backup_back"
+    label: "設定へ戻る"
+
+- assertVisible:
+    id: "e2e_settings_screen"
+    label: "設定画面へ復帰"
