@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: 'Henüz etiket yok.',
   photoDeletedNotice: 'Fotoğraf kaldırıldı.',
   undoAction: 'Geri al',
+  a11yGoBack: 'Geri dön',
 };
 
 export default dict;

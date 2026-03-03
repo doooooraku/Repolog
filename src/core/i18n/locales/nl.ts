@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: 'Nog geen tags.',
   photoDeletedNotice: 'Foto verwijderd.',
   undoAction: 'Ongedaan maken',
+  a11yGoBack: 'Terug',
 };
 
 export default dict;

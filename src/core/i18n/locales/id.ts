@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: 'Belum ada tag.',
   photoDeletedNotice: 'Foto dihapus.',
   undoAction: 'Urungkan',
+  a11yGoBack: 'Kembali',
 };
 
 export default dict;

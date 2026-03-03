@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: 'ยังไม่มีแท็ก',
   photoDeletedNotice: 'ลบรูปภาพแล้ว',
   undoAction: 'เลิกทำ',
+  a11yGoBack: 'ย้อนกลับ',
 };
 
 export default dict;

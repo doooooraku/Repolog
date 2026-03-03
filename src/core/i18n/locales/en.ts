@@ -93,6 +93,9 @@ const baseEn = {
 
   // --- Icon Categories & Labels ---
 
+  // --- Accessibility ---
+  a11yGoBack: 'Go back',
+
   // --- Misc / Errors ---
   errorLoadFailed: 'Failed to load data.',
   errorSaveFailed: 'Failed to save.',

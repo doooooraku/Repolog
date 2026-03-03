@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: 'Inga taggar ännu.',
   photoDeletedNotice: 'Foto borttaget.',
   undoAction: 'Ångra',
+  a11yGoBack: 'Gå tillbaka',
 };
 
 export default dict;

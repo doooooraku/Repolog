@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: '태그가 없습니다.',
   photoDeletedNotice: '사진이 삭제되었습니다.',
   undoAction: '실행 취소',
+  a11yGoBack: '뒤로 가기',
 };
 
 export default dict;

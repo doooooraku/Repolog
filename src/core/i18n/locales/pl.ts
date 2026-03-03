@@ -177,6 +177,7 @@ const dict = {
   backupSchemaMismatchBody: 'Ta kopia używa innej wersji schematu.',
   backupUnsupportedTitle: 'Nieobsługiwane',
   backupUnsupportedBody: 'Kopia zapasowa nie jest obsługiwana na tym urządzeniu.',
+  a11yGoBack: 'Wróć',
 };
 
 export default dict;

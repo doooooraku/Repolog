@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: 'Chưa có thẻ nào.',
   photoDeletedNotice: 'Đã xóa ảnh.',
   undoAction: 'Hoàn tác',
+  a11yGoBack: 'Quay lại',
 };
 
 export default dict;

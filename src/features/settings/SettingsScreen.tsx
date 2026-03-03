@@ -103,7 +103,7 @@ export default function SettingsScreen() {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]} edges={['top']}>
       <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]} testID="e2e_settings_screen">
         <View style={styles.headerRow}>
-          <Pressable testID="e2e_back_home" onPress={() => router.back()} style={[styles.backButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
+          <Pressable testID="e2e_back_home" accessibilityLabel={t.a11yGoBack} accessibilityRole="button" onPress={() => router.back()} style={[styles.backButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
             <Text style={[styles.backText, { color: colors.textSecondary }]}>{'‹'}</Text>
           </Pressable>
           <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>{t.settings}</Text>

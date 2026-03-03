@@ -271,6 +271,8 @@ export default function HomeScreen() {
           <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Repolog</Text>
           <Pressable
             testID="e2e_open_settings"
+            accessibilityLabel={t.settings}
+            accessibilityRole="button"
             onPress={() => router.push('/settings')}
             hitSlop={TOUCH_HIT_SLOP}
             style={styles.headerIconButton}>
@@ -346,6 +348,8 @@ export default function HomeScreen() {
 
         <Pressable
           testID="e2e_home_create_report_fab"
+          accessibilityLabel={t.homeCreateReport}
+          accessibilityRole="button"
           onPress={() => router.push('/reports/new')}
           hitSlop={TOUCH_HIT_SLOP}
           style={[styles.fabButton, { backgroundColor: colors.primaryBg }]}>
