@@ -1,3 +1,8 @@
+jest.mock('expo-localization', () => ({
+  getCalendars: () => [{}],
+  getLocales: () => [{ languageCode: 'en' }],
+}));
+
 import {
   buildPdfExportFileName,
   chunkPhotos,
