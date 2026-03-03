@@ -1,3 +1,5 @@
+import * as Localization from 'expo-localization';
+
 import type { Photo, Report } from '@/src/types/models';
 
 export type PaperSize = 'A4' | 'Letter';
@@ -15,16 +17,47 @@ const FILE_NAME_DUPLICATED_UNDERSCORES = /_+/g;
 const FILE_NAME_EDGE_UNDERSCORES = /^_+|_+$/g;
 const MAX_FILE_NAME_REPORT_PART_LENGTH = 30;
 
+const getDeviceTimeZone = (): string | undefined => {
+  try {
+    return Localization.getCalendars()[0]?.timeZone ?? undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const getLocalParts = (date: Date) => {
+  try {
+    const tz = getDeviceTimeZone();
+    const opts: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    };
+    if (tz) opts.timeZone = tz;
+    const parts = new Intl.DateTimeFormat('en-CA', opts).formatToParts(date);
+    const get = (type: Intl.DateTimeFormatPartTypes) =>
+      parts.find((p) => p.type === type)?.value ?? '';
+    return { year: get('year'), month: get('month'), day: get('day'), hour: get('hour'), minute: get('minute') };
+  } catch {
+    const pad = (v: number) => String(v).padStart(2, '0');
+    return {
+      year: String(date.getFullYear()),
+      month: pad(date.getMonth() + 1),
+      day: pad(date.getDate()),
+      hour: pad(date.getHours()),
+      minute: pad(date.getMinutes()),
+    };
+  }
+};
+
 export const formatDateTime = (iso: string) => {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  const pad = (value: number) => String(value).padStart(2, '0');
-  const year = date.getFullYear();
-  const month = pad(date.getMonth() + 1);
-  const day = pad(date.getDate());
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-  return `${year}-${month}-${day} ${hours}:${minutes}`;
+  const { year, month, day, hour, minute } = getLocalParts(date);
+  return `${year}-${month}-${day} ${hour}:${minute}`;
 };
 
 export const splitCommentIntoPages = (comment: string, charsPerPage = 1200) => {
@@ -72,13 +105,8 @@ const normalizeFileNamePart = (value: string, maxLength?: number) => {
 const formatFileNameTimestamp = (iso: string) => {
   const date = new Date(iso);
   const safeDate = Number.isNaN(date.getTime()) ? new Date() : date;
-  const pad = (value: number) => String(value).padStart(2, '0');
-  const year = safeDate.getFullYear();
-  const month = pad(safeDate.getMonth() + 1);
-  const day = pad(safeDate.getDate());
-  const hours = pad(safeDate.getHours());
-  const minutes = pad(safeDate.getMinutes());
-  return `${year}${month}${day}_${hours}${minutes}`;
+  const { year, month, day, hour, minute } = getLocalParts(safeDate);
+  return `${year}${month}${day}_${hour}${minute}`;
 };
 
 export const buildPdfExportFileName = (params: {
