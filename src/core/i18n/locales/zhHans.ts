@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: '暂无标签。',
   photoDeletedNotice: '照片已删除。',
   undoAction: '撤销',
+  a11yGoBack: '返回',
 };
 
 export default dict;

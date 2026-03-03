@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: 'अभी कोई टैग नहीं।',
   photoDeletedNotice: 'फ़ोटो हटाई गई।',
   undoAction: 'पूर्ववत करें',
+  a11yGoBack: 'वापस जाएँ',
 };
 
 export default dict;

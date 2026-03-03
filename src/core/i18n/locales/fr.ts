@@ -180,6 +180,7 @@ const dict = {
   tagsEmpty: 'Aucun tag pour le moment.',
   photoDeletedNotice: 'Photo supprimée.',
   undoAction: 'Annuler',
+  a11yGoBack: 'Retour',
 };
 
 export default dict;

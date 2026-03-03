@@ -709,14 +709,14 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       <View style={[styles.screen, { backgroundColor: colors.screenBg }]} testID="e2e_report_editor_screen">
         <View style={[styles.header, { borderBottomColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
           <View style={styles.headerLeft}>
-            <Pressable testID="e2e_report_back" onPress={handleBack} style={styles.backButton} hitSlop={TOUCH_HIT_SLOP}>
+            <Pressable testID="e2e_report_back" accessibilityLabel={t.a11yGoBack} accessibilityRole="button" onPress={handleBack} style={styles.backButton} hitSlop={TOUCH_HIT_SLOP}>
               <ArrowLeft size={18} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
             </Pressable>
             <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>
               {t.reportEditorTitle}
             </Text>
           </View>
-          <Pressable testID="e2e_report_pdf_preview" onPress={handlePreviewPdf} style={[styles.pdfButton, { backgroundColor: colors.primaryBg }]} hitSlop={TOUCH_HIT_SLOP}>
+          <Pressable testID="e2e_report_pdf_preview" accessibilityLabel={t.pdfPreviewTitle} accessibilityRole="button" onPress={handlePreviewPdf} style={[styles.pdfButton, { backgroundColor: colors.primaryBg }]} hitSlop={TOUCH_HIT_SLOP}>
             <FileText size={15} color={colors.textOnPrimary} strokeWidth={ICON_STROKE_WIDTH} />
             <Text style={[styles.pdfButtonText, { color: colors.textOnPrimary }]}>PDF</Text>
           </Pressable>
@@ -933,7 +933,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         </ScrollView>
 
         <View style={[styles.footerBar, { borderTopColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
-          <Pressable onPress={handleSave} style={[styles.saveButton, { backgroundColor: colors.primaryBg }, saving && styles.disabledButton]} disabled={saving} hitSlop={TOUCH_HIT_SLOP}>
+          <Pressable accessibilityLabel={t.save} accessibilityRole="button" onPress={handleSave} style={[styles.saveButton, { backgroundColor: colors.primaryBg }, saving && styles.disabledButton]} disabled={saving} hitSlop={TOUCH_HIT_SLOP}>
             {saving ? <ActivityIndicator color={colors.primaryText} /> : <Text style={[styles.saveButtonText, { color: colors.textOnPrimary }]}>{t.save}</Text>}
           </Pressable>
         </View>

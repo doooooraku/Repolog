@@ -153,6 +153,7 @@ const dict = {
   tagsEmpty: 'No hay etiquetas aún.',
   photoDeletedNotice: 'Foto eliminada.',
   undoAction: 'Deshacer',
+  a11yGoBack: 'Volver',
 };
 
 export default dict;
