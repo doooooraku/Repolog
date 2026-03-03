@@ -30,6 +30,7 @@ const dict = {
   themeDesc: '앱의 분위기를 바꿔보세요.',
   themeDarkLabel: '다크',            // Dark
   themeLightLabel: '라이트',          // Light
+  themeSystemLabel: '시스템',
 
   // --- Habit Management (習慣管理) ---
   save: '저장',

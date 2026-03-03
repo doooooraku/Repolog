@@ -85,6 +85,7 @@ const baseEn = {
   themeDesc: 'Change the appearance of the app.',
   themeDarkLabel: 'Dark',
   themeLightLabel: 'Light',
+  themeSystemLabel: 'System',
 
   // --- Habit Management ---
   deleteConfirmBody: 'Are you sure? This cannot be undone.',

@@ -152,9 +152,10 @@ export default function SettingsScreen() {
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.theme}</Text>
           <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.themeDesc}</Text>
           <View style={styles.themeRow}>
-            {(['light', 'dark'] as const).map((mode) => {
+            {(['system', 'light', 'dark'] as const).map((mode) => {
               const active = themeMode === mode;
-              const label = mode === 'light' ? t.themeLightLabel : t.themeDarkLabel;
+              const label =
+                mode === 'system' ? t.themeSystemLabel : mode === 'light' ? t.themeLightLabel : t.themeDarkLabel;
               return (
                 <Pressable
                   key={mode}

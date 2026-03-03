@@ -44,6 +44,7 @@ const dict = {
     comingSoonTitle: '近日対応',
     themeDarkLabel: 'ダーク',
     themeLightLabel: 'ライト',
+    themeSystemLabel: 'システム',
     themeDesc: 'アプリ全体の雰囲気を選べます。（Pro テーマは後から）',
     restoreSoon: '購入の復元は今後のアップデートで追加されます。',
     restoreDesc: '購入履歴を復元します。',

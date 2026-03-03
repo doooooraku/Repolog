@@ -36,6 +36,7 @@ const dict = {
   // --- Themes ---
   themeDarkLabel: 'Sombre',
   themeLightLabel: 'Clair',
+  themeSystemLabel: 'Système',
   themeDesc: 'Choisis ton ambiance. (Les thèmes Pro arriveront plus tard.)',
   restoreSoon: 'La restauration des achats sera ajoutée dans une future mise à jour.',
   restoreDesc: 'Restaurer les achats effectués sur ce compte.',

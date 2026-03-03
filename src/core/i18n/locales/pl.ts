@@ -102,6 +102,7 @@ const dict = {
   commentPlaceholder: 'Wpisz komentarz...',
   commentRemainingLabel: 'Pozostało',
   save: 'Zapisz',
+  themeSystemLabel: 'Systemowy',
   errorLoadFailed: 'Nie udało się wczytać danych.',
   errorSaveFailed: 'Nie udało się zapisać.',
   paywallHeaderTitle: 'Repolog Pro',

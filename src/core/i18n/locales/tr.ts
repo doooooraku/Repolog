@@ -30,6 +30,7 @@ const dict = {
   themeDesc: 'Uygulama görünümünü değiştir.',
   themeDarkLabel: 'Koyu',            // Dark
   themeLightLabel: 'Açık',            // Light
+  themeSystemLabel: 'Sistem',
 
   // --- Habit Management (習慣管理) ---
   save: 'Kaydet',

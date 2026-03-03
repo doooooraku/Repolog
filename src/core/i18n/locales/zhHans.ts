@@ -30,6 +30,7 @@ const dict = {
   themeDesc: '更改应用程序的外观。',
   themeDarkLabel: '深色',            // Dark
   themeLightLabel: '浅色',            // Light
+  themeSystemLabel: '跟随系统',
 
   // --- Habit Management (習慣管理) ---
   save: '保存',
