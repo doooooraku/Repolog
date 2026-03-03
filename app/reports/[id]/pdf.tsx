@@ -220,7 +220,7 @@ export default function PdfPreviewScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.screenBgAlt }]}>
+    <View testID="e2e_pdf_preview_screen" style={[styles.container, { backgroundColor: colors.screenBgAlt }]}>
       <Text style={[styles.title, { color: colors.textPrimary }]}>{t.pdfPreviewTitle}</Text>
       <View style={styles.row}>
         <Pressable
@@ -253,7 +253,7 @@ export default function PdfPreviewScreen() {
           trustAllCerts={false}
         />
       )}
-      <Pressable style={[styles.exportButton, { backgroundColor: colors.primaryBg }]} onPress={handleExport} disabled={exporting}>
+      <Pressable testID="e2e_pdf_export" style={[styles.exportButton, { backgroundColor: colors.primaryBg }]} onPress={handleExport} disabled={exporting}>
         {exporting ? (
           <ActivityIndicator color={colors.primaryText} />
         ) : (

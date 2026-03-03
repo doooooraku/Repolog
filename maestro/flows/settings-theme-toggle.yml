@@ -1,0 +1,64 @@
+appId: "com.dooooraku.repolog"
+name: "E2E - theme toggle cycle"
+tags:
+  - e2e
+  - settings
+
+---
+- launchApp:
+    clearState: true
+    label: "クリーン起動"
+
+- extendedWaitUntil:
+    visible:
+      id: "e2e_home_screen"
+    timeout: 60000
+    label: "Homeの初期描画を待機"
+
+- tapOn:
+    id: "e2e_open_settings"
+    label: "設定を開く"
+
+- assertVisible:
+    id: "e2e_settings_screen"
+    label: "設定画面を確認"
+
+# System → Light
+- tapOn:
+    id: "e2e_theme_light"
+    label: "Lightモードに切替"
+
+- assertVisible:
+    id: "e2e_theme_light"
+    label: "Lightボタンが見える"
+
+# Light → Dark
+- tapOn:
+    id: "e2e_theme_dark"
+    label: "Darkモードに切替"
+
+- assertVisible:
+    id: "e2e_theme_dark"
+    label: "Darkボタンが見える"
+
+# Dark → System
+- tapOn:
+    id: "e2e_theme_system"
+    label: "Systemモードに切替"
+
+- assertVisible:
+    id: "e2e_theme_system"
+    label: "Systemボタンが見える"
+
+# System → Light (元に戻す)
+- tapOn:
+    id: "e2e_theme_light"
+    label: "Lightに戻す"
+
+- tapOn:
+    id: "e2e_back_home"
+    label: "Homeに戻る"
+
+- assertVisible:
+    id: "e2e_home_screen"
+    label: "Home画面に復帰"
