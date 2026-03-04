@@ -10,6 +10,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Pdf from 'react-native-pdf';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ArrowLeft } from '@tamagui/lucide-icons';
 
 import * as LegacyFileSystem from 'expo-file-system/legacy';
 
@@ -29,6 +30,8 @@ import {
 
 const PHOTO_WARNING_THRESHOLD = 50;
 const FREE_MONTHLY_EXPORT_LIMIT = 5;
+const TOUCH_HIT_SLOP = { top: 6, bottom: 6, left: 6, right: 6 } as const;
+const ICON_STROKE_WIDTH = 1.85;
 
 export default function PdfPreviewScreen() {
   const { id } = useLocalSearchParams<{ id?: string | string[] }>();
@@ -223,6 +226,14 @@ export default function PdfPreviewScreen() {
   if (loading) {
     return (
       <SafeAreaView edges={['top', 'bottom']} style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]}>
+        <View style={[styles.header, { borderBottomColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
+          <View style={styles.headerLeft}>
+            <Pressable testID="e2e_pdf_back" accessibilityLabel={t.a11yGoBack} accessibilityRole="button" onPress={() => router.back()} style={styles.backButton} hitSlop={TOUCH_HIT_SLOP}>
+              <ArrowLeft size={18} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
+            </Pressable>
+            <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>{t.pdfPreviewTitle}</Text>
+          </View>
+        </View>
         <View style={styles.center}>
           <ActivityIndicator />
           <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.pdfGenerating}</Text>
@@ -233,8 +244,15 @@ export default function PdfPreviewScreen() {
 
   return (
     <SafeAreaView edges={['top', 'bottom']} style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]}>
+      <View style={[styles.header, { borderBottomColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
+        <View style={styles.headerLeft}>
+          <Pressable testID="e2e_pdf_back" accessibilityLabel={t.a11yGoBack} accessibilityRole="button" onPress={() => router.back()} style={styles.backButton} hitSlop={TOUCH_HIT_SLOP}>
+            <ArrowLeft size={18} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
+          </Pressable>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>{t.pdfPreviewTitle}</Text>
+        </View>
+      </View>
       <View testID="e2e_pdf_preview_screen" style={styles.container}>
-        <Text style={[styles.title, { color: colors.textPrimary }]}>{t.pdfPreviewTitle}</Text>
         <View style={styles.row}>
           <Pressable
             onPress={() => setLayout('standard')}
@@ -293,10 +311,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
   },
-  title: {
+  header: {
+    height: 60,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  headerLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    flex: 1,
     fontSize: 18,
     fontWeight: '700',
-    marginBottom: 12,
   },
   row: {
     flexDirection: 'row',
