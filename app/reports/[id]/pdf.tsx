@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,6 +10,8 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Pdf from 'react-native-pdf';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import * as LegacyFileSystem from 'expo-file-system/legacy';
 
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -38,6 +40,7 @@ export default function PdfPreviewScreen() {
   const [paperSize, setPaperSize] = useState<PaperSize>('A4');
   const [loading, setLoading] = useState(true);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
+  const prevPdfUriRef = useRef<string | null>(null);
   const isPro = useProStore((s) => s.isPro);
   const initPro = useProStore((s) => s.init);
   const [exporting, setExporting] = useState(false);
@@ -72,6 +75,11 @@ export default function PdfPreviewScreen() {
   const loadPdf = useCallback(async () => {
     if (!reportId) return;
     setLoading(true);
+    const oldUri = prevPdfUriRef.current;
+    setPdfUri(null);
+    if (oldUri) {
+      LegacyFileSystem.deleteAsync(oldUri, { idempotent: true }).catch(() => {});
+    }
     try {
       const report = await getReportById(reportId);
       if (!report) {
@@ -92,6 +100,7 @@ export default function PdfPreviewScreen() {
         labels: labelMap,
       });
       setPdfUri(uri);
+      prevPdfUriRef.current = uri;
     } catch (e) {
       console.error('[PDF] Generation failed:', e);
       Alert.alert(t.pdfExportFailed);

@@ -60,18 +60,29 @@ const escapeHtml = (value: string) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 
-const PDF_IMAGE_MAX_EDGE = 1400;
-const PDF_IMAGE_QUALITY = 0.8;
+type ImageSizeConfig = { maxEdge: number; quality: number };
 
-const fileToDataUri = async (uri: string) => {
+const IMAGE_SIZE_STANDARD: ImageSizeConfig = { maxEdge: 800, quality: 0.65 };
+const IMAGE_SIZE_LARGE: ImageSizeConfig = { maxEdge: 1000, quality: 0.7 };
+
+export const PDF_IMAGE_CONFIGS = {
+  standard: IMAGE_SIZE_STANDARD,
+  large: IMAGE_SIZE_LARGE,
+} as const;
+
+const getImageSizeConfig = (layout: PdfLayout): ImageSizeConfig =>
+  layout === 'large' ? IMAGE_SIZE_LARGE : IMAGE_SIZE_STANDARD;
+
+const fileToDataUri = async (uri: string, config: ImageSizeConfig) => {
   const compressed = await ImageManipulator.manipulateAsync(
     uri,
-    [{ resize: { width: PDF_IMAGE_MAX_EDGE } }],
-    { compress: PDF_IMAGE_QUALITY, format: ImageManipulator.SaveFormat.JPEG },
+    [{ resize: { width: config.maxEdge } }],
+    { compress: config.quality, format: ImageManipulator.SaveFormat.JPEG },
   );
   const base64 = await FileSystem.readAsStringAsync(compressed.uri, {
     encoding: 'base64',
   });
+  FileSystem.deleteAsync(compressed.uri, { idempotent: true }).catch(() => {});
   return `data:image/jpeg;base64,${base64}`;
 };
 
@@ -180,7 +191,8 @@ const buildPhotoPages = async (
         const label = photoLabel(photoCounter);
         photoCounter += 1;
         try {
-          const src = await fileToDataUri(photo.localUri);
+          const config = getImageSizeConfig(input.layout);
+          const src = await fileToDataUri(photo.localUri, config);
           return `
             <div class="photo-slot">
               <div class="photo-label">${escapeHtml(label)}</div>
