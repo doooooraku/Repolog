@@ -669,7 +669,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           testID={`e2e_photo_slot_${index}_${marker}`}
           style={[styles.photoCard, { backgroundColor: colors.photoCardBg }, isActive && styles.photoCardActive]}>
           <View style={styles.photoToolbar}>
-            <Pressable onLongPress={drag} delayLongPress={160} style={styles.photoDragHandle} accessibilityLabel={t.a11yReorderPhoto} accessibilityRole="button">
+            <Pressable onLongPress={drag} delayLongPress={200} style={styles.photoDragHandle} accessibilityLabel={t.a11yReorderPhoto} accessibilityRole="button">
               <GripVertical size={16} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
             </Pressable>
             <Text style={[styles.photoIndexLabel, { color: colors.textSecondary }]}>{index + 1}</Text>
@@ -884,7 +884,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 data={photos}
                 keyExtractor={(item) => item.id}
                 renderItem={renderPhotoItem}
-                activationDistance={12}
+                activationDistance={20}
+                autoscrollThreshold={80}
+                autoscrollSpeed={150}
                 onDragEnd={({ data }) => {
                   void handlePhotoReorder(data);
                 }}
