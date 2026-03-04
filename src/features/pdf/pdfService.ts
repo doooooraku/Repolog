@@ -4,6 +4,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 
 import type { Photo, Report } from '@/src/types/models';
+import { clearFontCache } from './pdfFonts';
 import { buildPdfHtml } from './pdfTemplate';
 import { PAPER_SIZES, type PaperSize, type PdfLayout } from './pdfUtils';
 
@@ -36,12 +37,16 @@ const MM_TO_POINTS = 72 / 25.4;
 export async function generatePdfFile(input: PdfGenerateInput) {
   const html = await buildPdfHtml(input);
   const size = PAPER_SIZES[input.paperSize];
-  const file = await Print.printToFileAsync({
-    html,
-    width: Math.round(size.widthMm * MM_TO_POINTS),
-    height: Math.round(size.heightMm * MM_TO_POINTS),
-  });
-  return file.uri;
+  try {
+    const file = await Print.printToFileAsync({
+      html,
+      width: Math.round(size.widthMm * MM_TO_POINTS),
+      height: Math.round(size.heightMm * MM_TO_POINTS),
+    });
+    return file.uri;
+  } finally {
+    clearFontCache();
+  }
 }
 
 async function savePdfAndroid(uri: string, fileName: string) {
