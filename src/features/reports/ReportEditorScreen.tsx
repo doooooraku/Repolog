@@ -668,12 +668,22 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         <View
           testID={`e2e_photo_slot_${index}_${marker}`}
           style={[styles.photoCard, { backgroundColor: colors.photoCardBg }, isActive && styles.photoCardActive]}>
-          <Pressable onLongPress={drag} delayLongPress={160} style={styles.photoDragHandle} accessibilityLabel={t.a11yReorderPhoto} accessibilityRole="button">
-            <GripVertical size={16} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
-          </Pressable>
-          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} />
-          <View style={styles.photoInfo}>
+          <View style={styles.photoToolbar}>
+            <Pressable onLongPress={drag} delayLongPress={160} style={styles.photoDragHandle} accessibilityLabel={t.a11yReorderPhoto} accessibilityRole="button">
+              <GripVertical size={16} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
+            </Pressable>
             <Text style={[styles.photoIndexLabel, { color: colors.textSecondary }]}>{index + 1}</Text>
+            <View style={styles.photoToolbarSpacer} />
+            {__DEV__ && (
+              <Pressable
+                testID={`e2e_photo_delete_now_${index}`}
+                onPress={() => {
+                  void handleDeletePhoto(item);
+                }}
+                style={styles.photoDeleteNowButton}>
+                <Text style={styles.photoDeleteNowText}>-</Text>
+              </Pressable>
+            )}
             <Pressable
               testID={`e2e_photo_delete_${index}`}
               onPress={() => confirmDeletePhoto(item)}
@@ -682,16 +692,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
               <Text style={styles.photoDeleteButtonText}>×</Text>
             </Pressable>
           </View>
-          {__DEV__ && (
-            <Pressable
-              testID={`e2e_photo_delete_now_${index}`}
-              onPress={() => {
-                void handleDeletePhoto(item);
-              }}
-              style={styles.photoDeleteNowButton}>
-              <Text style={styles.photoDeleteNowText}>-</Text>
-            </Pressable>
-          )}
+          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} resizeMode="cover" />
         </View>
       );
     },
@@ -1188,12 +1189,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   photoCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
     borderRadius: 10,
     marginBottom: 8,
     overflow: 'hidden',
-    height: 72,
   },
   photoCardActive: {
     opacity: 0.85,
@@ -1203,23 +1202,24 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
   },
+  photoToolbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 36,
+    paddingRight: 8,
+  },
+  photoToolbarSpacer: {
+    flex: 1,
+  },
   photoDragHandle: {
-    width: 32,
-    height: '100%',
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
   },
   photoThumb: {
-    width: 72,
-    height: 72,
-    borderRadius: 6,
-  },
-  photoInfo: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
+    width: '100%',
+    height: 200,
   },
   photoDeleteButton: {
     width: 28,
@@ -1236,15 +1236,13 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   photoDeleteNowButton: {
-    position: 'absolute',
-    top: 4,
-    right: 44,
     width: 20,
     height: 20,
     borderRadius: 10,
     backgroundColor: 'rgba(59, 130, 246, 0.8)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 4,
   },
   photoDeleteNowText: {
     color: '#ffffff',
