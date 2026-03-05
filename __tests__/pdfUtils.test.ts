@@ -6,7 +6,9 @@ jest.mock('expo-localization', () => ({
 import * as Localization from 'expo-localization';
 
 import {
+  COVER_COMMENT_CHAR_LIMIT,
   buildPdfExportFileName,
+  calculatePageCount,
   chunkPhotos,
   formatDateTime,
   photoLabel,
@@ -92,6 +94,35 @@ describe('pdfUtils', () => {
       reportName: '12345678901234567890123456789012345',
     });
     expect(fileName).toBe('20260209_0718_123456789012345678901234567890_Repolog.pdf');
+  });
+});
+
+describe('calculatePageCount', () => {
+  test('short comment fits on cover — no separate comment pages', () => {
+    // 10 chars is well under 800
+    expect(calculatePageCount('short', 4, 'standard')).toBe(1 + 0 + 2); // cover + 0 comment + 2 photo
+    expect(calculatePageCount('short', 4, 'large')).toBe(1 + 0 + 4);
+  });
+
+  test('empty comment fits on cover — no separate comment pages', () => {
+    expect(calculatePageCount('', 2, 'standard')).toBe(1 + 0 + 1);
+  });
+
+  test('comment at exactly the limit fits on cover', () => {
+    const exactLimit = 'a'.repeat(COVER_COMMENT_CHAR_LIMIT);
+    expect(calculatePageCount(exactLimit, 2, 'standard')).toBe(1 + 0 + 1);
+  });
+
+  test('long comment exceeding limit gets separate pages', () => {
+    const longComment = 'a'.repeat(COVER_COMMENT_CHAR_LIMIT + 1);
+    // 801 chars -> 1 page (splitCommentIntoPages with 1200 chars/page)
+    expect(calculatePageCount(longComment, 2, 'standard')).toBe(1 + 1 + 1);
+  });
+
+  test('very long comment splits into multiple pages', () => {
+    const veryLong = 'a'.repeat(2500);
+    // 2500 chars -> ceil(2500/1200) = 3 comment pages
+    expect(calculatePageCount(veryLong, 2, 'standard')).toBe(1 + 3 + 1);
   });
 });
 

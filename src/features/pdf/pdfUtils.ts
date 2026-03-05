@@ -11,6 +11,7 @@ export const PAPER_SIZES = {
 } as const;
 
 export const DEFAULT_TIME_FORMAT = 'YYYY-MM-DD HH:mm';
+export const COVER_COMMENT_CHAR_LIMIT = 800;
 const FILE_NAME_FORBIDDEN_CHARS = /[\/\\:*?"<>|]/g;
 const FILE_NAME_SPACES = /\s+/g;
 const FILE_NAME_DUPLICATED_UNDERSCORES = /_+/g;
@@ -85,10 +86,11 @@ export const photoLabel = (index: number) => `Photo ${index + 1}`;
 export const reportTitle = (report: Report) => report.reportName ?? 'Untitled Report';
 
 export const calculatePageCount = (comment: string, photoCount: number, layout: PdfLayout) => {
-  const commentPages = splitCommentIntoPages(comment);
+  const isCommentOnCover = comment.length <= COVER_COMMENT_CHAR_LIMIT;
+  const commentPages = isCommentOnCover ? 0 : splitCommentIntoPages(comment).length;
   const perPage = layout === 'large' ? 1 : 2;
   const photoPages = Math.ceil(photoCount / perPage);
-  return 1 + commentPages.length + photoPages;
+  return 1 + commentPages + photoPages;
 };
 
 const normalizeFileNamePart = (value: string, maxLength?: number) => {

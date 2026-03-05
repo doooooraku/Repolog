@@ -14,6 +14,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import {
   NestableDraggableFlatList,
   NestableScrollContainer,
+  ScaleDecorator,
   type RenderItemParams,
 } from 'react-native-draggable-flatlist';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -665,35 +666,39 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       const index = getIndex() ?? item.orderIndex;
       const marker = extractPhotoMarker(item.localUri);
       return (
-        <View
-          testID={`e2e_photo_slot_${index}_${marker}`}
-          style={[styles.photoCard, { backgroundColor: colors.photoCardBg }, isActive && styles.photoCardActive]}>
-          <View style={styles.photoToolbar}>
-            <Pressable onLongPress={drag} delayLongPress={200} style={styles.photoDragHandle} accessibilityLabel={t.a11yReorderPhoto} accessibilityRole="button">
-              <GripVertical size={16} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
-            </Pressable>
-            <Text style={[styles.photoIndexLabel, { color: colors.textSecondary }]}>{index + 1}</Text>
-            <View style={styles.photoToolbarSpacer} />
-            {__DEV__ && (
-              <Pressable
-                testID={`e2e_photo_delete_now_${index}`}
-                onPress={() => {
-                  void handleDeletePhoto(item);
-                }}
-                style={styles.photoDeleteNowButton}>
-                <Text style={styles.photoDeleteNowText}>-</Text>
+        <ScaleDecorator activeScale={1.03}>
+          <View
+            testID={`e2e_photo_slot_${index}_${marker}`}
+            style={[styles.photoCard, { backgroundColor: colors.photoCardBg }, isActive && styles.photoCardActive]}>
+            <View style={styles.photoToolbar}>
+              <Pressable onLongPress={drag} delayLongPress={200} style={styles.photoDragHandle} accessibilityLabel={t.a11yReorderPhoto} accessibilityRole="button">
+                <GripVertical size={16} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
               </Pressable>
-            )}
-            <Pressable
-              testID={`e2e_photo_delete_${index}`}
-              onPress={() => confirmDeletePhoto(item)}
-              hitSlop={8}
-              style={styles.photoDeleteButton}>
-              <Text style={styles.photoDeleteButtonText}>×</Text>
+              <Text style={[styles.photoIndexLabel, { color: colors.textSecondary }]}>{index + 1}</Text>
+              <View style={styles.photoToolbarSpacer} />
+              {__DEV__ && (
+                <Pressable
+                  testID={`e2e_photo_delete_now_${index}`}
+                  onPress={() => {
+                    void handleDeletePhoto(item);
+                  }}
+                  style={styles.photoDeleteNowButton}>
+                  <Text style={styles.photoDeleteNowText}>-</Text>
+                </Pressable>
+              )}
+              <Pressable
+                testID={`e2e_photo_delete_${index}`}
+                onPress={() => confirmDeletePhoto(item)}
+                hitSlop={8}
+                style={styles.photoDeleteButton}>
+                <Text style={styles.photoDeleteButtonText}>×</Text>
+              </Pressable>
+            </View>
+            <Pressable onLongPress={drag} delayLongPress={200}>
+              <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
             </Pressable>
           </View>
-          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
-        </View>
+        </ScaleDecorator>
       );
     },
     [colors.photoCardBg, colors.textMuted, colors.textSecondary, confirmDeletePhoto, handleDeletePhoto, t.a11yReorderPhoto],
@@ -1197,7 +1202,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   photoCardActive: {
-    opacity: 0.85,
     elevation: 4,
     shadowColor: '#000',
     shadowOpacity: 0.15,

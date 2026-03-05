@@ -4,6 +4,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import type { Photo, Report } from '@/src/types/models';
 import { buildPdfFontCss, pdfFontStack } from './pdfFonts';
 import {
+  COVER_COMMENT_CHAR_LIMIT,
   PAPER_SIZES,
   type PaperSize,
   type PdfLayout,
@@ -117,7 +118,7 @@ const buildFontSelectionText = (input: PdfTemplateInput) => {
   return chunks.join('\n');
 };
 
-const buildCover = (input: PdfTemplateInput, pageCount: number) => {
+const buildCover = (input: PdfTemplateInput, pageCount: number, commentText?: string) => {
   const title = escapeHtml(reportTitle(input.report));
   const createdAt = escapeHtml(formatDateTime(input.report.createdAt));
   const weather = escapeHtml(input.weatherLabel ?? input.report.weather ?? '');
@@ -128,25 +129,34 @@ const buildCover = (input: PdfTemplateInput, pageCount: number) => {
       : '-';
   const address = input.report.address ?? '-';
 
+  const commentBlock = commentText != null
+    ? `
+          <div class="comment-block no-break">
+            <h2 class="section-title">${escapeHtml(getLabel(input, 'comment'))}</h2>
+            <div class="comment-text">${escapeHtml(commentText || '-')}</div>
+          </div>`
+    : '';
+
   return `
-    <section class="page">
+    <section class="page cover">
       <div class="page-inner">
         <div class="page-main">
-          <h1 class="title">${title}</h1>
-          <div class="meta">
-            <div><span class="label">${escapeHtml(getLabel(input, 'createdAt'))}</span><span>${createdAt}</span></div>
-            <div><span class="label">${escapeHtml(getLabel(input, 'reportName'))}</span><span>${reportName}</span></div>
-            <div><span class="label">${escapeHtml(getLabel(input, 'address'))}</span><span>${escapeHtml(address)}</span></div>
-            <div><span class="label">${escapeHtml(getLabel(input, 'location'))}</span><span>${escapeHtml(location)}</span></div>
-            <div><span class="label">${escapeHtml(getLabel(input, 'weather'))}</span><span>${weather || '-'}</span></div>
-            <div><span class="label">${escapeHtml(getLabel(input, 'photoCount'))}</span><span>${input.photos.length} ${escapeHtml(getLabel(input, 'photos'))}</span></div>
-            <div><span class="label">${escapeHtml(getLabel(input, 'pageCount'))}</span><span>${pageCount} ${escapeHtml(getLabel(input, 'pages'))}</span></div>
+          <h1 class="report-title">${title}</h1>
+          <div class="meta-grid">
+            <div class="meta-k">${escapeHtml(getLabel(input, 'createdAt'))}</div><div class="meta-v">${createdAt}</div>
+            <div class="meta-k">${escapeHtml(getLabel(input, 'reportName'))}</div><div class="meta-v">${reportName}</div>
+            <div class="meta-k">${escapeHtml(getLabel(input, 'address'))}</div><div class="meta-v">${escapeHtml(address)}</div>
+            <div class="meta-k">${escapeHtml(getLabel(input, 'location'))}</div><div class="meta-v">${escapeHtml(location)}</div>
+            <div class="meta-k">${escapeHtml(getLabel(input, 'weather'))}</div><div class="meta-v">${weather || '-'}</div>
+            <div class="meta-k">${escapeHtml(getLabel(input, 'photoCount'))}</div><div class="meta-v">${input.photos.length} ${escapeHtml(getLabel(input, 'photos'))}</div>
+            <div class="meta-k">${escapeHtml(getLabel(input, 'pageCount'))}</div><div class="meta-v">${pageCount} ${escapeHtml(getLabel(input, 'pages'))}</div>
           </div>
+          ${commentBlock}
         </div>
-        <div class="page-footer">
+        <footer class="page-footer">
           <span>${escapeHtml(input.appName ?? 'Repolog')}</span>
           <span>1/${pageCount}</span>
-        </div>
+        </footer>
         ${input.isPro ? '' : '<div class="watermark">Created by Repolog</div>'}
       </div>
     </section>
@@ -159,16 +169,16 @@ const buildCommentPages = (input: PdfTemplateInput, startIndex: number, pageCoun
   pages.forEach((text, index) => {
     const pageNumber = startIndex + index;
     out.push(`
-      <section class="page">
+      <section class="page comment-page">
         <div class="page-inner">
           <div class="page-main">
             <h2 class="section-title">${escapeHtml(getLabel(input, 'comment'))}</h2>
-            <div class="comment">${escapeHtml(text || '-')}</div>
+            <div class="comment-text">${escapeHtml(text || '-')}</div>
           </div>
-          <div class="page-footer">
+          <footer class="page-footer">
             <span></span>
             <span>${pageNumber}/${pageCount}</span>
-          </div>
+          </footer>
         </div>
       </section>
     `);
@@ -182,6 +192,8 @@ const buildPhotoPages = async (
   perPage: number,
   pageCount: number,
 ) => {
+  const layout = input.layout === 'large' ? 'large' : 'standard';
+  const gridClass = layout === 'large' ? 'one' : 'two';
   const chunks = chunkPhotos(input.photos, perPage);
   const out: string[] = [];
   let photoCounter = 0;
@@ -198,31 +210,40 @@ const buildPhotoPages = async (
           const src = await fileToDataUri(photo.localUri, config);
           return `
             <div class="photo-slot">
-              <div class="photo-label">${escapeHtml(label)}</div>
-              <img class="photo" src="${src}" alt="${escapeHtml(label)}" />
+              <div class="photo-frame">
+                <img class="photo" src="${src}" alt="${escapeHtml(label)}" />
+                <div class="photo-no">${escapeHtml(label)}</div>
+              </div>
             </div>
           `;
         } catch {
           console.warn(`[PDF] Failed to load photo: ${photo.localUri}`);
           return `
             <div class="photo-slot">
-              <div class="photo-label">${escapeHtml(label)}</div>
+              <div class="photo-frame">
+                <div class="photo-no">${escapeHtml(label)}</div>
+              </div>
             </div>
           `;
         }
       }),
     );
 
+    // Add empty slot for odd photo count in standard layout
+    if (perPage === 2 && chunk.length < perPage) {
+      slots.push('<div class="photo-slot empty"></div>');
+    }
+
     out.push(`
-      <section class="page">
+      <section class="page photo-page ${layout}">
         <div class="page-inner">
-          <div class="page-main photo-grid layout-${input.layout}">
+          <div class="page-main photo-grid ${gridClass}">
             ${slots.join('')}
           </div>
-          <div class="page-footer">
+          <footer class="page-footer">
             <span></span>
             <span>${pageNumber}/${pageCount}</span>
-          </div>
+          </footer>
         </div>
       </section>
     `);
@@ -293,64 +314,105 @@ const buildCss = async (input: PdfTemplateInput) => {
     border-top: 1px solid rgba(0,0,0,0.08);
     padding-top: 2mm;
   }
-  .title {
-    margin: 0 0 8mm 0;
-    font-size: 20pt;
+  .report-title {
+    text-align: center;
+    font-size: 24pt;
+    font-weight: 800;
+    margin: 0 0 6mm 0;
+    padding-bottom: 4mm;
+    border-bottom: 2px solid rgba(0,0,0,0.75);
   }
-  .meta {
+  .meta-grid {
     display: grid;
-    gap: 4mm;
-    font-size: 11pt;
+    grid-template-columns: 32mm 1fr;
+    column-gap: 6mm;
+    row-gap: 3mm;
+    text-align: start;
+    margin-bottom: 6mm;
   }
-  .label {
-    display: inline-block;
-    width: 24mm;
-    color: var(--muted);
+  .meta-k {
+    font-weight: 700;
+    color: #444;
   }
-  .section-title {
-    margin: 0 0 4mm 0;
-    font-size: 14pt;
-  }
-  .comment {
-    white-space: pre-wrap;
+  .meta-v {
+    font-weight: 600;
+    overflow-wrap: anywhere;
     word-break: break-word;
   }
-  .photo-grid {
-    display: grid;
-    gap: 6mm;
+  .section-title {
+    margin: 0 0 3mm 0;
+    font-size: 13pt;
+    font-weight: 800;
+    color: #333;
+    border-left: 5px solid rgba(0,0,0,0.65);
+    padding-left: 3mm;
   }
-  .photo-grid.layout-standard {
+  .comment-text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+  .comment-block {
+    margin-top: 6mm;
+    padding: 5mm;
+    border: 1px solid rgba(0,0,0,0.10);
+    border-radius: 3mm;
+    background: #fafafa;
+  }
+  .no-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .photo-grid {
+    height: 100%;
+    display: grid;
+    gap: var(--gap);
+  }
+  .photo-grid.two {
     grid-template-rows: 1fr 1fr;
   }
-  .photo-grid.layout-large {
+  .photo-grid.one {
     grid-template-rows: 1fr;
   }
   .photo-slot {
-    position: relative;
+    min-height: 0;
+  }
+  .photo-slot.empty {
+    border: 1px dashed rgba(0,0,0,0.10);
+    border-radius: 3mm;
+  }
+  .photo-frame {
+    height: 100%;
     border: 1px solid var(--border);
+    border-radius: 3mm;
+    background: #fff;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    position: relative;
   }
   .photo {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
+    display: block;
   }
-  .photo-label {
+  .photo-no {
     position: absolute;
-    top: 3mm;
-    right: 3mm;
-    font-size: 9pt;
-    color: var(--muted);
+    right: 2mm;
+    bottom: 2mm;
+    font-size: 8pt;
+    color: rgba(0,0,0,0.70);
   }
   .watermark {
     position: absolute;
     right: var(--page-pad);
     bottom: calc(var(--page-pad) + var(--footer-h));
     font-size: 9pt;
-    color: rgba(0,0,0,0.3);
+    color: rgba(0,0,0,0.25);
   }
   `;
 };
@@ -359,17 +421,20 @@ export async function buildPdfHtml(input: PdfTemplateInput) {
   const layout = input.layout === 'large' ? 'large' : 'standard';
   const perPage = layout === 'large' ? 1 : 2;
   const css = await buildCss(input);
-  const commentPages = splitCommentIntoPages(input.report.comment ?? '');
+  const comment = input.report.comment ?? '';
+  const isCommentOnCover = comment.length <= COVER_COMMENT_CHAR_LIMIT;
+  const commentPageCount = isCommentOnCover ? 0 : splitCommentIntoPages(comment).length;
   const photoPageCount = Math.ceil(input.photos.length / perPage);
-  const pageCount = 1 + commentPages.length + photoPageCount;
-  const cover = buildCover(input, pageCount);
-  const commentPageHtml = buildCommentPages(input, 2, pageCount);
+  const pageCount = 1 + commentPageCount + photoPageCount;
+  const cover = buildCover(input, pageCount, isCommentOnCover ? comment : undefined);
+  const commentPageHtml = isCommentOnCover ? [] : buildCommentPages(input, 2, pageCount);
   const photoStartIndex = 2 + commentPageHtml.length;
   const photoPages = await buildPhotoPages(input, photoStartIndex, perPage, pageCount);
+  const lang = escapeHtml(input.localeHint ?? 'en');
 
   return `
   <!DOCTYPE html>
-  <html lang="en">
+  <html lang="${lang}">
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
