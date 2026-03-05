@@ -256,8 +256,8 @@ const buildCss = async (input: PdfTemplateInput) => {
   const fontCss = input.preview
     ? ''
     : await buildPdfFontCss({
+        lang: input.localeHint ?? 'en',
         textForSubset: buildFontSelectionText(input),
-        localeHint: input.localeHint,
       });
   const size = PAPER_SIZES[input.paperSize];
   return `

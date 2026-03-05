@@ -1,10 +1,8 @@
-import Constants from 'expo-constants';
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system/legacy';
 
 import { selectPdfFontKeys } from './pdfFontSelection';
-
-const EXPERIMENT_FLAG_KEY = 'PDF_FONT_SUBSET_EXPERIMENT';
+import type { PdfFontKey } from './pdfFontSelection';
 
 const fontAssets = [
   {
@@ -45,7 +43,6 @@ const fontAssets = [
 ] as const;
 
 type FontAsset = (typeof fontAssets)[number];
-type FontAssetKey = FontAsset['key'];
 
 const fontCache = new Map<FontAsset['source'], string>();
 
@@ -70,32 +67,18 @@ export function clearFontCache() {
   fontCache.clear();
 }
 
-function toBooleanFlag(value: unknown): boolean {
-  if (value === true || value === 1) return true;
-  if (typeof value !== 'string') return false;
-  const normalized = value.trim().toLowerCase();
-  return normalized === '1' || normalized === 'true';
-}
-
-function isSubsetExperimentEnabled() {
-  const expoConfig = Constants.expoConfig ?? Constants.manifest;
-  const extra = (expoConfig as { extra?: Record<string, unknown> } | null)?.extra ?? {};
-  return toBooleanFlag(extra?.[EXPERIMENT_FLAG_KEY]);
-}
-
 type BuildPdfFontCssOptions = {
+  lang: string;
   textForSubset?: string;
-  localeHint?: string;
 };
 
-export async function buildPdfFontCss(options: BuildPdfFontCssOptions = {}) {
+export async function buildPdfFontCss(options: BuildPdfFontCssOptions) {
   const selection = selectPdfFontKeys({
-    text: options.textForSubset ?? '',
-    localeHint: options.localeHint,
-    subsetExperimentEnabled: isSubsetExperimentEnabled(),
+    lang: options.lang,
+    text: options.textForSubset,
   });
 
-  const selectedKeys = new Set<FontAssetKey>(selection.selectedFontKeys);
+  const selectedKeys = new Set<PdfFontKey>(selection.selectedFontKeys);
   const selectedFonts = fontAssets.filter((font) => selectedKeys.has(font.key));
   const rules = await Promise.all(
     selectedFonts.map(async (font) => {
