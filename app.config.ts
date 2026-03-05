@@ -98,8 +98,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
   );
 
-  const pluginsWithAdMob = ensurePlugin(
+  const pluginsWithLargeHeap = ensurePlugin(
     pluginsWithBuildProps,
+    './plugins/withLargeHeap',
+  );
+
+  const pluginsWithAdMob = ensurePlugin(
+    pluginsWithLargeHeap,
     'react-native-google-mobile-ads',
     {
       androidAppId: admobAndroidAppId,
