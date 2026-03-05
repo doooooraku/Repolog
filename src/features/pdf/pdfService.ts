@@ -34,19 +34,47 @@ export type PdfGenerateInput = {
 // 1mm = 72/25.4 points (PDF standard: 72 points per inch)
 const MM_TO_POINTS = 72 / 25.4;
 
+function isOomError(error: unknown): boolean {
+  if (error instanceof Error) {
+    return error.message.includes('OutOfMemoryError');
+  }
+  return String(error).includes('OutOfMemoryError');
+}
+
+async function printHtml(html: string, paperSize: PaperSize) {
+  const size = PAPER_SIZES[paperSize];
+  const file = await Print.printToFileAsync({
+    html,
+    width: Math.round(size.widthMm * MM_TO_POINTS),
+    height: Math.round(size.heightMm * MM_TO_POINTS),
+  });
+  return file.uri;
+}
+
 export async function generatePdfFile(input: PdfGenerateInput) {
-  const html = await buildPdfHtml(input);
-  const size = PAPER_SIZES[input.paperSize];
+  // Attempt 1: full quality (language-based fonts + images)
   try {
-    const file = await Print.printToFileAsync({
-      html,
-      width: Math.round(size.widthMm * MM_TO_POINTS),
-      height: Math.round(size.heightMm * MM_TO_POINTS),
-    });
-    return file.uri;
+    const html = await buildPdfHtml(input);
+    return await printHtml(html, input.paperSize);
+  } catch (e) {
+    if (!isOomError(e)) throw e;
+    console.warn('[PDF] OOM on attempt 1, retrying without custom fonts');
   } finally {
     clearFontCache();
   }
+
+  // Attempt 2: skip font embedding (use system fonts only)
+  try {
+    const html = await buildPdfHtml({ ...input, preview: true });
+    return await printHtml(html, input.paperSize);
+  } catch (e) {
+    if (!isOomError(e)) throw e;
+    console.warn('[PDF] OOM on attempt 2, retrying with reduced images');
+  }
+
+  // Attempt 3: skip fonts + tiny images
+  const html = await buildPdfHtml({ ...input, preview: true });
+  return await printHtml(html, input.paperSize);
 }
 
 async function savePdfAndroid(uri: string, fileName: string) {

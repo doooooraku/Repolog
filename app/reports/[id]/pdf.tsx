@@ -201,6 +201,10 @@ export default function PdfPreviewScreen() {
         if (!proceed) return;
       }
 
+      // Free preview WebView memory before PDF generation (~100-150MB)
+      setPreviewHtml(null);
+      await new Promise((r) => setTimeout(r, 100));
+
       // Generate full-resolution PDF (on-demand, not during preview)
       const uri = await generatePdfFile({
         report,
@@ -245,6 +249,8 @@ export default function PdfPreviewScreen() {
       Alert.alert(t.pdfExportFailed);
     } finally {
       setExporting(false);
+      // Restore preview after export
+      void loadPreview();
     }
   };
 
