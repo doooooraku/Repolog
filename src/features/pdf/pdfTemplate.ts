@@ -24,6 +24,8 @@ type PdfTemplateInput = {
   appName?: string;
   weatherLabel?: string;
   labels?: Partial<PdfLabels>;
+  /** When true, uses tiny thumbnails and skips font embedding for fast preview. */
+  preview?: boolean;
 };
 
 type PdfLabels = {
@@ -62,16 +64,17 @@ const escapeHtml = (value: string) =>
 
 type ImageSizeConfig = { maxEdge: number; quality: number };
 
-const IMAGE_SIZE_STANDARD: ImageSizeConfig = { maxEdge: 800, quality: 0.65 };
-const IMAGE_SIZE_LARGE: ImageSizeConfig = { maxEdge: 1000, quality: 0.7 };
+const IMAGE_SIZE_STANDARD: ImageSizeConfig = { maxEdge: 600, quality: 0.65 };
+const IMAGE_SIZE_LARGE: ImageSizeConfig = { maxEdge: 800, quality: 0.65 };
+const IMAGE_SIZE_PREVIEW: ImageSizeConfig = { maxEdge: 200, quality: 0.3 };
 
 export const PDF_IMAGE_CONFIGS = {
   standard: IMAGE_SIZE_STANDARD,
   large: IMAGE_SIZE_LARGE,
 } as const;
 
-const getImageSizeConfig = (layout: PdfLayout): ImageSizeConfig =>
-  layout === 'large' ? IMAGE_SIZE_LARGE : IMAGE_SIZE_STANDARD;
+const getImageSizeConfig = (layout: PdfLayout, preview?: boolean): ImageSizeConfig =>
+  preview ? IMAGE_SIZE_PREVIEW : layout === 'large' ? IMAGE_SIZE_LARGE : IMAGE_SIZE_STANDARD;
 
 const fileToDataUri = async (uri: string, config: ImageSizeConfig) => {
   const compressed = await ImageManipulator.manipulateAsync(
@@ -191,7 +194,7 @@ const buildPhotoPages = async (
         const label = photoLabel(photoCounter);
         photoCounter += 1;
         try {
-          const config = getImageSizeConfig(input.layout);
+          const config = getImageSizeConfig(input.layout, input.preview);
           const src = await fileToDataUri(photo.localUri, config);
           return `
             <div class="photo-slot">
@@ -229,10 +232,12 @@ const buildPhotoPages = async (
 };
 
 const buildCss = async (input: PdfTemplateInput) => {
-  const fontCss = await buildPdfFontCss({
-    textForSubset: buildFontSelectionText(input),
-    localeHint: input.localeHint,
-  });
+  const fontCss = input.preview
+    ? ''
+    : await buildPdfFontCss({
+        textForSubset: buildFontSelectionText(input),
+        localeHint: input.localeHint,
+      });
   const size = PAPER_SIZES[input.paperSize];
   return `
   ${fontCss}

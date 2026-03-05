@@ -692,7 +692,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
               <Text style={styles.photoDeleteButtonText}>×</Text>
             </Pressable>
           </View>
-          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} resizeMode="cover" />
+          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
         </View>
       );
     },

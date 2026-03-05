@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import Pdf from 'react-native-pdf';
+import { WebView } from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft } from '@tamagui/lucide-icons';
 
@@ -21,12 +21,15 @@ import { listPhotosByReport } from '@/src/db/photoRepository';
 import { recordExport, countExportsSince } from '@/src/db/exportRepository';
 import { useProStore } from '@/src/stores/proStore';
 import { exportPdfFile, generatePdfFile } from '@/src/features/pdf/pdfService';
+import { buildPdfHtml } from '@/src/features/pdf/pdfTemplate';
 import {
   buildPdfExportFileName,
   calculatePageCount,
   type PdfLayout,
   type PaperSize,
 } from '@/src/features/pdf/pdfUtils';
+
+import type { Photo, Report } from '@/src/types/models';
 
 const PHOTO_WARNING_THRESHOLD = 50;
 const FREE_MONTHLY_EXPORT_LIMIT = 5;
@@ -41,12 +44,15 @@ export default function PdfPreviewScreen() {
   const { t, lang } = useTranslation();
   const [layout, setLayout] = useState<PdfLayout>('standard');
   const [paperSize, setPaperSize] = useState<PaperSize>('A4');
-  const [loading, setLoading] = useState(true);
-  const [pdfUri, setPdfUri] = useState<string | null>(null);
-  const prevPdfUriRef = useRef<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(true);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const isPro = useProStore((s) => s.isPro);
   const initPro = useProStore((s) => s.init);
   const [exporting, setExporting] = useState(false);
+
+  // Cache report + photos so we don't re-fetch for export
+  const reportRef = useRef<Report | null>(null);
+  const photosRef = useRef<Photo[]>([]);
 
   const labelMap = useMemo(
     () => ({
@@ -75,23 +81,22 @@ export default function PdfPreviewScreen() {
     [t],
   );
 
-  const loadPdf = useCallback(async () => {
+  // Build lightweight HTML preview (small thumbnails, no font embedding)
+  const loadPreview = useCallback(async () => {
     if (!reportId) return;
-    setLoading(true);
-    const oldUri = prevPdfUriRef.current;
-    setPdfUri(null);
-    if (oldUri) {
-      LegacyFileSystem.deleteAsync(oldUri, { idempotent: true }).catch(() => {});
-    }
+    setPreviewLoading(true);
     try {
       const report = await getReportById(reportId);
       if (!report) {
         Alert.alert(t.errorLoadFailed);
-        setLoading(false);
+        setPreviewLoading(false);
         return;
       }
       const photos = await listPhotosByReport(reportId);
-      const uri = await generatePdfFile({
+      reportRef.current = report;
+      photosRef.current = photos;
+
+      const html = await buildPdfHtml({
         report,
         photos,
         layout,
@@ -101,14 +106,14 @@ export default function PdfPreviewScreen() {
         appName: 'Repolog',
         weatherLabel: weatherLabelMap[report.weather],
         labels: labelMap,
+        preview: true,
       });
-      setPdfUri(uri);
-      prevPdfUriRef.current = uri;
+      setPreviewHtml(html);
     } catch (e) {
-      console.error('[PDF] Generation failed:', e);
+      console.error('[PDF] Preview build failed:', e);
       Alert.alert(t.pdfExportFailed);
     } finally {
-      setLoading(false);
+      setPreviewLoading(false);
     }
   }, [reportId, layout, paperSize, isPro, lang, labelMap, weatherLabelMap, t.errorLoadFailed, t.pdfExportFailed]);
 
@@ -117,8 +122,8 @@ export default function PdfPreviewScreen() {
   }, [initPro]);
 
   useEffect(() => {
-    void loadPdf();
-  }, [loadPdf]);
+    void loadPreview();
+  }, [loadPreview]);
 
   const confirmPhotoWarning = () =>
     new Promise<boolean>((resolve) => {
@@ -157,17 +162,20 @@ export default function PdfPreviewScreen() {
       );
     });
 
+  // Generate PDF on-demand and export immediately
   const handleExport = async () => {
-    if (!reportId || !pdfUri) return;
+    if (!reportId) return;
     if (exporting) return;
     setExporting(true);
     try {
-      const report = await getReportById(reportId);
+      const report = reportRef.current ?? await getReportById(reportId);
       if (!report) {
         Alert.alert(t.errorLoadFailed);
         return;
       }
-      const photos = await listPhotosByReport(reportId);
+      const photos = photosRef.current.length > 0
+        ? photosRef.current
+        : await listPhotosByReport(reportId);
 
       if (!isPro && layout === 'large') {
         await confirmLargeLayout();
@@ -193,12 +201,29 @@ export default function PdfPreviewScreen() {
         if (!proceed) return;
       }
 
+      // Generate full-resolution PDF (on-demand, not during preview)
+      const uri = await generatePdfFile({
+        report,
+        photos,
+        layout,
+        paperSize,
+        isPro,
+        localeHint: lang,
+        appName: 'Repolog',
+        weatherLabel: weatherLabelMap[report.weather],
+        labels: labelMap,
+      });
+
       const fileName = buildPdfExportFileName({
         createdAt: report.createdAt,
         reportName: report.reportName,
         appName: 'Repolog',
       });
-      const success = await exportPdfFile(pdfUri, fileName);
+      const success = await exportPdfFile(uri, fileName);
+
+      // Cleanup generated PDF file
+      LegacyFileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
+
       if (!success) {
         Alert.alert(t.pdfExportFailed);
         return;
@@ -222,25 +247,6 @@ export default function PdfPreviewScreen() {
       setExporting(false);
     }
   };
-
-  if (loading) {
-    return (
-      <SafeAreaView edges={['top', 'bottom']} style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]}>
-        <View style={[styles.header, { borderBottomColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
-          <View style={styles.headerLeft}>
-            <Pressable testID="e2e_pdf_back" accessibilityLabel={t.a11yGoBack} accessibilityRole="button" onPress={() => router.back()} style={styles.backButton} hitSlop={TOUCH_HIT_SLOP}>
-              <ArrowLeft size={18} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
-            </Pressable>
-            <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>{t.pdfPreviewTitle}</Text>
-          </View>
-        </View>
-        <View style={styles.center}>
-          <ActivityIndicator />
-          <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.pdfGenerating}</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView edges={['top', 'bottom']} style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]}>
@@ -277,14 +283,20 @@ export default function PdfPreviewScreen() {
             <Text style={{ color: colors.textPrimary }}>{t.pdfPaperLetter}</Text>
           </Pressable>
         </View>
-        {pdfUri && (
-          <Pdf
-            key={pdfUri}
-            source={{ uri: pdfUri }}
-            style={[styles.pdf, { backgroundColor: colors.surfaceBg }]}
-            trustAllCerts={false}
+        {previewLoading ? (
+          <View style={styles.center}>
+            <ActivityIndicator />
+            <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.pdfGenerating}</Text>
+          </View>
+        ) : previewHtml ? (
+          <WebView
+            originWhitelist={['*']}
+            source={{ html: previewHtml }}
+            style={[styles.preview, { backgroundColor: colors.surfaceBg }]}
+            scalesPageToFit
+            showsVerticalScrollIndicator
           />
-        )}
+        ) : null}
         <Pressable testID="e2e_pdf_export" style={[styles.exportButton, { backgroundColor: colors.primaryBg }]} onPress={handleExport} disabled={exporting}>
           {exporting ? (
             <ActivityIndicator color={colors.primaryText} />
@@ -351,7 +363,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
   },
-  pdf: {
+  preview: {
     flex: 1,
     borderRadius: 12,
     overflow: 'hidden',
