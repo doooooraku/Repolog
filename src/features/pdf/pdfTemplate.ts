@@ -27,6 +27,10 @@ type PdfTemplateInput = {
   labels?: Partial<PdfLabels>;
   /** When true, uses tiny thumbnails and skips font embedding for fast preview. */
   preview?: boolean;
+  /** Skip embedding custom fonts. Useful for low-memory fallback generation. */
+  skipFontEmbedding?: boolean;
+  /** Explicit image preset to control memory usage during PDF generation. */
+  imagePreset?: 'default' | 'reduced' | 'tiny';
 };
 
 type PdfLabels = {
@@ -67,6 +71,8 @@ type ImageSizeConfig = { maxEdge: number; quality: number };
 
 const IMAGE_SIZE_STANDARD: ImageSizeConfig = { maxEdge: 600, quality: 0.65 };
 const IMAGE_SIZE_LARGE: ImageSizeConfig = { maxEdge: 800, quality: 0.65 };
+const IMAGE_SIZE_REDUCED_STANDARD: ImageSizeConfig = { maxEdge: 420, quality: 0.5 };
+const IMAGE_SIZE_REDUCED_LARGE: ImageSizeConfig = { maxEdge: 560, quality: 0.5 };
 const IMAGE_SIZE_PREVIEW: ImageSizeConfig = { maxEdge: 200, quality: 0.3 };
 
 export const PDF_IMAGE_CONFIGS = {
@@ -76,6 +82,14 @@ export const PDF_IMAGE_CONFIGS = {
 
 const getImageSizeConfig = (layout: PdfLayout, preview?: boolean): ImageSizeConfig =>
   preview ? IMAGE_SIZE_PREVIEW : layout === 'large' ? IMAGE_SIZE_LARGE : IMAGE_SIZE_STANDARD;
+
+const resolveImageSizeConfig = (input: PdfTemplateInput): ImageSizeConfig => {
+  if (input.imagePreset === 'tiny') return IMAGE_SIZE_PREVIEW;
+  if (input.imagePreset === 'reduced') {
+    return input.layout === 'large' ? IMAGE_SIZE_REDUCED_LARGE : IMAGE_SIZE_REDUCED_STANDARD;
+  }
+  return getImageSizeConfig(input.layout, input.preview);
+};
 
 const fileToDataUri = async (uri: string, config: ImageSizeConfig) => {
   const compressed = await ImageManipulator.manipulateAsync(
@@ -206,7 +220,7 @@ const buildPhotoPages = async (
         const label = photoLabel(photoCounter);
         photoCounter += 1;
         try {
-          const config = getImageSizeConfig(input.layout, input.preview);
+          const config = resolveImageSizeConfig(input);
           const src = await fileToDataUri(photo.localUri, config);
           return `
             <div class="photo-slot">
@@ -253,7 +267,8 @@ const buildPhotoPages = async (
 };
 
 const buildCss = async (input: PdfTemplateInput) => {
-  const fontCss = input.preview
+  const skipFontEmbedding = input.preview || input.skipFontEmbedding;
+  const fontCss = skipFontEmbedding
     ? ''
     : await buildPdfFontCss({
         lang: input.localeHint ?? 'en',

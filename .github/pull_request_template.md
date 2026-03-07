@@ -109,6 +109,12 @@ Repolog PR Template
 - Before（修正前の再現）:
 - After（修正後に再現しない）:
 
+### 6-4. デバッグ証拠（bug/perf の場合 / REQUIRED）
+- [ ] `before.png` / `after.png` を添付した
+- [ ] 画面録画を添付した（無い場合は理由を記載）
+- [ ] `logcat` の該当行（エラー/警告）を貼った
+- [ ] `meminfo` を添付した（または取得不可理由を記載）
+
 ---
 
 ## 7. UI差分（UI変更がある場合 / REQUIRED if UI）

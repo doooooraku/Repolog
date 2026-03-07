@@ -33,12 +33,35 @@ export type PdfGenerateInput = {
 
 // 1mm = 72/25.4 points (PDF standard: 72 points per inch)
 const MM_TO_POINTS = 72 / 25.4;
+const MIN_REASONABLE_PDF_BYTES = 1024;
+
+class BlankPdfError extends Error {
+  constructor(sizeBytes: number) {
+    super(`[PDF] Generated blank or truncated PDF (${sizeBytes} bytes).`);
+    this.name = 'BlankPdfError';
+  }
+}
 
 function isOomError(error: unknown): boolean {
   if (error instanceof Error) {
     return error.message.includes('OutOfMemoryError');
   }
   return String(error).includes('OutOfMemoryError');
+}
+
+function isBlankPdfError(error: unknown): boolean {
+  return error instanceof BlankPdfError;
+}
+
+function isRecoverablePdfError(error: unknown): boolean {
+  return isOomError(error) || isBlankPdfError(error);
+}
+
+async function assertPdfLooksValid(uri: string) {
+  const info = await LegacyFileSystem.getInfoAsync(uri);
+  const sizeBytes = info.exists && typeof info.size === 'number' ? info.size : 0;
+  if (sizeBytes >= MIN_REASONABLE_PDF_BYTES) return;
+  throw new BlankPdfError(sizeBytes);
 }
 
 async function printHtml(html: string, paperSize: PaperSize) {
@@ -48,33 +71,57 @@ async function printHtml(html: string, paperSize: PaperSize) {
     width: Math.round(size.widthMm * MM_TO_POINTS),
     height: Math.round(size.heightMm * MM_TO_POINTS),
   });
+  try {
+    await assertPdfLooksValid(file.uri);
+  } catch (error) {
+    await LegacyFileSystem.deleteAsync(file.uri, { idempotent: true }).catch(() => {});
+    throw error;
+  }
   return file.uri;
 }
 
 export async function generatePdfFile(input: PdfGenerateInput) {
-  // Attempt 1: full quality (language-based fonts + images)
-  try {
-    const html = await buildPdfHtml(input);
-    return await printHtml(html, input.paperSize);
-  } catch (e) {
-    if (!isOomError(e)) throw e;
-    console.warn('[PDF] OOM on attempt 1, retrying without custom fonts');
-  } finally {
-    clearFontCache();
+  const attempts: {
+    label: string;
+    options: Parameters<typeof buildPdfHtml>[0];
+  }[] = [
+    {
+      label: 'full quality',
+      options: { ...input },
+    },
+    {
+      label: 'reduced images + no custom fonts',
+      options: { ...input, skipFontEmbedding: true, imagePreset: 'reduced' },
+    },
+    {
+      label: 'tiny images + no custom fonts',
+      options: { ...input, skipFontEmbedding: true, imagePreset: 'tiny' },
+    },
+  ];
+
+  let lastError: unknown = null;
+
+  for (let index = 0; index < attempts.length; index += 1) {
+    const attemptNumber = index + 1;
+    const attempt = attempts[index];
+    try {
+      const html = await buildPdfHtml(attempt.options);
+      return await printHtml(html, input.paperSize);
+    } catch (error) {
+      lastError = error;
+      const recoverable = isRecoverablePdfError(error);
+      const hasNext = attemptNumber < attempts.length;
+      if (!recoverable || !hasNext) {
+        throw error;
+      }
+      const reason = isOomError(error) ? 'OOM' : 'blank PDF';
+      console.warn(`[PDF] ${reason} on attempt ${attemptNumber} (${attempt.label}), retrying...`);
+    } finally {
+      clearFontCache();
+    }
   }
 
-  // Attempt 2: skip font embedding (use system fonts only)
-  try {
-    const html = await buildPdfHtml({ ...input, preview: true });
-    return await printHtml(html, input.paperSize);
-  } catch (e) {
-    if (!isOomError(e)) throw e;
-    console.warn('[PDF] OOM on attempt 2, retrying with reduced images');
-  }
-
-  // Attempt 3: skip fonts + tiny images
-  const html = await buildPdfHtml({ ...input, preview: true });
-  return await printHtml(html, input.paperSize);
+  throw lastError instanceof Error ? lastError : new Error('PDF generation failed.');
 }
 
 async function savePdfAndroid(uri: string, fileName: string) {

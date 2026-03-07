@@ -20,7 +20,8 @@ docs/
 │   ├── glossary.md                用語辞書
 │   ├── pdf_template.md            PDF HTML/CSS テンプレ（SSoT）
 │   ├── wireframes.md              画面設計ワイヤーフレーム
-│   └── UI_Figma/                  Figma 連携・画面ノード台帳
+│   ├── UI_Figma/                  Figma 連携・画面ノード台帳
+│   └── Debug/                     デバッグ成果物（ログ/画像/動画。通常はgit管理外）
 │
 ├── adr/                      ── なぜそうしたか（意思決定ログ）
 │   ├── ADR-0001  初期アーキテクチャ
@@ -49,6 +50,8 @@ docs/
 │   │   ├── testing.md             テスト戦略と実行手順
 │   │   ├── pdf_font_benchmark.md  フォント性能計測
 │   │   └── benchmarks/            計測結果 (JSON/MD)
+│   │       └── debug_analysis_20260307_log_video_image.md
+│   │       └── user_feedback_improvement_analysis_20260308.md
 │   ├── i18n/                      多言語
 │   │   ├── i18n_key_inventory.md
 │   │   └── i18n_pl_fallback_audit.md
@@ -73,6 +76,7 @@ docs/
 | 「なぜそうしたか」が議論になる | `adr/ADR-XXXX.md` を追加 |
 | 合否条件が変わる | テスト (Jest / Maestro) を追加/更新 |
 | 運用手順が変わる | `how-to/` の該当ファイル |
+| 障害調査の結果を残す | `how-to/testing/benchmarks/debug_analysis_*.md` |
 
 > PRテンプレ (`.github/pull_request_template.md`) のセクション8にも同じチェックリストがあります。
 
