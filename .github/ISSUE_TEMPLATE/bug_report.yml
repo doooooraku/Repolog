@@ -24,6 +24,8 @@ body:
           required: true
         - label: "合否判定できる受け入れ条件（AC）を必ず書きます"
           required: true
+        - label: "証拠4点（logcat / before-after画像 / 動画 / meminfo）を添付、欠落時は理由を本文に書きます"
+          required: true
 
   - type: dropdown
     id: priority
@@ -150,8 +152,30 @@ body:
   - type: textarea
     id: evidence
     attributes:
-      label: "証拠（スクショ/動画/ログ）"
-      description: "リンクでもOK。ログはコピペOK。"
+      label: "証拠（スクショ/動画/ログ/meminfo）"
+      description: "最低限: before.png / after.png / logcat.log / meminfo.txt。録画が無い場合は理由を明記。"
+      placeholder: |
+        - セッションID: session_YYYYMMDD_HHMMSS
+        - before画像:
+        - after画像:
+        - 動画:
+        - logcat（該当行）:
+        - meminfo:
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro_commands
+    attributes:
+      label: "再現時に使ったコマンド（推奨）"
+      description: "再現性を上げるため、実際に実行したコマンドを記載。"
+      placeholder: |
+        例:
+        bash scripts/debug_session.sh start
+        adb logcat -v threadtime
+        adb shell dumpsys meminfo com.dooooraku.repolog
+        bash scripts/debug_session.sh stop
       render: shell
     validations:
       required: false
