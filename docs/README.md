@@ -51,6 +51,7 @@ docs/
 │   │   ├── pdf_font_benchmark.md  フォント性能計測
 │   │   └── benchmarks/            計測結果 (JSON/MD)
 │   │       └── debug_analysis_20260307_log_video_image.md
+│   │       └── user_feedback_improvement_analysis_20260308.md
 │   ├── i18n/                      多言語
 │   │   ├── i18n_key_inventory.md
 │   │   └── i18n_pl_fallback_audit.md

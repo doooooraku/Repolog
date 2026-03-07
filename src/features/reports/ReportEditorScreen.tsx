@@ -145,6 +145,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [locationState, setLocationState] = useState<LocationState>(emptyLocation);
   const [locationLoading, setLocationLoading] = useState(false);
   const [undoVisible, setUndoVisible] = useState(false);
+  const [isPhotoDragging, setIsPhotoDragging] = useState(false);
 
   const autoLocationRequested = useRef(false);
   const reportNameSeeded = useRef(false);
@@ -666,12 +667,18 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       const index = getIndex() ?? item.orderIndex;
       const marker = extractPhotoMarker(item.localUri);
       return (
-        <ScaleDecorator activeScale={1.03}>
+        <ScaleDecorator activeScale={0.98}>
           <View
             testID={`e2e_photo_slot_${index}_${marker}`}
             style={[styles.photoCard, { backgroundColor: colors.photoCardBg }, isActive && styles.photoCardActive]}>
             <View style={styles.photoToolbar}>
-              <Pressable onLongPress={drag} delayLongPress={200} style={styles.photoDragHandle} accessibilityLabel={t.a11yReorderPhoto} accessibilityRole="button">
+              <Pressable
+                onLongPress={drag}
+                delayLongPress={220}
+                disabled={isActive}
+                style={styles.photoDragHandle}
+                accessibilityLabel={t.a11yReorderPhoto}
+                accessibilityRole="button">
                 <GripVertical size={16} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
               </Pressable>
               <Text style={[styles.photoIndexLabel, { color: colors.textSecondary }]}>{index + 1}</Text>
@@ -694,7 +701,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 <Text style={styles.photoDeleteButtonText}>×</Text>
               </Pressable>
             </View>
-            <Pressable onLongPress={drag} delayLongPress={200}>
+            <Pressable onLongPress={drag} delayLongPress={220} disabled={isActive}>
               <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
             </Pressable>
           </View>
@@ -735,7 +742,10 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           </Pressable>
         </View>
 
-        <NestableScrollContainer style={styles.scrollArea} contentContainerStyle={styles.container}>
+        <NestableScrollContainer
+          style={styles.scrollArea}
+          contentContainerStyle={styles.container}
+          scrollEnabled={!isPhotoDragging}>
           <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderDefault }]}>
             <View style={styles.sectionTitleRow}>
               <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{t.reportBasicInfoSection}</Text>
@@ -889,10 +899,18 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 data={photos}
                 keyExtractor={(item) => item.id}
                 renderItem={renderPhotoItem}
-                activationDistance={20}
-                autoscrollThreshold={80}
-                autoscrollSpeed={150}
+                activationDistance={8}
+                autoscrollThreshold={56}
+                autoscrollSpeed={70}
+                dragItemOverflow={false}
+                onDragBegin={() => {
+                  setIsPhotoDragging(true);
+                }}
+                onRelease={() => {
+                  setIsPhotoDragging(false);
+                }}
                 onDragEnd={({ data }) => {
+                  setIsPhotoDragging(false);
                   void handlePhotoReorder(data);
                 }}
                 containerStyle={styles.photoStrip}

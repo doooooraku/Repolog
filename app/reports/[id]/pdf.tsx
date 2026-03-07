@@ -35,6 +35,28 @@ const PHOTO_WARNING_THRESHOLD = 50;
 const FREE_MONTHLY_EXPORT_LIMIT = 5;
 const TOUCH_HIT_SLOP = { top: 6, bottom: 6, left: 6, right: 6 } as const;
 const ICON_STROKE_WIDTH = 1.85;
+const PREVIEW_ZOOM_SCRIPT = `
+  (function() {
+    function applyFit() {
+      var page = document.querySelector('.page');
+      if (!page) return;
+      document.body.style.zoom = '1';
+      document.body.style.margin = '0';
+      document.body.style.padding = '8px 0 16px';
+      var pageWidth = page.getBoundingClientRect().width;
+      var viewportWidth = document.documentElement.clientWidth;
+      if (!pageWidth || !viewportWidth) return;
+      var availableWidth = Math.max(220, viewportWidth - 16);
+      var scale = Math.min(1, availableWidth / pageWidth);
+      document.body.style.zoom = String(scale);
+    }
+    window.addEventListener('load', applyFit);
+    window.addEventListener('resize', applyFit);
+    setTimeout(applyFit, 0);
+    setTimeout(applyFit, 120);
+  })();
+  true;
+`;
 
 export default function PdfPreviewScreen() {
   const { id } = useLocalSearchParams<{ id?: string | string[] }>();
@@ -295,13 +317,21 @@ export default function PdfPreviewScreen() {
             <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.pdfGenerating}</Text>
           </View>
         ) : previewHtml ? (
-          <WebView
-            originWhitelist={['*']}
-            source={{ html: previewHtml }}
-            style={[styles.preview, { backgroundColor: colors.surfaceBg }]}
-            scalesPageToFit
-            showsVerticalScrollIndicator
-          />
+          <View style={[styles.previewFrame, { backgroundColor: colors.surfaceBg }]}>
+            <WebView
+              originWhitelist={['*']}
+              source={{ html: previewHtml }}
+              style={styles.previewWebView}
+              injectedJavaScriptBeforeContentLoaded={PREVIEW_ZOOM_SCRIPT}
+              injectedJavaScript={PREVIEW_ZOOM_SCRIPT}
+              scalesPageToFit={false}
+              setBuiltInZoomControls
+              setDisplayZoomControls={false}
+              nestedScrollEnabled
+              textZoom={100}
+              showsVerticalScrollIndicator
+            />
+          </View>
         ) : null}
         <Pressable testID="e2e_pdf_export" style={[styles.exportButton, { backgroundColor: colors.primaryBg }]} onPress={handleExport} disabled={exporting}>
           {exporting ? (
@@ -369,10 +399,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
   },
-  preview: {
+  previewFrame: {
     flex: 1,
     borderRadius: 12,
     overflow: 'hidden',
+  },
+  previewWebView: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
   exportButton: {
     marginTop: 12,

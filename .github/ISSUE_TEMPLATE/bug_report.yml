@@ -159,6 +159,7 @@ body:
         - before画像:
         - after画像:
         - 動画:
+        - 出力PDFファイル（該当時）:
         - logcat（該当行）:
         - meminfo:
       render: shell
