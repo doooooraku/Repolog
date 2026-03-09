@@ -114,6 +114,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
   );
 
+  const pluginsWithDatePicker = ensurePlugin(
+    pluginsWithAdMob,
+    '@react-native-community/datetimepicker',
+  );
+
   return {
     ...config,
     name: config.name ?? 'Repolog',
@@ -138,6 +143,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       supportsRTL,
       forcesRTL,
     },
-    plugins: pluginsWithAdMob,
+    plugins: pluginsWithDatePicker,
   };
 };

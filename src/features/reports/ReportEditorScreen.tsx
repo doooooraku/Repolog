@@ -20,6 +20,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   ArrowLeft,
+  CalendarClock,
   Camera,
   Cloud,
   CloudRain,
@@ -30,6 +31,7 @@ import {
   MapPin,
   Sun,
 } from '@tamagui/lucide-icons';
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import type { IconProps } from '@tamagui/helpers-icon';
 
 import type { AddressSource, Photo, Report, WeatherType } from '@/src/types/models';
@@ -46,7 +48,7 @@ import {
   remainingCommentChars,
   splitTagInput,
 } from '@/src/features/reports/reportUtils';
-import { formatDateTime, parseDateTimeInput } from '@/src/features/pdf/pdfUtils';
+import { formatDateTime } from '@/src/features/pdf/pdfUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
@@ -142,7 +144,6 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [tagInput, setTagInput] = useState('');
   const [weather, setWeather] = useState<WeatherType>('none');
   const [createdAt, setCreatedAt] = useState<string>(new Date().toISOString());
-  const [dateText, setDateText] = useState(() => formatDateTime(new Date().toISOString()));
   const [locationState, setLocationState] = useState<LocationState>(emptyLocation);
   const [locationLoading, setLocationLoading] = useState(false);
   const [undoVisible, setUndoVisible] = useState(false);
@@ -213,19 +214,25 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     };
   }, [loading, report, reportId]);
 
-  useEffect(() => {
-    setDateText(formatDateTime(createdAt));
+  const handleDatePress = useCallback(() => {
+    DateTimePickerAndroid.open({
+      value: new Date(createdAt),
+      mode: 'date',
+      onChange: (event, selectedDate) => {
+        if (event.type !== 'set' || !selectedDate) return;
+        DateTimePickerAndroid.open({
+          value: selectedDate,
+          mode: 'time',
+          is24Hour: true,
+          onChange: (timeEvent, selectedTime) => {
+            if (timeEvent.type === 'set' && selectedTime) {
+              setCreatedAt(selectedTime.toISOString());
+            }
+          },
+        });
+      },
+    });
   }, [createdAt]);
-
-  const handleDateBlur = useCallback(() => {
-    const parsed = parseDateTimeInput(dateText);
-    if (parsed) {
-      setCreatedAt(parsed);
-      setDateText(formatDateTime(parsed));
-    } else {
-      setDateText(formatDateTime(createdAt));
-    }
-  }, [dateText, createdAt]);
 
   const handleFetchLocation = useCallback(async () => {
     if (!includeLocation || locationLoading) return;
@@ -778,15 +785,13 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             />
 
             <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.createdAtLabel}</Text>
-            <TextInput
-              style={[styles.input, { color: colors.textPrimary, backgroundColor: colors.surfaceHighlight, borderColor: 'rgba(0, 0, 0, 0)' }]}
-              value={dateText}
-              onChangeText={setDateText}
-              onBlur={handleDateBlur}
-              placeholder="YYYY-MM-DD HH:MM"
-              placeholderTextColor={colors.textPlaceholder}
-              keyboardType="numbers-and-punctuation"
-            />
+            <Pressable
+              onPress={handleDatePress}
+              style={[styles.dateField, { backgroundColor: colors.surfaceHighlight }]}
+            >
+              <Text style={[styles.dateFieldText, { color: colors.textPrimary }]}>{formatDateTime(createdAt)}</Text>
+              <CalendarClock size={16} color={colors.textSecondary} strokeWidth={ICON_STROKE_WIDTH} />
+            </Pressable>
 
             <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.weatherLabel}</Text>
             <View style={styles.weatherRow}>
@@ -1093,6 +1098,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    fontSize: 16,
+  },
+  dateField: {
+    minHeight: 36,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  dateFieldText: {
     fontSize: 16,
   },
   textarea: {
