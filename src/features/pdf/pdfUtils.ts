@@ -61,6 +61,16 @@ export const formatDateTime = (iso: string) => {
   return `${year}-${month}-${day} ${hour}:${minute}`;
 };
 
+export const parseDateTimeInput = (text: string): string | null => {
+  const match = text.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{1,2})$/);
+  if (!match) return null;
+  const [, y, m, d, h, min] = match;
+  const date = new Date(Number(y), Number(m) - 1, Number(d), Number(h), Number(min));
+  if (Number.isNaN(date.getTime())) return null;
+  if (date.getFullYear() !== Number(y) || date.getMonth() !== Number(m) - 1 || date.getDate() !== Number(d)) return null;
+  return date.toISOString();
+};
+
 export const splitCommentIntoPages = (comment: string, charsPerPage = 1200) => {
   if (!comment) return [''];
   const chars = Array.from(comment);

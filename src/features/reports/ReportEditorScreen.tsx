@@ -46,7 +46,7 @@ import {
   remainingCommentChars,
   splitTagInput,
 } from '@/src/features/reports/reportUtils';
-import { formatDateTime } from '@/src/features/pdf/pdfUtils';
+import { formatDateTime, parseDateTimeInput } from '@/src/features/pdf/pdfUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
@@ -142,6 +142,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [tagInput, setTagInput] = useState('');
   const [weather, setWeather] = useState<WeatherType>('none');
   const [createdAt, setCreatedAt] = useState<string>(new Date().toISOString());
+  const [dateText, setDateText] = useState(() => formatDateTime(new Date().toISOString()));
   const [locationState, setLocationState] = useState<LocationState>(emptyLocation);
   const [locationLoading, setLocationLoading] = useState(false);
   const [undoVisible, setUndoVisible] = useState(false);
@@ -211,6 +212,20 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       mounted = false;
     };
   }, [loading, report, reportId]);
+
+  useEffect(() => {
+    setDateText(formatDateTime(createdAt));
+  }, [createdAt]);
+
+  const handleDateBlur = useCallback(() => {
+    const parsed = parseDateTimeInput(dateText);
+    if (parsed) {
+      setCreatedAt(parsed);
+      setDateText(formatDateTime(parsed));
+    } else {
+      setDateText(formatDateTime(createdAt));
+    }
+  }, [dateText, createdAt]);
 
   const handleFetchLocation = useCallback(async () => {
     if (!includeLocation || locationLoading) return;
@@ -763,7 +778,15 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             />
 
             <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.createdAtLabel}</Text>
-            <Text style={[styles.value, { color: colors.textSecondary }]}>{formatDateTime(createdAt)}</Text>
+            <TextInput
+              style={[styles.input, { color: colors.textPrimary, backgroundColor: colors.surfaceHighlight, borderColor: 'rgba(0, 0, 0, 0)' }]}
+              value={dateText}
+              onChangeText={setDateText}
+              onBlur={handleDateBlur}
+              placeholder="YYYY-MM-DD HH:MM"
+              placeholderTextColor={colors.textPlaceholder}
+              keyboardType="numbers-and-punctuation"
+            />
 
             <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.weatherLabel}</Text>
             <View style={styles.weatherRow}>

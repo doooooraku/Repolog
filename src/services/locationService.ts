@@ -17,18 +17,18 @@ export type LocationResponse =
   | { ok: true; data: LocationResult }
   | { ok: false; reason: LocationFailureReason; error?: unknown };
 
+const CJK_LANGUAGES = new Set(['ja', 'ko', 'zh']);
+
 const formatAddress = (value?: Location.LocationGeocodedAddress | null) => {
   if (!value) return null;
-  const parts = [
-    value.street,
-    value.name,
-    value.city,
-    value.region,
-    value.postalCode,
-    value.country,
-  ].filter((part) => typeof part === 'string' && part.trim().length > 0);
-  if (parts.length === 0) return null;
-  return Array.from(new Set(parts)).join(', ');
+  const lang = Localization.getLocales()?.[0]?.languageCode;
+  const isCjk = lang != null && CJK_LANGUAGES.has(lang);
+  const parts = isCjk
+    ? [value.country, value.postalCode, value.region, value.city, value.name, value.street]
+    : [value.street, value.name, value.city, value.region, value.postalCode, value.country];
+  const filtered = parts.filter((part) => typeof part === 'string' && part.trim().length > 0);
+  if (filtered.length === 0) return null;
+  return Array.from(new Set(filtered)).join(', ');
 };
 
 export async function getCurrentLocationWithAddress(): Promise<LocationResponse> {
