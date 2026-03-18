@@ -144,8 +144,8 @@ importers:
         specifier: ~2.28.0
         version: 2.28.0(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       react-native-google-mobile-ads:
-        specifier: ^16.0.0
-        version: 16.0.0(expo@54.0.32)(react@19.1.0)
+        specifier: ^16.3.0
+        version: 16.3.0(expo@54.0.32)(react@19.1.0)
       react-native-pdf:
         specifier: ^7.0.3
         version: 7.0.3(react-native-blob-util@0.24.6(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -5234,8 +5234,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-google-mobile-ads@16.0.0:
-    resolution: {integrity: sha512-jjSolMj0Q5CBXQjUrow4D0IQ8CpNXocEYYt6xi1xVSUSWg0QQRuTzjXrHLczIMXLm2qWPr1ZllN/VGCOIz0n/g==}
+  react-native-google-mobile-ads@16.3.0:
+    resolution: {integrity: sha512-YzUbCCi7UFVVWZpxVsCbab8euSUzUtwvlouimjqqfja8LexY3KT07fL6+kKsmhCa7v4R1xnHEFfEmeMWRSzcGA==}
     peerDependencies:
       expo: '>=47.0.0'
     peerDependenciesMeta:
@@ -12913,7 +12913,7 @@ snapshots:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)
 
-  react-native-google-mobile-ads@16.0.0(expo@54.0.32)(react@19.1.0):
+  react-native-google-mobile-ads@16.3.0(expo@54.0.32)(react@19.1.0):
     dependencies:
       '@iabtcf/core': 1.5.6
       use-deep-compare-effect: 1.8.1(react@19.1.0)
