@@ -126,6 +126,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     android: {
       ...config.android,
       permissions: nextPermissions,
+      blockedPermissions: [
+        'android.permission.RECORD_AUDIO',
+        'android.permission.SYSTEM_ALERT_WINDOW',
+      ],
     },
     extra: {
       ...config.extra,
