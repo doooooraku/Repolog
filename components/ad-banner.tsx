@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
@@ -27,11 +27,21 @@ export function AdBanner() {
     };
   }, [isWeb]);
 
+  const handleAdFailedToLoad = useCallback((error: Error) => {
+    if (__DEV__) {
+      console.warn(`[AdBanner] failed to load: ${error.message}`);
+    }
+  }, []);
+
   if (isWeb || !unitId || !ready) return null;
 
   return (
     <View style={styles.container}>
-      <BannerAd unitId={unitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+      <BannerAd
+        unitId={unitId}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        onAdFailedToLoad={handleAdFailedToLoad}
+      />
     </View>
   );
 }

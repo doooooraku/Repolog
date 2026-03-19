@@ -4,6 +4,7 @@ import mobileAds, {
   AdsConsent,
   AdsConsentDebugGeography,
   AdsConsentPrivacyOptionsRequirementStatus,
+  MaxAdContentRating,
   type AdsConsentInfoOptions,
   TestIds,
 } from 'react-native-google-mobile-ads';
@@ -117,6 +118,11 @@ export async function initializeAds(): Promise<boolean> {
 
   const canRequestAds = await canRequestAdsAfterConsent();
   if (!canRequestAds) return false;
+
+  mobileAds().setRequestConfiguration({
+    tagForChildDirectedTreatment: false,
+    maxAdContentRating: MaxAdContentRating.G,
+  });
 
   await mobileAds().initialize();
   initialized = true;
