@@ -22,6 +22,7 @@
     "build:android": "expo prebuild --platform android && cd android && ./gradlew bundleRelease",
     "build:android:apk:local": "npx eas-cli@latest build -p android --profile preview-local-apk --local --output dist/repolog-preview-local.apk",
     "build:android:apk:cloud": "npx eas-cli@latest build -p android --profile preview-cloud-apk",
+    "build:android:aab:local": "npx eas-cli@latest build -p android --profile production --local --output dist/repolog-production.aab",
     "build:android:aab:cloud": "npx eas-cli@latest build -p android --profile production",
     "install:device": "adb install -r \"$(wslpath -w dist/repolog-preview-local.apk)\""
   },
