@@ -26,6 +26,10 @@ const dict = {
   paywallCtaLifetime: 'Obter acesso vitalício',
   paywallOneTimeBadge: 'Único',
   paywallLifetimeFinePrint: 'Compra única. Sem renovação automática.',
+  lifetimeSubWarningTitle: 'Assinatura ativa encontrada',
+  lifetimeSubWarningBody: 'Você tem uma assinatura ativa. A compra do acesso vitalício não a cancelará automaticamente. Cancele sua assinatura após a compra para evitar cobranças duplicadas.',
+  manageSubscription: 'Gerenciar assinatura',
+  continueAnyway: 'Continuar',
   paywallOrDivider: 'ou',
 
   // --- Settings (Appearance) (設定：見た目) ---

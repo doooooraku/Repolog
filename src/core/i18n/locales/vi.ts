@@ -26,6 +26,10 @@ const dict = {
   paywallCtaLifetime: 'Mua quyền trọn đời',
   paywallOneTimeBadge: 'Một lần',
   paywallLifetimeFinePrint: 'Mua một lần. Không tự động gia hạn.',
+  lifetimeSubWarningTitle: 'Phát hiện gói đăng ký đang hoạt động',
+  lifetimeSubWarningBody: 'Bạn có gói đăng ký đang hoạt động. Việc mua quyền trọn đời sẽ không tự động hủy gói đăng ký. Vui lòng hủy gói đăng ký sau khi mua để tránh bị tính phí hai lần.',
+  manageSubscription: 'Quản lý đăng ký',
+  continueAnyway: 'Tiếp tục',
   paywallOrDivider: 'hoặc',
 
   // --- Settings (Appearance) (設定：見た目) ---

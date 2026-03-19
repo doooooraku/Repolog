@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import Purchases from 'react-native-purchases';
 
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -79,6 +81,37 @@ export default function PaywallScreen() {
 
   const handlePurchase = async (plan: PlanType) => {
     if (isPro) return;
+
+    // Warn if user has active subscription and is buying lifetime
+    if (plan === 'lifetime') {
+      try {
+        const info = await Purchases.getCustomerInfo();
+        if (info.activeSubscriptions.length > 0) {
+          const proceed = await new Promise<boolean>((resolve) => {
+            Alert.alert(
+              t.lifetimeSubWarningTitle,
+              t.lifetimeSubWarningBody,
+              [
+                { text: t.cancel, style: 'cancel', onPress: () => resolve(false) },
+                {
+                  text: t.manageSubscription,
+                  onPress: () => {
+                    void Linking.openURL('https://play.google.com/store/account/subscriptions');
+                    resolve(false);
+                  },
+                },
+                { text: t.continueAnyway, onPress: () => resolve(true) },
+              ],
+              { cancelable: false },
+            );
+          });
+          if (!proceed) return;
+        }
+      } catch {
+        // If check fails, proceed with purchase
+      }
+    }
+
     setAction(plan);
     try {
       await purchasePro(plan);

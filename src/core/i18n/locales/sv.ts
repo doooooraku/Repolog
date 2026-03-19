@@ -26,6 +26,10 @@ const dict = {
   paywallCtaLifetime: 'Få livstidsåtkomst',
   paywallOneTimeBadge: 'Engångs',
   paywallLifetimeFinePrint: 'Engångsköp. Ingen automatisk förnyelse.',
+  lifetimeSubWarningTitle: 'Aktivt abonnemang hittades',
+  lifetimeSubWarningBody: 'Du har ett aktivt abonnemang. Köp av livstidsåtkomst avbryter det inte automatiskt. Avsluta ditt abonnemang efter köpet för att undvika dubbla avgifter.',
+  manageSubscription: 'Hantera abonnemang',
+  continueAnyway: 'Fortsätt ändå',
   paywallOrDivider: 'eller',
 
   // --- Settings (Appearance) (設定：見た目) ---

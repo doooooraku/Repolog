@@ -26,6 +26,10 @@ const dict = {
   paywallCtaLifetime: '평생 이용권 구매',
   paywallOneTimeBadge: '1회',
   paywallLifetimeFinePrint: '일회성 구매. 자동 갱신 없음.',
+  lifetimeSubWarningTitle: '활성 구독 발견',
+  lifetimeSubWarningBody: '활성 구독이 있습니다. 평생 이용권을 구매해도 구독이 자동으로 해지되지 않습니다. 이중 결제를 방지하려면 구매 후 구독을 해지해 주세요.',
+  manageSubscription: '구독 관리',
+  continueAnyway: '계속 진행',
   paywallOrDivider: '또는',
 
   // --- Settings (Appearance) (設定：見た目) ---

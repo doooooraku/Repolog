@@ -26,6 +26,10 @@ const dict = {
   paywallCtaLifetime: 'Получить пожизненный доступ',
   paywallOneTimeBadge: 'Разово',
   paywallLifetimeFinePrint: 'Разовая покупка. Без автопродления.',
+  lifetimeSubWarningTitle: 'Найдена активная подписка',
+  lifetimeSubWarningBody: 'У вас есть активная подписка. Покупка пожизненного доступа не отменит её автоматически. Отмените подписку после покупки, чтобы избежать двойной оплаты.',
+  manageSubscription: 'Управление подпиской',
+  continueAnyway: 'Продолжить',
   paywallOrDivider: 'или',
 
   // --- Settings (Appearance) (設定：見た目) ---

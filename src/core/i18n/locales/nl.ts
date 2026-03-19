@@ -26,6 +26,10 @@ const dict = {
   paywallCtaLifetime: 'Levenslange toegang kopen',
   paywallOneTimeBadge: 'Eenmalig',
   paywallLifetimeFinePrint: 'Eenmalige aankoop. Geen automatische verlenging.',
+  lifetimeSubWarningTitle: 'Actief abonnement gevonden',
+  lifetimeSubWarningBody: 'Je hebt een actief abonnement. De aankoop van levenslange toegang annuleert dit niet automatisch. Annuleer je abonnement na de aankoop om dubbele kosten te voorkomen.',
+  manageSubscription: 'Abonnement beheren',
+  continueAnyway: 'Toch doorgaan',
   paywallOrDivider: 'of',
 
   // --- Settings (Appearance) (設定：見た目) ---

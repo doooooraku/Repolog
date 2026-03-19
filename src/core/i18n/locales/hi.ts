@@ -26,6 +26,10 @@ const dict = {
   paywallCtaLifetime: 'लाइफ़टाइम एक्सेस पाएं',
   paywallOneTimeBadge: 'एकबार',
   paywallLifetimeFinePrint: 'एकमुश्त खरीद। कोई ऑटो-रिन्यूअल नहीं।',
+  lifetimeSubWarningTitle: 'सक्रिय सदस्यता मिली',
+  lifetimeSubWarningBody: 'आपकी एक सक्रिय सदस्यता है। लाइफ़टाइम एक्सेस खरीदने से यह स्वचालित रूप से रद्द नहीं होगी। दोहरे शुल्क से बचने के लिए कृपया खरीद के बाद अपनी सदस्यता रद्द करें।',
+  manageSubscription: 'सदस्यता प्रबंधित करें',
+  continueAnyway: 'फिर भी जारी रखें',
   paywallOrDivider: 'या',
 
   // --- Settings (Appearance) (設定：見た目) ---

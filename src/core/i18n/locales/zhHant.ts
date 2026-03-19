@@ -26,6 +26,10 @@ const dict = {
   paywallCtaLifetime: '取得永久版',
   paywallOneTimeBadge: '一次性',
   paywallLifetimeFinePrint: '一次性購買，無自動續費。',
+  lifetimeSubWarningTitle: '偵測到有效訂閱',
+  lifetimeSubWarningBody: '您有一個有效的訂閱。購買永久版不會自動取消訂閱。請在購買後取消訂閱，以避免重複扣款。',
+  manageSubscription: '管理訂閱',
+  continueAnyway: '繼續購買',
   paywallOrDivider: '或',
 
   // --- Settings (Appearance) (設定：見た目) ---
