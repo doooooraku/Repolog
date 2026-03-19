@@ -114,7 +114,7 @@ const dict = {
   paywallBestValueBadge: 'Najlepsza wartość',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Cena za miesiąc',
-  paywallYearlySavings: 'Oszczędź ~37% względem planu miesięcznego.',
+  paywallYearlySavings: 'Oszczędź ~16% względem planu miesięcznego.',
   paywallCtaYearly: 'Rozpocznij plan roczny',
   paywallCtaMonthly: 'Rozpocznij plan miesięczny',
   paywallCtaStayFree: 'Pozostań przy Free',

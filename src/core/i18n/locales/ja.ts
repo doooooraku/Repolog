@@ -18,7 +18,7 @@ const dict = {
     paywallBestValueBadge: 'いちばんおトク',
     paywallBadgeShort: 'PRO',
     paywallPricePerMonthLabel: '1か月あたり',
-    paywallYearlySavings: '月額より約37%おトク',
+    paywallYearlySavings: '月額より約16%おトク',
     paywallCtaYearly: '年額プランでProを始める',
     paywallCtaMonthly: '月額プランでProを試す',
     paywallCtaStayFree: '今は無料で続ける',

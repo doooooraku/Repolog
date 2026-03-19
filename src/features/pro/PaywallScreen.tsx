@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { proService, type PlanType, type PriceDetails } from '@/src/services/proService';
+import { getLegalLinks, openExternalLink } from '@/src/services/legalService';
 import { useProStore } from '@/src/stores/proStore';
 
 const DEFAULT_BADGE = '#ffb800';
@@ -77,11 +78,24 @@ export default function PaywallScreen() {
       await purchasePro(plan);
       Alert.alert(t.purchaseSuccess);
       router.back();
-    } catch {
+    } catch (e: unknown) {
+      if (e && typeof e === 'object' && 'userCancelled' in e && (e as { userCancelled: boolean }).userCancelled) {
+        return;
+      }
       Alert.alert(t.purchaseFailed);
     } finally {
       setAction(null);
     }
+  };
+
+  const openPrivacyPolicy = () => {
+    const { privacyUrl } = getLegalLinks();
+    void openExternalLink(privacyUrl);
+  };
+
+  const openTerms = () => {
+    const { termsUrl } = getLegalLinks();
+    void openExternalLink(termsUrl);
   };
 
   const handleRestore = async () => {
@@ -185,6 +199,16 @@ export default function PaywallScreen() {
       </View>
 
       <Text style={[styles.finePrint, { color: colors.textMuted }]}>{t.paywallFinePrint}</Text>
+
+      <View style={styles.legalRow}>
+        <Pressable onPress={() => openPrivacyPolicy()}>
+          <Text style={[styles.legalLink, { color: colors.primaryBg }]}>{t.legalPrivacyPolicyLabel}</Text>
+        </Pressable>
+        <Text style={[styles.legalSeparator, { color: colors.textMuted }]}>{'|'}</Text>
+        <Pressable onPress={() => openTerms()}>
+          <Text style={[styles.legalLink, { color: colors.primaryBg }]}>{t.legalTermsOfUseLabel}</Text>
+        </Pressable>
+      </View>
 
       <Pressable onPress={() => router.back()} style={[styles.stayFreeButton, { backgroundColor: colors.surfaceBg, borderColor: colors.borderMedium }]}>
         <Text style={[styles.stayFreeText, { color: colors.textSecondary }]}>{t.paywallCtaStayFree}</Text>
@@ -326,5 +350,18 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.5,
+  },
+  legalRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+  },
+  legalLink: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  legalSeparator: {
+    fontSize: 12,
   },
 });

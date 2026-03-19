@@ -36,7 +36,7 @@ const baseEn = {
   paywallBestValueBadge: 'Best value',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Price per month',
-  paywallYearlySavings: 'Save ~37% compared with monthly.',
+  paywallYearlySavings: 'Save ~16% compared with monthly.',
   paywallCtaYearly: 'Start Yearly Plan',
   paywallCtaMonthly: 'Start Monthly Plan',
   paywallCtaStayFree: 'Stay Free',
