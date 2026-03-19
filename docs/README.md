@@ -41,10 +41,11 @@ docs/
 │   │   ├── ios_build.md
 │   │   └── coding_rules.md
 │   ├── workflow/                  開発〜リリースの流れ
-│   │   ├── whole_workflow.md      Issue→PR→CI→Release 全体像
-│   │   ├── git_workflow.md        ブランチ/コミット規約
+│   │   ├── whole_workflow.md        Issue→PR→CI→Release 全体像
+│   │   ├── git_workflow.md          ブランチ/コミット規約
+│   │   ├── google_play_release.md   Google Play公開フロー（AAB→内部テスト→製品版）
 │   │   ├── release_notes_template.md
-│   │   ├── backup_restore.md      バックアップ運用と障害対応
+│   │   ├── backup_restore.md        バックアップ運用と障害対応
 │   │   └── figma_mcp_prompt.md
 │   ├── testing/                   テスト・ベンチマーク
 │   │   ├── testing.md             テスト戦略と実行手順
