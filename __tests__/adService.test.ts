@@ -12,6 +12,7 @@ import {
 jest.mock('react-native-google-mobile-ads', () => {
   const mobileAds = jest.fn(() => ({
     initialize: jest.fn(),
+    setRequestConfiguration: jest.fn(),
   }));
 
   return {
@@ -39,6 +40,12 @@ jest.mock('react-native-google-mobile-ads', () => {
       UNKNOWN: 'UNKNOWN',
       REQUIRED: 'REQUIRED',
       NOT_REQUIRED: 'NOT_REQUIRED',
+    },
+    MaxAdContentRating: {
+      G: 'G',
+      MA: 'MA',
+      PG: 'PG',
+      T: 'T',
     },
     TestIds: {
       ADAPTIVE_BANNER: 'test-banner',
