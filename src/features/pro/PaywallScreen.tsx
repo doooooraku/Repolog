@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import Purchases from 'react-native-purchases';
 
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -67,12 +69,49 @@ export default function PaywallScreen() {
     return priceDetails?.yearly?.priceString ?? t.priceUnavailable;
   }, [loadingPrices, priceDetails?.yearly?.priceString, t.priceLoading, t.priceUnavailable]);
 
+  const lifetimePriceLabel = useMemo(() => {
+    if (loadingPrices) return t.priceLoading;
+    return priceDetails?.lifetime?.priceString ?? t.priceUnavailable;
+  }, [loadingPrices, priceDetails?.lifetime?.priceString, t.priceLoading, t.priceUnavailable]);
+  const lifetimeAvailable = Boolean(priceDetails?.lifetime?.priceString);
+
   const yearlyPerMonth = priceDetails?.yearly?.pricePerMonthString ?? null;
   const monthlyAvailable = Boolean(priceDetails?.monthly?.priceString);
   const yearlyAvailable = Boolean(priceDetails?.yearly?.priceString);
 
   const handlePurchase = async (plan: PlanType) => {
     if (isPro) return;
+
+    // Warn if user has active subscription and is buying lifetime
+    if (plan === 'lifetime') {
+      try {
+        const info = await Purchases.getCustomerInfo();
+        if (info.activeSubscriptions.length > 0) {
+          const proceed = await new Promise<boolean>((resolve) => {
+            Alert.alert(
+              t.lifetimeSubWarningTitle,
+              t.lifetimeSubWarningBody,
+              [
+                { text: t.cancel, style: 'cancel', onPress: () => resolve(false) },
+                {
+                  text: t.manageSubscription,
+                  onPress: () => {
+                    void Linking.openURL('https://play.google.com/store/account/subscriptions');
+                    resolve(false);
+                  },
+                },
+                { text: t.continueAnyway, onPress: () => resolve(true) },
+              ],
+              { cancelable: false },
+            );
+          });
+          if (!proceed) return;
+        }
+      } catch {
+        // If check fails, proceed with purchase
+      }
+    }
+
     setAction(plan);
     try {
       await purchasePro(plan);
@@ -181,6 +220,42 @@ export default function PaywallScreen() {
             )}
           </Pressable>
         </View>
+      </View>
+
+      {/* --- or divider --- */}
+      <View style={styles.dividerRow}>
+        <View style={[styles.dividerLine, { backgroundColor: colors.borderLight }]} />
+        <Text style={[styles.dividerText, { color: colors.textMuted }]}>{t.paywallOrDivider}</Text>
+        <View style={[styles.dividerLine, { backgroundColor: colors.borderLight }]} />
+      </View>
+
+      {/* --- Lifetime plan --- */}
+      <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+        <View style={[styles.planCard, { borderColor: colors.borderLight, backgroundColor: colors.surfaceBgAlt }]}>
+          <View style={styles.planRow}>
+            <Text style={[styles.planTitle, { color: colors.textPrimary }]}>{t.paywallPlanLifetimeTitle}</Text>
+            <View style={[styles.badge, { backgroundColor: colors.textMuted }]}>
+              <Text style={[styles.badgeText, { color: colors.surfaceBg }]}>{t.paywallOneTimeBadge}</Text>
+            </View>
+          </View>
+          <Text style={[styles.planPrice, { color: colors.textPrimary }]}>{lifetimePriceLabel}</Text>
+          <Text style={[styles.planSub, { color: colors.textMuted }]}>{t.paywallLifetimeDesc}</Text>
+          <Pressable
+            onPress={() => handlePurchase('lifetime')}
+            style={[
+              styles.ctaButton,
+              { backgroundColor: colors.primaryBg },
+              (!lifetimeAvailable || isPro) && styles.disabledButton,
+            ]}
+            disabled={!lifetimeAvailable || isPro || action !== null}>
+            {action === 'lifetime' ? (
+              <ActivityIndicator color={colors.primaryText} />
+            ) : (
+              <Text style={[styles.ctaText, { color: colors.primaryText }]}>{t.paywallCtaLifetime}</Text>
+            )}
+          </Pressable>
+        </View>
+        <Text style={[styles.finePrint, { color: colors.textMuted }]}>{t.paywallLifetimeFinePrint}</Text>
       </View>
 
       <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
@@ -363,5 +438,18 @@ const styles = StyleSheet.create({
   },
   legalSeparator: {
     fontSize: 12,
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  dividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+  },
+  dividerText: {
+    fontSize: 12,
+    fontWeight: '500',
   },
 });

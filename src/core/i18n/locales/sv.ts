@@ -21,6 +21,16 @@ const dict = {
   // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
   openPro: 'Se Pro-planen',          // Proプランを見る
   cancel: 'Avbryt',                  // キャンセル
+  paywallPlanLifetimeTitle: 'Livstid',
+  paywallLifetimeDesc: 'Betala en gång, använd för alltid.',
+  paywallCtaLifetime: 'Få livstidsåtkomst',
+  paywallOneTimeBadge: 'Engångs',
+  paywallLifetimeFinePrint: 'Engångsköp. Ingen automatisk förnyelse.',
+  lifetimeSubWarningTitle: 'Aktivt abonnemang hittades',
+  lifetimeSubWarningBody: 'Du har ett aktivt abonnemang. Köp av livstidsåtkomst avbryter det inte automatiskt. Avsluta ditt abonnemang efter köpet för att undvika dubbla avgifter.',
+  manageSubscription: 'Hantera abonnemang',
+  continueAnyway: 'Fortsätt ändå',
+  paywallOrDivider: 'eller',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

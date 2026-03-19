@@ -21,6 +21,16 @@ const dict = {
   // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
   openPro: 'Lihat Paket Pro',        // Proプランを見る
   cancel: 'Batal',                   // キャンセル
+  paywallPlanLifetimeTitle: 'Seumur Hidup',
+  paywallLifetimeDesc: 'Bayar sekali, gunakan selamanya.',
+  paywallCtaLifetime: 'Dapatkan Akses Seumur Hidup',
+  paywallOneTimeBadge: 'Sekali',
+  paywallLifetimeFinePrint: 'Pembelian satu kali. Tidak ada perpanjangan otomatis.',
+  lifetimeSubWarningTitle: 'Langganan aktif ditemukan',
+  lifetimeSubWarningBody: 'Anda memiliki langganan aktif. Membeli akses seumur hidup tidak akan membatalkan langganan secara otomatis. Batalkan langganan Anda setelah pembelian untuk menghindari tagihan ganda.',
+  manageSubscription: 'Kelola langganan',
+  continueAnyway: 'Lanjutkan',
+  paywallOrDivider: 'atau',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

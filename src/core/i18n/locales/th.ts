@@ -21,6 +21,16 @@ const dict = {
   // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
   openPro: 'ดูแพ็กเกจ Pro',          // Proプランを見る
   cancel: 'ยกเลิก',                  // キャンセル
+  paywallPlanLifetimeTitle: 'ตลอดชีพ',
+  paywallLifetimeDesc: 'จ่ายครั้งเดียว ใช้ตลอดไป',
+  paywallCtaLifetime: 'รับสิทธิ์ตลอดชีพ',
+  paywallOneTimeBadge: 'ครั้งเดียว',
+  paywallLifetimeFinePrint: 'ซื้อครั้งเดียว ไม่มีการต่ออายุอัตโนมัติ',
+  lifetimeSubWarningTitle: 'พบการสมัครสมาชิกที่ใช้งานอยู่',
+  lifetimeSubWarningBody: 'คุณมีการสมัครสมาชิกที่ใช้งานอยู่ การซื้อสิทธิ์ตลอดชีพจะไม่ยกเลิกการสมัครสมาชิกโดยอัตโนมัติ กรุณายกเลิกการสมัครสมาชิกหลังการซื้อเพื่อหลีกเลี่ยงการเรียกเก็บเงินซ้ำ',
+  manageSubscription: 'จัดการการสมัครสมาชิก',
+  continueAnyway: 'ดำเนินการต่อ',
+  paywallOrDivider: 'หรือ',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

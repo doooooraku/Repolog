@@ -21,6 +21,16 @@ const dict = {
   // --- Pro Screen (Paywall) (課金画面) ---
   openPro: 'Pro-Plan ansehen',       // Proプランを見る
   cancel: 'Abbrechen',               // キャンセル
+  paywallPlanLifetimeTitle: 'Einmalkauf',
+  paywallLifetimeDesc: 'Einmal zahlen, für immer nutzen.',
+  paywallCtaLifetime: 'Lebenslangen Zugang erhalten',
+  paywallOneTimeBadge: 'Einmalig',
+  paywallLifetimeFinePrint: 'Einmaliger Kauf. Kein Abo, keine automatische Verlängerung.',
+  lifetimeSubWarningTitle: 'Aktives Abo gefunden',
+  lifetimeSubWarningBody: 'Du hast ein aktives Abo. Der Kauf des Lebenslang-Zugangs kündigt es nicht automatisch. Bitte kündige dein Abo nach dem Kauf, um Doppelbelastungen zu vermeiden.',
+  manageSubscription: 'Abo verwalten',
+  continueAnyway: 'Trotzdem fortfahren',
+  paywallOrDivider: 'oder',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

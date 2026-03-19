@@ -19,7 +19,17 @@ const dict = {
   // --- Settings (Sound & Info) ---
   
   // --- Paywall / Pro Screen ---
-  
+  paywallPlanLifetimeTitle: 'À vie',
+  paywallLifetimeDesc: 'Un seul paiement, accès illimité.',
+  paywallCtaLifetime: 'Obtenir l\'accès à vie',
+  paywallOneTimeBadge: 'Unique',
+  paywallLifetimeFinePrint: 'Achat unique. Pas de renouvellement automatique.',
+  lifetimeSubWarningTitle: 'Abonnement actif détecté',
+  lifetimeSubWarningBody: 'Vous avez un abonnement actif. L\'achat à vie ne l\'annulera pas automatiquement. Veuillez annuler votre abonnement après l\'achat pour éviter une double facturation.',
+  manageSubscription: 'Gérer l\'abonnement',
+  continueAnyway: 'Continuer',
+  paywallOrDivider: 'ou',
+
 
   // --- Heatmap Range (Settings) ---
 

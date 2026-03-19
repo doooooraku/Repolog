@@ -21,6 +21,16 @@ const dict = {
   // --- Pro Screen (Paywall) ---
   openPro: 'Ver plan Pro',
   cancel: 'Cancelar',
+  paywallPlanLifetimeTitle: 'De por vida',
+  paywallLifetimeDesc: 'Paga una vez, usa para siempre.',
+  paywallCtaLifetime: 'Obtener acceso de por vida',
+  paywallOneTimeBadge: 'Único',
+  paywallLifetimeFinePrint: 'Compra única. Sin renovación automática.',
+  lifetimeSubWarningTitle: 'Suscripción activa encontrada',
+  lifetimeSubWarningBody: 'Tienes una suscripción activa. La compra de acceso de por vida no la cancelará automáticamente. Cancela tu suscripción después de la compra para evitar cargos dobles.',
+  manageSubscription: 'Gestionar suscripción',
+  continueAnyway: 'Continuar',
+  paywallOrDivider: 'o',
 
   // --- Settings (Appearance) ---
 

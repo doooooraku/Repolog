@@ -21,6 +21,16 @@ const dict = {
   // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
   openPro: 'Pro Planı Gör',          // Proプランを見る
   cancel: 'İptal',                   // キャンセル
+  paywallPlanLifetimeTitle: 'Ömür Boyu',
+  paywallLifetimeDesc: 'Bir kez öde, sonsuza dek kullan.',
+  paywallCtaLifetime: 'Ömür Boyu Erişim Al',
+  paywallOneTimeBadge: 'Tek seferlik',
+  paywallLifetimeFinePrint: 'Tek seferlik satın alma. Otomatik yenileme yok.',
+  lifetimeSubWarningTitle: 'Aktif abonelik bulundu',
+  lifetimeSubWarningBody: 'Aktif bir aboneliğiniz var. Ömür boyu erişim satın almak aboneliğinizi otomatik olarak iptal etmez. Çifte ücretlendirmeden kaçınmak için satın alma sonrası aboneliğinizi iptal edin.',
+  manageSubscription: 'Aboneliği yönet',
+  continueAnyway: 'Devam et',
+  paywallOrDivider: 'veya',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

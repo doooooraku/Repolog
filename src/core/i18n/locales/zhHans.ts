@@ -21,6 +21,16 @@ const dict = {
   // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
   openPro: '查看 Pro 方案',          // Proプランを見る
   cancel: '取消',                    // キャンセル
+  paywallPlanLifetimeTitle: '永久版',
+  paywallLifetimeDesc: '一次付费，永久使用。',
+  paywallCtaLifetime: '获取永久版',
+  paywallOneTimeBadge: '一次性',
+  paywallLifetimeFinePrint: '一次性购买，无自动续费。',
+  lifetimeSubWarningTitle: '检测到有效订阅',
+  lifetimeSubWarningBody: '您有一个有效的订阅。购买永久版不会自动取消订阅。请在购买后取消订阅，以避免重复扣费。',
+  manageSubscription: '管理订阅',
+  continueAnyway: '继续购买',
+  paywallOrDivider: '或',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

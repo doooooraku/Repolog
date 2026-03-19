@@ -12,7 +12,7 @@ import Purchases, {
 import type { ProState } from '@/src/types/models';
 import { IAP_DEBUG } from '@/src/core/debug';
 
-export type PlanType = 'monthly' | 'yearly';
+export type PlanType = 'monthly' | 'yearly' | 'lifetime';
 export type PriceDetail = {
   title: string;
   priceString: string;
@@ -25,6 +25,7 @@ export type PriceDetail = {
 export type PriceDetails = {
   monthly?: PriceDetail;
   yearly?: PriceDetail;
+  lifetime?: PriceDetail;
 };
 
 const PRO_STATE_KEY = 'repolog_pro_state_v1';
@@ -102,7 +103,10 @@ async function getCurrentOffering(): Promise<PurchasesOffering | null> {
 
 function findPackage(offering: PurchasesOffering | null, plan: PlanType): PurchasesPackage | null {
   if (!offering) return null;
-  return plan === 'monthly' ? offering.monthly : offering.annual;
+  if (plan === 'monthly') return offering.monthly;
+  if (plan === 'yearly') return offering.annual;
+  if (plan === 'lifetime') return offering.lifetime;
+  return null;
 }
 
 function toPriceDetail(product?: PurchasesStoreProduct | null): PriceDetail | null {
@@ -124,15 +128,17 @@ async function getPriceDetails(): Promise<PriceDetails | null> {
   return {
     monthly: toPriceDetail(offering.monthly?.product ?? null) ?? undefined,
     yearly: toPriceDetail(offering.annual?.product ?? null) ?? undefined,
+    lifetime: toPriceDetail(offering.lifetime?.product ?? null) ?? undefined,
   };
 }
 
-async function getPriceStrings(): Promise<{ monthly?: string; yearly?: string } | null> {
+async function getPriceStrings(): Promise<{ monthly?: string; yearly?: string; lifetime?: string } | null> {
   const details = await getPriceDetails();
   if (!details) return null;
   return {
     monthly: details.monthly?.priceString,
     yearly: details.yearly?.priceString,
+    lifetime: details.lifetime?.priceString,
   };
 }
 
