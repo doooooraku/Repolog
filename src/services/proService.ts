@@ -27,7 +27,8 @@ export type PriceDetails = {
   yearly?: PriceDetail;
 };
 
-const PRO_STATE_KEY = 'dotchain_pro_state_v1';
+const PRO_STATE_KEY = 'repolog_pro_state_v1';
+const LEGACY_PRO_STATE_KEY = 'dotchain_pro_state_v1';
 const ENTITLEMENT_ID = 'Pro_Plan';
 let configured = false;
 
@@ -145,8 +146,16 @@ export const proService = {
   async loadLocalState(): Promise<ProState | null> {
     try {
       const raw = await SecureStore.getItemAsync(PRO_STATE_KEY);
-      if (!raw) return null;
-      return JSON.parse(raw) as ProState;
+      if (raw) return JSON.parse(raw) as ProState;
+
+      // Migrate from legacy key
+      const legacy = await SecureStore.getItemAsync(LEGACY_PRO_STATE_KEY);
+      if (legacy) {
+        await SecureStore.setItemAsync(PRO_STATE_KEY, legacy);
+        await SecureStore.deleteItemAsync(LEGACY_PRO_STATE_KEY);
+        return JSON.parse(legacy) as ProState;
+      }
+      return null;
     } catch {
       return null;
     }
