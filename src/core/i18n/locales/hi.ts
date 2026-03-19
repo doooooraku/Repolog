@@ -21,6 +21,12 @@ const dict = {
   // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
   openPro: 'Pro प्लान देखें',        // Proプランを見る
   cancel: 'रद्द करें',               // キャンセル
+  paywallPlanLifetimeTitle: 'लाइफ़टाइम',
+  paywallLifetimeDesc: 'एक बार भुगतान करें, हमेशा उपयोग करें।',
+  paywallCtaLifetime: 'लाइफ़टाइम एक्सेस पाएं',
+  paywallOneTimeBadge: 'एकबार',
+  paywallLifetimeFinePrint: 'एकमुश्त खरीद। कोई ऑटो-रिन्यूअल नहीं।',
+  paywallOrDivider: 'या',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

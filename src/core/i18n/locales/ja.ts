@@ -24,6 +24,12 @@ const dict = {
     paywallCtaStayFree: '今は無料で続ける',
     paywallFinePrint:
       'サブスクリプションは自動更新されます。いつでもアカウント設定から解約できます。',
+    paywallPlanLifetimeTitle: '買い切り',
+    paywallLifetimeDesc: '1回限りのお支払いで、ずっと使えます。',
+    paywallCtaLifetime: '買い切りでProを始める',
+    paywallOneTimeBadge: '1回払い',
+    paywallLifetimeFinePrint: '1回限りのお支払いです。自動更新や定期的な課金はありません。',
+    paywallOrDivider: 'または',
     paywallRestoreTitle: '購入を復元',
     paywallRestoreDesc: 'このアカウントの購入履歴を復元します。',
         proFeatureAds: '広告',

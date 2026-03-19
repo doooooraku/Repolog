@@ -21,6 +21,12 @@ const dict = {
   // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
   openPro: 'Xem gói Pro',            // Proプランを見る
   cancel: 'Hủy',                     // キャンセル
+  paywallPlanLifetimeTitle: 'Trọn đời',
+  paywallLifetimeDesc: 'Thanh toán một lần, dùng mãi mãi.',
+  paywallCtaLifetime: 'Mua quyền trọn đời',
+  paywallOneTimeBadge: 'Một lần',
+  paywallLifetimeFinePrint: 'Mua một lần. Không tự động gia hạn.',
+  paywallOrDivider: 'hoặc',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

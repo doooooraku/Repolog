@@ -21,6 +21,12 @@ const dict = {
   // --- Pro Screen (Paywall) (課金画面) ---
   openPro: 'Pro-Plan ansehen',       // Proプランを見る
   cancel: 'Abbrechen',               // キャンセル
+  paywallPlanLifetimeTitle: 'Einmalkauf',
+  paywallLifetimeDesc: 'Einmal zahlen, für immer nutzen.',
+  paywallCtaLifetime: 'Lebenslangen Zugang erhalten',
+  paywallOneTimeBadge: 'Einmalig',
+  paywallLifetimeFinePrint: 'Einmaliger Kauf. Kein Abo, keine automatische Verlängerung.',
+  paywallOrDivider: 'oder',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

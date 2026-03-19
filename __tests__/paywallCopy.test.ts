@@ -32,6 +32,12 @@ const paywallKeys = [
   'paywallCtaMonthly',
   'paywallCtaStayFree',
   'paywallFinePrint',
+  'paywallPlanLifetimeTitle',
+  'paywallLifetimeDesc',
+  'paywallCtaLifetime',
+  'paywallOneTimeBadge',
+  'paywallLifetimeFinePrint',
+  'paywallOrDivider',
   'paywallRestoreTitle',
   'paywallRestoreDesc',
 ] as const;

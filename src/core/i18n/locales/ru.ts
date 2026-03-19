@@ -21,6 +21,12 @@ const dict = {
   // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
   openPro: 'Смотреть Pro',
   cancel: 'Отмена',
+  paywallPlanLifetimeTitle: 'Навсегда',
+  paywallLifetimeDesc: 'Оплатите один раз — пользуйтесь вечно.',
+  paywallCtaLifetime: 'Получить пожизненный доступ',
+  paywallOneTimeBadge: 'Разово',
+  paywallLifetimeFinePrint: 'Разовая покупка. Без автопродления.',
+  paywallOrDivider: 'или',
 
   // --- Settings (Appearance) (設定：見た目) ---
 

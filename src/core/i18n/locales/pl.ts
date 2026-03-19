@@ -120,6 +120,12 @@ const dict = {
   paywallCtaStayFree: 'Pozostań przy Free',
   paywallFinePrint:
     'Subskrypcje odnawiają się automatycznie. Możesz anulować w ustawieniach konta w dowolnym momencie.',
+  paywallPlanLifetimeTitle: 'Na zawsze',
+  paywallLifetimeDesc: 'Zapłać raz, korzystaj na zawsze.',
+  paywallCtaLifetime: 'Uzyskaj dożywotni dostęp',
+  paywallOneTimeBadge: 'Jednorazowo',
+  paywallLifetimeFinePrint: 'Jednorazowy zakup. Brak automatycznego odnowienia.',
+  paywallOrDivider: 'lub',
   paywallRestoreTitle: 'Przywróć zakupy',
   paywallRestoreDesc: 'Przywróć zakupy wykonane na tym koncie.',
   priceLoading: 'Ładowanie...',

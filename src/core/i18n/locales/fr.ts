@@ -19,7 +19,13 @@ const dict = {
   // --- Settings (Sound & Info) ---
   
   // --- Paywall / Pro Screen ---
-  
+  paywallPlanLifetimeTitle: 'À vie',
+  paywallLifetimeDesc: 'Un seul paiement, accès illimité.',
+  paywallCtaLifetime: 'Obtenir l\'accès à vie',
+  paywallOneTimeBadge: 'Unique',
+  paywallLifetimeFinePrint: 'Achat unique. Pas de renouvellement automatique.',
+  paywallOrDivider: 'ou',
+
 
   // --- Heatmap Range (Settings) ---
 
