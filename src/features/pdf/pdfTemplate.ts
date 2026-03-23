@@ -36,6 +36,7 @@ type PdfTemplateInput = {
 type PdfLabels = {
   createdAt: string;
   reportName: string;
+  author: string;
   address: string;
   location: string;
   weather: string;
@@ -49,6 +50,7 @@ type PdfLabels = {
 const DEFAULT_LABELS: PdfLabels = {
   createdAt: 'Created at',
   reportName: 'Report name',
+  author: 'Author',
   address: 'Address',
   location: 'Location',
   weather: 'Weather',
@@ -69,10 +71,10 @@ const escapeHtml = (value: string) =>
 
 type ImageSizeConfig = { maxEdge: number; quality: number };
 
-const IMAGE_SIZE_STANDARD: ImageSizeConfig = { maxEdge: 600, quality: 0.65 };
-const IMAGE_SIZE_LARGE: ImageSizeConfig = { maxEdge: 800, quality: 0.65 };
-const IMAGE_SIZE_REDUCED_STANDARD: ImageSizeConfig = { maxEdge: 420, quality: 0.5 };
-const IMAGE_SIZE_REDUCED_LARGE: ImageSizeConfig = { maxEdge: 560, quality: 0.5 };
+const IMAGE_SIZE_STANDARD: ImageSizeConfig = { maxEdge: 1200, quality: 0.80 };
+const IMAGE_SIZE_LARGE: ImageSizeConfig = { maxEdge: 1600, quality: 0.80 };
+const IMAGE_SIZE_REDUCED_STANDARD: ImageSizeConfig = { maxEdge: 800, quality: 0.65 };
+const IMAGE_SIZE_REDUCED_LARGE: ImageSizeConfig = { maxEdge: 1000, quality: 0.65 };
 const IMAGE_SIZE_PREVIEW: ImageSizeConfig = { maxEdge: 200, quality: 0.3 };
 
 export const PDF_IMAGE_CONFIGS = {
@@ -115,6 +117,7 @@ const buildFontSelectionText = (input: PdfTemplateInput) => {
   const chunks = [
     input.appName ?? 'Repolog',
     input.report.reportName ?? '',
+    input.report.authorName ?? '',
     input.report.comment ?? '',
     input.report.address ?? '',
     input.weatherLabel ?? '',
@@ -132,22 +135,29 @@ const buildFontSelectionText = (input: PdfTemplateInput) => {
   return chunks.join('\n');
 };
 
+const metaRow = (label: string, value: string | null | undefined) => {
+  if (!value || value === '-') return '';
+  return `<div class="meta-k">${escapeHtml(label)}</div><div class="meta-v">${escapeHtml(value)}</div>`;
+};
+
 const buildCover = (input: PdfTemplateInput, pageCount: number, commentText?: string) => {
   const title = escapeHtml(reportTitle(input.report));
   const createdAt = escapeHtml(formatDateTime(input.report.createdAt));
-  const weather = escapeHtml(input.weatherLabel ?? input.report.weather ?? '');
-  const reportName = escapeHtml(input.report.reportName ?? '-');
+  const weather = input.weatherLabel ?? (input.report.weather !== 'none' ? input.report.weather : null) ?? null;
+  const reportName = input.report.reportName?.trim() || null;
+  const authorName = input.report.authorName?.trim() || null;
   const location =
     input.report.lat != null && input.report.lng != null
       ? `${input.report.lat}, ${input.report.lng}`
-      : '-';
-  const address = input.report.address ?? '-';
+      : null;
+  const address = input.report.address?.trim() || null;
 
-  const commentBlock = commentText != null
+  const hasComment = commentText != null && commentText.trim().length > 0;
+  const commentBlock = hasComment
     ? `
           <div class="comment-block no-break">
             <h2 class="section-title">${escapeHtml(getLabel(input, 'comment'))}</h2>
-            <div class="comment-text">${escapeHtml(commentText || '-')}</div>
+            <div class="comment-text">${escapeHtml(commentText)}</div>
           </div>`
     : '';
 
@@ -158,10 +168,11 @@ const buildCover = (input: PdfTemplateInput, pageCount: number, commentText?: st
           <h1 class="report-title">${title}</h1>
           <div class="meta-grid">
             <div class="meta-k">${escapeHtml(getLabel(input, 'createdAt'))}</div><div class="meta-v">${createdAt}</div>
-            <div class="meta-k">${escapeHtml(getLabel(input, 'reportName'))}</div><div class="meta-v">${reportName}</div>
-            <div class="meta-k">${escapeHtml(getLabel(input, 'address'))}</div><div class="meta-v">${escapeHtml(address)}</div>
-            <div class="meta-k">${escapeHtml(getLabel(input, 'location'))}</div><div class="meta-v">${escapeHtml(location)}</div>
-            <div class="meta-k">${escapeHtml(getLabel(input, 'weather'))}</div><div class="meta-v">${weather || '-'}</div>
+            ${metaRow(getLabel(input, 'reportName'), reportName)}
+            ${metaRow(getLabel(input, 'author'), authorName)}
+            ${metaRow(getLabel(input, 'address'), address)}
+            ${metaRow(getLabel(input, 'location'), location)}
+            ${metaRow(getLabel(input, 'weather'), weather)}
             <div class="meta-k">${escapeHtml(getLabel(input, 'photoCount'))}</div><div class="meta-v">${input.photos.length} ${escapeHtml(getLabel(input, 'photos'))}</div>
             <div class="meta-k">${escapeHtml(getLabel(input, 'pageCount'))}</div><div class="meta-v">${pageCount} ${escapeHtml(getLabel(input, 'pages'))}</div>
           </div>
@@ -215,33 +226,31 @@ const buildPhotoPages = async (
   for (let pageIndex = 0; pageIndex < chunks.length; pageIndex += 1) {
     const pageNumber = startIndex + pageIndex;
     const chunk = chunks[pageIndex];
-    const slots = await Promise.all(
-      chunk.map(async (photo) => {
-        const label = photoLabel(photoCounter);
-        photoCounter += 1;
-        try {
-          const config = resolveImageSizeConfig(input);
-          const src = await fileToDataUri(photo.localUri, config);
-          return `
+    const slots: string[] = [];
+    for (const photo of chunk) {
+      const label = photoLabel(photoCounter);
+      photoCounter += 1;
+      try {
+        const config = resolveImageSizeConfig(input);
+        const src = await fileToDataUri(photo.localUri, config);
+        slots.push(`
             <div class="photo-slot">
               <div class="photo-frame">
                 <img class="photo" src="${src}" alt="${escapeHtml(label)}" />
-                <div class="photo-no">${escapeHtml(label)}</div>
               </div>
+              <div class="photo-no">${escapeHtml(label)}</div>
             </div>
-          `;
-        } catch {
-          console.warn(`[PDF] Failed to load photo: ${photo.localUri}`);
-          return `
+          `);
+      } catch {
+        console.warn(`[PDF] Failed to load photo: ${photo.localUri}`);
+        slots.push(`
             <div class="photo-slot">
-              <div class="photo-frame">
-                <div class="photo-no">${escapeHtml(label)}</div>
-              </div>
+              <div class="photo-frame"></div>
+              <div class="photo-no">${escapeHtml(label)}</div>
             </div>
-          `;
-        }
-      }),
-    );
+          `);
+      }
+    }
 
     // Add empty slot for odd photo count in standard layout
     if (perPage === 2 && chunk.length < perPage) {
@@ -393,13 +402,16 @@ const buildCss = async (input: PdfTemplateInput) => {
   }
   .photo-slot {
     min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
   .photo-slot.empty {
     border: 1px dashed rgba(0,0,0,0.10);
     border-radius: 3mm;
   }
   .photo-frame {
-    height: 100%;
+    flex: 1;
+    min-height: 0;
     border: 1px solid var(--border);
     border-radius: 3mm;
     background: #fff;
@@ -416,11 +428,12 @@ const buildCss = async (input: PdfTemplateInput) => {
     display: block;
   }
   .photo-no {
-    position: absolute;
-    right: 2mm;
-    bottom: 2mm;
+    text-align: right;
     font-size: 8pt;
-    color: rgba(0,0,0,0.70);
+    color: #666;
+    padding-top: 1mm;
+    padding-right: 2mm;
+    line-height: 1;
   }
   .watermark {
     position: absolute;

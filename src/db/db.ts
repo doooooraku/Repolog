@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 
-import { SCHEMA_VERSION, schemaV1, schemaV2 } from './schema';
+import { SCHEMA_VERSION, schemaV1, schemaV2, schemaV3 } from './schema';
 
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
@@ -17,6 +17,11 @@ async function migrate(db: SQLite.SQLiteDatabase) {
   if (version < 2) {
     await db.execAsync(schemaV2);
     version = 2;
+  }
+
+  if (version < 3) {
+    await db.execAsync(schemaV3);
+    version = 3;
   }
 
   if (version !== SCHEMA_VERSION) {

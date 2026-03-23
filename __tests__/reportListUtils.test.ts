@@ -21,6 +21,7 @@ const makeReport = (id: string, createdAt: string, overrides: Partial<Report> = 
   comment: '',
   tags: [],
   pinned: false,
+  authorName: null,
   ...overrides,
 });
 

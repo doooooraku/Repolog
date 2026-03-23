@@ -81,7 +81,7 @@ export const chunkPhotos = (photos: Photo[], perPage: number) => {
 
 export const normalizeLayout = (layout: PdfLayout) => layout;
 
-export const photoLabel = (index: number) => `Photo ${index + 1}`;
+export const photoLabel = (index: number) => `${index + 1}`;
 
 export const reportTitle = (report: Report) => report.reportName ?? 'Untitled Report';
 

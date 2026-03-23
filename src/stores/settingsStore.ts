@@ -9,6 +9,8 @@ type SettingsState = {
   setIncludeLocation: (value: boolean) => void;
   themeMode: ThemeMode;
   setThemeMode: (mode: ThemeMode) => void;
+  authorName: string;
+  setAuthorName: (name: string) => void;
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -18,6 +20,8 @@ export const useSettingsStore = create<SettingsState>()(
       setIncludeLocation: (value) => set({ includeLocation: value }),
       themeMode: 'system',
       setThemeMode: (mode) => set({ themeMode: mode }),
+      authorName: '',
+      setAuthorName: (name) => set({ authorName: name }),
     }),
     {
       name: 'repolog-settings',

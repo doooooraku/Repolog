@@ -17,6 +17,7 @@ export type Report = {
   comment: string;
   tags: string[];
   pinned: boolean;
+  authorName: string | null;
 };
 
 export type NewReportInput = {
@@ -32,6 +33,7 @@ export type NewReportInput = {
   comment?: string;
   tags?: string[];
   pinned?: boolean;
+  authorName?: string | null;
 };
 
 export type UpdateReportInput = {
@@ -48,6 +50,7 @@ export type UpdateReportInput = {
   comment?: string;
   tags?: string[];
   pinned?: boolean;
+  authorName?: string | null;
   updatedAt?: string;
 };
 
