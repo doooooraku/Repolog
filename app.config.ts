@@ -119,6 +119,26 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     '@react-native-community/datetimepicker',
   );
 
+  const pluginsWithImagePicker = ensurePlugin(
+    pluginsWithDatePicker,
+    'expo-image-picker',
+    {
+      cameraPermission: 'Repolog uses your camera to take photos for your work reports.',
+      photosPermission: 'Repolog accesses your photo library so you can attach existing photos to your work reports.',
+      microphonePermission: false,
+    },
+  );
+
+  const pluginsWithLocation = ensurePlugin(
+    pluginsWithImagePicker,
+    'expo-location',
+    {
+      locationWhenInUsePermission: 'Repolog uses your location to tag your work reports with the place where the work was performed.',
+      locationAlwaysPermission: false,
+      locationAlwaysAndWhenInUsePermission: false,
+    },
+  );
+
   return {
     ...config,
     name: config.name ?? 'Repolog',
@@ -147,6 +167,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       supportsRTL,
       forcesRTL,
     },
-    plugins: pluginsWithDatePicker,
+    plugins: pluginsWithLocation,
   };
 };

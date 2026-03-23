@@ -159,6 +159,11 @@
 - 広告は「表示箇所」「頻度」「子供向け/同意」「ストア審査」を強く意識する
 - 実装開始前にADRを書いて、審査事故を減らす
 
+### 8.4 暗号化ライブラリ追加時の再評価
+- 暗号化ライブラリ（SQLCipher、E2E暗号化、VPN等）を追加する場合、`ios.config.usesNonExemptEncryption` の値を再評価する
+- 詳細は ADR-0010 と `docs/how-to/development/ios_build.md` セクション4.5を参照
+- CI検証（`pnpm config:check`）で設定漏れを自動検知する
+
 ---
 
 ## 9. テストルール（“合否＝テスト”に寄せる）

@@ -31,7 +31,9 @@ docs/
 │   ├── ADR-0005  19言語セット選定
 │   ├── ADR-0006  AsyncStorage/SecureStore 使い分け
 │   ├── ADR-0007  バックアップ Import 追記戦略
-│   └── ADR-0008  AdMob UMP 同意プリフライト
+│   ├── ADR-0008  AdMob UMP 同意プリフライト
+│   ├── ADR-0009  デバッグワークフロー v2
+│   └── ADR-0010  iOS暗号化輸出コンプライアンス
 │
 ├── how-to/                   ── 手順・レシピ
 │   ├── development/               ビルド・実機・コーディング
