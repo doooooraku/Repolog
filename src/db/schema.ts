@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export const schemaV1 = `
 PRAGMA foreign_keys = ON;
@@ -52,3 +52,6 @@ CREATE TABLE IF NOT EXISTS exports (
 CREATE INDEX IF NOT EXISTS idx_exports_report ON exports(report_id);
 CREATE INDEX IF NOT EXISTS idx_exports_exported_at ON exports(exported_at);
 `;
+
+// v3: author_name column added via idempotent migration in db.ts
+// (ALTER TABLE ADD COLUMN has no IF NOT EXISTS in SQLite)

@@ -4,6 +4,11 @@ import { SCHEMA_VERSION, schemaV1, schemaV2 } from './schema';
 
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
+async function hasColumn(db: SQLite.SQLiteDatabase, table: string, column: string) {
+  const cols = await db.getAllAsync<{ name: string }>(`PRAGMA table_info(${table});`);
+  return cols.some((c) => c.name === column);
+}
+
 async function migrate(db: SQLite.SQLiteDatabase) {
   await db.execAsync('PRAGMA foreign_keys = ON;');
   const row = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version;');
@@ -19,9 +24,14 @@ async function migrate(db: SQLite.SQLiteDatabase) {
     version = 2;
   }
 
-  if (version !== SCHEMA_VERSION) {
-    await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION};`);
+  if (version < 3) {
+    if (!(await hasColumn(db, 'reports', 'author_name'))) {
+      await db.execAsync('ALTER TABLE reports ADD COLUMN author_name TEXT;');
+    }
+    version = 3;
   }
+
+  await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION};`);
 }
 
 export async function getDb() {

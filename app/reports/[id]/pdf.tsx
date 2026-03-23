@@ -80,6 +80,7 @@ export default function PdfPreviewScreen() {
     () => ({
       createdAt: t.pdfCreatedAt,
       reportName: t.pdfReportName,
+      author: t.pdfAuthor,
       address: t.pdfAddress,
       location: t.pdfLocation,
       weather: t.pdfWeather,

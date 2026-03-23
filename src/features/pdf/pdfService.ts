@@ -20,6 +20,7 @@ export type PdfGenerateInput = {
   labels?: {
     createdAt?: string;
     reportName?: string;
+    author?: string;
     address?: string;
     location?: string;
     weather?: string;

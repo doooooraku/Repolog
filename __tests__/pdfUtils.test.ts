@@ -57,8 +57,8 @@ describe('pdfUtils', () => {
   });
 
   test('photoLabel increments from 1', () => {
-    expect(photoLabel(0)).toBe('Photo 1');
-    expect(photoLabel(5)).toBe('Photo 6');
+    expect(photoLabel(0)).toBe('1');
+    expect(photoLabel(5)).toBe('6');
   });
 
   test('buildPdfExportFileName uses timestamp and report name', () => {

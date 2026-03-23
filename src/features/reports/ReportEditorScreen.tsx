@@ -130,6 +130,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const { t } = useTranslation();
   const { colors } = useAppTheme();
   const includeLocation = useSettingsStore((s) => s.includeLocation);
+  const savedAuthorName = useSettingsStore((s) => s.authorName);
+  const setSettingsAuthorName = useSettingsStore((s) => s.setAuthorName);
 
   const [loading, setLoading] = useState<boolean>(Boolean(reportId));
   const [saving, setSaving] = useState(false);
@@ -139,6 +141,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const initPro = useProStore((s) => s.init);
 
   const [reportName, setReportName] = useState('');
+  const [authorName, setAuthorName] = useState('');
   const [comment, setComment] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
@@ -171,6 +174,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         }
         setReport(existing);
         setReportName(existing.reportName ?? '');
+        setAuthorName(existing.authorName ?? '');
         setComment(existing.comment ?? '');
         setTags(existing.tags ?? []);
         setWeather(existing.weather);
@@ -202,6 +206,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   useEffect(() => {
     if (reportId || loading || report || reportNameSeeded.current) return;
     reportNameSeeded.current = true;
+    if (savedAuthorName) {
+      setAuthorName((current) => (current.trim().length > 0 ? current : savedAuthorName));
+    }
     let mounted = true;
     const seedReportName = async () => {
       const latestReportName = await getLatestReportName();
@@ -212,7 +219,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     return () => {
       mounted = false;
     };
-  }, [loading, report, reportId]);
+  }, [loading, report, reportId, savedAuthorName]);
 
   const handleDatePress = useCallback(() => {
     DateTimePickerAndroid.open({
@@ -320,6 +327,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     const nextTags = normalizeTags([...tags, ...splitTagInput(tagInput)]);
     return {
       reportName: reportName.trim() || null,
+      authorName: authorName.trim() || null,
       comment,
       tags: nextTags,
       weather,
@@ -331,7 +339,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       addressSource: includeLocation ? locationState.addressSource : null,
       addressLocale: includeLocation ? locationState.addressLocale : null,
     };
-  }, [report, reportName, comment, tags, tagInput, weather, includeLocation, locationState]);
+  }, [report, reportName, authorName, comment, tags, tagInput, weather, includeLocation, locationState]);
 
   const ensureReport = useCallback(async () => {
     if (report) return report;
@@ -527,6 +535,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         return;
       }
       const payload = buildPayload();
+      if (authorName.trim()) {
+        setSettingsAuthorName(authorName.trim());
+      }
       const existingId = report?.id ?? reportId;
       if (existingId) {
         await updateReport({ id: existingId, ...payload });
@@ -719,8 +730,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 testID={`e2e_photo_delete_${index}`}
                 onPress={() => confirmDeletePhoto(item)}
                 hitSlop={8}
-                style={styles.photoDeleteButton}>
-                <Text style={styles.photoDeleteButtonText}>×</Text>
+                style={[styles.photoDeleteButton, { backgroundColor: colors.surfaceHighlight }]}>
+                <Text style={[styles.photoDeleteButtonText, { color: colors.textPrimary }]}>×</Text>
               </Pressable>
             </View>
             <Pressable onLongPress={drag} delayLongPress={220} disabled={isActive}>
@@ -730,7 +741,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         </ScaleDecorator>
       );
     },
-    [colors.photoCardBg, colors.textMuted, colors.textSecondary, confirmDeletePhoto, handleDeletePhoto, t.a11yReorderPhoto],
+    [colors.photoCardBg, colors.surfaceHighlight, colors.textMuted, colors.textPrimary, colors.textSecondary, confirmDeletePhoto, handleDeletePhoto, t.a11yReorderPhoto],
   );
 
   const remaining = remainingCommentChars(comment);
@@ -782,6 +793,16 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
               onChangeText={setReportName}
               placeholder={t.reportNamePlaceholder}
               placeholderTextColor={colors.textPlaceholder}
+            />
+
+            <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.authorNameLabel}</Text>
+            <TextInput
+              style={[styles.input, { color: colors.textPrimary, backgroundColor: colors.surfaceHighlight, borderColor: 'rgba(0, 0, 0, 0)' }]}
+              value={authorName}
+              onChangeText={setAuthorName}
+              placeholder={t.authorNamePlaceholder}
+              placeholderTextColor={colors.textPlaceholder}
+              maxLength={50}
             />
 
             <Text style={[styles.fieldLabel, styles.fieldSpacing, { color: colors.textPrimary }]}>{t.createdAtLabel}</Text>

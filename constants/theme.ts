@@ -69,7 +69,7 @@ export const Colors = {
     textSecondary: '#9ba1a6',
     textMuted: '#6d7278',
     textPlaceholder: '#6d7278',
-    textOnPrimary: '#ffffff',
+    textOnPrimary: '#111214',
 
     // Borders
     borderDefault: 'rgba(255, 255, 255, 0.1)',

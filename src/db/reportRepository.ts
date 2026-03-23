@@ -22,6 +22,7 @@ const REPORT_COLUMNS = [
   'comment',
   'tags_json',
   'pinned',
+  'author_name',
 ] as const;
 
 type ReportRow = {
@@ -40,6 +41,7 @@ type ReportRow = {
   comment: string;
   tags_json: string;
   pinned: number;
+  author_name: string | null;
 };
 
 const toReport = (row: ReportRow): Report => {
@@ -69,6 +71,7 @@ const toReport = (row: ReportRow): Report => {
     comment: row.comment ?? '',
     tags,
     pinned: Boolean(row.pinned),
+    authorName: row.author_name ?? null,
   };
 };
 
@@ -137,6 +140,7 @@ export async function createReport(input: NewReportInput = {}): Promise<Report> 
   const comment = clampComment(input.comment ?? '');
   const tags = normalizeTags(input.tags);
   const pinned = Boolean(input.pinned);
+  const authorName = input.authorName ?? null;
   const id = createId();
 
   const db = await getDb();
@@ -144,8 +148,8 @@ export async function createReport(input: NewReportInput = {}): Promise<Report> 
     `INSERT INTO reports (
       id, created_at, updated_at, report_name, weather, location_enabled,
       lat, lng, lat_lng_captured_at, address, address_source, address_locale,
-      comment, tags_json, pinned
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      comment, tags_json, pinned, author_name
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     id,
     now,
     now,
@@ -161,6 +165,7 @@ export async function createReport(input: NewReportInput = {}): Promise<Report> 
     comment,
     JSON.stringify(tags),
     pinned ? 1 : 0,
+    authorName,
   );
 
   return {
@@ -179,6 +184,7 @@ export async function createReport(input: NewReportInput = {}): Promise<Report> 
     comment,
     tags,
     pinned,
+    authorName,
   };
 }
 
@@ -204,6 +210,7 @@ export async function updateReport(input: UpdateReportInput): Promise<Report | n
     comment: input.comment !== undefined ? clampComment(input.comment) : existing.comment,
     tags: input.tags ? normalizeTags(input.tags) : existing.tags,
     pinned: input.pinned ?? existing.pinned,
+    authorName: input.authorName !== undefined ? (input.authorName ?? null) : existing.authorName,
     updatedAt: input.updatedAt ?? new Date().toISOString(),
   };
 
@@ -222,7 +229,8 @@ export async function updateReport(input: UpdateReportInput): Promise<Report | n
       address_locale = ?,
       comment = ?,
       tags_json = ?,
-      pinned = ?
+      pinned = ?,
+      author_name = ?
     WHERE id = ?`,
     next.updatedAt,
     next.reportName,
@@ -237,6 +245,7 @@ export async function updateReport(input: UpdateReportInput): Promise<Report | n
     next.comment,
     JSON.stringify(next.tags),
     next.pinned ? 1 : 0,
+    next.authorName,
     next.id,
   );
 
