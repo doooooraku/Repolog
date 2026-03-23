@@ -114,6 +114,38 @@ eas submit -p ios --profile production
 
 ---
 
+## 4.5 iOS提出前チェックリスト（Issue #214）
+
+### 4.5-1. app.json 必須設定
+
+- [ ] `ios.config.usesNonExemptEncryption` が設定されている（通常 `false`。ADR-0010 参照）
+- [ ] `ios.privacyManifests.NSPrivacyAccessedAPITypes` が設定されている（Apple 2024年5月〜必須）
+- [ ] `ios.bundleIdentifier` が Apple Developer Portal と一致（`com.dooooraku.repolog`）
+
+### 4.5-2. iOS権限説明文
+
+- [ ] `expo-image-picker` プラグインで `cameraPermission` / `photosPermission` が明示設定されている
+- [ ] `microphonePermission: false` でマイク権限がブロックされている（写真のみ、動画不要）
+- [ ] `expo-location` プラグインで `locationWhenInUsePermission` が明示設定されている
+- [ ] `locationAlwaysPermission: false` で常時位置情報がブロックされている
+
+### 4.5-3. App Store Connect
+
+- [ ] Privacy Policy URL が設定済み（`https://doooooraku.github.io/Repolog/privacy/`）
+- [ ] アプリカテゴリが選択済み
+- [ ] 年齢レーティング（IARC）が回答済み
+
+### 4.5-4. CI検証
+
+```bash
+pnpm config:check
+```
+
+意味：
+- `config:check`：app.json の必須iOS設定（暗号化コンプライアンス、Privacy Manifests、bundle ID等）が正しく設定されているか自動検証する
+
+---
+
 ## 5. 参考（正は公式）
 - Expo EAS Build（iOS）: https://docs.expo.dev/build/introduction/
 - Expo EAS Submit（iOS）: https://docs.expo.dev/submit/introduction/
