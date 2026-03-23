@@ -1,8 +1,13 @@
 import * as SQLite from 'expo-sqlite';
 
-import { SCHEMA_VERSION, schemaV1, schemaV2, schemaV3 } from './schema';
+import { SCHEMA_VERSION, schemaV1, schemaV2 } from './schema';
 
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
+
+async function hasColumn(db: SQLite.SQLiteDatabase, table: string, column: string) {
+  const cols = await db.getAllAsync<{ name: string }>(`PRAGMA table_info(${table});`);
+  return cols.some((c) => c.name === column);
+}
 
 async function migrate(db: SQLite.SQLiteDatabase) {
   await db.execAsync('PRAGMA foreign_keys = ON;');
@@ -20,13 +25,13 @@ async function migrate(db: SQLite.SQLiteDatabase) {
   }
 
   if (version < 3) {
-    await db.execAsync(schemaV3);
+    if (!(await hasColumn(db, 'reports', 'author_name'))) {
+      await db.execAsync('ALTER TABLE reports ADD COLUMN author_name TEXT;');
+    }
     version = 3;
   }
 
-  if (version !== SCHEMA_VERSION) {
-    await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION};`);
-  }
+  await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION};`);
 }
 
 export async function getDb() {

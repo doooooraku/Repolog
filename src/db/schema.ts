@@ -53,6 +53,5 @@ CREATE INDEX IF NOT EXISTS idx_exports_report ON exports(report_id);
 CREATE INDEX IF NOT EXISTS idx_exports_exported_at ON exports(exported_at);
 `;
 
-export const schemaV3 = `
-ALTER TABLE reports ADD COLUMN author_name TEXT;
-`;
+// v3: author_name column added via idempotent migration in db.ts
+// (ALTER TABLE ADD COLUMN has no IF NOT EXISTS in SQLite)
