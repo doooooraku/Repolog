@@ -7,6 +7,7 @@ const dict = {
     restore: '購入を復元',
     purchaseSuccess: 'Proプランが有効になりました。',
     purchaseFailed: '購入に失敗しました。時間をおいて再度お試しください。',
+    purchasePending: 'お支払いの確認中です。確認が完了すると Pro 機能が有効になります。',
     restoreSuccess: '購入履歴を復元しました。',
     restoreNotFound: '復元可能な購入は見つかりませんでした。',
     restoreFailed: '購入の復元に失敗しました。',

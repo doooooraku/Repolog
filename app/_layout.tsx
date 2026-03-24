@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -7,6 +8,8 @@ import 'react-native-reanimated';
 
 import tamaguiConfig from '@/tamagui.config';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { proService } from '@/src/services/proService';
+import { useProStore } from '@/src/stores/proStore';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -14,6 +17,13 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const { colorScheme, isDark } = useAppTheme();
+
+  useEffect(() => {
+    const remove = proService.addCustomerInfoListener((state) => {
+      useProStore.setState({ state, isPro: state.isPro, initialized: true });
+    });
+    return () => { remove?.(); };
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

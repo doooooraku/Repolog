@@ -12,6 +12,7 @@ const dict = {
   restore: 'Aankopen herstellen',    // 購入の復元
   purchaseSuccess: 'Pro-abonnement is nu actief.', // 購入成功
   purchaseFailed: 'Aankoop mislukt. Probeer het later opnieuw.', // 購入失敗
+  purchasePending: 'Je betaling wordt verwerkt. Pro-functies worden geactiveerd zodra de betaling is bevestigd.',
   restoreSuccess: 'Aankoopgeschiedenis hersteld.', // 復元成功 (長い単語ですがここは大丈夫)
   restoreNotFound: 'Geen aankopen gevonden om te herstellen.', // 復元データなし
   restoreFailed: 'Herstellen van aankopen mislukt.', // 復元失敗

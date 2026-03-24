@@ -12,6 +12,7 @@ const dict = {
   restore: '恢复购买',               // 購入の復元
   purchaseSuccess: 'Pro 方案已激活。', // 購入成功
   purchaseFailed: '购买失败，请稍后重试。', // 購入失敗
+  purchasePending: '您的付款正在处理中。付款确认后 Pro 功能将自动激活。',
   restoreSuccess: '购买记录已恢复。', // 復元成功
   restoreNotFound: '未找到可恢复的购买记录。', // 復元データなし
   restoreFailed: '恢复购买失败。',   // 復元失敗

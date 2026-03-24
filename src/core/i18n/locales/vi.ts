@@ -12,6 +12,7 @@ const dict = {
   restore: 'Khôi phục mua hàng',     // 購入の復元
   purchaseSuccess: 'Gói Pro đã được kích hoạt.', // 購入成功
   purchaseFailed: 'Giao dịch thất bại. Vui lòng thử lại sau.', // 購入失敗
+  purchasePending: 'Thanh toán của bạn đang được xử lý. Các tính năng Pro sẽ được kích hoạt khi thanh toán được xác nhận.',
   restoreSuccess: 'Đã khôi phục lịch sử mua hàng.', // 復元成功
   restoreNotFound: 'Không tìm thấy đơn hàng để khôi phục.', // 復元データなし
   restoreFailed: 'Khôi phục thất bại.', // 復元失敗

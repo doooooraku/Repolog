@@ -12,6 +12,7 @@ const dict = {
   restore: '구매 복원',              // 購入履歴の復元
   purchaseSuccess: 'Pro 플랜이 활성화되었습니다.', // 購入成功
   purchaseFailed: '결제에 실패했습니다. 나중에 다시 시도해 주세요.', // 購入失敗
+  purchasePending: '결제가 처리 중입니다. 결제가 확인되면 Pro 기능이 활성화됩니다.',
   restoreSuccess: '구매 기록이 복원되었습니다.', // 復元成功
   restoreNotFound: '복원할 구매 기록이 없습니다.', // 復元データなし
   restoreFailed: '구매 복원에 실패했습니다.', // 復元失敗

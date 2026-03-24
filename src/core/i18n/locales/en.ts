@@ -20,6 +20,7 @@ const baseEn = {
   restore: 'Restore Purchases',
   purchaseSuccess: 'Pro plan is now active.',
   purchaseFailed: 'Purchase failed. Please try again later.',
+  purchasePending: 'Your payment is being processed. Pro features will activate once the payment is confirmed.',
   restoreSuccess: 'Purchase history restored.',
   restoreNotFound: 'No purchases were found to restore.',
   restoreFailed: 'Failed to restore purchases.',

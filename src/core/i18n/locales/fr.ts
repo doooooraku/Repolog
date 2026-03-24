@@ -11,8 +11,9 @@ const dict = {
   // --- Purchase / Restore ---
   restore: 'Restaurer les achats',
   purchaseSuccess: 'Le plan Pro est maintenant actif.',
-  purchaseFailed: 'L’achat a échoué. Veuillez réessayer plus tard.',
-  restoreSuccess: 'Historique d’achat restauré.',
+  purchaseFailed: "L’achat a échoué. Veuillez réessayer plus tard.",
+  purchasePending: 'Votre paiement est en cours de traitement. Les fonctionnalit\xc3\xa9s Pro seront activ\xc3\xa9es une fois le paiement confirm\xc3\xa9.',
+  restoreSuccess: "Historique d’achat restauré.",
   restoreNotFound: 'Aucun achat trouvé à restaurer.',
   restoreFailed: 'Échec de la restauration des achats.',
 

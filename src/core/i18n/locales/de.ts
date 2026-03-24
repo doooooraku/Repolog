@@ -12,6 +12,7 @@ const dict = {
   restore: 'Käufe wiederherstellen', // 購入の復元
   purchaseSuccess: 'Pro-Plan ist jetzt aktiv.', // 購入成功
   purchaseFailed: 'Kauf fehlgeschlagen. Bitte später erneut versuchen.', // 購入失敗
+  purchasePending: 'Deine Zahlung wird verarbeitet. Die Pro-Funktionen werden aktiviert, sobald die Zahlung bestätigt ist.',
   restoreSuccess: 'Kaufhistorie wiederhergestellt.', // 復元成功
   restoreNotFound: 'Keine Käufe zum Wiederherstellen gefunden.', // 復元データなし
   restoreFailed: 'Wiederherstellung fehlgeschlagen.', // 復元失敗

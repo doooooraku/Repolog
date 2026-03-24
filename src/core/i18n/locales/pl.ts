@@ -42,6 +42,7 @@ const dict = {
   restoreFailed: 'Nie udało się przywrócić zakupów.',
   purchaseSuccess: 'Plan Pro jest teraz aktywny.',
   purchaseFailed: 'Zakup nie powiódł się. Spróbuj ponownie później.',
+  purchasePending: 'Twoja płatność jest przetwarzana. Funkcje Pro zostaną aktywowane po potwierdzeniu płatności.',
   adPrivacyOptionsHelp: 'Sprawdź zgody dotyczące reklam wyświetlanych w planie Free.',
   adPrivacyOptionsAction: 'Zarządzaj ustawieniami prywatności reklam',
   adPrivacyOptionsUnavailable: 'Obecnie brak dodatkowych ustawień prywatności reklam.',

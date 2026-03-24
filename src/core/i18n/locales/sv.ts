@@ -12,6 +12,7 @@ const dict = {
   restore: 'Återställ köp',          // 購入の復元
   purchaseSuccess: 'Pro-planen är nu aktiv.', // 購入成功
   purchaseFailed: 'Köpet misslyckades. Försök igen senare.', // 購入失敗
+  purchasePending: 'Din betalning behandlas. Pro-funktioner aktiveras när betalningen har bekräftats.',
   restoreSuccess: 'Köphistorik återställd.', // 復元成功
   restoreNotFound: 'Inga köp hittades att återställa.', // 復元データなし
   restoreFailed: 'Misslyckades med att återställa köp.', // 復元失敗

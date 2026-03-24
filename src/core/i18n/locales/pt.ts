@@ -12,6 +12,7 @@ const dict = {
   restore: 'Restaurar Compras',
   purchaseSuccess: 'O plano Pro está ativo agora.',
   purchaseFailed: 'Falha na compra. Tente novamente mais tarde.',
+  purchasePending: 'Seu pagamento está sendo processado. Os recursos Pro serão ativados após a confirmação do pagamento.',
   restoreSuccess: 'Histórico de compras restaurado.',
   restoreNotFound: 'Nenhuma compra encontrada para restaurar.',
   restoreFailed: 'Falha ao restaurar compras.',
