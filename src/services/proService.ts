@@ -142,7 +142,24 @@ async function getPriceStrings(): Promise<{ monthly?: string; yearly?: string; l
   };
 }
 
+/** Exported for unit testing only. */
+export { toProState as _toProState, findPackage as _findPackage };
+
 export const proService = {
+  /** Register a listener that fires whenever RevenueCat delivers updated CustomerInfo. */
+  addCustomerInfoListener(
+    onUpdate: (state: ProState) => void,
+  ): (() => void) | null {
+    if (!isNative) return null;
+    const handler = async (info: CustomerInfo) => {
+      const state = toProState(info);
+      await saveState(state);
+      onUpdate(state);
+    };
+    Purchases.addCustomerInfoUpdateListener(handler);
+    return () => { Purchases.removeCustomerInfoUpdateListener(handler); };
+  },
+
   async getPriceDetails() {
     return getPriceDetails();
   },

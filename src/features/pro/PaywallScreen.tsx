@@ -121,6 +121,10 @@ export default function PaywallScreen() {
       if (e && typeof e === 'object' && 'userCancelled' in e && (e as { userCancelled: boolean }).userCancelled) {
         return;
       }
+      if (e && typeof e === 'object' && 'code' in e && (e as { code: string }).code === 'PAYMENT_PENDING_ERROR') {
+        Alert.alert(t.purchasePending);
+        return;
+      }
       Alert.alert(t.purchaseFailed);
     } finally {
       setAction(null);

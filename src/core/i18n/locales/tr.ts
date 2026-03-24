@@ -12,6 +12,7 @@ const dict = {
   restore: 'Satın Alımları Yükle',   // 購入の復元 (少し短縮してボタンに収める)
   purchaseSuccess: 'Pro plan artık aktif.', // 購入成功
   purchaseFailed: 'Satın alma başarısız. Lütfen sonra tekrar dene.', // 購入失敗
+  purchasePending: 'Ödemeniz işleniyor. Ödeme onaylandığında Pro özellikleri etkinleştirilecektir.',
   restoreSuccess: 'Satın alma geçmişi yüklendi.', // 復元成功
   restoreNotFound: 'Geri yüklenecek satın alma bulunamadı.', // 復元データなし
   restoreFailed: 'Satın alımlar yüklenemedi.', // 復元失敗

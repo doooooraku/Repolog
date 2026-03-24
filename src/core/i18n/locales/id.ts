@@ -12,6 +12,7 @@ const dict = {
   restore: 'Pulihkan Pembelian',     // 購入の復元
   purchaseSuccess: 'Paket Pro kini aktif.', // 購入成功
   purchaseFailed: 'Pembelian gagal. Silakan coba lagi nanti.', // 購入失敗
+  purchasePending: 'Pembayaran Anda sedang diproses. Fitur Pro akan diaktifkan setelah pembayaran dikonfirmasi.',
   restoreSuccess: 'Riwayat pembelian dipulihkan.', // 復元成功
   restoreNotFound: 'Tidak ada pembelian untuk dipulihkan.', // 復元データなし
   restoreFailed: 'Gagal memulihkan pembelian.', // 復元失敗
