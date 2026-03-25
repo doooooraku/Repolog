@@ -41,7 +41,7 @@ const baseEn = {
   paywallCtaYearly: 'Start Yearly Plan',
   paywallCtaMonthly: 'Start Monthly Plan',
   paywallCtaStayFree: 'Stay Free',
-  paywallFinePrint: 'Subscriptions auto-renew. Cancel anytime in your account settings.',
+  paywallFinePrint: 'Subscription auto-renews until canceled. Payment charged to Apple ID. Manage or cancel anytime in App Store account settings.',
   paywallPlanLifetimeTitle: 'Lifetime',
   paywallLifetimeDesc: 'Pay once, use forever. No subscription needed.',
   paywallCtaLifetime: 'Get Lifetime Access',

@@ -2,28 +2,48 @@ import baseEn from './en';
 
 const dict = {
   ...baseEn,
-  // --- Home / Header (ホーム画面 / ヘッダー) ---
 
-  // --- Settings (General) (設定：一般) ---
-  settings: 'การตั้งค่า',            // 設定
-  theme: 'ธีม',                      // テーマ
+  // --- Settings (General) ---
+  settings: 'การตั้งค่า',
+  theme: 'ธีม',
+  settingsSectionGeneral: 'ทั่วไป',
+  settingsSectionPrivacy: 'ความเป็นส่วนตัว',
+  settingsSectionPurchases: 'การซื้อ',
+  settingsSectionBackup: 'สำรองข้อมูล',
+  settingsBackupDesc: 'ส่งออกหรือนำเข้าไฟล์ ZIP สำรอง (manifest.json + photos/)',
+  settingsBackupOpen: 'เปิดการสำรองข้อมูล',
+  settingsLegalDesc: 'เปิดหน้านโยบายความเป็นส่วนตัวและข้อกำหนดการใช้งาน',
+  adPrivacyOptionsHelp: 'ตรวจสอบตัวเลือกความยินยอมสำหรับโฆษณาในแพ็กเกจ Free',
+  adPrivacyOptionsAction: 'จัดการการตั้งค่าความเป็นส่วนตัวของโฆษณา',
+  adPrivacyOptionsUnavailable: 'ขณะนี้ไม่จำเป็นต้องตั้งค่าความเป็นส่วนตัวของโฆษณา',
+  adPrivacyOptionsFailed: 'ไม่สามารถเปิดการตั้งค่าความเป็นส่วนตัวของโฆษณาได้',
 
-  // --- Purchase / Restore (購入 / 復元) ---
-  restore: 'กู้คืนการซื้อ',          // 購入の復元
-  purchaseSuccess: 'แพ็กเกจ Pro ใช้งานได้แล้ว', // 購入成功
-  purchaseFailed: 'การสั่งซื้อล้มเหลว โปรดลองใหม่ภายหลัง', // 購入失敗
+  // --- Purchase / Restore ---
+  restore: 'กู้คืนการซื้อ',
+  purchaseSuccess: 'แพ็กเกจ Pro ใช้งานได้แล้ว',
+  purchaseFailed: 'การสั่งซื้อล้มเหลว โปรดลองใหม่ภายหลัง',
   purchasePending: 'กำลังดำเนินการชำระเงิน ฟีเจอร์ Pro จะเปิดใช้งานเมื่อการชำระเงินได้รับการยืนยัน',
-  restoreSuccess: 'กู้คืนประวัติการซื้อแล้ว', // 復元成功
-  restoreNotFound: 'ไม่พบประวัติการซื้อ',    // 復元データなし
-  restoreFailed: 'กู้คืนการซื้อไม่สำเร็จ',   // 復元失敗
+  restoreSuccess: 'กู้คืนประวัติการซื้อแล้ว',
+  restoreNotFound: 'ไม่พบประวัติการซื้อ',
+  restoreFailed: 'กู้คืนการซื้อไม่สำเร็จ',
+  restoreDesc: 'กู้คืนการซื้อที่ทำไว้กับบัญชีนี้',
 
-  // --- Settings (Sound & Info) (設定：音と情報) ---
-
-  // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
-  openPro: 'ดูแพ็กเกจ Pro',          // Proプランを見る
-  cancel: 'ยกเลิก',                  // キャンセル
+  // --- Pro Screen (Paywall) ---
+  paywallHeaderTitle: 'Repolog Pro',
+  paywallHeroSubtitle: 'สร้างรายงานภาพถ่ายที่ชัดเจน และส่งออก PDF คุณภาพสูงโดยมีข้อจำกัดน้อยลง',
+  paywallPlansTitle: 'สิ่งที่คุณจะได้รับจาก Pro',
+  paywallPlanMonthlyTitle: 'รายเดือน',
+  paywallPlanYearlyTitle: 'รายปี',
+  paywallBestValueBadge: 'คุ้มค่าที่สุด',
+  paywallBadgeShort: 'PRO',
+  paywallPricePerMonthLabel: 'ราคาต่อเดือน',
+  paywallYearlySavings: 'ประหยัดประมาณ 16% เมื่อเทียบกับรายเดือน',
+  paywallCtaYearly: 'เริ่มแพ็กเกจรายปี',
+  paywallCtaMonthly: 'เริ่มแพ็กเกจรายเดือน',
+  paywallCtaStayFree: 'ใช้แพ็กเกจ Free ต่อ',
+  paywallFinePrint: 'การสมัครสมาชิกจะต่ออายุอัตโนมัติจนกว่าจะยกเลิก การชำระเงินจะเรียกเก็บจาก Apple ID สามารถจัดการหรือยกเลิกได้ตลอดเวลาในการตั้งค่าบัญชี App Store',
   paywallPlanLifetimeTitle: 'ตลอดชีพ',
-  paywallLifetimeDesc: 'จ่ายครั้งเดียว ใช้ตลอดไป',
+  paywallLifetimeDesc: 'จ่ายครั้งเดียว ใช้ตลอดไป ไม่ต้องสมัครสมาชิก',
   paywallCtaLifetime: 'รับสิทธิ์ตลอดชีพ',
   paywallOneTimeBadge: 'ครั้งเดียว',
   paywallLifetimeFinePrint: 'ซื้อครั้งเดียว ไม่มีการต่ออายุอัตโนมัติ',
@@ -32,33 +52,60 @@ const dict = {
   manageSubscription: 'จัดการการสมัครสมาชิก',
   continueAnyway: 'ดำเนินการต่อ',
   paywallOrDivider: 'หรือ',
+  paywallRestoreTitle: 'กู้คืนการซื้อ',
+  paywallRestoreDesc: 'กู้คืนการซื้อที่ทำไว้กับบัญชีนี้',
+  priceLoading: 'กำลังโหลด...',
+  priceUnavailable: 'ไม่พร้อมใช้งาน',
+  legalSectionTitle: 'ข้อกฎหมาย',
+  legalPrivacyPolicyLabel: 'นโยบายความเป็นส่วนตัว',
+  legalTermsOfUseLabel: 'ข้อกำหนดการใช้งาน (EULA)',
+  openPro: 'ดูแพ็กเกจ Pro',
+  cancel: 'ยกเลิก',
 
-  // --- Settings (Appearance) (設定：見た目) ---
+  // --- Backup ---
+  backupTitle: 'สำรองข้อมูล',
+  backupExportTitle: 'ส่งออกข้อมูลสำรอง',
+  backupExportDesc: 'สร้างไฟล์ ZIP ที่มี manifest.json และ photos/ ไม่รวม PDF',
+  backupExportAction: 'ส่งออก',
+  backupExportSuccess: 'ส่งออกข้อมูลสำรองแล้ว',
+  backupExportFailed: 'ส่งออกข้อมูลสำรองไม่สำเร็จ',
+  backupShareUnavailableTitle: 'ไม่สามารถแชร์ได้',
+  backupShareUnavailableBody: 'อุปกรณ์นี้ไม่สามารถเปิดหน้าแชร์ได้',
+  backupImportTitle: 'นำเข้าข้อมูลสำรอง',
+  backupImportDesc: 'นำเข้าไฟล์ ZIP สำรอง รายงาน/รูปภาพที่มีอยู่จะถูกเก็บไว้ ID ที่ซ้ำจะถูกข้าม',
+  backupImportAction: 'นำเข้า',
+  backupImportSuccess: 'นำเข้าข้อมูลสำรองแล้ว',
+  backupImportSuccessDetail: 'เพิ่มแล้ว {reports} รายงานและ {photos} รูปภาพ',
+  backupImportFailed: 'นำเข้าข้อมูลสำรองไม่สำเร็จ',
+  backupImportWarningTitle: 'นำเข้าข้อมูลสำรองหรือไม่?',
+  backupImportWarningBody: 'ข้อมูลสำรองจะถูกเพิ่มเข้ากับรายงาน/รูปภาพที่มีอยู่ ข้อมูลเดิมจะไม่ถูกลบ',
+  backupInvalidTitle: 'ข้อมูลสำรองไม่ถูกต้อง',
+  backupInvalidBody: 'ไฟล์นี้ไม่มี manifest ที่ถูกต้อง',
+  backupSchemaMismatchTitle: 'ข้อมูลสำรองไม่รองรับ',
+  backupSchemaMismatchBody: 'ข้อมูลสำรองนี้ใช้ schema เวอร์ชันอื่น',
+  backupUnsupportedTitle: 'ไม่รองรับ',
+  backupUnsupportedBody: 'อุปกรณ์นี้ไม่รองรับการสำรองข้อมูล',
 
-  // --- Heatmap Range (Settings) (ヒートマップ表示期間) ---
-
-  // --- Themes (テーマ) ---
+  // --- Themes ---
   themeDesc: 'เปลี่ยนหน้าตาของแอป',
-  themeDarkLabel: 'มืด',             // Dark
-  themeLightLabel: 'สว่าง',           // Light
+  themeDarkLabel: 'มืด',
+  themeLightLabel: 'สว่าง',
   themeSystemLabel: 'ระบบ',
 
-  // --- Habit Management (習慣管理) ---
+  // --- Habit Management ---
+  deleteConfirmBody: 'แน่ใจหรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้',
   save: 'บันทึก',
 
-  // --- Icon Categories & Labels (アイコンカテゴリとラベル) ---
+  // --- Accessibility ---
+  a11yGoBack: 'ย้อนกลับ',
+  a11yReorderPhoto: 'จัดลำดับรูปภาพใหม่',
 
-  // --- Misc / Errors (その他 / エラー) ---
+  // --- Misc / Errors ---
   errorLoadFailed: 'โหลดข้อมูลล้มเหลว',
   errorSaveFailed: 'บันทึกไม่สำเร็จ',
+  legalOpenFailed: 'ไม่สามารถเปิดลิงก์ข้อกฎหมายได้',
 
-  // --- Settings description (設定の説明) ---
-
-  // --- Reminder (リマインダー) ---
-
-  // --- Review (7-day streak) (レビュー依頼) ---
-
-  // --- Language labels (言語名) ---
+  // --- Language labels ---
   languageChange: 'เปลี่ยนภาษา',
   currentLanguage: 'ปัจจุบัน',
   languageNameEn: 'อังกฤษ',
@@ -81,94 +128,100 @@ const dict = {
   languageNamePl: 'โปแลนด์',
   languageNameSv: 'สวีเดน',
 
-  // --- Tutorial (チュートリアル) ---
-  reportEditorTitle: 'Report Editor',
-  reportNameLabel: 'Report name',
-  reportNamePlaceholder: 'Enter report name...',
+  // --- Report Editor ---
+  reportEditorTitle: 'ตัวแก้ไขรายงาน',
+  reportBasicInfoSection: 'ข้อมูลเบื้องต้น',
+  reportNameLabel: 'ชื่อรายงาน',
+  reportNamePlaceholder: 'กรอกชื่อรายงาน...',
   authorNameLabel: 'ผู้เขียน',
   authorNamePlaceholder: 'กรอกชื่อผู้เขียน...',
-  createdAtLabel: 'Created at',
-  weatherLabel: 'Weather',
-  weatherSunny: 'Sunny',
-  weatherCloudy: 'Cloudy',
-  weatherRainy: 'Rainy',
-  weatherSnowy: 'Snowy',
-  weatherNone: 'No weather',
-  commentLabel: 'Comment',
-  commentPlaceholder: 'Enter comment...',
-  commentRemainingLabel: 'Remaining',
-  includeLocationLabel: 'Include location',
-  includeLocationHelp: 'Adds location and address to this report.',
-  locationLabel: 'Location',
-  locationFetch: 'Get location',
-  locationRefresh: 'Refresh location',
-  locationClear: 'Clear location',
-  locationUnavailable: 'Location unavailable',
-  locationPermissionDenied: 'Location permission denied',
-  locationError: 'Failed to get location',
-  addressPlaceholder: 'Enter address...',
-  obtaining: 'Obtaining...',
-  photosLabel: 'Photos',
-  addFromCamera: 'Camera',
-  addFromLibrary: 'Library',
-  photoLimitHint: 'Free plan allows up to {max} photos per report.',
-  photoLimitTitle: 'Photo limit reached',
-  photoLimitBody: 'Free plan allows up to {max} photos per report.',
-  photoPermissionDenied: 'Photo permission denied',
-  photoAddFailed: 'Failed to add photo',
-  photoEmpty: 'No photos yet.',
-  homeSearchPlaceholder: 'Search reports...',
-  homePinnedSection: 'Pinned',
-  homeEmptyTitle: 'No reports yet',
-  homeEmptyBody: 'Create your first report.',
-  homeCreateReport: 'Create report',
-  deleteConfirmTitle: 'Delete report?',
-  deleteConfirmBody: 'This action cannot be undone.',
-  deleteAction: 'Delete',
-  cancelAction: 'Cancel',
-  reportUnnamed: 'Untitled report',
-  pdfPreviewTitle: 'PDF Preview',
-  pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Large',
+  createdAtLabel: 'วันที่สร้าง',
+  weatherLabel: 'สภาพอากาศ',
+  weatherSunny: 'แดดจัด',
+  weatherCloudy: 'มีเมฆ',
+  weatherRainy: 'ฝนตก',
+  weatherSnowy: 'หิมะตก',
+  weatherNone: 'ไม่ระบุสภาพอากาศ',
+  tagsLabel: 'แท็ก',
+  tagInputPlaceholder: 'เพิ่มแท็ก (คั่นด้วยเครื่องหมายจุลภาคหรือขึ้นบรรทัดใหม่)...',
+  addTagAction: 'เพิ่ม',
+  tagsEmpty: 'ยังไม่มีแท็ก',
+  commentLabel: 'ความคิดเห็น',
+  commentPlaceholder: 'กรอกความคิดเห็น...',
+  commentRemainingLabel: 'เหลือ',
+  includeLocationLabel: 'รวมตำแหน่งที่ตั้ง',
+  includeLocationHelp: 'เพิ่มตำแหน่งที่ตั้งและที่อยู่ในรายงานนี้',
+  locationDisabledHint: 'ตำแหน่งที่ตั้งถูกปิดในการตั้งค่า เปิดใช้งานที่นั่นเพื่อเพิ่มข้อมูลตำแหน่ง',
+  locationLabel: 'ตำแหน่งที่ตั้ง',
+  locationFetch: 'รับตำแหน่ง',
+  locationRefresh: 'รีเฟรชตำแหน่ง',
+  locationClear: 'ล้างตำแหน่ง',
+  locationUnavailable: 'ไม่สามารถระบุตำแหน่งได้',
+  locationPermissionDenied: 'สิทธิ์ตำแหน่งถูกปฏิเสธ',
+  locationError: 'ไม่สามารถรับตำแหน่งได้',
+  addressPlaceholder: 'กรอกที่อยู่...',
+  obtaining: 'กำลังรับข้อมูล...',
+  photosLabel: 'รูปภาพ',
+  addFromCamera: 'กล้อง',
+  addFromLibrary: 'คลังภาพ',
+  photoLimitHint: 'แพ็กเกจ Free อนุญาตสูงสุด {max} รูปต่อรายงาน',
+  photoLimitTitle: 'ถึงขีดจำกัดรูปภาพแล้ว',
+  photoLimitBody: 'แพ็กเกจ Free อนุญาตสูงสุด {max} รูปต่อรายงาน',
+  photoPermissionDenied: 'สิทธิ์รูปภาพถูกปฏิเสธ',
+  photoAddFailed: 'เพิ่มรูปภาพไม่สำเร็จ',
+  photoEmpty: 'ยังไม่มีรูปภาพ',
+  photoReorderHint: 'กดค้างที่รูปภาพเพื่อจัดลำดับใหม่ แตะ x เพื่อลบ',
+  photoReorderFailed: 'บันทึกลำดับรูปภาพไม่สำเร็จ',
+  photoDeleteConfirmTitle: 'ลบรูปภาพ?',
+  photoDeleteConfirmBody: 'รูปภาพนี้จะถูกลบออกจากรายงานนี้',
+  photoDeleteFailed: 'ลบรูปภาพไม่สำเร็จ',
+  photoDeletedNotice: 'ลบรูปภาพแล้ว',
+  undoAction: 'เลิกทำ',
+
+  // --- Home ---
+  homeSearchPlaceholder: 'ค้นหารายงาน...',
+  homeFilterAll: 'ทั้งหมด',
+  homeFilterPinned: 'ปักหมุด',
+  homeFilterThisWeek: 'สัปดาห์นี้',
+  homePinnedSection: 'ปักหมุด',
+  homeEmptyTitle: 'ยังไม่มีรายงาน',
+  homeEmptyBody: 'สร้างรายงานแรกของคุณ',
+  homeCreateReport: 'สร้างรายงาน',
+  deleteConfirmTitle: 'ลบรายงาน?',
+  deleteAction: 'ลบ',
+  cancelAction: 'ยกเลิก',
+  reportUnnamed: 'รายงานไม่มีชื่อ',
+
+  // --- PDF ---
+  pdfPreviewTitle: 'ตัวอย่าง PDF',
+  pdfLayoutStandard: 'มาตรฐาน',
+  pdfLayoutLarge: 'ขนาดใหญ่',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
-  pdfExport: 'Export PDF',
-  pdfGenerating: 'Generating PDF...',
-  pdfLargeProTitle: 'Pro only layout',
-  pdfLargeProBody: 'Large layout is Pro only. Use Standard instead?',
-  pdfLargeUseStandard: 'Use Standard',
-  pdfLargeUpgrade: 'Upgrade',
-  pdfExportLimitTitle: 'Monthly limit reached',
-  pdfExportLimitBody: 'Free plan allows 5 exports per month.',
-  pdfExportFailed: 'Failed to export PDF.',
+  pdfExport: 'ส่งออก PDF',
+  pdfGenerating: 'กำลังสร้าง PDF...',
+  pdfLargeProTitle: 'เลย์เอาต์สำหรับ Pro เท่านั้น',
+  pdfLargeProBody: 'เลย์เอาต์ขนาดใหญ่สำหรับ Pro เท่านั้น ใช้แบบมาตรฐานแทนหรือไม่?',
+  pdfLargeUseStandard: 'ใช้แบบมาตรฐาน',
+  pdfLargeUpgrade: 'อัปเกรด',
+  pdfExportLimitTitle: 'ถึงขีดจำกัดรายเดือนแล้ว',
+  pdfExportLimitBody: 'แพ็กเกจ Free อนุญาตส่งออก 5 ครั้งต่อเดือน',
+  pdfExportFailed: 'ส่งออก PDF ไม่สำเร็จ',
   pdfPhotoWarningTitle: 'รูปภาพมากเกินไป',
   pdfPhotoWarningBody: 'มีรูปมากกว่า {count} รูป การสร้าง PDF อาจใช้เวลานาน ดำเนินการต่อหรือไม่?',
   pdfPhotoWarningContinue: 'ดำเนินการต่อ',
   pdfPhotoWarningCancel: 'กลับ',
-  pdfCreatedAt: 'Created at',
-  pdfReportName: 'Report name',
+  pdfCreatedAt: 'วันที่สร้าง',
+  pdfReportName: 'ชื่อรายงาน',
   pdfAuthor: 'ผู้เขียน',
-  pdfAddress: 'Address',
-  pdfLocation: 'Location',
-  pdfWeather: 'Weather',
-  pdfPhotoCount: 'Photo count',
-  pdfPageCount: 'Page count',
-  pdfPhotos: 'Photos',
-  pdfPages: 'Pages',
-  pdfComment: 'Comment',
-  settingsSectionGeneral: 'ทั่วไป',
-  settingsSectionPrivacy: 'ความเป็นส่วนตัว',
-  settingsSectionPurchases: 'การซื้อ',
-  settingsSectionBackup: 'สำรองข้อมูล',
-  settingsBackupDesc: 'ส่งออกหรือนำเข้าไฟล์ ZIP สำรอง (manifest.json + photos/)',
-  settingsBackupOpen: 'เปิดการสำรองข้อมูล',
-  tagsLabel: 'แท็ก',
-  addTagAction: 'เพิ่ม',
-  tagsEmpty: 'ยังไม่มีแท็ก',
-  photoDeletedNotice: 'ลบรูปภาพแล้ว',
-  undoAction: 'เลิกทำ',
-  a11yGoBack: 'ย้อนกลับ',
-  a11yReorderPhoto: 'จัดลำดับรูปภาพใหม่',
+  pdfAddress: 'ที่อยู่',
+  pdfLocation: 'ตำแหน่งที่ตั้ง',
+  pdfWeather: 'สภาพอากาศ',
+  pdfPhotoCount: 'จำนวนรูปภาพ',
+  pdfPageCount: 'จำนวนหน้า',
+  pdfPhotos: 'รูปภาพ',
+  pdfPages: 'หน้า',
+  pdfComment: 'ความคิดเห็น',
 };
 
 export default dict;

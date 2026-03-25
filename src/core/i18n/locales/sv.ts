@@ -2,26 +2,46 @@ import baseEn from './en';
 
 const dict = {
   ...baseEn,
-  // --- Home / Header (ホーム画面 / ヘッダー) ---
 
-  // --- Settings (General) (設定：一般) ---
-  settings: 'Inställningar',         // 設定
-  theme: 'Tema',                     // テーマ
+  // --- Settings (General) ---
+  settings: 'Inställningar',
+  theme: 'Tema',
+  settingsSectionGeneral: 'Allmänt',
+  settingsSectionPrivacy: 'Integritet',
+  settingsSectionPurchases: 'Köp',
+  settingsSectionBackup: 'Säkerhetskopiering',
+  settingsBackupDesc: 'Exportera eller importera en säkerhetskopia (manifest.json + photos/).',
+  settingsBackupOpen: 'Öppna säkerhetskopia',
+  settingsLegalDesc: 'Öppna sidan för Integritetspolicy och Användarvillkor.',
+  adPrivacyOptionsHelp: 'Granska annonssamtycken för annonser som visas i gratisplanen.',
+  adPrivacyOptionsAction: 'Hantera annonsintegritetsinställningar',
+  adPrivacyOptionsUnavailable: 'Inga annonsintegritetsinställningar krävs just nu.',
+  adPrivacyOptionsFailed: 'Kunde inte öppna annonsintegritetsinställningar.',
 
-  // --- Purchase / Restore (購入 / 復元) ---
-  restore: 'Återställ köp',          // 購入の復元
-  purchaseSuccess: 'Pro-planen är nu aktiv.', // 購入成功
-  purchaseFailed: 'Köpet misslyckades. Försök igen senare.', // 購入失敗
+  // --- Purchase / Restore ---
+  restore: 'Återställ köp',
+  purchaseSuccess: 'Pro-planen är nu aktiv.',
+  purchaseFailed: 'Köpet misslyckades. Försök igen senare.',
   purchasePending: 'Din betalning behandlas. Pro-funktioner aktiveras när betalningen har bekräftats.',
-  restoreSuccess: 'Köphistorik återställd.', // 復元成功
-  restoreNotFound: 'Inga köp hittades att återställa.', // 復元データなし
-  restoreFailed: 'Misslyckades med att återställa köp.', // 復元失敗
+  restoreSuccess: 'Köphistorik återställd.',
+  restoreNotFound: 'Inga köp hittades att återställa.',
+  restoreFailed: 'Misslyckades med att återställa köp.',
+  restoreDesc: 'Återställ köp som gjorts med detta konto.',
 
-  // --- Settings (Sound & Info) (設定：音と情報) ---
-
-  // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
-  openPro: 'Se Pro-planen',          // Proプランを見る
-  cancel: 'Avbryt',                  // キャンセル
+  // --- Pro Screen (Paywall) ---
+  paywallHeaderTitle: 'Repolog Pro',
+  paywallHeroSubtitle: 'Skapa tydliga fotorapporter och exportera snygga PDF:er med färre begränsningar.',
+  paywallPlansTitle: 'Vad du låser upp med Pro',
+  paywallPlanMonthlyTitle: 'Månadsvis',
+  paywallPlanYearlyTitle: 'Årsvis',
+  paywallBestValueBadge: 'Bästa värdet',
+  paywallBadgeShort: 'PRO',
+  paywallPricePerMonthLabel: 'Pris per månad',
+  paywallYearlySavings: 'Spara ~16% jämfört med månadsvis.',
+  paywallCtaYearly: 'Starta årsplan',
+  paywallCtaMonthly: 'Starta månadsplan',
+  paywallCtaStayFree: 'Fortsätt gratis',
+  paywallFinePrint: 'Prenumerationen förnyas automatiskt tills den avbryts. Betalning debiteras Apple-ID. Hantera eller avbryt när som helst i App Store-kontoinställningarna.',
   paywallPlanLifetimeTitle: 'Livstid',
   paywallLifetimeDesc: 'Betala en gång, använd för alltid.',
   paywallCtaLifetime: 'Få livstidsåtkomst',
@@ -32,33 +52,60 @@ const dict = {
   manageSubscription: 'Hantera abonnemang',
   continueAnyway: 'Fortsätt ändå',
   paywallOrDivider: 'eller',
+  paywallRestoreTitle: 'Återställ köp',
+  paywallRestoreDesc: 'Återställ köp som gjorts med detta konto.',
+  priceLoading: 'Laddar...',
+  priceUnavailable: 'Inte tillgängligt',
+  legalSectionTitle: 'Juridiskt',
+  legalPrivacyPolicyLabel: 'Integritetspolicy',
+  legalTermsOfUseLabel: 'Användarvillkor (EULA)',
+  openPro: 'Se Pro-planen',
+  cancel: 'Avbryt',
 
-  // --- Settings (Appearance) (設定：見た目) ---
+  // --- Backup ---
+  backupTitle: 'Säkerhetskopiering',
+  backupExportTitle: 'Exportera säkerhetskopia',
+  backupExportDesc: 'Skapar en ZIP med manifest.json och photos/. PDF:er inkluderas inte.',
+  backupExportAction: 'Exportera',
+  backupExportSuccess: 'Säkerhetskopia exporterad.',
+  backupExportFailed: 'Misslyckades med att exportera säkerhetskopia.',
+  backupShareUnavailableTitle: 'Delning inte tillgänglig',
+  backupShareUnavailableBody: 'Den här enheten kan inte öppna delningsmenyn.',
+  backupImportTitle: 'Importera säkerhetskopia',
+  backupImportDesc: 'Importera en säkerhetskopia. Befintliga rapporter/foton behålls och dubbletter av ID:n hoppas över.',
+  backupImportAction: 'Importera',
+  backupImportSuccess: 'Säkerhetskopia importerad.',
+  backupImportSuccessDetail: '{reports} rapporter och {photos} foton tillagda.',
+  backupImportFailed: 'Misslyckades med att importera säkerhetskopia.',
+  backupImportWarningTitle: 'Importera säkerhetskopia?',
+  backupImportWarningBody: 'Säkerhetskopians data läggs till befintliga rapporter/foton. Befintlig data raderas inte.',
+  backupInvalidTitle: 'Ogiltig säkerhetskopia',
+  backupInvalidBody: 'Filen innehåller inget giltigt manifest.',
+  backupSchemaMismatchTitle: 'Säkerhetskopia stöds inte',
+  backupSchemaMismatchBody: 'Denna säkerhetskopia använder en annan schemaversion.',
+  backupUnsupportedTitle: 'Stöds inte',
+  backupUnsupportedBody: 'Säkerhetskopiering stöds inte på den här enheten.',
 
-  // --- Heatmap Range (Settings) (ヒートマップ表示期間) ---
-
-  // --- Themes (テーマ) ---
+  // --- Themes ---
   themeDesc: 'Ändra appens utseende.',
-  themeDarkLabel: 'Mörk',            // Dark
-  themeLightLabel: 'Ljus',            // Light
+  themeDarkLabel: 'Mörk',
+  themeLightLabel: 'Ljus',
   themeSystemLabel: 'System',
 
-  // --- Habit Management (習慣管理) ---
+  // --- Habit Management ---
+  deleteConfirmBody: 'Är du säker? Detta kan inte ångras.',
   save: 'Spara',
 
-  // --- Icon Categories & Labels (アイコンカテゴリとラベル) ---
+  // --- Accessibility ---
+  a11yGoBack: 'Gå tillbaka',
+  a11yReorderPhoto: 'Ändra ordning på foto',
 
-  // --- Misc / Errors (その他 / エラー) ---
+  // --- Misc / Errors ---
   errorLoadFailed: 'Kunde inte ladda data.',
   errorSaveFailed: 'Kunde inte spara.',
+  legalOpenFailed: 'Kunde inte öppna den juridiska länken.',
 
-  // --- Settings description (設定の説明) ---
-
-  // --- Reminder (リマインダー) ---
-
-  // --- Review (7-day streak) (レビュー依頼) ---
-
-  // --- Language labels (言語名) ---
+  // --- Language labels ---
   languageChange: 'Byt språk',
   currentLanguage: 'Nuvarande',
   languageNameEn: 'Engelska',
@@ -81,94 +128,100 @@ const dict = {
   languageNamePl: 'Polska',
   languageNameSv: 'Svenska',
 
-  // --- Tutorial (チュートリアル) ---
-  reportEditorTitle: 'Report Editor',
-  reportNameLabel: 'Report name',
-  reportNamePlaceholder: 'Enter report name...',
+  // --- Report Editor ---
+  reportEditorTitle: 'Rapportredigerare',
+  reportBasicInfoSection: 'Grundläggande info',
+  reportNameLabel: 'Rapportnamn',
+  reportNamePlaceholder: 'Ange rapportnamn...',
   authorNameLabel: 'Författare',
   authorNamePlaceholder: 'Ange författarnamn...',
-  createdAtLabel: 'Created at',
-  weatherLabel: 'Weather',
-  weatherSunny: 'Sunny',
-  weatherCloudy: 'Cloudy',
-  weatherRainy: 'Rainy',
-  weatherSnowy: 'Snowy',
-  weatherNone: 'No weather',
-  commentLabel: 'Comment',
-  commentPlaceholder: 'Enter comment...',
-  commentRemainingLabel: 'Remaining',
-  includeLocationLabel: 'Include location',
-  includeLocationHelp: 'Adds location and address to this report.',
-  locationLabel: 'Location',
-  locationFetch: 'Get location',
-  locationRefresh: 'Refresh location',
-  locationClear: 'Clear location',
-  locationUnavailable: 'Location unavailable',
-  locationPermissionDenied: 'Location permission denied',
-  locationError: 'Failed to get location',
-  addressPlaceholder: 'Enter address...',
-  obtaining: 'Obtaining...',
-  photosLabel: 'Photos',
-  addFromCamera: 'Camera',
-  addFromLibrary: 'Library',
-  photoLimitHint: 'Free plan allows up to {max} photos per report.',
-  photoLimitTitle: 'Photo limit reached',
-  photoLimitBody: 'Free plan allows up to {max} photos per report.',
-  photoPermissionDenied: 'Photo permission denied',
-  photoAddFailed: 'Failed to add photo',
-  photoEmpty: 'No photos yet.',
-  homeSearchPlaceholder: 'Search reports...',
-  homePinnedSection: 'Pinned',
-  homeEmptyTitle: 'No reports yet',
-  homeEmptyBody: 'Create your first report.',
-  homeCreateReport: 'Create report',
-  deleteConfirmTitle: 'Delete report?',
-  deleteConfirmBody: 'This action cannot be undone.',
-  deleteAction: 'Delete',
-  cancelAction: 'Cancel',
-  reportUnnamed: 'Untitled report',
-  pdfPreviewTitle: 'PDF Preview',
+  createdAtLabel: 'Skapad',
+  weatherLabel: 'Väder',
+  weatherSunny: 'Soligt',
+  weatherCloudy: 'Molnigt',
+  weatherRainy: 'Regnigt',
+  weatherSnowy: 'Snöigt',
+  weatherNone: 'Inget väder',
+  tagsLabel: 'Taggar',
+  tagInputPlaceholder: 'Lägg till taggar (komma/ny rad)...',
+  addTagAction: 'Lägg till',
+  tagsEmpty: 'Inga taggar ännu.',
+  commentLabel: 'Kommentar',
+  commentPlaceholder: 'Ange kommentar...',
+  commentRemainingLabel: 'Kvar',
+  includeLocationLabel: 'Lägg till plats',
+  includeLocationHelp: 'Lägger till plats och adress i denna rapport.',
+  locationDisabledHint: 'Plats är inaktiverad i Inställningar. Aktivera den där för att lägga till platsdata.',
+  locationLabel: 'Plats',
+  locationFetch: 'Hämta plats',
+  locationRefresh: 'Uppdatera plats',
+  locationClear: 'Rensa plats',
+  locationUnavailable: 'Plats inte tillgänglig',
+  locationPermissionDenied: 'Platsåtkomst nekad',
+  locationError: 'Kunde inte hämta plats',
+  addressPlaceholder: 'Ange adress...',
+  obtaining: 'Hämtar...',
+  photosLabel: 'Foton',
+  addFromCamera: 'Kamera',
+  addFromLibrary: 'Bibliotek',
+  photoLimitHint: 'Gratisplanen tillåter upp till {max} foton per rapport.',
+  photoLimitTitle: 'Fotogräns nådd',
+  photoLimitBody: 'Gratisplanen tillåter upp till {max} foton per rapport.',
+  photoPermissionDenied: 'Fotoåtkomst nekad',
+  photoAddFailed: 'Kunde inte lägga till foto',
+  photoEmpty: 'Inga foton ännu.',
+  photoReorderHint: 'Håll in ett foto för att ändra ordning. Tryck på x för att ta bort.',
+  photoReorderFailed: 'Kunde inte spara fotoordning.',
+  photoDeleteConfirmTitle: 'Ta bort foto?',
+  photoDeleteConfirmBody: 'Detta foto tas bort från rapporten.',
+  photoDeleteFailed: 'Kunde inte ta bort foto.',
+  photoDeletedNotice: 'Foto borttaget.',
+  undoAction: 'Ångra',
+
+  // --- Home ---
+  homeSearchPlaceholder: 'Sök rapporter...',
+  homeFilterAll: 'Alla',
+  homeFilterPinned: 'Fästa',
+  homeFilterThisWeek: 'Denna vecka',
+  homePinnedSection: 'Fästa',
+  homeEmptyTitle: 'Inga rapporter ännu',
+  homeEmptyBody: 'Skapa din första rapport.',
+  homeCreateReport: 'Skapa rapport',
+  deleteConfirmTitle: 'Ta bort rapport?',
+  deleteAction: 'Ta bort',
+  cancelAction: 'Avbryt',
+  reportUnnamed: 'Namnlös rapport',
+
+  // --- PDF ---
+  pdfPreviewTitle: 'PDF-förhandsgranskning',
   pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Large',
+  pdfLayoutLarge: 'Stor',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
-  pdfExport: 'Export PDF',
-  pdfGenerating: 'Generating PDF...',
-  pdfLargeProTitle: 'Pro only layout',
-  pdfLargeProBody: 'Large layout is Pro only. Use Standard instead?',
-  pdfLargeUseStandard: 'Use Standard',
-  pdfLargeUpgrade: 'Upgrade',
-  pdfExportLimitTitle: 'Monthly limit reached',
-  pdfExportLimitBody: 'Free plan allows 5 exports per month.',
-  pdfExportFailed: 'Failed to export PDF.',
+  pdfExport: 'Exportera PDF',
+  pdfGenerating: 'Skapar PDF...',
+  pdfLargeProTitle: 'Endast Pro-layout',
+  pdfLargeProBody: 'Stor layout är bara för Pro. Använda Standard istället?',
+  pdfLargeUseStandard: 'Använd Standard',
+  pdfLargeUpgrade: 'Uppgradera',
+  pdfExportLimitTitle: 'Månadsgräns nådd',
+  pdfExportLimitBody: 'Gratisplanen tillåter 5 exporter per månad.',
+  pdfExportFailed: 'Misslyckades med att exportera PDF.',
   pdfPhotoWarningTitle: 'För många bilder',
   pdfPhotoWarningBody: '{count}+ bilder kan ta lång tid att skapa PDF. Fortsätta?',
   pdfPhotoWarningContinue: 'Fortsätt',
   pdfPhotoWarningCancel: 'Tillbaka',
-  pdfCreatedAt: 'Created at',
-  pdfReportName: 'Report name',
+  pdfCreatedAt: 'Skapad',
+  pdfReportName: 'Rapportnamn',
   pdfAuthor: 'Författare',
-  pdfAddress: 'Address',
-  pdfLocation: 'Location',
-  pdfWeather: 'Weather',
-  pdfPhotoCount: 'Photo count',
-  pdfPageCount: 'Page count',
-  pdfPhotos: 'Photos',
-  pdfPages: 'Pages',
-  pdfComment: 'Comment',
-  settingsSectionGeneral: 'Allmänt',
-  settingsSectionPrivacy: 'Integritet',
-  settingsSectionPurchases: 'Köp',
-  settingsSectionBackup: 'Säkerhetskopiering',
-  settingsBackupDesc: 'Exportera eller importera en säkerhetskopia (manifest.json + photos/).',
-  settingsBackupOpen: 'Öppna säkerhetskopia',
-  tagsLabel: 'Taggar',
-  addTagAction: 'Lägg till',
-  tagsEmpty: 'Inga taggar ännu.',
-  photoDeletedNotice: 'Foto borttaget.',
-  undoAction: 'Ångra',
-  a11yGoBack: 'Gå tillbaka',
-  a11yReorderPhoto: 'Ändra ordning på foto',
+  pdfAddress: 'Adress',
+  pdfLocation: 'Plats',
+  pdfWeather: 'Väder',
+  pdfPhotoCount: 'Antal foton',
+  pdfPageCount: 'Antal sidor',
+  pdfPhotos: 'Foton',
+  pdfPages: 'Sidor',
+  pdfComment: 'Kommentar',
 };
 
 export default dict;

@@ -2,28 +2,48 @@ import baseEn from './en';
 
 const dict = {
   ...baseEn,
-  // --- Home / Header (ホーム画面 / ヘッダー) ---
 
-  // --- Settings (General) (設定：一般) ---
-  settings: '設定',                  // 設定 (Settings)
-  theme: '主題',                     // テーマ
+  // --- Settings (General) ---
+  settings: '設定',
+  theme: '主題',
+  settingsSectionGeneral: '一般',
+  settingsSectionPrivacy: '隱私',
+  settingsSectionPurchases: '購買',
+  settingsSectionBackup: '備份',
+  settingsBackupDesc: '匯出或匯入備份ZIP檔案（manifest.json + photos/）。',
+  settingsBackupOpen: '開啟備份',
+  settingsLegalDesc: '開啟隱私權政策及使用條款頁面。',
+  adPrivacyOptionsHelp: '管理免費方案中廣告顯示的同意選項。',
+  adPrivacyOptionsAction: '管理廣告隱私設定',
+  adPrivacyOptionsUnavailable: '目前無需設定廣告隱私選項。',
+  adPrivacyOptionsFailed: '無法開啟廣告隱私設定。',
 
-  // --- Purchase / Restore (購入 / 復元) ---
-  restore: '恢復購買',               // 購入の復元
-  purchaseSuccess: 'Pro 方案已啟用。', // 購入成功
-  purchaseFailed: '購買失敗，請稍後再試。', // 購入失敗
+  // --- Purchase / Restore ---
+  restore: '恢復購買',
+  purchaseSuccess: 'Pro 方案已啟用。',
+  purchaseFailed: '購買失敗，請稍後再試。',
   purchasePending: '您的付款正在處理中。付款確認後 Pro 功能將自動啟用。',
-  restoreSuccess: '購買紀錄已恢復。', // 復元成功
-  restoreNotFound: '找不到可恢復的購買紀錄。', // 復元データなし
-  restoreFailed: '恢復購買失敗。',   // 復元失敗
+  restoreSuccess: '購買紀錄已恢復。',
+  restoreNotFound: '找不到可恢復的購買紀錄。',
+  restoreFailed: '恢復購買失敗。',
+  restoreDesc: '恢復此帳號的購買紀錄。',
 
-  // --- Settings (Sound & Info) (設定：音と情報) ---
-
-  // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
-  openPro: '查看 Pro 方案',          // Proプランを見る
-  cancel: '取消',                    // キャンセル
+  // --- Pro Screen (Paywall) ---
+  paywallHeaderTitle: 'Repolog Pro',
+  paywallHeroSubtitle: '建立清晰的照片報告，匯出精美 PDF，更少限制。',
+  paywallPlansTitle: '升級 Pro 可解鎖',
+  paywallPlanMonthlyTitle: '月付',
+  paywallPlanYearlyTitle: '年付',
+  paywallBestValueBadge: '最划算',
+  paywallBadgeShort: 'PRO',
+  paywallPricePerMonthLabel: '每月價格',
+  paywallYearlySavings: '與月付方案相比可節省約 16%。',
+  paywallCtaYearly: '開始年付方案',
+  paywallCtaMonthly: '開始月付方案',
+  paywallCtaStayFree: '維持免費方案',
+  paywallFinePrint: '訂閱將自動續費，直到取消為止。付款將從 Apple ID 扣款。您可隨時於 App Store 帳號設定中管理或取消訂閱。',
   paywallPlanLifetimeTitle: '永久版',
-  paywallLifetimeDesc: '一次付費，永久使用。',
+  paywallLifetimeDesc: '一次付費，永久使用。無需訂閱。',
   paywallCtaLifetime: '取得永久版',
   paywallOneTimeBadge: '一次性',
   paywallLifetimeFinePrint: '一次性購買，無自動續費。',
@@ -32,33 +52,60 @@ const dict = {
   manageSubscription: '管理訂閱',
   continueAnyway: '繼續購買',
   paywallOrDivider: '或',
+  paywallRestoreTitle: '恢復購買',
+  paywallRestoreDesc: '恢復此帳號的購買紀錄。',
+  priceLoading: '載入中...',
+  priceUnavailable: '無法取得',
+  legalSectionTitle: '法律資訊',
+  legalPrivacyPolicyLabel: '隱私權政策',
+  legalTermsOfUseLabel: '使用條款（EULA）',
+  openPro: '查看 Pro 方案',
+  cancel: '取消',
 
-  // --- Settings (Appearance) (設定：見た目) ---
+  // --- Backup ---
+  backupTitle: '備份',
+  backupExportTitle: '匯出備份',
+  backupExportDesc: '建立包含 manifest.json 和 photos/ 的 ZIP 檔案。不包含 PDF。',
+  backupExportAction: '匯出',
+  backupExportSuccess: '備份已匯出。',
+  backupExportFailed: '匯出備份失敗。',
+  backupShareUnavailableTitle: '無法分享',
+  backupShareUnavailableBody: '此裝置無法開啟分享面板。',
+  backupImportTitle: '匯入備份',
+  backupImportDesc: '匯入備份 ZIP 檔案。現有的報告與照片會保留，重複的 ID 將被略過。',
+  backupImportAction: '匯入',
+  backupImportSuccess: '備份已匯入。',
+  backupImportSuccessDetail: '已新增 {reports} 份報告和 {photos} 張照片。',
+  backupImportFailed: '匯入備份失敗。',
+  backupImportWarningTitle: '要匯入備份資料嗎？',
+  backupImportWarningBody: '備份資料將附加至現有的報告與照片。現有資料不會被刪除。',
+  backupInvalidTitle: '無效的備份',
+  backupInvalidBody: '此檔案不包含有效的 manifest。',
+  backupSchemaMismatchTitle: '不支援的備份',
+  backupSchemaMismatchBody: '此備份使用不同的 schema 版本。',
+  backupUnsupportedTitle: '不支援',
+  backupUnsupportedBody: '此裝置不支援備份功能。',
 
-  // --- Heatmap Range (Settings) (ヒートマップ表示期間) ---
-
-  // --- Themes (テーマ) ---
+  // --- Themes ---
   themeDesc: '更改應用程式的外觀。',
-  themeDarkLabel: '深色',            // Dark
-  themeLightLabel: '淺色',            // Light
+  themeDarkLabel: '深色',
+  themeLightLabel: '淺色',
   themeSystemLabel: '跟隨系統',
 
-  // --- Habit Management (習慣管理) ---
+  // --- Habit Management ---
+  deleteConfirmBody: '確定要刪除嗎？此操作無法復原。',
   save: '儲存',
 
-  // --- Icon Categories & Labels (アイコンカテゴリとラベル) ---
+  // --- Accessibility ---
+  a11yGoBack: '返回',
+  a11yReorderPhoto: '重新排列照片',
 
-  // --- Misc / Errors (その他 / エラー) ---
+  // --- Misc / Errors ---
   errorLoadFailed: '資料載入失敗。',
   errorSaveFailed: '儲存失敗。',
+  legalOpenFailed: '無法開啟法律條款連結。',
 
-  // --- Settings description (設定の説明) ---
-
-  // --- Reminder (リマインダー) ---
-
-  // --- Review (7-day streak) (レビュー依頼) ---
-
-  // --- Language labels (言語名) ---
+  // --- Language labels ---
   languageChange: '更改語言',
   currentLanguage: '目前語言',
   languageNameEn: '英語',
@@ -81,94 +128,100 @@ const dict = {
   languageNamePl: '波蘭語',
   languageNameSv: '瑞典語',
 
-  // --- Tutorial (チュートリアル) ---
-  reportEditorTitle: 'Report Editor',
-  reportNameLabel: 'Report name',
-  reportNamePlaceholder: 'Enter report name...',
+  // --- Report Editor ---
+  reportEditorTitle: '報告編輯器',
+  reportBasicInfoSection: '基本資訊',
+  reportNameLabel: '報告名稱',
+  reportNamePlaceholder: '輸入報告名稱...',
   authorNameLabel: '作者',
   authorNamePlaceholder: '輸入作者姓名...',
-  createdAtLabel: 'Created at',
-  weatherLabel: 'Weather',
-  weatherSunny: 'Sunny',
-  weatherCloudy: 'Cloudy',
-  weatherRainy: 'Rainy',
-  weatherSnowy: 'Snowy',
-  weatherNone: 'No weather',
-  commentLabel: 'Comment',
-  commentPlaceholder: 'Enter comment...',
-  commentRemainingLabel: 'Remaining',
-  includeLocationLabel: 'Include location',
-  includeLocationHelp: 'Adds location and address to this report.',
-  locationLabel: 'Location',
-  locationFetch: 'Get location',
-  locationRefresh: 'Refresh location',
-  locationClear: 'Clear location',
-  locationUnavailable: 'Location unavailable',
-  locationPermissionDenied: 'Location permission denied',
-  locationError: 'Failed to get location',
-  addressPlaceholder: 'Enter address...',
-  obtaining: 'Obtaining...',
-  photosLabel: 'Photos',
-  addFromCamera: 'Camera',
-  addFromLibrary: 'Library',
-  photoLimitHint: 'Free plan allows up to {max} photos per report.',
-  photoLimitTitle: 'Photo limit reached',
-  photoLimitBody: 'Free plan allows up to {max} photos per report.',
-  photoPermissionDenied: 'Photo permission denied',
-  photoAddFailed: 'Failed to add photo',
-  photoEmpty: 'No photos yet.',
-  homeSearchPlaceholder: 'Search reports...',
-  homePinnedSection: 'Pinned',
-  homeEmptyTitle: 'No reports yet',
-  homeEmptyBody: 'Create your first report.',
-  homeCreateReport: 'Create report',
-  deleteConfirmTitle: 'Delete report?',
-  deleteConfirmBody: 'This action cannot be undone.',
-  deleteAction: 'Delete',
-  cancelAction: 'Cancel',
-  reportUnnamed: 'Untitled report',
-  pdfPreviewTitle: 'PDF Preview',
-  pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Large',
+  createdAtLabel: '建立日期',
+  weatherLabel: '天氣',
+  weatherSunny: '晴天',
+  weatherCloudy: '多雲',
+  weatherRainy: '雨天',
+  weatherSnowy: '雪天',
+  weatherNone: '未設定天氣',
+  tagsLabel: '標籤',
+  tagInputPlaceholder: '新增標籤（以逗號或換行分隔）...',
+  addTagAction: '新增',
+  tagsEmpty: '尚無標籤。',
+  commentLabel: '備註',
+  commentPlaceholder: '輸入備註...',
+  commentRemainingLabel: '剩餘',
+  includeLocationLabel: '加入位置資訊',
+  includeLocationHelp: '在此報告中加入位置與地址。',
+  locationDisabledHint: '位置功能已在設定中關閉。請前往設定開啟位置功能以新增位置資訊。',
+  locationLabel: '位置',
+  locationFetch: '取得位置',
+  locationRefresh: '重新取得位置',
+  locationClear: '清除位置',
+  locationUnavailable: '位置無法取得',
+  locationPermissionDenied: '位置權限已被拒絕',
+  locationError: '取得位置失敗',
+  addressPlaceholder: '輸入地址...',
+  obtaining: '取得中...',
+  photosLabel: '照片',
+  addFromCamera: '相機',
+  addFromLibrary: '相簿',
+  photoLimitHint: '免費方案每份報告最多可加入 {max} 張照片。',
+  photoLimitTitle: '已達照片上限',
+  photoLimitBody: '免費方案每份報告最多可加入 {max} 張照片。',
+  photoPermissionDenied: '照片權限已被拒絕',
+  photoAddFailed: '新增照片失敗',
+  photoEmpty: '尚無照片。',
+  photoReorderHint: '長按照片可重新排序，點擊 x 可刪除。',
+  photoReorderFailed: '儲存照片順序失敗。',
+  photoDeleteConfirmTitle: '刪除照片？',
+  photoDeleteConfirmBody: '此照片將從報告中移除。',
+  photoDeleteFailed: '刪除照片失敗。',
+  photoDeletedNotice: '照片已刪除。',
+  undoAction: '復原',
+
+  // --- Home ---
+  homeSearchPlaceholder: '搜尋報告...',
+  homeFilterAll: '全部',
+  homeFilterPinned: '已釘選',
+  homeFilterThisWeek: '本週',
+  homePinnedSection: '已釘選',
+  homeEmptyTitle: '尚無報告',
+  homeEmptyBody: '建立您的第一份報告。',
+  homeCreateReport: '建立報告',
+  deleteConfirmTitle: '刪除報告？',
+  deleteAction: '刪除',
+  cancelAction: '取消',
+  reportUnnamed: '未命名報告',
+
+  // --- PDF ---
+  pdfPreviewTitle: 'PDF 預覽',
+  pdfLayoutStandard: '標準',
+  pdfLayoutLarge: '大型',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
-  pdfExport: 'Export PDF',
-  pdfGenerating: 'Generating PDF...',
-  pdfLargeProTitle: 'Pro only layout',
-  pdfLargeProBody: 'Large layout is Pro only. Use Standard instead?',
-  pdfLargeUseStandard: 'Use Standard',
-  pdfLargeUpgrade: 'Upgrade',
-  pdfExportLimitTitle: 'Monthly limit reached',
-  pdfExportLimitBody: 'Free plan allows 5 exports per month.',
-  pdfExportFailed: 'Failed to export PDF.',
+  pdfExport: '匯出 PDF',
+  pdfGenerating: '正在產生 PDF...',
+  pdfLargeProTitle: '僅限 Pro 版面',
+  pdfLargeProBody: '大型版面僅限 Pro 方案。改用標準版面嗎？',
+  pdfLargeUseStandard: '使用標準',
+  pdfLargeUpgrade: '升級',
+  pdfExportLimitTitle: '已達每月匯出上限',
+  pdfExportLimitBody: '免費方案每月限匯出 5 次。',
+  pdfExportFailed: '匯出 PDF 失敗。',
   pdfPhotoWarningTitle: '照片過多',
   pdfPhotoWarningBody: '超過 {count} 張照片，產生 PDF 可能需要較長時間。要繼續嗎？',
   pdfPhotoWarningContinue: '繼續',
   pdfPhotoWarningCancel: '返回',
-  pdfCreatedAt: 'Created at',
-  pdfReportName: 'Report name',
+  pdfCreatedAt: '建立日期',
+  pdfReportName: '報告名稱',
   pdfAuthor: '作者',
-  pdfAddress: 'Address',
-  pdfLocation: 'Location',
-  pdfWeather: 'Weather',
-  pdfPhotoCount: 'Photo count',
-  pdfPageCount: 'Page count',
-  pdfPhotos: 'Photos',
-  pdfPages: 'Pages',
-  pdfComment: 'Comment',
-  settingsSectionGeneral: '一般',
-  settingsSectionPrivacy: '隱私',
-  settingsSectionPurchases: '購買',
-  settingsSectionBackup: '備份',
-  settingsBackupDesc: '匯出或匯入備份ZIP檔案（manifest.json + photos/）。',
-  settingsBackupOpen: '開啟備份',
-  tagsLabel: '標籤',
-  addTagAction: '新增',
-  tagsEmpty: '尚無標籤。',
-  photoDeletedNotice: '照片已刪除。',
-  undoAction: '復原',
-  a11yGoBack: '返回',
-  a11yReorderPhoto: '重新排列照片',
+  pdfAddress: '地址',
+  pdfLocation: '位置',
+  pdfWeather: '天氣',
+  pdfPhotoCount: '照片數量',
+  pdfPageCount: '頁數',
+  pdfPhotos: '照片',
+  pdfPages: '頁',
+  pdfComment: '備註',
 };
 
 export default dict;

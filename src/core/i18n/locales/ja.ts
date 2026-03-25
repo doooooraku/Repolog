@@ -24,7 +24,7 @@ const dict = {
     paywallCtaMonthly: '月額プランでProを試す',
     paywallCtaStayFree: '今は無料で続ける',
     paywallFinePrint:
-      'サブスクリプションは自動更新されます。いつでもアカウント設定から解約できます。',
+      'サブスクリプションは解約するまで自動更新されます。Apple IDに課金されます。App Storeのアカウント設定からいつでも管理・解約できます。',
     paywallPlanLifetimeTitle: '買い切り',
     paywallLifetimeDesc: '1回限りのお支払いで、ずっと使えます。',
     paywallCtaLifetime: '買い切りでProを始める',
