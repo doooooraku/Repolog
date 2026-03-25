@@ -2,63 +2,110 @@ import baseEn from './en';
 
 const dict = {
   ...baseEn,
-  // --- Home / Header (ホーム画面 / ヘッダー) ---
 
-  // --- Settings (General) (設定：一般) ---
-  settings: 'Ayarlar',               // 設定
-  theme: 'Tema',                     // テーマ
+  // --- Settings (General) ---
+  settings: 'Ayarlar',
+  theme: 'Tema',
+  settingsSectionGeneral: 'Genel',
+  settingsSectionPrivacy: 'Gizlilik',
+  settingsSectionPurchases: 'Satın Almalar',
+  settingsSectionBackup: 'Yedekleme',
+  settingsBackupDesc: 'Yedek ZIP dosyasını (manifest.json + photos/) dışa veya içe aktarın.',
+  settingsBackupOpen: 'Yedeği aç',
+  settingsLegalDesc: 'Gizlilik Politikası ve Kullanım Koşulları sayfalarını açar.',
+  adPrivacyOptionsHelp: 'Ücretsiz planda gösterilen reklamlar için reklam onay tercihlerini gözden geçir.',
+  adPrivacyOptionsAction: 'Reklam gizlilik ayarlarını yönet',
+  adPrivacyOptionsUnavailable: 'Şu anda reklam gizlilik ayarı gerekmiyor.',
+  adPrivacyOptionsFailed: 'Reklam gizlilik ayarları açılamadı.',
 
-  // --- Purchase / Restore (購入 / 復元) ---
-  restore: 'Satın Alımları Yükle',   // 購入の復元 (少し短縮してボタンに収める)
-  purchaseSuccess: 'Pro plan artık aktif.', // 購入成功
-  purchaseFailed: 'Satın alma başarısız. Lütfen sonra tekrar dene.', // 購入失敗
+  // --- Purchase / Restore ---
+  restore: 'Satın Alımları Yükle',
+  purchaseSuccess: 'Pro plan artık aktif.',
+  purchaseFailed: 'Satın alma başarısız. Lütfen sonra tekrar dene.',
   purchasePending: 'Ödemeniz işleniyor. Ödeme onaylandığında Pro özellikleri etkinleştirilecektir.',
-  restoreSuccess: 'Satın alma geçmişi yüklendi.', // 復元成功
-  restoreNotFound: 'Geri yüklenecek satın alma bulunamadı.', // 復元データなし
-  restoreFailed: 'Satın alımlar yüklenemedi.', // 復元失敗
+  restoreSuccess: 'Satın alma geçmişi yüklendi.',
+  restoreNotFound: 'Geri yüklenecek satın alma bulunamadı.',
+  restoreFailed: 'Satın alımlar yüklenemedi.',
+  restoreDesc: 'Bu hesaptaki satın alımları geri yükle.',
 
-  // --- Settings (Sound & Info) (設定：音と情報) ---
-
-  // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
-  openPro: 'Pro Planı Gör',          // Proプランを見る
-  cancel: 'İptal',                   // キャンセル
+  // --- Pro Screen (Paywall) ---
+  paywallHeaderTitle: 'Repolog Pro',
+  paywallHeroSubtitle: 'Net fotoğraf raporları oluştur ve daha az sınırlamayla profesyonel PDF\'ler dışa aktar.',
+  paywallPlansTitle: 'Pro ile neler açılır',
+  paywallPlanMonthlyTitle: 'Aylık',
+  paywallPlanYearlyTitle: 'Yıllık',
+  paywallBestValueBadge: 'En avantajlı',
+  paywallBadgeShort: 'PRO',
+  paywallPricePerMonthLabel: 'Aylık fiyat',
+  paywallYearlySavings: 'Aylık plana göre ~%16 tasarruf.',
+  paywallCtaYearly: 'Yıllık Planı Başlat',
+  paywallCtaMonthly: 'Aylık Planı Başlat',
+  paywallCtaStayFree: 'Ücretsiz Kal',
+  paywallFinePrint: 'Abonelik iptal edilene kadar otomatik yenilenir. Ödeme Apple ID\'ye faturalandırılır. App Store hesap ayarlarından istediğin zaman yönetebilir veya iptal edebilirsin.',
   paywallPlanLifetimeTitle: 'Ömür Boyu',
   paywallLifetimeDesc: 'Bir kez öde, sonsuza dek kullan.',
   paywallCtaLifetime: 'Ömür Boyu Erişim Al',
   paywallOneTimeBadge: 'Tek seferlik',
   paywallLifetimeFinePrint: 'Tek seferlik satın alma. Otomatik yenileme yok.',
   lifetimeSubWarningTitle: 'Aktif abonelik bulundu',
-  lifetimeSubWarningBody: 'Aktif bir aboneliğiniz var. Ömür boyu erişim satın almak aboneliğinizi otomatik olarak iptal etmez. Çifte ücretlendirmeden kaçınmak için satın alma sonrası aboneliğinizi iptal edin.',
+  lifetimeSubWarningBody: 'Aktif bir aboneliğin var. Ömür boyu erişim satın almak aboneliğini otomatik olarak iptal etmez. Çifte ücretlendirmeden kaçınmak için satın alma sonrası aboneliğini iptal et.',
   manageSubscription: 'Aboneliği yönet',
   continueAnyway: 'Devam et',
   paywallOrDivider: 'veya',
+  paywallRestoreTitle: 'Satın Alımları Yükle',
+  paywallRestoreDesc: 'Bu hesaptaki satın alımları geri yükle.',
+  priceLoading: 'Yükleniyor...',
+  priceUnavailable: 'Kullanılamıyor',
+  legalSectionTitle: 'Yasal',
+  legalPrivacyPolicyLabel: 'Gizlilik Politikası',
+  legalTermsOfUseLabel: 'Kullanım Koşulları (EULA)',
+  openPro: 'Pro Planı Gör',
+  cancel: 'İptal',
 
-  // --- Settings (Appearance) (設定：見た目) ---
+  // --- Backup ---
+  backupTitle: 'Yedekleme',
+  backupExportTitle: 'Yedeği dışa aktar',
+  backupExportDesc: 'manifest.json ve photos/ içeren bir ZIP oluşturur. PDF dahil değildir.',
+  backupExportAction: 'Dışa aktar',
+  backupExportSuccess: 'Yedek dışa aktarıldı.',
+  backupExportFailed: 'Yedek dışa aktarılamadı.',
+  backupShareUnavailableTitle: 'Paylaşım kullanılamıyor',
+  backupShareUnavailableBody: 'Bu cihaz paylaşım panelini açamıyor.',
+  backupImportTitle: 'Yedeği içe aktar',
+  backupImportDesc: 'Yedek ZIP dosyasını içe aktar. Mevcut raporlar/fotoğraflar korunur ve tekrarlanan ID\'ler atlanır.',
+  backupImportAction: 'İçe aktar',
+  backupImportSuccess: 'Yedek içe aktarıldı.',
+  backupImportSuccessDetail: '{reports} rapor ve {photos} fotoğraf eklendi.',
+  backupImportFailed: 'Yedek içe aktarılamadı.',
+  backupImportWarningTitle: 'Yedek verisi içe aktarılsın mı?',
+  backupImportWarningBody: 'Yedek verisi mevcut raporlara/fotoğraflara eklenecektir. Mevcut veriler silinmez.',
+  backupInvalidTitle: 'Geçersiz yedek',
+  backupInvalidBody: 'Dosya geçerli bir manifest içermiyor.',
+  backupSchemaMismatchTitle: 'Desteklenmeyen yedek',
+  backupSchemaMismatchBody: 'Bu yedek farklı bir şema sürümü kullanıyor.',
+  backupUnsupportedTitle: 'Desteklenmiyor',
+  backupUnsupportedBody: 'Bu cihazda yedekleme desteklenmiyor.',
 
-  // --- Heatmap Range (Settings) (ヒートマップ表示期間) ---
-
-  // --- Themes (テーマ) ---
+  // --- Themes ---
   themeDesc: 'Uygulama görünümünü değiştir.',
-  themeDarkLabel: 'Koyu',            // Dark
-  themeLightLabel: 'Açık',            // Light
+  themeDarkLabel: 'Koyu',
+  themeLightLabel: 'Açık',
   themeSystemLabel: 'Sistem',
 
-  // --- Habit Management (習慣管理) ---
+  // --- Habit Management ---
+  deleteConfirmBody: 'Emin misin? Bu işlem geri alınamaz.',
   save: 'Kaydet',
 
-  // --- Icon Categories & Labels (アイコンカテゴリとラベル) ---
+  // --- Accessibility ---
+  a11yGoBack: 'Geri dön',
+  a11yReorderPhoto: 'Fotoğrafı yeniden sırala',
 
-  // --- Misc / Errors (その他 / エラー) ---
+  // --- Misc / Errors ---
   errorLoadFailed: 'Veri yüklenemedi.',
   errorSaveFailed: 'Kaydedilemedi.',
+  legalOpenFailed: 'Yasal bağlantı açılamadı.',
 
-  // --- Settings description (設定の説明) ---
-
-  // --- Reminder (リマインダー) ---
-
-  // --- Review (7-day streak) (レビュー依頼) ---
-
-  // --- Language labels (言語名) ---
+  // --- Language labels ---
   languageChange: 'Dili değiştir',
   currentLanguage: 'Mevcut',
   languageNameEn: 'İngilizce',
@@ -81,94 +128,100 @@ const dict = {
   languageNamePl: 'Lehçe',
   languageNameSv: 'İsveççe',
 
-  // --- Tutorial (チュートリアル) ---
-  reportEditorTitle: 'Report Editor',
-  reportNameLabel: 'Report name',
-  reportNamePlaceholder: 'Enter report name...',
+  // --- Report Editor ---
+  reportEditorTitle: 'Rapor Düzenleyici',
+  reportBasicInfoSection: 'Temel bilgiler',
+  reportNameLabel: 'Rapor adı',
+  reportNamePlaceholder: 'Rapor adı girin...',
   authorNameLabel: 'Yazar',
   authorNamePlaceholder: 'Yazar adını girin...',
-  createdAtLabel: 'Created at',
-  weatherLabel: 'Weather',
-  weatherSunny: 'Sunny',
-  weatherCloudy: 'Cloudy',
-  weatherRainy: 'Rainy',
-  weatherSnowy: 'Snowy',
-  weatherNone: 'No weather',
-  commentLabel: 'Comment',
-  commentPlaceholder: 'Enter comment...',
-  commentRemainingLabel: 'Remaining',
-  includeLocationLabel: 'Include location',
-  includeLocationHelp: 'Adds location and address to this report.',
-  locationLabel: 'Location',
-  locationFetch: 'Get location',
-  locationRefresh: 'Refresh location',
-  locationClear: 'Clear location',
-  locationUnavailable: 'Location unavailable',
-  locationPermissionDenied: 'Location permission denied',
-  locationError: 'Failed to get location',
-  addressPlaceholder: 'Enter address...',
-  obtaining: 'Obtaining...',
-  photosLabel: 'Photos',
-  addFromCamera: 'Camera',
-  addFromLibrary: 'Library',
-  photoLimitHint: 'Free plan allows up to {max} photos per report.',
-  photoLimitTitle: 'Photo limit reached',
-  photoLimitBody: 'Free plan allows up to {max} photos per report.',
-  photoPermissionDenied: 'Photo permission denied',
-  photoAddFailed: 'Failed to add photo',
-  photoEmpty: 'No photos yet.',
-  homeSearchPlaceholder: 'Search reports...',
-  homePinnedSection: 'Pinned',
-  homeEmptyTitle: 'No reports yet',
-  homeEmptyBody: 'Create your first report.',
-  homeCreateReport: 'Create report',
-  deleteConfirmTitle: 'Delete report?',
-  deleteConfirmBody: 'This action cannot be undone.',
-  deleteAction: 'Delete',
-  cancelAction: 'Cancel',
-  reportUnnamed: 'Untitled report',
-  pdfPreviewTitle: 'PDF Preview',
-  pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Large',
+  createdAtLabel: 'Oluşturulma tarihi',
+  weatherLabel: 'Hava durumu',
+  weatherSunny: 'Güneşli',
+  weatherCloudy: 'Bulutlu',
+  weatherRainy: 'Yağmurlu',
+  weatherSnowy: 'Karlı',
+  weatherNone: 'Hava durumu yok',
+  tagsLabel: 'Etiketler',
+  tagInputPlaceholder: 'Etiket ekle (virgül/yeni satır ile ayır)...',
+  addTagAction: 'Ekle',
+  tagsEmpty: 'Henüz etiket yok.',
+  commentLabel: 'Yorum',
+  commentPlaceholder: 'Yorum girin...',
+  commentRemainingLabel: 'Kalan',
+  includeLocationLabel: 'Konum ekle',
+  includeLocationHelp: 'Bu rapora konum ve adres bilgisi ekler.',
+  locationDisabledHint: 'Konum Ayarlar\'da kapalı. Konum verisi eklemek için orada etkinleştir.',
+  locationLabel: 'Konum',
+  locationFetch: 'Konum al',
+  locationRefresh: 'Konumu yenile',
+  locationClear: 'Konumu temizle',
+  locationUnavailable: 'Konum kullanılamıyor',
+  locationPermissionDenied: 'Konum izni reddedildi',
+  locationError: 'Konum alınamadı',
+  addressPlaceholder: 'Adres girin...',
+  obtaining: 'Alınıyor...',
+  photosLabel: 'Fotoğraflar',
+  addFromCamera: 'Kamera',
+  addFromLibrary: 'Galeri',
+  photoLimitHint: 'Ücretsiz plan rapor başına en fazla {max} fotoğrafa izin verir.',
+  photoLimitTitle: 'Fotoğraf sınırına ulaşıldı',
+  photoLimitBody: 'Ücretsiz plan rapor başına en fazla {max} fotoğrafa izin verir.',
+  photoPermissionDenied: 'Fotoğraf izni reddedildi',
+  photoAddFailed: 'Fotoğraf eklenemedi',
+  photoEmpty: 'Henüz fotoğraf yok.',
+  photoReorderHint: 'Sıralamak için fotoğrafa uzun bas. Silmek için x\'e dokun.',
+  photoReorderFailed: 'Fotoğraf sırası kaydedilemedi.',
+  photoDeleteConfirmTitle: 'Fotoğraf silinsin mi?',
+  photoDeleteConfirmBody: 'Bu fotoğraf rapordan kaldırılacak.',
+  photoDeleteFailed: 'Fotoğraf silinemedi.',
+  photoDeletedNotice: 'Fotoğraf kaldırıldı.',
+  undoAction: 'Geri al',
+
+  // --- Home ---
+  homeSearchPlaceholder: 'Rapor ara...',
+  homeFilterAll: 'Tümü',
+  homeFilterPinned: 'Sabitlenmiş',
+  homeFilterThisWeek: 'Bu hafta',
+  homePinnedSection: 'Sabitlenmiş',
+  homeEmptyTitle: 'Henüz rapor yok',
+  homeEmptyBody: 'İlk raporunu oluştur.',
+  homeCreateReport: 'Rapor oluştur',
+  deleteConfirmTitle: 'Rapor silinsin mi?',
+  deleteAction: 'Sil',
+  cancelAction: 'İptal',
+  reportUnnamed: 'Adsız rapor',
+
+  // --- PDF ---
+  pdfPreviewTitle: 'PDF Önizleme',
+  pdfLayoutStandard: 'Standart',
+  pdfLayoutLarge: 'Büyük',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
-  pdfExport: 'Export PDF',
-  pdfGenerating: 'Generating PDF...',
-  pdfLargeProTitle: 'Pro only layout',
-  pdfLargeProBody: 'Large layout is Pro only. Use Standard instead?',
-  pdfLargeUseStandard: 'Use Standard',
-  pdfLargeUpgrade: 'Upgrade',
-  pdfExportLimitTitle: 'Monthly limit reached',
-  pdfExportLimitBody: 'Free plan allows 5 exports per month.',
-  pdfExportFailed: 'Failed to export PDF.',
+  pdfExport: 'PDF Dışa Aktar',
+  pdfGenerating: 'PDF oluşturuluyor...',
+  pdfLargeProTitle: 'Yalnızca Pro düzeni',
+  pdfLargeProBody: 'Büyük düzen yalnızca Pro\'ya özeldir. Bunun yerine Standart kullanılsın mı?',
+  pdfLargeUseStandard: 'Standart Kullan',
+  pdfLargeUpgrade: 'Yükselt',
+  pdfExportLimitTitle: 'Aylık sınıra ulaşıldı',
+  pdfExportLimitBody: 'Ücretsiz plan ayda 5 dışa aktarmaya izin verir.',
+  pdfExportFailed: 'PDF dışa aktarılamadı.',
   pdfPhotoWarningTitle: 'Çok fazla fotoğraf',
   pdfPhotoWarningBody: '{count}+ fotoğraf PDF oluşturmayı uzun sürebilir. Devam edilsin mi?',
   pdfPhotoWarningContinue: 'Devam et',
   pdfPhotoWarningCancel: 'Geri dön',
-  pdfCreatedAt: 'Created at',
-  pdfReportName: 'Report name',
+  pdfCreatedAt: 'Oluşturulma tarihi',
+  pdfReportName: 'Rapor adı',
   pdfAuthor: 'Yazar',
-  pdfAddress: 'Address',
-  pdfLocation: 'Location',
-  pdfWeather: 'Weather',
-  pdfPhotoCount: 'Photo count',
-  pdfPageCount: 'Page count',
-  pdfPhotos: 'Photos',
-  pdfPages: 'Pages',
-  pdfComment: 'Comment',
-  settingsSectionGeneral: 'Genel',
-  settingsSectionPrivacy: 'Gizlilik',
-  settingsSectionPurchases: 'Satın Almalar',
-  settingsSectionBackup: 'Yedekleme',
-  settingsBackupDesc: 'Yedek ZIP dosyasını (manifest.json + photos/) dışa veya içe aktarın.',
-  settingsBackupOpen: 'Yedeği aç',
-  tagsLabel: 'Etiketler',
-  addTagAction: 'Ekle',
-  tagsEmpty: 'Henüz etiket yok.',
-  photoDeletedNotice: 'Fotoğraf kaldırıldı.',
-  undoAction: 'Geri al',
-  a11yGoBack: 'Geri dön',
-  a11yReorderPhoto: 'Fotoğrafı yeniden sırala',
+  pdfAddress: 'Adres',
+  pdfLocation: 'Konum',
+  pdfWeather: 'Hava durumu',
+  pdfPhotoCount: 'Fotoğraf sayısı',
+  pdfPageCount: 'Sayfa sayısı',
+  pdfPhotos: 'Fotoğraf',
+  pdfPages: 'Sayfa',
+  pdfComment: 'Yorum',
 };
 
 export default dict;

@@ -2,28 +2,48 @@ import baseEn from './en';
 
 const dict = {
   ...baseEn,
-  // --- Home / Header (ホーム画面 / ヘッダー) ---
 
-  // --- Settings (General) (設定：一般) ---
-  settings: 'Pengaturan',            // 設定
-  theme: 'Tema',                     // テーマ
+  // --- Settings (General) ---
+  settings: 'Pengaturan',
+  theme: 'Tema',
+  settingsSectionGeneral: 'Umum',
+  settingsSectionPrivacy: 'Privasi',
+  settingsSectionPurchases: 'Pembelian',
+  settingsSectionBackup: 'Cadangan',
+  settingsBackupDesc: 'Ekspor atau impor file ZIP cadangan (manifest.json + photos/).',
+  settingsBackupOpen: 'Buka cadangan',
+  settingsLegalDesc: 'Buka halaman Kebijakan Privasi dan Ketentuan Penggunaan.',
+  adPrivacyOptionsHelp: 'Tinjau pilihan persetujuan iklan pada paket Free.',
+  adPrivacyOptionsAction: 'Kelola pengaturan privasi iklan',
+  adPrivacyOptionsUnavailable: 'Tidak ada pengaturan privasi iklan yang diperlukan saat ini.',
+  adPrivacyOptionsFailed: 'Gagal membuka pengaturan privasi iklan.',
 
-  // --- Purchase / Restore (購入 / 復元) ---
-  restore: 'Pulihkan Pembelian',     // 購入の復元
-  purchaseSuccess: 'Paket Pro kini aktif.', // 購入成功
-  purchaseFailed: 'Pembelian gagal. Silakan coba lagi nanti.', // 購入失敗
+  // --- Purchase / Restore ---
+  restore: 'Pulihkan Pembelian',
+  purchaseSuccess: 'Paket Pro kini aktif.',
+  purchaseFailed: 'Pembelian gagal. Silakan coba lagi nanti.',
   purchasePending: 'Pembayaran Anda sedang diproses. Fitur Pro akan diaktifkan setelah pembayaran dikonfirmasi.',
-  restoreSuccess: 'Riwayat pembelian dipulihkan.', // 復元成功
-  restoreNotFound: 'Tidak ada pembelian untuk dipulihkan.', // 復元データなし
-  restoreFailed: 'Gagal memulihkan pembelian.', // 復元失敗
+  restoreSuccess: 'Riwayat pembelian dipulihkan.',
+  restoreNotFound: 'Tidak ada pembelian untuk dipulihkan.',
+  restoreFailed: 'Gagal memulihkan pembelian.',
+  restoreDesc: 'Pulihkan pembelian yang dilakukan dengan akun ini.',
 
-  // --- Settings (Sound & Info) (設定：音と情報) ---
-
-  // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
-  openPro: 'Lihat Paket Pro',        // Proプランを見る
-  cancel: 'Batal',                   // キャンセル
+  // --- Pro Screen (Paywall) ---
+  paywallHeaderTitle: 'Repolog Pro',
+  paywallHeroSubtitle: 'Buat laporan foto yang jelas dan ekspor PDF berkualitas dengan lebih sedikit batasan.',
+  paywallPlansTitle: 'Yang Anda dapatkan dengan Pro',
+  paywallPlanMonthlyTitle: 'Bulanan',
+  paywallPlanYearlyTitle: 'Tahunan',
+  paywallBestValueBadge: 'Paling hemat',
+  paywallBadgeShort: 'PRO',
+  paywallPricePerMonthLabel: 'Harga per bulan',
+  paywallYearlySavings: 'Hemat ~16% dibandingkan paket bulanan.',
+  paywallCtaYearly: 'Mulai Paket Tahunan',
+  paywallCtaMonthly: 'Mulai Paket Bulanan',
+  paywallCtaStayFree: 'Tetap Gratis',
+  paywallFinePrint: 'Langganan diperpanjang otomatis hingga dibatalkan. Pembayaran ditagihkan ke Apple ID. Kelola atau batalkan kapan saja di pengaturan akun App Store.',
   paywallPlanLifetimeTitle: 'Seumur Hidup',
-  paywallLifetimeDesc: 'Bayar sekali, gunakan selamanya.',
+  paywallLifetimeDesc: 'Bayar sekali, gunakan selamanya. Tanpa langganan.',
   paywallCtaLifetime: 'Dapatkan Akses Seumur Hidup',
   paywallOneTimeBadge: 'Sekali',
   paywallLifetimeFinePrint: 'Pembelian satu kali. Tidak ada perpanjangan otomatis.',
@@ -32,33 +52,60 @@ const dict = {
   manageSubscription: 'Kelola langganan',
   continueAnyway: 'Lanjutkan',
   paywallOrDivider: 'atau',
+  paywallRestoreTitle: 'Pulihkan Pembelian',
+  paywallRestoreDesc: 'Pulihkan pembelian yang dilakukan dengan akun ini.',
+  priceLoading: 'Memuat...',
+  priceUnavailable: 'Tidak tersedia',
+  legalSectionTitle: 'Hukum',
+  legalPrivacyPolicyLabel: 'Kebijakan Privasi',
+  legalTermsOfUseLabel: 'Ketentuan Penggunaan (EULA)',
+  openPro: 'Lihat Paket Pro',
+  cancel: 'Batal',
 
-  // --- Settings (Appearance) (設定：見た目) ---
+  // --- Backup ---
+  backupTitle: 'Cadangan',
+  backupExportTitle: 'Ekspor cadangan',
+  backupExportDesc: 'Membuat file ZIP berisi manifest.json dan photos/. PDF tidak disertakan.',
+  backupExportAction: 'Ekspor',
+  backupExportSuccess: 'Cadangan berhasil diekspor.',
+  backupExportFailed: 'Gagal mengekspor cadangan.',
+  backupShareUnavailableTitle: 'Berbagi tidak tersedia',
+  backupShareUnavailableBody: 'Perangkat ini tidak dapat membuka lembar berbagi.',
+  backupImportTitle: 'Impor cadangan',
+  backupImportDesc: 'Impor file ZIP cadangan. Laporan/foto yang ada tetap disimpan, ID duplikat akan dilewati.',
+  backupImportAction: 'Impor',
+  backupImportSuccess: 'Cadangan berhasil diimpor.',
+  backupImportSuccessDetail: 'Ditambahkan {reports} laporan dan {photos} foto.',
+  backupImportFailed: 'Gagal mengimpor cadangan.',
+  backupImportWarningTitle: 'Impor data cadangan?',
+  backupImportWarningBody: 'Data cadangan akan ditambahkan ke laporan/foto yang ada. Data yang ada tidak akan dihapus.',
+  backupInvalidTitle: 'Cadangan tidak valid',
+  backupInvalidBody: 'File ini tidak berisi manifest yang valid.',
+  backupSchemaMismatchTitle: 'Cadangan tidak didukung',
+  backupSchemaMismatchBody: 'Cadangan ini menggunakan versi schema yang berbeda.',
+  backupUnsupportedTitle: 'Tidak didukung',
+  backupUnsupportedBody: 'Cadangan tidak didukung di perangkat ini.',
 
-  // --- Heatmap Range (Settings) (ヒートマップ表示期間) ---
-
-  // --- Themes (テーマ) ---
+  // --- Themes ---
   themeDesc: 'Ubah tampilan aplikasi.',
-  themeDarkLabel: 'Gelap',           // Dark
-  themeLightLabel: 'Terang',          // Light
+  themeDarkLabel: 'Gelap',
+  themeLightLabel: 'Terang',
   themeSystemLabel: 'Sistem',
 
-  // --- Habit Management (習慣管理) ---
+  // --- Habit Management ---
+  deleteConfirmBody: 'Anda yakin? Tindakan ini tidak dapat dibatalkan.',
   save: 'Simpan',
 
-  // --- Icon Categories & Labels (アイコンカテゴリとラベル) ---
+  // --- Accessibility ---
+  a11yGoBack: 'Kembali',
+  a11yReorderPhoto: 'Urutkan ulang foto',
 
-  // --- Misc / Errors (その他 / エラー) ---
+  // --- Misc / Errors ---
   errorLoadFailed: 'Gagal memuat data.',
   errorSaveFailed: 'Gagal menyimpan.',
+  legalOpenFailed: 'Gagal membuka tautan hukum.',
 
-  // --- Settings description (設定の説明) ---
-
-  // --- Reminder (リマインダー) ---
-
-  // --- Review (7-day streak) (レビュー依頼) ---
-
-  // --- Language labels (言語名) ---
+  // --- Language labels ---
   languageChange: 'Ganti Bahasa',
   currentLanguage: 'Saat ini',
   languageNameEn: 'Inggris',
@@ -81,94 +128,100 @@ const dict = {
   languageNamePl: 'Polandia',
   languageNameSv: 'Swedia',
 
-  // --- Tutorial (チュートリアル) ---
-  reportEditorTitle: 'Report Editor',
-  reportNameLabel: 'Report name',
-  reportNamePlaceholder: 'Enter report name...',
+  // --- Report Editor ---
+  reportEditorTitle: 'Editor Laporan',
+  reportBasicInfoSection: 'Informasi dasar',
+  reportNameLabel: 'Nama laporan',
+  reportNamePlaceholder: 'Masukkan nama laporan...',
   authorNameLabel: 'Penulis',
   authorNamePlaceholder: 'Masukkan nama penulis...',
-  createdAtLabel: 'Created at',
-  weatherLabel: 'Weather',
-  weatherSunny: 'Sunny',
-  weatherCloudy: 'Cloudy',
-  weatherRainy: 'Rainy',
-  weatherSnowy: 'Snowy',
-  weatherNone: 'No weather',
-  commentLabel: 'Comment',
-  commentPlaceholder: 'Enter comment...',
-  commentRemainingLabel: 'Remaining',
-  includeLocationLabel: 'Include location',
-  includeLocationHelp: 'Adds location and address to this report.',
-  locationLabel: 'Location',
-  locationFetch: 'Get location',
-  locationRefresh: 'Refresh location',
-  locationClear: 'Clear location',
-  locationUnavailable: 'Location unavailable',
-  locationPermissionDenied: 'Location permission denied',
-  locationError: 'Failed to get location',
-  addressPlaceholder: 'Enter address...',
-  obtaining: 'Obtaining...',
-  photosLabel: 'Photos',
-  addFromCamera: 'Camera',
-  addFromLibrary: 'Library',
-  photoLimitHint: 'Free plan allows up to {max} photos per report.',
-  photoLimitTitle: 'Photo limit reached',
-  photoLimitBody: 'Free plan allows up to {max} photos per report.',
-  photoPermissionDenied: 'Photo permission denied',
-  photoAddFailed: 'Failed to add photo',
-  photoEmpty: 'No photos yet.',
-  homeSearchPlaceholder: 'Search reports...',
-  homePinnedSection: 'Pinned',
-  homeEmptyTitle: 'No reports yet',
-  homeEmptyBody: 'Create your first report.',
-  homeCreateReport: 'Create report',
-  deleteConfirmTitle: 'Delete report?',
-  deleteConfirmBody: 'This action cannot be undone.',
-  deleteAction: 'Delete',
-  cancelAction: 'Cancel',
-  reportUnnamed: 'Untitled report',
-  pdfPreviewTitle: 'PDF Preview',
-  pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Large',
+  createdAtLabel: 'Tanggal dibuat',
+  weatherLabel: 'Cuaca',
+  weatherSunny: 'Cerah',
+  weatherCloudy: 'Berawan',
+  weatherRainy: 'Hujan',
+  weatherSnowy: 'Bersalju',
+  weatherNone: 'Tanpa cuaca',
+  tagsLabel: 'Tag',
+  tagInputPlaceholder: 'Tambah tag (pisahkan dengan koma atau baris baru)...',
+  addTagAction: 'Tambah',
+  tagsEmpty: 'Belum ada tag.',
+  commentLabel: 'Komentar',
+  commentPlaceholder: 'Masukkan komentar...',
+  commentRemainingLabel: 'Sisa',
+  includeLocationLabel: 'Sertakan lokasi',
+  includeLocationHelp: 'Menambahkan lokasi dan alamat ke laporan ini.',
+  locationDisabledHint: 'Lokasi dinonaktifkan di Pengaturan. Aktifkan di sana untuk menambahkan data lokasi.',
+  locationLabel: 'Lokasi',
+  locationFetch: 'Dapatkan lokasi',
+  locationRefresh: 'Perbarui lokasi',
+  locationClear: 'Hapus lokasi',
+  locationUnavailable: 'Lokasi tidak tersedia',
+  locationPermissionDenied: 'Izin lokasi ditolak',
+  locationError: 'Gagal mendapatkan lokasi',
+  addressPlaceholder: 'Masukkan alamat...',
+  obtaining: 'Memperoleh...',
+  photosLabel: 'Foto',
+  addFromCamera: 'Kamera',
+  addFromLibrary: 'Galeri',
+  photoLimitHint: 'Paket Free memungkinkan hingga {max} foto per laporan.',
+  photoLimitTitle: 'Batas foto tercapai',
+  photoLimitBody: 'Paket Free memungkinkan hingga {max} foto per laporan.',
+  photoPermissionDenied: 'Izin foto ditolak',
+  photoAddFailed: 'Gagal menambahkan foto',
+  photoEmpty: 'Belum ada foto.',
+  photoReorderHint: 'Tekan lama foto untuk mengurutkan ulang. Ketuk x untuk menghapus.',
+  photoReorderFailed: 'Gagal menyimpan urutan foto.',
+  photoDeleteConfirmTitle: 'Hapus foto?',
+  photoDeleteConfirmBody: 'Foto ini akan dihapus dari laporan ini.',
+  photoDeleteFailed: 'Gagal menghapus foto.',
+  photoDeletedNotice: 'Foto dihapus.',
+  undoAction: 'Urungkan',
+
+  // --- Home ---
+  homeSearchPlaceholder: 'Cari laporan...',
+  homeFilterAll: 'Semua',
+  homeFilterPinned: 'Disematkan',
+  homeFilterThisWeek: 'Minggu ini',
+  homePinnedSection: 'Disematkan',
+  homeEmptyTitle: 'Belum ada laporan',
+  homeEmptyBody: 'Buat laporan pertama Anda.',
+  homeCreateReport: 'Buat laporan',
+  deleteConfirmTitle: 'Hapus laporan?',
+  deleteAction: 'Hapus',
+  cancelAction: 'Batal',
+  reportUnnamed: 'Laporan tanpa judul',
+
+  // --- PDF ---
+  pdfPreviewTitle: 'Pratinjau PDF',
+  pdfLayoutStandard: 'Standar',
+  pdfLayoutLarge: 'Besar',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
-  pdfExport: 'Export PDF',
-  pdfGenerating: 'Generating PDF...',
-  pdfLargeProTitle: 'Pro only layout',
-  pdfLargeProBody: 'Large layout is Pro only. Use Standard instead?',
-  pdfLargeUseStandard: 'Use Standard',
+  pdfExport: 'Ekspor PDF',
+  pdfGenerating: 'Membuat PDF...',
+  pdfLargeProTitle: 'Tata letak khusus Pro',
+  pdfLargeProBody: 'Tata letak Besar hanya untuk Pro. Gunakan Standar saja?',
+  pdfLargeUseStandard: 'Gunakan Standar',
   pdfLargeUpgrade: 'Upgrade',
-  pdfExportLimitTitle: 'Monthly limit reached',
-  pdfExportLimitBody: 'Free plan allows 5 exports per month.',
-  pdfExportFailed: 'Failed to export PDF.',
+  pdfExportLimitTitle: 'Batas bulanan tercapai',
+  pdfExportLimitBody: 'Paket Free memungkinkan 5 ekspor per bulan.',
+  pdfExportFailed: 'Gagal mengekspor PDF.',
   pdfPhotoWarningTitle: 'Foto terlalu banyak',
   pdfPhotoWarningBody: '{count}+ foto mungkin membutuhkan waktu lama untuk membuat PDF. Lanjutkan?',
   pdfPhotoWarningContinue: 'Lanjutkan',
   pdfPhotoWarningCancel: 'Kembali',
-  pdfCreatedAt: 'Created at',
-  pdfReportName: 'Report name',
+  pdfCreatedAt: 'Tanggal dibuat',
+  pdfReportName: 'Nama laporan',
   pdfAuthor: 'Penulis',
-  pdfAddress: 'Address',
-  pdfLocation: 'Location',
-  pdfWeather: 'Weather',
-  pdfPhotoCount: 'Photo count',
-  pdfPageCount: 'Page count',
-  pdfPhotos: 'Photos',
-  pdfPages: 'Pages',
-  pdfComment: 'Comment',
-  settingsSectionGeneral: 'Umum',
-  settingsSectionPrivacy: 'Privasi',
-  settingsSectionPurchases: 'Pembelian',
-  settingsSectionBackup: 'Cadangan',
-  settingsBackupDesc: 'Ekspor atau impor file ZIP cadangan (manifest.json + photos/).',
-  settingsBackupOpen: 'Buka cadangan',
-  tagsLabel: 'Tag',
-  addTagAction: 'Tambah',
-  tagsEmpty: 'Belum ada tag.',
-  photoDeletedNotice: 'Foto dihapus.',
-  undoAction: 'Urungkan',
-  a11yGoBack: 'Kembali',
-  a11yReorderPhoto: 'Urutkan ulang foto',
+  pdfAddress: 'Alamat',
+  pdfLocation: 'Lokasi',
+  pdfWeather: 'Cuaca',
+  pdfPhotoCount: 'Jumlah foto',
+  pdfPageCount: 'Jumlah halaman',
+  pdfPhotos: 'Foto',
+  pdfPages: 'Halaman',
+  pdfComment: 'Komentar',
 };
 
 export default dict;

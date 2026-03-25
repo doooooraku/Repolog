@@ -2,26 +2,46 @@ import baseEn from './en';
 
 const dict = {
   ...baseEn,
-  // --- Home / Header (ホーム画面 / ヘッダー) ---
 
-  // --- Settings (General) (設定：一般) ---
-  settings: 'Cài đặt',               // 設定
-  theme: 'Giao diện',                // テーマ (Chủ đềとも言うがGiao diệnはUI全体を指す)
+  // --- Settings (General) ---
+  settings: 'Cài đặt',
+  theme: 'Giao diện',
+  settingsSectionGeneral: 'Chung',
+  settingsSectionPrivacy: 'Quyền riêng tư',
+  settingsSectionPurchases: 'Mua hàng',
+  settingsSectionBackup: 'Sao lưu',
+  settingsBackupDesc: 'Xuất hoặc nhập tệp ZIP sao lưu (manifest.json + photos/).',
+  settingsBackupOpen: 'Mở sao lưu',
+  settingsLegalDesc: 'Mở trang Chính sách Quyền riêng tư và Điều khoản Sử dụng.',
+  adPrivacyOptionsHelp: 'Xem lại lựa chọn đồng ý quảng cáo cho quảng cáo trong gói Miễn phí.',
+  adPrivacyOptionsAction: 'Quản lý cài đặt quyền riêng tư quảng cáo',
+  adPrivacyOptionsUnavailable: 'Hiện không cần cài đặt quyền riêng tư quảng cáo.',
+  adPrivacyOptionsFailed: 'Không thể mở cài đặt quyền riêng tư quảng cáo.',
 
-  // --- Purchase / Restore (購入 / 復元) ---
-  restore: 'Khôi phục mua hàng',     // 購入の復元
-  purchaseSuccess: 'Gói Pro đã được kích hoạt.', // 購入成功
-  purchaseFailed: 'Giao dịch thất bại. Vui lòng thử lại sau.', // 購入失敗
+  // --- Purchase / Restore ---
+  restore: 'Khôi phục mua hàng',
+  purchaseSuccess: 'Gói Pro đã được kích hoạt.',
+  purchaseFailed: 'Giao dịch thất bại. Vui lòng thử lại sau.',
   purchasePending: 'Thanh toán của bạn đang được xử lý. Các tính năng Pro sẽ được kích hoạt khi thanh toán được xác nhận.',
-  restoreSuccess: 'Đã khôi phục lịch sử mua hàng.', // 復元成功
-  restoreNotFound: 'Không tìm thấy đơn hàng để khôi phục.', // 復元データなし
-  restoreFailed: 'Khôi phục thất bại.', // 復元失敗
+  restoreSuccess: 'Đã khôi phục lịch sử mua hàng.',
+  restoreNotFound: 'Không tìm thấy đơn hàng để khôi phục.',
+  restoreFailed: 'Khôi phục thất bại.',
+  restoreDesc: 'Khôi phục các giao dịch mua hàng trên tài khoản này.',
 
-  // --- Settings (Sound & Info) (設定：音と情報) ---
-
-  // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
-  openPro: 'Xem gói Pro',            // Proプランを見る
-  cancel: 'Hủy',                     // キャンセル
+  // --- Pro Screen (Paywall) ---
+  paywallHeaderTitle: 'Repolog Pro',
+  paywallHeroSubtitle: 'Tạo báo cáo ảnh rõ ràng và xuất PDF chuyên nghiệp với ít giới hạn hơn.',
+  paywallPlansTitle: 'Bạn mở khóa gì với Pro',
+  paywallPlanMonthlyTitle: 'Hàng tháng',
+  paywallPlanYearlyTitle: 'Hàng năm',
+  paywallBestValueBadge: 'Tiết kiệm nhất',
+  paywallBadgeShort: 'PRO',
+  paywallPricePerMonthLabel: 'Giá mỗi tháng',
+  paywallYearlySavings: 'Tiết kiệm ~16% so với gói tháng.',
+  paywallCtaYearly: 'Bắt đầu gói Hàng năm',
+  paywallCtaMonthly: 'Bắt đầu gói Hàng tháng',
+  paywallCtaStayFree: 'Dùng bản Miễn phí',
+  paywallFinePrint: 'Đăng ký tự động gia hạn cho đến khi hủy. Thanh toán được tính vào Apple ID. Quản lý hoặc hủy bất kỳ lúc nào trong cài đặt tài khoản App Store.',
   paywallPlanLifetimeTitle: 'Trọn đời',
   paywallLifetimeDesc: 'Thanh toán một lần, dùng mãi mãi.',
   paywallCtaLifetime: 'Mua quyền trọn đời',
@@ -32,33 +52,60 @@ const dict = {
   manageSubscription: 'Quản lý đăng ký',
   continueAnyway: 'Tiếp tục',
   paywallOrDivider: 'hoặc',
+  paywallRestoreTitle: 'Khôi phục mua hàng',
+  paywallRestoreDesc: 'Khôi phục các giao dịch mua hàng trên tài khoản này.',
+  priceLoading: 'Đang tải...',
+  priceUnavailable: 'Không khả dụng',
+  legalSectionTitle: 'Pháp lý',
+  legalPrivacyPolicyLabel: 'Chính sách Quyền riêng tư',
+  legalTermsOfUseLabel: 'Điều khoản Sử dụng (EULA)',
+  openPro: 'Xem gói Pro',
+  cancel: 'Hủy',
 
-  // --- Settings (Appearance) (設定：見た目) ---
+  // --- Backup ---
+  backupTitle: 'Sao lưu',
+  backupExportTitle: 'Xuất sao lưu',
+  backupExportDesc: 'Tạo tệp ZIP với manifest.json và photos/. Không bao gồm PDF.',
+  backupExportAction: 'Xuất',
+  backupExportSuccess: 'Đã xuất sao lưu.',
+  backupExportFailed: 'Xuất sao lưu thất bại.',
+  backupShareUnavailableTitle: 'Không thể chia sẻ',
+  backupShareUnavailableBody: 'Thiết bị này không thể mở bảng chia sẻ.',
+  backupImportTitle: 'Nhập sao lưu',
+  backupImportDesc: 'Nhập tệp ZIP sao lưu. Các báo cáo/ảnh hiện có được giữ lại và bỏ qua ID trùng lặp.',
+  backupImportAction: 'Nhập',
+  backupImportSuccess: 'Đã nhập sao lưu.',
+  backupImportSuccessDetail: 'Đã thêm {reports} báo cáo và {photos} ảnh.',
+  backupImportFailed: 'Nhập sao lưu thất bại.',
+  backupImportWarningTitle: 'Nhập dữ liệu sao lưu?',
+  backupImportWarningBody: 'Dữ liệu sao lưu sẽ được thêm vào các báo cáo/ảnh hiện tại. Dữ liệu hiện có không bị xóa.',
+  backupInvalidTitle: 'Sao lưu không hợp lệ',
+  backupInvalidBody: 'Tệp không chứa manifest hợp lệ.',
+  backupSchemaMismatchTitle: 'Sao lưu không được hỗ trợ',
+  backupSchemaMismatchBody: 'Bản sao lưu này sử dụng phiên bản schema khác.',
+  backupUnsupportedTitle: 'Không được hỗ trợ',
+  backupUnsupportedBody: 'Tính năng sao lưu không được hỗ trợ trên thiết bị này.',
 
-  // --- Heatmap Range (Settings) (ヒートマップ表示期間) ---
-
-  // --- Themes (テーマ) ---
+  // --- Themes ---
   themeDesc: 'Thay đổi giao diện ứng dụng.',
-  themeDarkLabel: 'Tối',             // Dark
-  themeLightLabel: 'Sáng',            // Light
+  themeDarkLabel: 'Tối',
+  themeLightLabel: 'Sáng',
   themeSystemLabel: 'Hệ thống',
 
-  // --- Habit Management (習慣管理) ---
+  // --- Habit Management ---
+  deleteConfirmBody: 'Bạn có chắc không? Thao tác này không thể hoàn tác.',
   save: 'Lưu',
 
-  // --- Icon Categories & Labels (アイコンカテゴリとラベル) ---
+  // --- Accessibility ---
+  a11yGoBack: 'Quay lại',
+  a11yReorderPhoto: 'Sắp xếp lại ảnh',
 
-  // --- Misc / Errors (その他 / エラー) ---
+  // --- Misc / Errors ---
   errorLoadFailed: 'Tải dữ liệu thất bại.',
   errorSaveFailed: 'Lưu thất bại.',
+  legalOpenFailed: 'Không thể mở liên kết pháp lý.',
 
-  // --- Settings description (設定の説明) ---
-
-  // --- Reminder (リマインダー) ---
-
-  // --- Review (7-day streak) (レビュー依頼) ---
-
-  // --- Language labels (言語名) ---
+  // --- Language labels ---
   languageChange: 'Đổi ngôn ngữ',
   currentLanguage: 'Hiện tại',
   languageNameEn: 'Tiếng Anh',
@@ -81,94 +128,100 @@ const dict = {
   languageNamePl: 'Tiếng Ba Lan',
   languageNameSv: 'Tiếng Thụy Điển',
 
-  // --- Tutorial (チュートリアル) ---
-  reportEditorTitle: 'Report Editor',
-  reportNameLabel: 'Report name',
-  reportNamePlaceholder: 'Enter report name...',
+  // --- Report Editor ---
+  reportEditorTitle: 'Chỉnh sửa báo cáo',
+  reportBasicInfoSection: 'Thông tin cơ bản',
+  reportNameLabel: 'Tên báo cáo',
+  reportNamePlaceholder: 'Nhập tên báo cáo...',
   authorNameLabel: 'Tác giả',
   authorNamePlaceholder: 'Nhập tên tác giả...',
-  createdAtLabel: 'Created at',
-  weatherLabel: 'Weather',
-  weatherSunny: 'Sunny',
-  weatherCloudy: 'Cloudy',
-  weatherRainy: 'Rainy',
-  weatherSnowy: 'Snowy',
-  weatherNone: 'No weather',
-  commentLabel: 'Comment',
-  commentPlaceholder: 'Enter comment...',
-  commentRemainingLabel: 'Remaining',
-  includeLocationLabel: 'Include location',
-  includeLocationHelp: 'Adds location and address to this report.',
-  locationLabel: 'Location',
-  locationFetch: 'Get location',
-  locationRefresh: 'Refresh location',
-  locationClear: 'Clear location',
-  locationUnavailable: 'Location unavailable',
-  locationPermissionDenied: 'Location permission denied',
-  locationError: 'Failed to get location',
-  addressPlaceholder: 'Enter address...',
-  obtaining: 'Obtaining...',
-  photosLabel: 'Photos',
-  addFromCamera: 'Camera',
-  addFromLibrary: 'Library',
-  photoLimitHint: 'Free plan allows up to {max} photos per report.',
-  photoLimitTitle: 'Photo limit reached',
-  photoLimitBody: 'Free plan allows up to {max} photos per report.',
-  photoPermissionDenied: 'Photo permission denied',
-  photoAddFailed: 'Failed to add photo',
-  photoEmpty: 'No photos yet.',
-  homeSearchPlaceholder: 'Search reports...',
-  homePinnedSection: 'Pinned',
-  homeEmptyTitle: 'No reports yet',
-  homeEmptyBody: 'Create your first report.',
-  homeCreateReport: 'Create report',
-  deleteConfirmTitle: 'Delete report?',
-  deleteConfirmBody: 'This action cannot be undone.',
-  deleteAction: 'Delete',
-  cancelAction: 'Cancel',
-  reportUnnamed: 'Untitled report',
-  pdfPreviewTitle: 'PDF Preview',
-  pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Large',
+  createdAtLabel: 'Ngày tạo',
+  weatherLabel: 'Thời tiết',
+  weatherSunny: 'Nắng',
+  weatherCloudy: 'Mây',
+  weatherRainy: 'Mưa',
+  weatherSnowy: 'Tuyết',
+  weatherNone: 'Không có thời tiết',
+  tagsLabel: 'Thẻ',
+  tagInputPlaceholder: 'Thêm thẻ (phân cách bằng dấu phẩy/dòng mới)...',
+  addTagAction: 'Thêm',
+  tagsEmpty: 'Chưa có thẻ nào.',
+  commentLabel: 'Bình luận',
+  commentPlaceholder: 'Nhập bình luận...',
+  commentRemainingLabel: 'Còn lại',
+  includeLocationLabel: 'Thêm vị trí',
+  includeLocationHelp: 'Thêm vị trí và địa chỉ vào báo cáo này.',
+  locationDisabledHint: 'Vị trí đã bị tắt trong Cài đặt. Bật lên để thêm dữ liệu vị trí.',
+  locationLabel: 'Vị trí',
+  locationFetch: 'Lấy vị trí',
+  locationRefresh: 'Làm mới vị trí',
+  locationClear: 'Xóa vị trí',
+  locationUnavailable: 'Không có vị trí',
+  locationPermissionDenied: 'Quyền truy cập vị trí bị từ chối',
+  locationError: 'Không thể lấy vị trí',
+  addressPlaceholder: 'Nhập địa chỉ...',
+  obtaining: 'Đang lấy...',
+  photosLabel: 'Ảnh',
+  addFromCamera: 'Máy ảnh',
+  addFromLibrary: 'Thư viện',
+  photoLimitHint: 'Gói Miễn phí cho phép tối đa {max} ảnh mỗi báo cáo.',
+  photoLimitTitle: 'Đã đạt giới hạn ảnh',
+  photoLimitBody: 'Gói Miễn phí cho phép tối đa {max} ảnh mỗi báo cáo.',
+  photoPermissionDenied: 'Quyền truy cập ảnh bị từ chối',
+  photoAddFailed: 'Không thể thêm ảnh',
+  photoEmpty: 'Chưa có ảnh nào.',
+  photoReorderHint: 'Nhấn giữ ảnh để sắp xếp lại. Nhấn x để xóa.',
+  photoReorderFailed: 'Không thể lưu thứ tự ảnh.',
+  photoDeleteConfirmTitle: 'Xóa ảnh?',
+  photoDeleteConfirmBody: 'Ảnh này sẽ bị xóa khỏi báo cáo.',
+  photoDeleteFailed: 'Không thể xóa ảnh.',
+  photoDeletedNotice: 'Đã xóa ảnh.',
+  undoAction: 'Hoàn tác',
+
+  // --- Home ---
+  homeSearchPlaceholder: 'Tìm kiếm báo cáo...',
+  homeFilterAll: 'Tất cả',
+  homeFilterPinned: 'Đã ghim',
+  homeFilterThisWeek: 'Tuần này',
+  homePinnedSection: 'Đã ghim',
+  homeEmptyTitle: 'Chưa có báo cáo nào',
+  homeEmptyBody: 'Tạo báo cáo đầu tiên của bạn.',
+  homeCreateReport: 'Tạo báo cáo',
+  deleteConfirmTitle: 'Xóa báo cáo?',
+  deleteAction: 'Xóa',
+  cancelAction: 'Hủy',
+  reportUnnamed: 'Báo cáo chưa đặt tên',
+
+  // --- PDF ---
+  pdfPreviewTitle: 'Xem trước PDF',
+  pdfLayoutStandard: 'Tiêu chuẩn',
+  pdfLayoutLarge: 'Lớn',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
-  pdfExport: 'Export PDF',
-  pdfGenerating: 'Generating PDF...',
-  pdfLargeProTitle: 'Pro only layout',
-  pdfLargeProBody: 'Large layout is Pro only. Use Standard instead?',
-  pdfLargeUseStandard: 'Use Standard',
-  pdfLargeUpgrade: 'Upgrade',
-  pdfExportLimitTitle: 'Monthly limit reached',
-  pdfExportLimitBody: 'Free plan allows 5 exports per month.',
-  pdfExportFailed: 'Failed to export PDF.',
+  pdfExport: 'Xuất PDF',
+  pdfGenerating: 'Đang tạo PDF...',
+  pdfLargeProTitle: 'Bố cục chỉ dành cho Pro',
+  pdfLargeProBody: 'Bố cục Lớn chỉ dành cho Pro. Dùng Tiêu chuẩn thay thế?',
+  pdfLargeUseStandard: 'Dùng Tiêu chuẩn',
+  pdfLargeUpgrade: 'Nâng cấp',
+  pdfExportLimitTitle: 'Đã đạt giới hạn hàng tháng',
+  pdfExportLimitBody: 'Gói Miễn phí cho phép 5 lần xuất mỗi tháng.',
+  pdfExportFailed: 'Xuất PDF thất bại.',
   pdfPhotoWarningTitle: 'Quá nhiều ảnh',
   pdfPhotoWarningBody: '{count}+ ảnh có thể mất nhiều thời gian để tạo PDF. Tiếp tục?',
   pdfPhotoWarningContinue: 'Tiếp tục',
   pdfPhotoWarningCancel: 'Quay lại',
-  pdfCreatedAt: 'Created at',
-  pdfReportName: 'Report name',
+  pdfCreatedAt: 'Ngày tạo',
+  pdfReportName: 'Tên báo cáo',
   pdfAuthor: 'Tác giả',
-  pdfAddress: 'Address',
-  pdfLocation: 'Location',
-  pdfWeather: 'Weather',
-  pdfPhotoCount: 'Photo count',
-  pdfPageCount: 'Page count',
-  pdfPhotos: 'Photos',
-  pdfPages: 'Pages',
-  pdfComment: 'Comment',
-  settingsSectionGeneral: 'Chung',
-  settingsSectionPrivacy: 'Quyền riêng tư',
-  settingsSectionPurchases: 'Mua hàng',
-  settingsSectionBackup: 'Sao lưu',
-  settingsBackupDesc: 'Xuất hoặc nhập tệp ZIP sao lưu (manifest.json + photos/).',
-  settingsBackupOpen: 'Mở sao lưu',
-  tagsLabel: 'Thẻ',
-  addTagAction: 'Thêm',
-  tagsEmpty: 'Chưa có thẻ nào.',
-  photoDeletedNotice: 'Đã xóa ảnh.',
-  undoAction: 'Hoàn tác',
-  a11yGoBack: 'Quay lại',
-  a11yReorderPhoto: 'Sắp xếp lại ảnh',
+  pdfAddress: 'Địa chỉ',
+  pdfLocation: 'Vị trí',
+  pdfWeather: 'Thời tiết',
+  pdfPhotoCount: 'Số lượng ảnh',
+  pdfPageCount: 'Số trang',
+  pdfPhotos: 'Ảnh',
+  pdfPages: 'Trang',
+  pdfComment: 'Bình luận',
 };
 
 export default dict;

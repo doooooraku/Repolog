@@ -2,26 +2,46 @@ import baseEn from './en';
 
 const dict = {
   ...baseEn,
-  // --- Home / Header (ホーム画面 / ヘッダー) ---
 
-  // --- Settings (General) (設定：一般) ---
-  settings: 'Instellingen',          // 設定
-  theme: 'Thema',                    // テーマ
+  // --- Settings (General) ---
+  settings: 'Instellingen',
+  theme: 'Thema',
+  settingsSectionGeneral: 'Algemeen',
+  settingsSectionPrivacy: 'Privacy',
+  settingsSectionPurchases: 'Aankopen',
+  settingsSectionBackup: 'Back-up',
+  settingsBackupDesc: 'Exporteer of importeer een back-up ZIP (manifest.json + photos/).',
+  settingsBackupOpen: 'Back-up openen',
+  settingsLegalDesc: 'Open het Privacybeleid en de Gebruiksvoorwaarden.',
+  adPrivacyOptionsHelp: 'Bekijk je advertentietoestemmingen voor advertenties in het gratis abonnement.',
+  adPrivacyOptionsAction: 'Advertentieprivacy-instellingen beheren',
+  adPrivacyOptionsUnavailable: 'Er zijn momenteel geen advertentieprivacy-opties vereist.',
+  adPrivacyOptionsFailed: 'Kon advertentieprivacy-instellingen niet openen.',
 
-  // --- Purchase / Restore (購入 / 復元) ---
-  restore: 'Aankopen herstellen',    // 購入の復元
-  purchaseSuccess: 'Pro-abonnement is nu actief.', // 購入成功
-  purchaseFailed: 'Aankoop mislukt. Probeer het later opnieuw.', // 購入失敗
+  // --- Purchase / Restore ---
+  restore: 'Aankopen herstellen',
+  purchaseSuccess: 'Pro-abonnement is nu actief.',
+  purchaseFailed: 'Aankoop mislukt. Probeer het later opnieuw.',
   purchasePending: 'Je betaling wordt verwerkt. Pro-functies worden geactiveerd zodra de betaling is bevestigd.',
-  restoreSuccess: 'Aankoopgeschiedenis hersteld.', // 復元成功 (長い単語ですがここは大丈夫)
-  restoreNotFound: 'Geen aankopen gevonden om te herstellen.', // 復元データなし
-  restoreFailed: 'Herstellen van aankopen mislukt.', // 復元失敗
+  restoreSuccess: 'Aankoopgeschiedenis hersteld.',
+  restoreNotFound: 'Geen aankopen gevonden om te herstellen.',
+  restoreFailed: 'Herstellen van aankopen mislukt.',
+  restoreDesc: 'Herstel aankopen die op dit account zijn gedaan.',
 
-  // --- Settings (Sound & Info) (設定：音と情報) ---
-
-  // --- Pro Screen (Paywall) (Pro画面 / 課金) ---
-  openPro: 'Bekijk Pro-plan',        // Proプランを見る
-  cancel: 'Annuleren',               // キャンセル
+  // --- Pro Screen (Paywall) ---
+  paywallHeaderTitle: 'Repolog Pro',
+  paywallHeroSubtitle: 'Maak duidelijke fotorapporten en exporteer verzorgde PDF\'s met minder beperkingen.',
+  paywallPlansTitle: 'Wat je ontgrendelt met Pro',
+  paywallPlanMonthlyTitle: 'Maandelijks',
+  paywallPlanYearlyTitle: 'Jaarlijks',
+  paywallBestValueBadge: 'Beste waarde',
+  paywallBadgeShort: 'PRO',
+  paywallPricePerMonthLabel: 'Prijs per maand',
+  paywallYearlySavings: 'Bespaar ~16% vergeleken met maandelijks.',
+  paywallCtaYearly: 'Start jaarplan',
+  paywallCtaMonthly: 'Start maandplan',
+  paywallCtaStayFree: 'Gratis blijven',
+  paywallFinePrint: 'Abonnement wordt automatisch verlengd tot je opzegt. Betaling wordt in rekening gebracht bij Apple ID. Beheer of annuleer op elk moment in de App Store-accountinstellingen.',
   paywallPlanLifetimeTitle: 'Levenslang',
   paywallLifetimeDesc: 'Eenmalig betalen, voor altijd gebruiken.',
   paywallCtaLifetime: 'Levenslange toegang kopen',
@@ -32,33 +52,60 @@ const dict = {
   manageSubscription: 'Abonnement beheren',
   continueAnyway: 'Toch doorgaan',
   paywallOrDivider: 'of',
+  paywallRestoreTitle: 'Aankopen herstellen',
+  paywallRestoreDesc: 'Herstel aankopen die op dit account zijn gedaan.',
+  priceLoading: 'Laden...',
+  priceUnavailable: 'Niet beschikbaar',
+  legalSectionTitle: 'Juridisch',
+  legalPrivacyPolicyLabel: 'Privacybeleid',
+  legalTermsOfUseLabel: 'Gebruiksvoorwaarden (EULA)',
+  openPro: 'Bekijk Pro-plan',
+  cancel: 'Annuleren',
 
-  // --- Settings (Appearance) (設定：見た目) ---
+  // --- Backup ---
+  backupTitle: 'Back-up',
+  backupExportTitle: 'Back-up exporteren',
+  backupExportDesc: 'Maakt een ZIP met manifest.json en photos/. PDF\'s worden niet meegenomen.',
+  backupExportAction: 'Exporteren',
+  backupExportSuccess: 'Back-up geëxporteerd.',
+  backupExportFailed: 'Exporteren van back-up mislukt.',
+  backupShareUnavailableTitle: 'Delen niet beschikbaar',
+  backupShareUnavailableBody: 'Dit apparaat kan het deelmenu niet openen.',
+  backupImportTitle: 'Back-up importeren',
+  backupImportDesc: 'Importeer een back-up ZIP. Bestaande rapporten/foto\'s worden behouden en dubbele ID\'s worden overgeslagen.',
+  backupImportAction: 'Importeren',
+  backupImportSuccess: 'Back-up geïmporteerd.',
+  backupImportSuccessDetail: '{reports} rapporten en {photos} foto\'s toegevoegd.',
+  backupImportFailed: 'Importeren van back-up mislukt.',
+  backupImportWarningTitle: 'Back-upgegevens importeren?',
+  backupImportWarningBody: 'Back-upgegevens worden toegevoegd aan de huidige rapporten/foto\'s. Bestaande gegevens worden niet verwijderd.',
+  backupInvalidTitle: 'Ongeldige back-up',
+  backupInvalidBody: 'Het bestand bevat geen geldig manifest.',
+  backupSchemaMismatchTitle: 'Niet-ondersteunde back-up',
+  backupSchemaMismatchBody: 'Deze back-up gebruikt een andere schemaversie.',
+  backupUnsupportedTitle: 'Niet ondersteund',
+  backupUnsupportedBody: 'Back-up wordt niet ondersteund op dit apparaat.',
 
-  // --- Heatmap Range (Settings) (ヒートマップ表示期間) ---
-
-  // --- Themes (テーマ) ---
+  // --- Themes ---
   themeDesc: 'Verander het uiterlijk van de app.',
-  themeDarkLabel: 'Donker',          // Dark
-  themeLightLabel: 'Licht',           // Light
+  themeDarkLabel: 'Donker',
+  themeLightLabel: 'Licht',
   themeSystemLabel: 'Systeem',
 
-  // --- Habit Management (習慣管理) ---
+  // --- Habit Management ---
+  deleteConfirmBody: 'Weet je het zeker? Dit kan niet ongedaan worden gemaakt.',
   save: 'Opslaan',
 
-  // --- Icon Categories & Labels (アイコンカテゴリとラベル) ---
+  // --- Accessibility ---
+  a11yGoBack: 'Terug',
+  a11yReorderPhoto: 'Foto herordenen',
 
-  // --- Misc / Errors (その他 / エラー) ---
+  // --- Misc / Errors ---
   errorLoadFailed: 'Gegevens laden mislukt.',
   errorSaveFailed: 'Opslaan mislukt.',
+  legalOpenFailed: 'Kon de juridische link niet openen.',
 
-  // --- Settings description (設定の説明) ---
-
-  // --- Reminder (リマインダー) ---
-
-  // --- Review (7-day streak) (レビュー依頼) ---
-
-  // --- Language labels (言語名) ---
+  // --- Language labels ---
   languageChange: 'Taal wijzigen',
   currentLanguage: 'Huidige',
   languageNameEn: 'Engels',
@@ -81,94 +128,100 @@ const dict = {
   languageNamePl: 'Pools',
   languageNameSv: 'Zweeds',
 
-  // --- Tutorial (チュートリアル) ---
-  reportEditorTitle: 'Report Editor',
-  reportNameLabel: 'Report name',
-  reportNamePlaceholder: 'Enter report name...',
+  // --- Report Editor ---
+  reportEditorTitle: 'Rapport bewerken',
+  reportBasicInfoSection: 'Basisinformatie',
+  reportNameLabel: 'Rapportnaam',
+  reportNamePlaceholder: 'Voer rapportnaam in...',
   authorNameLabel: 'Auteur',
   authorNamePlaceholder: 'Voer auteursnaam in...',
-  createdAtLabel: 'Created at',
-  weatherLabel: 'Weather',
-  weatherSunny: 'Sunny',
-  weatherCloudy: 'Cloudy',
-  weatherRainy: 'Rainy',
-  weatherSnowy: 'Snowy',
-  weatherNone: 'No weather',
-  commentLabel: 'Comment',
-  commentPlaceholder: 'Enter comment...',
-  commentRemainingLabel: 'Remaining',
-  includeLocationLabel: 'Include location',
-  includeLocationHelp: 'Adds location and address to this report.',
-  locationLabel: 'Location',
-  locationFetch: 'Get location',
-  locationRefresh: 'Refresh location',
-  locationClear: 'Clear location',
-  locationUnavailable: 'Location unavailable',
-  locationPermissionDenied: 'Location permission denied',
-  locationError: 'Failed to get location',
-  addressPlaceholder: 'Enter address...',
-  obtaining: 'Obtaining...',
-  photosLabel: 'Photos',
+  createdAtLabel: 'Aangemaakt op',
+  weatherLabel: 'Weer',
+  weatherSunny: 'Zonnig',
+  weatherCloudy: 'Bewolkt',
+  weatherRainy: 'Regenachtig',
+  weatherSnowy: 'Sneeuw',
+  weatherNone: 'Geen weer',
+  tagsLabel: 'Tags',
+  tagInputPlaceholder: 'Tags toevoegen (komma/nieuwe regel)...',
+  addTagAction: 'Toevoegen',
+  tagsEmpty: 'Nog geen tags.',
+  commentLabel: 'Opmerking',
+  commentPlaceholder: 'Voer opmerking in...',
+  commentRemainingLabel: 'Resterend',
+  includeLocationLabel: 'Locatie toevoegen',
+  includeLocationHelp: 'Voegt locatie en adres toe aan dit rapport.',
+  locationDisabledHint: 'Locatie is uitgeschakeld in Instellingen. Schakel het daar in om locatiegegevens toe te voegen.',
+  locationLabel: 'Locatie',
+  locationFetch: 'Locatie ophalen',
+  locationRefresh: 'Locatie vernieuwen',
+  locationClear: 'Locatie wissen',
+  locationUnavailable: 'Locatie niet beschikbaar',
+  locationPermissionDenied: 'Locatietoegang geweigerd',
+  locationError: 'Kon locatie niet ophalen',
+  addressPlaceholder: 'Voer adres in...',
+  obtaining: 'Ophalen...',
+  photosLabel: 'Foto\'s',
   addFromCamera: 'Camera',
-  addFromLibrary: 'Library',
-  photoLimitHint: 'Free plan allows up to {max} photos per report.',
-  photoLimitTitle: 'Photo limit reached',
-  photoLimitBody: 'Free plan allows up to {max} photos per report.',
-  photoPermissionDenied: 'Photo permission denied',
-  photoAddFailed: 'Failed to add photo',
-  photoEmpty: 'No photos yet.',
-  homeSearchPlaceholder: 'Search reports...',
-  homePinnedSection: 'Pinned',
-  homeEmptyTitle: 'No reports yet',
-  homeEmptyBody: 'Create your first report.',
-  homeCreateReport: 'Create report',
-  deleteConfirmTitle: 'Delete report?',
-  deleteConfirmBody: 'This action cannot be undone.',
-  deleteAction: 'Delete',
-  cancelAction: 'Cancel',
-  reportUnnamed: 'Untitled report',
-  pdfPreviewTitle: 'PDF Preview',
-  pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Large',
+  addFromLibrary: 'Bibliotheek',
+  photoLimitHint: 'Het gratis abonnement staat maximaal {max} foto\'s per rapport toe.',
+  photoLimitTitle: 'Fotolimiet bereikt',
+  photoLimitBody: 'Het gratis abonnement staat maximaal {max} foto\'s per rapport toe.',
+  photoPermissionDenied: 'Fototoegang geweigerd',
+  photoAddFailed: 'Kon foto niet toevoegen',
+  photoEmpty: 'Nog geen foto\'s.',
+  photoReorderHint: 'Houd een foto ingedrukt om te herordenen. Tik op x om te verwijderen.',
+  photoReorderFailed: 'Kon fotovolgorde niet opslaan.',
+  photoDeleteConfirmTitle: 'Foto verwijderen?',
+  photoDeleteConfirmBody: 'Deze foto wordt uit dit rapport verwijderd.',
+  photoDeleteFailed: 'Kon foto niet verwijderen.',
+  photoDeletedNotice: 'Foto verwijderd.',
+  undoAction: 'Ongedaan maken',
+
+  // --- Home ---
+  homeSearchPlaceholder: 'Rapporten zoeken...',
+  homeFilterAll: 'Alle',
+  homeFilterPinned: 'Vastgezet',
+  homeFilterThisWeek: 'Deze week',
+  homePinnedSection: 'Vastgezet',
+  homeEmptyTitle: 'Nog geen rapporten',
+  homeEmptyBody: 'Maak je eerste rapport aan.',
+  homeCreateReport: 'Rapport aanmaken',
+  deleteConfirmTitle: 'Rapport verwijderen?',
+  deleteAction: 'Verwijderen',
+  cancelAction: 'Annuleren',
+  reportUnnamed: 'Naamloos rapport',
+
+  // --- PDF ---
+  pdfPreviewTitle: 'PDF-voorbeeld',
+  pdfLayoutStandard: 'Standaard',
+  pdfLayoutLarge: 'Groot',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
-  pdfExport: 'Export PDF',
-  pdfGenerating: 'Generating PDF...',
-  pdfLargeProTitle: 'Pro only layout',
-  pdfLargeProBody: 'Large layout is Pro only. Use Standard instead?',
-  pdfLargeUseStandard: 'Use Standard',
-  pdfLargeUpgrade: 'Upgrade',
-  pdfExportLimitTitle: 'Monthly limit reached',
-  pdfExportLimitBody: 'Free plan allows 5 exports per month.',
-  pdfExportFailed: 'Failed to export PDF.',
+  pdfExport: 'PDF exporteren',
+  pdfGenerating: 'PDF wordt gemaakt...',
+  pdfLargeProTitle: 'Alleen voor Pro',
+  pdfLargeProBody: 'Groot formaat is alleen voor Pro. In plaats daarvan Standaard gebruiken?',
+  pdfLargeUseStandard: 'Standaard gebruiken',
+  pdfLargeUpgrade: 'Upgraden',
+  pdfExportLimitTitle: 'Maandlimiet bereikt',
+  pdfExportLimitBody: 'Het gratis abonnement staat 5 exports per maand toe.',
+  pdfExportFailed: 'PDF exporteren mislukt.',
   pdfPhotoWarningTitle: 'Te veel foto\'s',
   pdfPhotoWarningBody: '{count}+ foto\'s kunnen lang duren om een PDF te maken. Doorgaan?',
   pdfPhotoWarningContinue: 'Doorgaan',
   pdfPhotoWarningCancel: 'Terug',
-  pdfCreatedAt: 'Created at',
-  pdfReportName: 'Report name',
+  pdfCreatedAt: 'Aangemaakt op',
+  pdfReportName: 'Rapportnaam',
   pdfAuthor: 'Auteur',
-  pdfAddress: 'Address',
-  pdfLocation: 'Location',
-  pdfWeather: 'Weather',
-  pdfPhotoCount: 'Photo count',
-  pdfPageCount: 'Page count',
-  pdfPhotos: 'Photos',
-  pdfPages: 'Pages',
-  pdfComment: 'Comment',
-  settingsSectionGeneral: 'Algemeen',
-  settingsSectionPrivacy: 'Privacy',
-  settingsSectionPurchases: 'Aankopen',
-  settingsSectionBackup: 'Back-up',
-  settingsBackupDesc: 'Exporteer of importeer een back-up ZIP (manifest.json + photos/).',
-  settingsBackupOpen: 'Back-up openen',
-  tagsLabel: 'Tags',
-  addTagAction: 'Toevoegen',
-  tagsEmpty: 'Nog geen tags.',
-  photoDeletedNotice: 'Foto verwijderd.',
-  undoAction: 'Ongedaan maken',
-  a11yGoBack: 'Terug',
-  a11yReorderPhoto: 'Foto herordenen',
+  pdfAddress: 'Adres',
+  pdfLocation: 'Locatie',
+  pdfWeather: 'Weer',
+  pdfPhotoCount: 'Aantal foto\'s',
+  pdfPageCount: 'Aantal pagina\'s',
+  pdfPhotos: 'Foto\'s',
+  pdfPages: 'Pagina\'s',
+  pdfComment: 'Opmerking',
 };
 
 export default dict;
