@@ -703,7 +703,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 style={styles.photoDragHandle}
                 accessibilityLabel={t.a11yReorderPhoto}
                 accessibilityRole="button">
-                <GripVertical size={16} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
+                <GripVertical size={20} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
               </Pressable>
               <Text style={[styles.photoIndexLabel, { color: colors.textSecondary }]}>{index + 1}</Text>
               <View style={styles.photoToolbarSpacer} />
@@ -725,9 +725,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 <Text style={[styles.photoDeleteButtonText, { color: colors.textPrimary }]}>×</Text>
               </Pressable>
             </View>
-            <Pressable onLongPress={drag} delayLongPress={220} disabled={isActive}>
-              <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
-            </Pressable>
+            <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
           </View>
         </ScaleDecorator>
       );
@@ -939,7 +937,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 data={photos}
                 keyExtractor={(item) => item.id}
                 renderItem={renderPhotoItem}
-                activationDistance={8}
+                activationDistance={15}
                 autoscrollThreshold={56}
                 autoscrollSpeed={70}
                 dragItemOverflow={false}
@@ -1214,8 +1212,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   photoDragHandle: {
-    width: 36,
-    height: 36,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
   },
