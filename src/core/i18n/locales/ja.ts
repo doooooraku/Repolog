@@ -139,8 +139,6 @@ const dict = {
   photoAddFailed: '写真を追加できませんでした',
   photoEmpty: '写真がまだありません。',
   photoReorderHint: '↑↓で並べ替え、×で削除できます。',
-  photoMoveUp: '上へ',
-  photoMoveDown: '下へ',
   photoReorderFailed: '写真の並び順を保存できませんでした。',
   photoDeleteConfirmTitle: '写真を削除しますか？',
   photoDeleteConfirmBody: 'この写真はこのレポートから削除されます。',

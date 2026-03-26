@@ -167,8 +167,6 @@ const dict = {
   photoAddFailed: '添加照片失败',
   photoEmpty: '暂无照片。',
   photoReorderHint: '使用↑↓重新排序，点击×删除。',
-  photoMoveUp: '上移',
-  photoMoveDown: '下移',
   photoReorderFailed: '保存照片顺序失败。',
   photoDeleteConfirmTitle: '删除照片？',
   photoDeleteConfirmBody: '此照片将从该报告中移除。',

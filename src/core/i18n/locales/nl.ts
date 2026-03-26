@@ -168,8 +168,6 @@ const dict = {
   photoAddFailed: 'Kon foto niet toevoegen',
   photoEmpty: 'Nog geen foto\'s.',
   photoReorderHint: 'Gebruik ↑↓ om te herordenen. Tik op × om te verwijderen.',
-  photoMoveUp: 'Omhoog',
-  photoMoveDown: 'Omlaag',
   photoReorderFailed: 'Kon fotovolgorde niet opslaan.',
   photoDeleteConfirmTitle: 'Foto verwijderen?',
   photoDeleteConfirmBody: 'Deze foto wordt uit dit rapport verwijderd.',

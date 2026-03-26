@@ -168,8 +168,6 @@ const dict = {
   photoAddFailed: 'เพิ่มรูปภาพไม่สำเร็จ',
   photoEmpty: 'ยังไม่มีรูปภาพ',
   photoReorderHint: 'ใช้ ↑↓ เพื่อจัดเรียงใหม่ แตะ × เพื่อลบ',
-  photoMoveUp: 'ย้ายขึ้น',
-  photoMoveDown: 'ย้ายลง',
   photoReorderFailed: 'บันทึกลำดับรูปภาพไม่สำเร็จ',
   photoDeleteConfirmTitle: 'ลบรูปภาพ?',
   photoDeleteConfirmBody: 'รูปภาพนี้จะถูกลบออกจากรายงานนี้',

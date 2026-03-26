@@ -168,8 +168,6 @@ const dict = {
   photoAddFailed: 'Fotoğraf eklenemedi',
   photoEmpty: 'Henüz fotoğraf yok.',
   photoReorderHint: 'Yeniden sıralamak için ↑↓ kullanın. Silmek için × simgesine dokunun.',
-  photoMoveUp: 'Yukarı taşı',
-  photoMoveDown: 'Aşağı taşı',
   photoReorderFailed: 'Fotoğraf sırası kaydedilemedi.',
   photoDeleteConfirmTitle: 'Fotoğraf silinsin mi?',
   photoDeleteConfirmBody: 'Bu fotoğraf rapordan kaldırılacak.',

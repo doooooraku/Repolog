@@ -168,8 +168,6 @@ const dict = {
   photoAddFailed: 'Gagal menambahkan foto',
   photoEmpty: 'Belum ada foto.',
   photoReorderHint: 'Gunakan ↑↓ untuk mengurutkan. Ketuk × untuk menghapus.',
-  photoMoveUp: 'Pindah ke atas',
-  photoMoveDown: 'Pindah ke bawah',
   photoReorderFailed: 'Gagal menyimpan urutan foto.',
   photoDeleteConfirmTitle: 'Hapus foto?',
   photoDeleteConfirmBody: 'Foto ini akan dihapus dari laporan ini.',

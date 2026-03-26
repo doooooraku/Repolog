@@ -283,8 +283,6 @@
 - photoLimitHint
 - photoLimitTitle
 - photoPermissionDenied
-- photoMoveDown
-- photoMoveUp
 - photoReorderFailed
 - photoReorderHint
 - photosLabel

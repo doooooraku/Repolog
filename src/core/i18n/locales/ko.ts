@@ -167,8 +167,6 @@ const dict = {
   photoAddFailed: '사진 추가에 실패했습니다',
   photoEmpty: '아직 사진이 없습니다.',
   photoReorderHint: '↑↓로 순서를 변경하고 ×로 삭제할 수 있습니다.',
-  photoMoveUp: '위로',
-  photoMoveDown: '아래로',
   photoReorderFailed: '사진 순서 저장에 실패했습니다.',
   photoDeleteConfirmTitle: '사진을 삭제할까요?',
   photoDeleteConfirmBody: '이 사진이 보고서에서 삭제됩니다.',

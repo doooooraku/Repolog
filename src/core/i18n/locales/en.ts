@@ -182,8 +182,6 @@ const baseEn = {
   photoAddFailed: 'Failed to add photo',
   photoEmpty: 'No photos yet.',
   photoReorderHint: 'Use ↑↓ to reorder. Tap × to delete.',
-  photoMoveUp: 'Move up',
-  photoMoveDown: 'Move down',
   photoReorderFailed: 'Failed to save photo order.',
   photoDeleteConfirmTitle: 'Delete photo?',
   photoDeleteConfirmBody: 'This photo will be removed from this report.',

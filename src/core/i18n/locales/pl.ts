@@ -95,8 +95,6 @@ const dict = {
   photoAddFailed: 'Nie udało się dodać zdjęcia.',
   photoEmpty: 'Brak zdjęć.',
   photoReorderHint: 'Użyj ↑↓, aby zmienić kolejność. Dotknij ×, aby usunąć.',
-  photoMoveUp: 'Przesuń w górę',
-  photoMoveDown: 'Przesuń w dół',
   photoReorderFailed: 'Nie udało się zapisać kolejności zdjęć.',
   photoDeleteConfirmTitle: 'Usunąć zdjęcie?',
   photoDeleteConfirmBody: 'To zdjęcie zostanie usunięte z tego raportu.',

@@ -168,8 +168,6 @@ const dict = {
   photoAddFailed: 'Kunde inte lägga till foto',
   photoEmpty: 'Inga foton ännu.',
   photoReorderHint: 'Använd ↑↓ för att ordna om. Tryck × för att ta bort.',
-  photoMoveUp: 'Flytta upp',
-  photoMoveDown: 'Flytta ner',
   photoReorderFailed: 'Kunde inte spara fotoordning.',
   photoDeleteConfirmTitle: 'Ta bort foto?',
   photoDeleteConfirmBody: 'Detta foto tas bort från rapporten.',

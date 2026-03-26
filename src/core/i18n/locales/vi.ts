@@ -168,8 +168,6 @@ const dict = {
   photoAddFailed: 'Không thể thêm ảnh',
   photoEmpty: 'Chưa có ảnh nào.',
   photoReorderHint: 'Dùng ↑↓ để sắp xếp lại. Nhấn × để xóa.',
-  photoMoveUp: 'Di chuyển lên',
-  photoMoveDown: 'Di chuyển xuống',
   photoReorderFailed: 'Không thể lưu thứ tự ảnh.',
   photoDeleteConfirmTitle: 'Xóa ảnh?',
   photoDeleteConfirmBody: 'Ảnh này sẽ bị xóa khỏi báo cáo.',

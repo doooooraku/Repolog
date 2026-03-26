@@ -168,8 +168,6 @@ const dict = {
   photoAddFailed: 'फ़ोटो जोड़ने में विफल',
   photoEmpty: 'अभी कोई फ़ोटो नहीं।',
   photoReorderHint: 'पुनर्व्यवस्थित करने के लिए ↑↓ का उपयोग करें। हटाने के लिए × दबाएँ।',
-  photoMoveUp: 'ऊपर ले जाएँ',
-  photoMoveDown: 'नीचे ले जाएँ',
   photoReorderFailed: 'फ़ोटो क्रम सहेजने में विफल।',
   photoDeleteConfirmTitle: 'फ़ोटो हटाएँ?',
   photoDeleteConfirmBody: 'यह फ़ोटो इस रिपोर्ट से हटा दी जाएगी।',

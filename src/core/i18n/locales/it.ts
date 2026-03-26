@@ -168,8 +168,6 @@ const dict = {
   photoAddFailed: 'Impossibile aggiungere la foto',
   photoEmpty: 'Nessuna foto.',
   photoReorderHint: 'Usa ↑↓ per riordinare. Tocca × per eliminare.',
-  photoMoveUp: 'Sposta su',
-  photoMoveDown: 'Sposta giù',
   photoReorderFailed: 'Impossibile salvare l\'ordine delle foto.',
   photoDeleteConfirmTitle: 'Eliminare la foto?',
   photoDeleteConfirmBody: 'Questa foto verrà rimossa dal report.',

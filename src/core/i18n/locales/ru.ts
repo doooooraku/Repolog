@@ -167,8 +167,6 @@ const dict = {
   photoAddFailed: 'Не удалось добавить фото',
   photoEmpty: 'Фото пока нет.',
   photoReorderHint: 'Используйте ↑↓ для сортировки. Нажмите × для удаления.',
-  photoMoveUp: 'Вверх',
-  photoMoveDown: 'Вниз',
   photoReorderFailed: 'Не удалось сохранить порядок фото.',
   photoDeleteConfirmTitle: 'Удалить фото?',
   photoDeleteConfirmBody: 'Фото будет удалено из этого отчёта.',

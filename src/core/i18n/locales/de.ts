@@ -168,8 +168,6 @@ const dict = {
   photoAddFailed: 'Foto konnte nicht hinzugefügt werden',
   photoEmpty: 'Noch keine Fotos.',
   photoReorderHint: 'Mit ↑↓ neu anordnen. Tippe × zum Löschen.',
-  photoMoveUp: 'Nach oben',
-  photoMoveDown: 'Nach unten',
   photoReorderFailed: 'Fotoreihenfolge konnte nicht gespeichert werden.',
   photoDeleteConfirmTitle: 'Foto löschen?',
   photoDeleteConfirmBody: 'Dieses Foto wird aus dem Bericht entfernt.',
