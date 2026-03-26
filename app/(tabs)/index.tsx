@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Cloud,
   CloudRain,
@@ -90,6 +90,7 @@ export default function HomeScreen() {
   const { colors } = useAppTheme();
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const isPro = useProStore((s) => s.isPro);
   const proInitialized = useProStore((s) => s.initialized);
   const initPro = useProStore((s) => s.init);
@@ -333,13 +334,13 @@ export default function HomeScreen() {
               data={reports}
               keyExtractor={(item) => item.id}
               renderItem={renderItem}
-              contentContainerStyle={styles.listContent}
+              contentContainerStyle={[styles.listContent, { paddingBottom: 120 + insets.bottom }]}
               showsVerticalScrollIndicator={false}
             />
           )}
 
           {proInitialized && !isPro && (
-            <View style={styles.adBannerWrap}>
+            <View style={[styles.adBannerWrap, { marginBottom: 16 + insets.bottom }]}>
               <AdBanner />
             </View>
           )}
@@ -350,8 +351,8 @@ export default function HomeScreen() {
           accessibilityLabel={t.homeCreateReport}
           accessibilityRole="button"
           onPress={() => router.push('/reports/new')}
-          hitSlop={TOUCH_HIT_SLOP}
-          style={[styles.fabButton, { backgroundColor: colors.primaryBg }]}>
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          style={[styles.fabButton, { backgroundColor: colors.primaryBg, bottom: 24 + insets.bottom }]}>
           <Plus size={16} color={colors.textOnPrimary} strokeWidth={ICON_STROKE_WIDTH} />
         </Pressable>
       </View>
@@ -440,7 +441,6 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   listContent: {
-    paddingBottom: 120,
     gap: 16,
   },
   card: {
@@ -521,7 +521,6 @@ const styles = StyleSheet.create({
   },
   adBannerWrap: {
     marginTop: 8,
-    marginBottom: 16,
   },
   emptyState: {
     flex: 1,
@@ -554,7 +553,6 @@ const styles = StyleSheet.create({
   fabButton: {
     position: 'absolute',
     right: 24,
-    bottom: 24,
     width: 56,
     height: 56,
     borderRadius: 28,

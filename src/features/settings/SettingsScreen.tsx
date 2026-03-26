@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTranslation, type Lang, type TranslationKey } from '@/src/core/i18n/i18n';
 import { useSettingsStore } from '@/src/stores/settingsStore';
@@ -47,6 +47,7 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { t, lang, setLang } = useTranslation();
   const { colors } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const includeLocation = useSettingsStore((s) => s.includeLocation);
   const setIncludeLocation = useSettingsStore((s) => s.setIncludeLocation);
   const themeMode = useSettingsStore((s) => s.themeMode);
@@ -101,7 +102,7 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]} edges={['top']}>
-      <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]} testID="e2e_settings_screen">
+      <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt, paddingBottom: 40 + insets.bottom }]} testID="e2e_settings_screen">
         <View style={styles.headerRow}>
           <Pressable testID="e2e_back_home" accessibilityLabel={t.a11yGoBack} accessibilityRole="button" onPress={() => router.back()} style={[styles.backButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
             <Text style={[styles.backText, { color: colors.textSecondary }]}>{'‹'}</Text>
@@ -251,7 +252,6 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 16,
-    paddingBottom: 40,
     gap: 16,
   },
   headerRow: {
