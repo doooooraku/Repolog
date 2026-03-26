@@ -2,13 +2,15 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType }
 import {
   ActivityIndicator,
   Alert,
+  BackHandler,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as FileSystem from 'expo-file-system/legacy';
 import {
@@ -559,6 +561,17 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       router.back();
     })();
   }, [finalizePendingDeletion, router]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== 'android') return;
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+        handleBack();
+        return true;
+      });
+      return () => sub.remove();
+    }, [handleBack]),
+  );
 
   const handleAddPhotos = useCallback(
     async (source: 'camera' | 'library') => {

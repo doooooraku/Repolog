@@ -77,6 +77,19 @@
 
 ---
 
+## Android 戻るジェスチャー
+
+### 2026-03-26: predictiveBackGestureEnabled: true で全画面の戻るジェスチャーがアプリ終了になる
+- **状況**: Android端末で左端スワイプバック（戻るジェスチャー）をすると、前の画面に戻らずアプリが閉じる。全画面で発生
+- **根本原因**: `app.json` の `predictiveBackGestureEnabled: true` が `react-native-screens` v4 未対応の Predictive Back API を有効化。ジェスチャーがJSレイヤーをバイパスし、Activity終了として処理される
+- **1次情報**: expo/expo#39092（OPEN）、react-native-screens Discussion #2540（OPEN）、RN#55211（OPEN）
+- **ルール**:
+  1. `react-native-screens` が Predictive Back を正式サポートするまで `predictiveBackGestureEnabled: false` を維持する
+  2. 非同期処理中にバックで離脱されるリスクがある画面には `BackHandler`（Android）を追加し、カスタム `handleBack` を経由させる
+  3. SDK/ライブラリアップグレード時に expo/expo#39092 の解決状況を確認する
+
+---
+
 ### Claude Code トリガーフレーズ
 - 有効なフレーズ: 「デバッグセッションを分析して」「rebuild して」「Maestro スクショ付きで E2E テストして」
 - 分析時は summary.md → app_logcat.log → screenshots/ の順に読むのが効率的
