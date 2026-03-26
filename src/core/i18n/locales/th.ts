@@ -98,7 +98,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: 'ย้อนกลับ',
-  a11yReorderPhoto: 'จัดลำดับรูปภาพใหม่',
+  a11yPhotoMoveUp: 'ย้ายรูปภาพขึ้น',
+  a11yPhotoMoveDown: 'ย้ายรูปภาพลง',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'โหลดข้อมูลล้มเหลว',
@@ -166,7 +167,9 @@ const dict = {
   photoPermissionDenied: 'สิทธิ์รูปภาพถูกปฏิเสธ',
   photoAddFailed: 'เพิ่มรูปภาพไม่สำเร็จ',
   photoEmpty: 'ยังไม่มีรูปภาพ',
-  photoReorderHint: 'กดค้างที่รูปภาพเพื่อจัดลำดับใหม่ แตะ x เพื่อลบ',
+  photoReorderHint: 'ใช้ ↑↓ เพื่อจัดเรียงใหม่ แตะ × เพื่อลบ',
+  photoMoveUp: 'ย้ายขึ้น',
+  photoMoveDown: 'ย้ายลง',
   photoReorderFailed: 'บันทึกลำดับรูปภาพไม่สำเร็จ',
   photoDeleteConfirmTitle: 'ลบรูปภาพ?',
   photoDeleteConfirmBody: 'รูปภาพนี้จะถูกลบออกจากรายงานนี้',

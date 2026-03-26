@@ -13,22 +13,19 @@ import {
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as FileSystem from 'expo-file-system/legacy';
-import {
-  NestableDraggableFlatList,
-  NestableScrollContainer,
-  ScaleDecorator,
-  type RenderItemParams,
-} from 'react-native-draggable-flatlist';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { LinearTransition } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import {
   ArrowLeft,
   CalendarClock,
   Camera,
+  ChevronDown,
+  ChevronUp,
   Cloud,
   CloudRain,
   CloudSnow,
   FileText,
-  GripVertical,
   Images,
   MapPin,
   Sun,
@@ -63,9 +60,9 @@ import {
 import { resolvePhotoAddLimit, MAX_FREE_PHOTOS_PER_REPORT } from '@/src/features/photos/photoUtils';
 import { useProStore } from '@/src/stores/proStore';
 import {
-  normalizePhotoOrder,
   removePhotoAndNormalize,
   restorePhotoAtIndexAndNormalize,
+  swapPhotos,
 } from '@/src/features/reports/photoOrderUtils';
 
 type LocationState = {
@@ -150,7 +147,6 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [locationState, setLocationState] = useState<LocationState>(emptyLocation);
   const [locationLoading, setLocationLoading] = useState(false);
   const [undoVisible, setUndoVisible] = useState(false);
-  const [isPhotoDragging, setIsPhotoDragging] = useState(false);
 
   const autoLocationRequested = useRef(false);
   const reportNameSeeded = useRef(false);
@@ -613,18 +609,20 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     [ensureReport, finalizePendingDeletion, photos.length, isPro, refreshPhotos, showPhotoLimitAlert, t],
   );
 
-  const handlePhotoReorder = useCallback(
-    async (reordered: Photo[]) => {
+  const handleMovePhoto = useCallback(
+    async (fromIndex: number, toIndex: number) => {
       const finalized = await finalizePendingDeletion();
       if (!finalized) return;
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       const current = await ensureReport();
       const previous = photos;
-      const normalized = normalizePhotoOrder(reordered);
-      setPhotos(normalized);
+      const swapped = swapPhotos(photos, fromIndex, toIndex);
+      if (swapped === photos) return;
+      setPhotos(swapped);
       try {
         await updatePhotoOrderByIds(
           current.id,
-          normalized.map((photo) => photo.id),
+          swapped.map((photo) => photo.id),
         );
       } catch {
         setPhotos(previous);
@@ -700,50 +698,62 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   );
 
   const renderPhotoItem = useCallback(
-    ({ item, drag, isActive, getIndex }: RenderItemParams<Photo>) => {
-      const index = getIndex() ?? item.orderIndex;
+    ({ item, index }: { item: Photo; index: number }) => {
       const marker = extractPhotoMarker(item.localUri);
+      const isFirst = index === 0;
+      const isLast = index === photos.length - 1;
       return (
-        <ScaleDecorator activeScale={0.98}>
-          <View
-            testID={`e2e_photo_slot_${index}_${marker}`}
-            style={[styles.photoCard, { backgroundColor: colors.photoCardBg }, isActive && styles.photoCardActive]}>
-            <View style={styles.photoToolbar}>
+        <View
+          testID={`e2e_photo_slot_${index}_${marker}`}
+          style={[styles.photoCard, { backgroundColor: colors.photoCardBg }]}>
+          <View style={styles.photoToolbar}>
+            <Text style={[styles.photoIndexLabel, { color: colors.textSecondary }]}>{index + 1}</Text>
+            <Pressable
+              testID={`e2e_photo_move_up_${index}`}
+              onPress={() => { void handleMovePhoto(index, index - 1); }}
+              disabled={isFirst}
+              accessibilityRole="button"
+              accessibilityLabel={t.a11yPhotoMoveUp}
+              accessibilityState={{ disabled: isFirst }}
+              hitSlop={TOUCH_HIT_SLOP}
+              style={[styles.photoMoveButton, isFirst && styles.photoMoveButtonDisabled]}>
+              <ChevronUp size={18} color={isFirst ? colors.textMuted : colors.textSecondary} strokeWidth={ICON_STROKE_WIDTH} />
+            </Pressable>
+            <Pressable
+              testID={`e2e_photo_move_down_${index}`}
+              onPress={() => { void handleMovePhoto(index, index + 1); }}
+              disabled={isLast}
+              accessibilityRole="button"
+              accessibilityLabel={t.a11yPhotoMoveDown}
+              accessibilityState={{ disabled: isLast }}
+              hitSlop={TOUCH_HIT_SLOP}
+              style={[styles.photoMoveButton, isLast && styles.photoMoveButtonDisabled]}>
+              <ChevronDown size={18} color={isLast ? colors.textMuted : colors.textSecondary} strokeWidth={ICON_STROKE_WIDTH} />
+            </Pressable>
+            <View style={styles.photoToolbarSpacer} />
+            {__DEV__ && (
               <Pressable
-                onLongPress={drag}
-                delayLongPress={220}
-                disabled={isActive}
-                style={styles.photoDragHandle}
-                accessibilityLabel={t.a11yReorderPhoto}
-                accessibilityRole="button">
-                <GripVertical size={20} color={colors.textMuted} strokeWidth={ICON_STROKE_WIDTH} />
+                testID={`e2e_photo_delete_now_${index}`}
+                onPress={() => {
+                  void handleDeletePhoto(item);
+                }}
+                style={styles.photoDeleteNowButton}>
+                <Text style={styles.photoDeleteNowText}>-</Text>
               </Pressable>
-              <Text style={[styles.photoIndexLabel, { color: colors.textSecondary }]}>{index + 1}</Text>
-              <View style={styles.photoToolbarSpacer} />
-              {__DEV__ && (
-                <Pressable
-                  testID={`e2e_photo_delete_now_${index}`}
-                  onPress={() => {
-                    void handleDeletePhoto(item);
-                  }}
-                  style={styles.photoDeleteNowButton}>
-                  <Text style={styles.photoDeleteNowText}>-</Text>
-                </Pressable>
-              )}
-              <Pressable
-                testID={`e2e_photo_delete_${index}`}
-                onPress={() => confirmDeletePhoto(item)}
-                hitSlop={8}
-                style={[styles.photoDeleteButton, { backgroundColor: colors.surfaceHighlight }]}>
-                <Text style={[styles.photoDeleteButtonText, { color: colors.textPrimary }]}>×</Text>
-              </Pressable>
-            </View>
-            <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
+            )}
+            <Pressable
+              testID={`e2e_photo_delete_${index}`}
+              onPress={() => confirmDeletePhoto(item)}
+              hitSlop={8}
+              style={[styles.photoDeleteButton, { backgroundColor: colors.surfaceHighlight }]}>
+              <Text style={[styles.photoDeleteButtonText, { color: colors.textPrimary }]}>×</Text>
+            </Pressable>
           </View>
-        </ScaleDecorator>
+          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
+        </View>
       );
     },
-    [colors.photoCardBg, colors.surfaceHighlight, colors.textMuted, colors.textPrimary, colors.textSecondary, confirmDeletePhoto, handleDeletePhoto, t.a11yReorderPhoto],
+    [colors.photoCardBg, colors.surfaceHighlight, colors.textMuted, colors.textPrimary, colors.textSecondary, confirmDeletePhoto, handleDeletePhoto, handleMovePhoto, photos.length, t.a11yPhotoMoveDown, t.a11yPhotoMoveUp],
   );
 
   const remaining = remainingCommentChars(comment);
@@ -777,10 +787,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           </Pressable>
         </View>
 
-        <NestableScrollContainer
+        <Animated.ScrollView
           style={styles.scrollArea}
-          contentContainerStyle={styles.container}
-          scrollEnabled={!isPhotoDragging}>
+          contentContainerStyle={styles.container}>
           <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderDefault }]}>
             <View style={styles.sectionTitleRow}>
               <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{t.reportBasicInfoSection}</Text>
@@ -946,25 +955,13 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             {photos.length === 0 ? (
               <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.photoEmpty}</Text>
             ) : (
-              <NestableDraggableFlatList
+              <Animated.FlatList
                 data={photos}
                 keyExtractor={(item) => item.id}
                 renderItem={renderPhotoItem}
-                activationDistance={15}
-                autoscrollThreshold={56}
-                autoscrollSpeed={70}
-                dragItemOverflow={false}
-                onDragBegin={() => {
-                  setIsPhotoDragging(true);
-                }}
-                onRelease={() => {
-                  setIsPhotoDragging(false);
-                }}
-                onDragEnd={({ data }) => {
-                  setIsPhotoDragging(false);
-                  void handlePhotoReorder(data);
-                }}
-                containerStyle={styles.photoStrip}
+                scrollEnabled={false}
+                itemLayoutAnimation={LinearTransition.duration(300)}
+                style={styles.photoStrip}
               />
             )}
             {undoVisible && (
@@ -977,7 +974,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             )}
           </View>
 
-        </NestableScrollContainer>
+        </Animated.ScrollView>
 
         <View style={[styles.footerBar, { borderTopColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
           <Pressable accessibilityLabel={t.save} accessibilityRole="button" onPress={handleSave} style={[styles.saveButton, { backgroundColor: colors.primaryBg }, saving && styles.disabledButton]} disabled={saving} hitSlop={TOUCH_HIT_SLOP}>
@@ -1208,27 +1205,25 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     overflow: 'hidden',
   },
-  photoCardActive: {
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-  },
   photoToolbar: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 36,
-    paddingRight: 8,
+    paddingHorizontal: 8,
+    gap: 2,
   },
   photoToolbarSpacer: {
     flex: 1,
   },
-  photoDragHandle: {
-    width: 48,
-    height: 48,
+  photoMoveButton: {
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 6,
+  },
+  photoMoveButtonDisabled: {
+    opacity: 0.3,
   },
   photoThumb: {
     width: '100%',

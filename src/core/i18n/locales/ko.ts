@@ -97,7 +97,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: '뒤로 가기',
-  a11yReorderPhoto: '사진 순서 변경',
+  a11yPhotoMoveUp: '사진을 위로 이동',
+  a11yPhotoMoveDown: '사진을 아래로 이동',
 
   // --- Misc / Errors ---
   errorLoadFailed: '데이터를 불러오지 못했습니다.',
@@ -165,7 +166,9 @@ const dict = {
   photoPermissionDenied: '사진 권한이 거부되었습니다',
   photoAddFailed: '사진 추가에 실패했습니다',
   photoEmpty: '아직 사진이 없습니다.',
-  photoReorderHint: '사진을 길게 눌러 순서를 변경하세요. x을 눌러 삭제합니다.',
+  photoReorderHint: '↑↓로 순서를 변경하고 ×로 삭제할 수 있습니다.',
+  photoMoveUp: '위로',
+  photoMoveDown: '아래로',
   photoReorderFailed: '사진 순서 저장에 실패했습니다.',
   photoDeleteConfirmTitle: '사진을 삭제할까요?',
   photoDeleteConfirmBody: '이 사진이 보고서에서 삭제됩니다.',

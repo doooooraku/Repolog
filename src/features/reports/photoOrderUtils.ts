@@ -25,3 +25,20 @@ export function restorePhotoAtIndexAndNormalize(
 export function isPhotoOrderNormalized(photos: Photo[]): boolean {
   return photos.every((photo, index) => photo.orderIndex === index);
 }
+
+export function swapPhotos(photos: Photo[], fromIndex: number, toIndex: number): Photo[] {
+  if (
+    fromIndex < 0 ||
+    fromIndex >= photos.length ||
+    toIndex < 0 ||
+    toIndex >= photos.length ||
+    fromIndex === toIndex
+  ) {
+    return photos;
+  }
+  const next = [...photos];
+  const temp = next[fromIndex];
+  next[fromIndex] = next[toIndex];
+  next[toIndex] = temp;
+  return normalizePhotoOrder(next);
+}

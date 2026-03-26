@@ -94,7 +94,9 @@ const dict = {
   photoPermissionDenied: 'Odmówiono dostępu do zdjęć',
   photoAddFailed: 'Nie udało się dodać zdjęcia.',
   photoEmpty: 'Brak zdjęć.',
-  photoReorderHint: 'Przytrzymaj zdjęcie, aby zmienić kolejność. Naciśnij ×, aby usunąć.',
+  photoReorderHint: 'Użyj ↑↓, aby zmienić kolejność. Dotknij ×, aby usunąć.',
+  photoMoveUp: 'Przesuń w górę',
+  photoMoveDown: 'Przesuń w dół',
   photoReorderFailed: 'Nie udało się zapisać kolejności zdjęć.',
   photoDeleteConfirmTitle: 'Usunąć zdjęcie?',
   photoDeleteConfirmBody: 'To zdjęcie zostanie usunięte z tego raportu.',
@@ -192,7 +194,8 @@ const dict = {
   backupUnsupportedTitle: 'Nieobsługiwane',
   backupUnsupportedBody: 'Kopia zapasowa nie jest obsługiwana na tym urządzeniu.',
   a11yGoBack: 'Wróć',
-  a11yReorderPhoto: 'Zmień kolejność zdjęcia',
+  a11yPhotoMoveUp: 'Przesuń zdjęcie w górę',
+  a11yPhotoMoveDown: 'Przesuń zdjęcie w dół',
 };
 
 export default dict;

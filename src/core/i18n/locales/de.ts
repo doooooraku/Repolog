@@ -98,7 +98,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: 'Zurück',
-  a11yReorderPhoto: 'Foto neu anordnen',
+  a11yPhotoMoveUp: 'Foto nach oben verschieben',
+  a11yPhotoMoveDown: 'Foto nach unten verschieben',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'Daten konnten nicht geladen werden.',
@@ -166,7 +167,9 @@ const dict = {
   photoPermissionDenied: 'Fotoerlaubnis verweigert',
   photoAddFailed: 'Foto konnte nicht hinzugefügt werden',
   photoEmpty: 'Noch keine Fotos.',
-  photoReorderHint: 'Halte ein Foto gedrückt, um es neu anzuordnen. Tippe auf ×, um es zu löschen.',
+  photoReorderHint: 'Mit ↑↓ neu anordnen. Tippe × zum Löschen.',
+  photoMoveUp: 'Nach oben',
+  photoMoveDown: 'Nach unten',
   photoReorderFailed: 'Fotoreihenfolge konnte nicht gespeichert werden.',
   photoDeleteConfirmTitle: 'Foto löschen?',
   photoDeleteConfirmBody: 'Dieses Foto wird aus dem Bericht entfernt.',

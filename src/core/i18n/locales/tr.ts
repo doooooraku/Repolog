@@ -98,7 +98,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: 'Geri dön',
-  a11yReorderPhoto: 'Fotoğrafı yeniden sırala',
+  a11yPhotoMoveUp: 'Fotoğrafı yukarı taşı',
+  a11yPhotoMoveDown: 'Fotoğrafı aşağı taşı',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'Veri yüklenemedi.',
@@ -166,7 +167,9 @@ const dict = {
   photoPermissionDenied: 'Fotoğraf izni reddedildi',
   photoAddFailed: 'Fotoğraf eklenemedi',
   photoEmpty: 'Henüz fotoğraf yok.',
-  photoReorderHint: 'Sıralamak için fotoğrafa uzun bas. Silmek için x\'e dokun.',
+  photoReorderHint: 'Yeniden sıralamak için ↑↓ kullanın. Silmek için × simgesine dokunun.',
+  photoMoveUp: 'Yukarı taşı',
+  photoMoveDown: 'Aşağı taşı',
   photoReorderFailed: 'Fotoğraf sırası kaydedilemedi.',
   photoDeleteConfirmTitle: 'Fotoğraf silinsin mi?',
   photoDeleteConfirmBody: 'Bu fotoğraf rapordan kaldırılacak.',
