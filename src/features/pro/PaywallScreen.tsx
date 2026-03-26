@@ -155,7 +155,7 @@ export default function PaywallScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]} keyboardShouldPersistTaps="handled">
       <View style={styles.headerRow}>
         <Pressable onPress={() => router.back()} style={[styles.backButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
           <Text style={[styles.backText, { color: colors.textSecondary }]}>{'‹'}</Text>

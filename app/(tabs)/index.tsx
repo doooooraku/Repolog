@@ -328,6 +328,7 @@ export default function HomeScreen() {
               renderItem={renderItem}
               contentContainerStyle={[styles.listContent, { paddingBottom: adSpaceHeight + 80 + insets.bottom }]}
               showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
             />
           )}
         </View>

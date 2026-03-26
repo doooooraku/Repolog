@@ -80,7 +80,7 @@ export default function BackupScreen() {
   };
 
   return (
-    <ScrollView testID="e2e_backup_screen" contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]}>
+    <ScrollView testID="e2e_backup_screen" contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]} keyboardShouldPersistTaps="handled">
       <View style={styles.headerRow}>
         <Pressable testID="e2e_backup_back" onPress={() => router.back()} style={[styles.backButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
           <Text style={[styles.backText, { color: colors.textSecondary }]}>{'‹'}</Text>

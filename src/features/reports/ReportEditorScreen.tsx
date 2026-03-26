@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   BackHandler,
+  Keyboard,
   Platform,
   Pressable,
   StyleSheet,
@@ -515,6 +516,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   ]);
 
   const handleSave = async () => {
+    Keyboard.dismiss();
     if (saving) return;
     setSaving(true);
     try {
@@ -789,7 +791,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
 
         <Animated.ScrollView
           style={styles.scrollArea}
-          contentContainerStyle={styles.container}>
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag">
           <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderDefault }]}>
             <View style={styles.sectionTitleRow}>
               <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{t.reportBasicInfoSection}</Text>
@@ -960,6 +964,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
                 keyExtractor={(item) => item.id}
                 renderItem={renderPhotoItem}
                 scrollEnabled={false}
+                keyboardShouldPersistTaps="handled"
                 itemLayoutAnimation={LinearTransition.duration(300)}
                 style={styles.photoStrip}
               />
