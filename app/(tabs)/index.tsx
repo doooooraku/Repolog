@@ -28,7 +28,6 @@ import { AdBanner } from '@/components/ad-banner';
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { deleteReport, searchReportsWithFilters, updateReport } from '@/src/db/reportRepository';
 import {
-  countPhotosByReportIds,
   deletePhotosByReport,
   getFirstPhotosByReportIds,
 } from '@/src/db/photoRepository';
@@ -40,7 +39,6 @@ import { formatDateTime } from '@/src/features/pdf/pdfUtils';
 
 type ReportMeta = {
   firstPhotoUri?: string;
-  photoCount?: number;
 };
 
 type HomeFilter = 'all' | 'pinned' | 'week';
@@ -115,12 +113,10 @@ export default function HomeScreen() {
       setReports(data);
       const ids = data.map((report) => report.id);
       const firstPhotos = await getFirstPhotosByReportIds(ids);
-      const counts = await countPhotosByReportIds(ids);
       const nextMeta: Record<string, ReportMeta> = {};
       ids.forEach((id) => {
         nextMeta[id] = {
           firstPhotoUri: firstPhotos[id]?.localUri,
-          photoCount: counts[id] ?? 0,
         };
       });
       setMeta(nextMeta);
@@ -201,7 +197,6 @@ export default function HomeScreen() {
       const summary = meta[item.id] ?? {};
       const WeatherIcon = weatherIconMap[item.weather];
       const commentText = item.comment?.trim().length ? item.comment.trim() : '-';
-      const photoCount = summary.photoCount ?? 0;
 
       return (
         <Pressable
@@ -213,10 +208,6 @@ export default function HomeScreen() {
           ) : (
             <View style={[styles.cardImage, styles.cardImagePlaceholder, { backgroundColor: colors.imagePlaceholder }]} />
           )}
-
-          <View style={styles.photoCountBadge}>
-            <Text style={styles.photoCountBadgeText}>{photoCount}</Text>
-          </View>
 
           <View style={styles.cardBody}>
             <View style={styles.cardTitleRow}>
@@ -244,10 +235,6 @@ export default function HomeScreen() {
 
             <Text style={[styles.cardComment, { color: colors.textSecondary }]} numberOfLines={1}>
               {commentText}
-            </Text>
-
-            <Text testID={`e2e_home_report_${index}_photo_count_${photoCount}`} style={styles.hiddenText}>
-              {photoCount}
             </Text>
           </View>
         </Pressable>
@@ -458,22 +445,6 @@ const styles = StyleSheet.create({
     height: 258,
   },
   cardImagePlaceholder: {},
-  photoCountBadge: {
-    position: 'absolute',
-    right: 12,
-    top: 206,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  photoCountBadgeText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
   cardBody: {
     paddingHorizontal: 16,
     paddingTop: 16,
@@ -512,12 +483,6 @@ const styles = StyleSheet.create({
   cardComment: {
     fontSize: 14,
     lineHeight: 20,
-  },
-  hiddenText: {
-    position: 'absolute',
-    width: 1,
-    height: 1,
-    opacity: 0,
   },
   adBannerWrap: {
     marginTop: 8,
