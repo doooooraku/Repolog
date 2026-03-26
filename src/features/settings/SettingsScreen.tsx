@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTranslation, type Lang, type TranslationKey } from '@/src/core/i18n/i18n';
+import { ENDONYMS } from '@/src/core/i18n/endonyms';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { useProStore } from '@/src/stores/proStore';
 import { getLegalLinks, openExternalLink } from '@/src/services/legalService';
@@ -58,11 +59,7 @@ export default function SettingsScreen() {
   const [restoring, setRestoring] = useState(false);
   const [openingAdPrivacyOptions, setOpeningAdPrivacyOptions] = useState(false);
 
-  const currentLanguageLabel = useMemo(() => {
-    const matched = LANGUAGE_OPTIONS.find((option) => option.code === lang);
-    if (!matched) return lang;
-    return t[matched.labelKey] ?? matched.code;
-  }, [lang, t]);
+  const currentLanguageLabel = ENDONYMS[lang] ?? lang;
   const legalLinks = useMemo(() => getLegalLinks(), []);
 
   const handleRestore = async () => {
@@ -130,11 +127,17 @@ export default function SettingsScreen() {
                   <Pressable
                     key={option.code}
                     testID={`e2e_language_option_${toLangTestId(option.code)}`}
+                    accessibilityLabel={`${ENDONYMS[option.code]}, ${t[option.labelKey] ?? option.code}`}
                     onPress={() => setLang(option.code)}
                     style={[styles.optionRow, { borderBottomColor: colors.borderLight }, active && { backgroundColor: colors.surfaceHighlight }]}>
-                    <Text style={[styles.optionText, { color: colors.textSecondary }, active && { fontWeight: '600', color: colors.textPrimary }]}>
-                      {t[option.labelKey] ?? option.code}
-                    </Text>
+                    <View style={styles.optionLabelWrap}>
+                      <Text style={[styles.endonymText, { color: colors.textPrimary }, active && { fontWeight: '600' }]}>
+                        {ENDONYMS[option.code]}
+                      </Text>
+                      <Text style={[styles.exonymText, { color: colors.textMuted }]}>
+                        {t[option.labelKey] ?? option.code}
+                      </Text>
+                    </View>
                     {active && (
                       <Text
                         style={[styles.optionCheck, { color: colors.textPrimary }]}
@@ -313,8 +316,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderBottomWidth: 1,
   },
-  optionText: {
-    fontSize: 13,
+  optionLabelWrap: {
+    flex: 1,
+    gap: 2,
+  },
+  endonymText: {
+    fontSize: 14,
+  },
+  exonymText: {
+    fontSize: 12,
   },
   optionCheck: {
     fontSize: 12,
