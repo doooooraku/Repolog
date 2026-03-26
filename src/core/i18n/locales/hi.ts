@@ -98,7 +98,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: 'वापस जाएँ',
-  a11yReorderPhoto: 'फ़ोटो क्रम बदलें',
+  a11yPhotoMoveUp: 'फ़ोटो ऊपर ले जाएँ',
+  a11yPhotoMoveDown: 'फ़ोटो नीचे ले जाएँ',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'डेटा लोड करने में विफल।',
@@ -166,7 +167,7 @@ const dict = {
   photoPermissionDenied: 'फ़ोटो की अनुमति अस्वीकृत',
   photoAddFailed: 'फ़ोटो जोड़ने में विफल',
   photoEmpty: 'अभी कोई फ़ोटो नहीं।',
-  photoReorderHint: 'क्रम बदलने के लिए फ़ोटो को देर तक दबाएँ। हटाने के लिए x दबाएँ।',
+  photoReorderHint: 'पुनर्व्यवस्थित करने के लिए ↑↓ का उपयोग करें। हटाने के लिए × दबाएँ।',
   photoReorderFailed: 'फ़ोटो क्रम सहेजने में विफल।',
   photoDeleteConfirmTitle: 'फ़ोटो हटाएँ?',
   photoDeleteConfirmBody: 'यह फ़ोटो इस रिपोर्ट से हटा दी जाएगी।',

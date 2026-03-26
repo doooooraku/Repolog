@@ -98,7 +98,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: 'Quay lại',
-  a11yReorderPhoto: 'Sắp xếp lại ảnh',
+  a11yPhotoMoveUp: 'Di chuyển ảnh lên',
+  a11yPhotoMoveDown: 'Di chuyển ảnh xuống',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'Tải dữ liệu thất bại.',
@@ -166,7 +167,7 @@ const dict = {
   photoPermissionDenied: 'Quyền truy cập ảnh bị từ chối',
   photoAddFailed: 'Không thể thêm ảnh',
   photoEmpty: 'Chưa có ảnh nào.',
-  photoReorderHint: 'Nhấn giữ ảnh để sắp xếp lại. Nhấn x để xóa.',
+  photoReorderHint: 'Dùng ↑↓ để sắp xếp lại. Nhấn × để xóa.',
   photoReorderFailed: 'Không thể lưu thứ tự ảnh.',
   photoDeleteConfirmTitle: 'Xóa ảnh?',
   photoDeleteConfirmBody: 'Ảnh này sẽ bị xóa khỏi báo cáo.',

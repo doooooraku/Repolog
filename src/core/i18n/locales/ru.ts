@@ -97,7 +97,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: 'Назад',
-  a11yReorderPhoto: 'Изменить порядок фото',
+  a11yPhotoMoveUp: 'Переместить фото вверх',
+  a11yPhotoMoveDown: 'Переместить фото вниз',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'Ошибка загрузки данных.',
@@ -165,7 +166,7 @@ const dict = {
   photoPermissionDenied: 'Доступ к фото запрещён',
   photoAddFailed: 'Не удалось добавить фото',
   photoEmpty: 'Фото пока нет.',
-  photoReorderHint: 'Удерживай фото для изменения порядка. Нажми x для удаления.',
+  photoReorderHint: 'Используйте ↑↓ для сортировки. Нажмите × для удаления.',
   photoReorderFailed: 'Не удалось сохранить порядок фото.',
   photoDeleteConfirmTitle: 'Удалить фото?',
   photoDeleteConfirmBody: 'Фото будет удалено из этого отчёта.',

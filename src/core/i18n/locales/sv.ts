@@ -98,7 +98,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: 'Gå tillbaka',
-  a11yReorderPhoto: 'Ändra ordning på foto',
+  a11yPhotoMoveUp: 'Flytta foto uppåt',
+  a11yPhotoMoveDown: 'Flytta foto nedåt',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'Kunde inte ladda data.',
@@ -166,7 +167,7 @@ const dict = {
   photoPermissionDenied: 'Fotoåtkomst nekad',
   photoAddFailed: 'Kunde inte lägga till foto',
   photoEmpty: 'Inga foton ännu.',
-  photoReorderHint: 'Håll in ett foto för att ändra ordning. Tryck på x för att ta bort.',
+  photoReorderHint: 'Använd ↑↓ för att ordna om. Tryck × för att ta bort.',
   photoReorderFailed: 'Kunde inte spara fotoordning.',
   photoDeleteConfirmTitle: 'Ta bort foto?',
   photoDeleteConfirmBody: 'Detta foto tas bort från rapporten.',

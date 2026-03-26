@@ -29,12 +29,12 @@ tags:
     id: "e2e_photo_slot_1_seed_2"
 - assertVisible:
     id: "e2e_photo_slot_2_seed_3"
-- dragAndDrop:
-    from:
-      id: "e2e_photo_slot_0_seed_1"
-    to:
-      id: "e2e_photo_slot_2_seed_3"
-    label: "seed-1 を末尾へ移動"
+- tapOn:
+    id: "e2e_photo_move_down_0"
+    label: "1番目の写真を↓で移動"
+- tapOn:
+    id: "e2e_photo_move_down_1"
+    label: "2番目の写真を↓で移動（seed-1を末尾へ）"
 - assertVisible:
     id: "e2e_photo_slot_0_seed_2"
     label: "並び替え後の先頭を確認"

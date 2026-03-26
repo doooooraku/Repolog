@@ -138,7 +138,7 @@ const dict = {
   photoPermissionDenied: '写真へのアクセス許可が必要です',
   photoAddFailed: '写真を追加できませんでした',
   photoEmpty: '写真がまだありません。',
-  photoReorderHint: '長押しで並べ替え、×で削除できます。',
+  photoReorderHint: '↑↓で並べ替え、×で削除できます。',
   photoReorderFailed: '写真の並び順を保存できませんでした。',
   photoDeleteConfirmTitle: '写真を削除しますか？',
   photoDeleteConfirmBody: 'この写真はこのレポートから削除されます。',
@@ -185,7 +185,8 @@ const dict = {
   pdfPages: 'ページ',
   pdfComment: 'コメント',
   a11yGoBack: '戻る',
-  a11yReorderPhoto: '写真を並べ替え',
+  a11yPhotoMoveUp: '写真を上に移動',
+  a11yPhotoMoveDown: '写真を下に移動',
 };
 
 export default dict;

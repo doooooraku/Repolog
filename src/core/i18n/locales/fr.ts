@@ -98,7 +98,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: 'Retour',
-  a11yReorderPhoto: 'Réorganiser la photo',
+  a11yPhotoMoveUp: 'Déplacer la photo vers le haut',
+  a11yPhotoMoveDown: 'Déplacer la photo vers le bas',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'Échec du chargement des données.',
@@ -166,7 +167,7 @@ const dict = {
   photoPermissionDenied: 'Autorisation photo refusée',
   photoAddFailed: 'Échec de l\'ajout de la photo',
   photoEmpty: 'Aucune photo pour le moment.',
-  photoReorderHint: 'Appui long sur une photo pour la réorganiser. Appuyez sur × pour supprimer.',
+  photoReorderHint: 'Utilisez ↑↓ pour réorganiser. Appuyez sur × pour supprimer.',
   photoReorderFailed: 'Échec de l\'enregistrement de l\'ordre des photos.',
   photoDeleteConfirmTitle: 'Supprimer la photo ?',
   photoDeleteConfirmBody: 'Cette photo sera retirée de ce rapport.',

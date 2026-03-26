@@ -97,7 +97,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: '返回',
-  a11yReorderPhoto: '重新排列照片',
+  a11yPhotoMoveUp: '将照片上移',
+  a11yPhotoMoveDown: '将照片下移',
 
   // --- Misc / Errors ---
   errorLoadFailed: '数据加载失败。',
@@ -165,7 +166,7 @@ const dict = {
   photoPermissionDenied: '照片权限被拒绝',
   photoAddFailed: '添加照片失败',
   photoEmpty: '暂无照片。',
-  photoReorderHint: '长按照片可调整顺序，点击 x 可删除。',
+  photoReorderHint: '使用↑↓重新排序，点击×删除。',
   photoReorderFailed: '保存照片顺序失败。',
   photoDeleteConfirmTitle: '删除照片？',
   photoDeleteConfirmBody: '此照片将从该报告中移除。',

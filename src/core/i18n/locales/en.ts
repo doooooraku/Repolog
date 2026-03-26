@@ -106,7 +106,8 @@ const baseEn = {
 
   // --- Accessibility ---
   a11yGoBack: 'Go back',
-  a11yReorderPhoto: 'Reorder photo',
+  a11yPhotoMoveUp: 'Move photo up',
+  a11yPhotoMoveDown: 'Move photo down',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'Failed to load data.',
@@ -180,7 +181,7 @@ const baseEn = {
   photoPermissionDenied: 'Photo permission denied',
   photoAddFailed: 'Failed to add photo',
   photoEmpty: 'No photos yet.',
-  photoReorderHint: 'Long press a photo to reorder. Tap × to delete.',
+  photoReorderHint: 'Use ↑↓ to reorder. Tap × to delete.',
   photoReorderFailed: 'Failed to save photo order.',
   photoDeleteConfirmTitle: 'Delete photo?',
   photoDeleteConfirmBody: 'This photo will be removed from this report.',

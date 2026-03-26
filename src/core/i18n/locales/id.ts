@@ -98,7 +98,8 @@ const dict = {
 
   // --- Accessibility ---
   a11yGoBack: 'Kembali',
-  a11yReorderPhoto: 'Urutkan ulang foto',
+  a11yPhotoMoveUp: 'Pindahkan foto ke atas',
+  a11yPhotoMoveDown: 'Pindahkan foto ke bawah',
 
   // --- Misc / Errors ---
   errorLoadFailed: 'Gagal memuat data.',
@@ -166,7 +167,7 @@ const dict = {
   photoPermissionDenied: 'Izin foto ditolak',
   photoAddFailed: 'Gagal menambahkan foto',
   photoEmpty: 'Belum ada foto.',
-  photoReorderHint: 'Tekan lama foto untuk mengurutkan ulang. Ketuk x untuk menghapus.',
+  photoReorderHint: 'Gunakan ↑↓ untuk mengurutkan. Ketuk × untuk menghapus.',
   photoReorderFailed: 'Gagal menyimpan urutan foto.',
   photoDeleteConfirmTitle: 'Hapus foto?',
   photoDeleteConfirmBody: 'Foto ini akan dihapus dari laporan ini.',
