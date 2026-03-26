@@ -88,6 +88,14 @@
   2. 非同期処理中にバックで離脱されるリスクがある画面には `BackHandler`（Android）を追加し、カスタム `handleBack` を経由させる
   3. SDK/ライブラリアップグレード時に expo/expo#39092 の解決状況を確認する
 
+### 2026-03-26: 非インタラクティブシェルで nvm Node 20 が PATH に含まれない
+- **状況**: Claude Code の Bash 環境で `node -v` が v18 を返し、EAS ローカルビルドが `toReversed is not a function` で失敗する。`.bashrc` に `nvm use 20` 設定済みだが効かない
+- **根本原因**: nvm.sh は非インタラクティブシェルで PATH を変更しない場合がある。apt インストールの `/usr/bin/node` (v18) が優先される
+- **ルール**:
+  1. `.bashrc` の nvm セクションに「nvm が PATH を変更しなかった場合のフォールバック」を追加する
+  2. `echo "$PATH" | grep -q ".nvm/versions/node"` で nvm PATH の有無を検出し、なければ直接追加
+  3. `.nvmrc` や `engines` フィールドは「警告」であり「強制」ではない。PATH 自体の設定が根本対策
+
 ---
 
 ### Claude Code トリガーフレーズ
