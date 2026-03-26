@@ -45,6 +45,8 @@ type HomeFilter = 'all' | 'pinned' | 'week';
 
 const TOUCH_HIT_SLOP = { top: 6, bottom: 6, left: 6, right: 6 } as const;
 const ICON_STROKE_WIDTH = 1.9;
+const AD_BANNER_RESERVED_HEIGHT = 90;
+const AD_FAB_BUFFER = 16;
 
 const formatLocalDate = (date: Date) => {
   const year = date.getFullYear();
@@ -98,6 +100,9 @@ export default function HomeScreen() {
   const [reports, setReports] = useState<Report[]>([]);
   const [meta, setMeta] = useState<Record<string, ReportMeta>>({});
   const [loading, setLoading] = useState(true);
+
+  const showAdSpace = !proInitialized || (proInitialized && !isPro);
+  const adSpaceHeight = showAdSpace ? AD_BANNER_RESERVED_HEIGHT + AD_FAB_BUFFER : 0;
 
   const weekRange = useMemo(() => getCurrentWeekRange(), []);
 
@@ -321,17 +326,17 @@ export default function HomeScreen() {
               data={reports}
               keyExtractor={(item) => item.id}
               renderItem={renderItem}
-              contentContainerStyle={[styles.listContent, { paddingBottom: 120 + insets.bottom }]}
+              contentContainerStyle={[styles.listContent, { paddingBottom: adSpaceHeight + 80 + insets.bottom }]}
               showsVerticalScrollIndicator={false}
             />
           )}
-
-          {proInitialized && !isPro && (
-            <View style={[styles.adBannerWrap, { marginBottom: 16 + insets.bottom }]}>
-              <AdBanner />
-            </View>
-          )}
         </View>
+
+        {proInitialized && !isPro && (
+          <View style={[styles.adBannerContainer, { paddingBottom: insets.bottom }]}>
+            <AdBanner />
+          </View>
+        )}
 
         <Pressable
           testID="e2e_home_create_report_fab"
@@ -339,7 +344,7 @@ export default function HomeScreen() {
           accessibilityRole="button"
           onPress={() => router.push('/reports/new')}
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          style={[styles.fabButton, { backgroundColor: colors.primaryBg, bottom: 24 + insets.bottom }]}>
+          style={[styles.fabButton, { backgroundColor: colors.primaryBg, bottom: adSpaceHeight + 24 + insets.bottom }]}>
           <Plus size={16} color={colors.textOnPrimary} strokeWidth={ICON_STROKE_WIDTH} />
         </Pressable>
       </View>
@@ -484,8 +489,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
-  adBannerWrap: {
-    marginTop: 8,
+  adBannerContainer: {
+    alignItems: 'center',
   },
   emptyState: {
     flex: 1,
