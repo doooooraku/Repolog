@@ -103,8 +103,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     './plugins/withLargeHeap',
   );
 
-  const pluginsWithAdMob = ensurePlugin(
+  const pluginsWithFragmentFactory = ensurePlugin(
     pluginsWithLargeHeap,
+    './plugins/withFragmentFactory',
+  );
+
+  const pluginsWithAdMob = ensurePlugin(
+    pluginsWithFragmentFactory,
     'react-native-google-mobile-ads',
     {
       androidAppId: admobAndroidAppId,
