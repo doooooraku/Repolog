@@ -2,6 +2,9 @@
   "name": "repolog",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "expo start",
     "start": "expo start",
