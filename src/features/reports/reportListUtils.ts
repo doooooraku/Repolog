@@ -9,7 +9,6 @@ export type ReportSearchFilters = {
   query?: string;
   fromDate?: string | null;
   toDate?: string | null;
-  tags?: string[];
   pinnedOnly?: boolean;
 };
 
@@ -20,11 +19,9 @@ export const matchesQuery = (report: Report, query: string) => {
   if (!text) return true;
   const name = report.reportName ?? '';
   const comment = report.comment ?? '';
-  const tags = report.tags.join(' ');
   return (
     name.toLowerCase().includes(text) ||
-    comment.toLowerCase().includes(text) ||
-    tags.toLowerCase().includes(text)
+    comment.toLowerCase().includes(text)
   );
 };
 
@@ -43,18 +40,12 @@ const normalizeFilterDate = (value?: string | null): string | null => {
   return /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? trimmed : null;
 };
 
-const normalizeFilterTags = (tags?: string[]) =>
-  (tags ?? [])
-    .map((tag) => tag.trim().toLowerCase())
-    .filter((tag) => tag.length > 0);
-
 export const matchesReportFilters = (
   report: Report,
   {
     query = '',
     fromDate,
     toDate,
-    tags = [],
     pinnedOnly = false,
   }: ReportSearchFilters,
 ) => {
@@ -71,11 +62,7 @@ export const matchesReportFilters = (
     return false;
   }
 
-  const normalizedTags = normalizeFilterTags(tags);
-  if (normalizedTags.length === 0) return true;
-
-  const reportTags = new Set(report.tags.map((tag) => tag.trim().toLowerCase()));
-  return normalizedTags.every((tag) => reportTags.has(tag));
+  return true;
 };
 
 export const buildTimelineSections = (
