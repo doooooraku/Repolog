@@ -26,23 +26,20 @@ const makeReport = (id: string, createdAt: string, overrides: Partial<Report> = 
 });
 
 describe('reportListUtils', () => {
-  test('matchesQuery checks report name, comment, and tags', () => {
+  test('matchesQuery checks report name and comment', () => {
     const report = makeReport('1', '2026-01-31T00:00:00.000Z', {
       reportName: 'Main Bridge',
       comment: 'Inspection completed',
-      tags: ['urgent', 'bridge'],
     });
     expect(matchesQuery(report, 'bridge')).toBe(true);
     expect(matchesQuery(report, 'completed')).toBe(true);
-    expect(matchesQuery(report, 'urgent')).toBe(true);
     expect(matchesQuery(report, 'missing')).toBe(false);
   });
 
-  test('matchesReportFilters combines query/date/tag/pinned filters', () => {
+  test('matchesReportFilters combines query/date/pinned filters', () => {
     const report = makeReport('2', '2026-01-30T08:00:00.000Z', {
       reportName: 'Roof Check',
       comment: 'Need urgent follow-up',
-      tags: ['roof', 'urgent'],
       pinned: true,
     });
 
@@ -51,20 +48,12 @@ describe('reportListUtils', () => {
         query: 'urgent',
         fromDate: '2026-01-01',
         toDate: '2026-01-31',
-        tags: ['roof', 'urgent'],
         pinnedOnly: true,
       }),
     ).toBe(true);
 
-    expect(matchesReportFilters(report, { tags: ['missing'] })).toBe(false);
     expect(matchesReportFilters(report, { fromDate: '2026-02-01' })).toBe(false);
     expect(matchesReportFilters(report, { pinnedOnly: true, query: 'bridge' })).toBe(false);
-  });
-
-  test('matchesReportFilters handles reports with no tags', () => {
-    const report = makeReport('3', '2026-01-29T08:00:00.000Z', { tags: [] });
-    expect(matchesReportFilters(report, { query: '' })).toBe(true);
-    expect(matchesReportFilters(report, { tags: ['urgent'] })).toBe(false);
   });
 
   test('buildTimelineSections groups pinned and date sections', () => {

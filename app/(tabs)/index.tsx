@@ -109,7 +109,6 @@ export default function HomeScreen() {
         query,
         fromDate: activeFilter === 'week' ? weekRange.fromDate : '',
         toDate: activeFilter === 'week' ? weekRange.toDate : '',
-        tags: [],
         pinnedOnly: activeFilter === 'pinned',
       });
       setReports(data);

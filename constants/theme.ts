@@ -30,12 +30,6 @@ export const Colors = {
     imagePlaceholder: '#d4d4d8',
     photoCardBg: '#e5e7eb',
 
-    // Tags
-    tagChipBg: '#f3f4f6',
-    tagChipBorder: '#d1d5db',
-    tagChipText: '#111827',
-    tagChipRemove: '#374151',
-
     // Undo banner
     undoBannerBg: '#eff6ff',
     undoBannerBorder: '#dbeafe',
@@ -83,12 +77,6 @@ export const Colors = {
     // Misc
     imagePlaceholder: '#27282c',
     photoCardBg: '#27282c',
-
-    // Tags
-    tagChipBg: '#27282c',
-    tagChipBorder: '#3f4146',
-    tagChipText: '#d1d5db',
-    tagChipRemove: '#9ba1a6',
 
     // Undo banner
     undoBannerBg: '#1a2744',

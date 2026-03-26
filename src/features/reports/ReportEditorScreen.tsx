@@ -44,9 +44,7 @@ import {
 } from '@/src/db/reportRepository';
 import {
   clampComment,
-  normalizeTags,
   remainingCommentChars,
-  splitTagInput,
 } from '@/src/features/reports/reportUtils';
 import { formatDateTime } from '@/src/features/pdf/pdfUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
@@ -57,6 +55,7 @@ import {
   addPhotosFromCamera,
   addPhotosFromLibrary,
   consumePendingPhotoSelection,
+  recoverCameraPhoto,
   removePhotoFromReport,
 } from '@/src/services/photoService';
 import { resolvePhotoAddLimit, MAX_FREE_PHOTOS_PER_REPORT } from '@/src/features/photos/photoUtils';
@@ -144,7 +143,6 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [authorName, setAuthorName] = useState('');
   const [comment, setComment] = useState('');
   const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState('');
   const [weather, setWeather] = useState<WeatherType>('none');
   const [createdAt, setCreatedAt] = useState<string>(new Date().toISOString());
   const [locationState, setLocationState] = useState<LocationState>(emptyLocation);
@@ -297,21 +295,6 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     }));
   };
 
-  const handleAddTags = useCallback(() => {
-    const next = normalizeTags([...tags, ...splitTagInput(tagInput)]);
-    if (next.length === tags.length) {
-      setTagInput('');
-      return;
-    }
-    setTags(next);
-    setTagInput('');
-  }, [tagInput, tags]);
-
-  const handleRemoveTag = useCallback((tag: string) => {
-    const target = tag.trim().toLowerCase();
-    setTags((current) => current.filter((item) => item.trim().toLowerCase() !== target));
-  }, []);
-
   const weatherLabelMap = useMemo(
     () => ({
       sunny: t.weatherSunny,
@@ -324,12 +307,11 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   );
 
   const buildPayload = useCallback(() => {
-    const nextTags = normalizeTags([...tags, ...splitTagInput(tagInput)]);
     return {
       reportName: reportName.trim() || null,
       authorName: authorName.trim() || null,
       comment,
-      tags: nextTags,
+      tags,
       weather,
       locationEnabledAtCreation: report?.locationEnabledAtCreation ?? includeLocation,
       lat: includeLocation ? locationState.lat : null,
@@ -339,7 +321,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
       addressSource: includeLocation ? locationState.addressSource : null,
       addressLocale: includeLocation ? locationState.addressLocale : null,
     };
-  }, [report, reportName, authorName, comment, tags, tagInput, weather, includeLocation, locationState]);
+  }, [report, reportName, authorName, comment, tags, weather, includeLocation, locationState]);
 
   const ensureReport = useCallback(async () => {
     if (report) return report;
@@ -489,19 +471,28 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     const recoverPendingPhotoSelection = async () => {
       try {
         const result = await consumePendingPhotoSelection(reportId, isPro);
-        if (!mounted || !result) return;
-        if (result.reason === 'permission') {
-          Alert.alert(t.photoPermissionDenied);
-          return;
+        if (!mounted) return;
+        if (result) {
+          if (result.reason === 'permission') {
+            Alert.alert(t.photoPermissionDenied);
+            return;
+          }
+          if (result.reason === 'error' && result.photos.length === 0) {
+            Alert.alert(t.photoAddFailed);
+            return;
+          }
+          if (result.blocked && !isPro) {
+            showPhotoLimitAlert();
+          }
+          if (result.photos.length > 0) {
+            await refreshPhotos(reportId);
+            return;
+          }
         }
-        if (result.reason === 'error' && result.photos.length === 0) {
-          Alert.alert(t.photoAddFailed);
-          return;
-        }
-        if (result.blocked && !isPro) {
-          showPhotoLimitAlert();
-        }
-        if (result.photos.length > 0) {
+
+        const recovered = await recoverCameraPhoto(reportId, isPro);
+        if (!mounted || !recovered) return;
+        if (recovered.photos.length > 0) {
           await refreshPhotos(reportId);
         }
       } catch {
@@ -975,40 +966,6 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
             )}
           </View>
 
-          <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderDefault }]}>
-            <Text style={[styles.sectionTitle, { color: colors.textHeading }]}>{t.tagsLabel}</Text>
-            <View style={styles.tagInputRow}>
-              <TextInput
-                testID="e2e_report_tags_input"
-                style={[styles.input, styles.tagInput, { color: colors.textPrimary, backgroundColor: colors.surfaceHighlight, borderColor: 'rgba(0, 0, 0, 0)' }]}
-                value={tagInput}
-                onChangeText={setTagInput}
-                onSubmitEditing={handleAddTags}
-                placeholder={t.tagInputPlaceholder}
-                placeholderTextColor={colors.textPlaceholder}
-                returnKeyType="done"
-              />
-              <Pressable testID="e2e_report_tags_add" onPress={handleAddTags} style={[styles.tagAddButton, { backgroundColor: colors.primaryBg }]} hitSlop={TOUCH_HIT_SLOP}>
-                <Text style={[styles.tagAddButtonText, { color: colors.textOnPrimary }]}>{t.addTagAction}</Text>
-              </Pressable>
-            </View>
-            {tags.length === 0 ? (
-              <Text style={[styles.subtle, { color: colors.textMuted }]}>{t.tagsEmpty}</Text>
-            ) : (
-              <View style={styles.tagsWrap}>
-                {tags.map((tag) => (
-                  <Pressable
-                    key={tag}
-                    testID={`e2e_report_tag_chip_${sanitizeTestIdToken(tag)}`}
-                    onPress={() => handleRemoveTag(tag)}
-                    style={[styles.tagChip, { borderColor: colors.tagChipBorder, backgroundColor: colors.tagChipBg }]}>
-                    <Text style={[styles.tagChipText, { color: colors.tagChipText }]}>{tag}</Text>
-                    <Text style={[styles.tagChipRemove, { color: colors.tagChipRemove }]}>×</Text>
-                  </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
         </NestableScrollContainer>
 
         <View style={[styles.footerBar, { borderTopColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
@@ -1208,46 +1165,6 @@ const styles = StyleSheet.create({
   },
   photoActionText: {
     fontSize: 14,
-  },
-  tagInputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  tagInput: {
-    flex: 1,
-  },
-  tagAddButton: {
-    height: 36,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 12,
-  },
-  tagAddButtonText: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  tagsWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  tagChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  tagChipText: {
-    fontSize: 12,
-  },
-  tagChipRemove: {
-    fontSize: 12,
-    fontWeight: '700',
   },
   disabledButton: {
     opacity: 0.6,

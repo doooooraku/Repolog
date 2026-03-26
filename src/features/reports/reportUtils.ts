@@ -18,12 +18,6 @@ export const roundCoordinate = (value: number | null, digits = 5) => {
   return Math.round(value * factor) / factor;
 };
 
-export const splitTagInput = (value: string) =>
-  value
-    .split(/[\n,]/)
-    .map((token) => token.trim())
-    .filter((token) => token.length > 0);
-
 export const normalizeTags = (tags?: string[]) => {
   if (!tags) return [];
   const seen = new Set<string>();

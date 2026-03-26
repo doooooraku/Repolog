@@ -1,6 +1,7 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import type { Photo } from '@/src/types/models';
 import { listPhotosByReport, createPhoto, deletePhoto } from '@/src/db/photoRepository';
@@ -9,6 +10,7 @@ import { resolvePhotoAddLimit } from '@/src/features/photos/photoUtils';
 const PHOTO_DIR_ROOT = 'repolog/reports';
 const MAX_EDGE = 1600;
 const JPEG_QUALITY = 0.85;
+const CAMERA_LAUNCH_KEY = 'repolog:camera_launch_state';
 
 type AddPhotoResult = {
   photos: Photo[];
@@ -189,6 +191,81 @@ export async function consumePendingPhotoSelection(
   }
 }
 
+const getImagePickerCacheDir = () => {
+  const cache = FileSystem.cacheDirectory;
+  if (!cache) return null;
+  return `${cache}ImagePicker/`;
+};
+
+const listCacheFiles = async (): Promise<string[]> => {
+  const dir = getImagePickerCacheDir();
+  if (!dir) return [];
+  try {
+    const info = await FileSystem.getInfoAsync(dir);
+    if (!info.exists) return [];
+    return FileSystem.readDirectoryAsync(dir);
+  } catch {
+    return [];
+  }
+};
+
+async function saveCameraLaunchState(reportId: string) {
+  const files = await listCacheFiles();
+  await AsyncStorage.setItem(
+    CAMERA_LAUNCH_KEY,
+    JSON.stringify({ reportId, files, ts: Date.now() }),
+  );
+}
+
+async function clearCameraLaunchState() {
+  await AsyncStorage.removeItem(CAMERA_LAUNCH_KEY);
+}
+
+export async function recoverCameraPhoto(
+  reportId: string,
+  isPro: boolean,
+): Promise<AddPhotoResult | null> {
+  try {
+    const raw = await AsyncStorage.getItem(CAMERA_LAUNCH_KEY);
+    if (!raw) return null;
+
+    const state = JSON.parse(raw) as { reportId: string; files: string[]; ts: number };
+    await clearCameraLaunchState();
+
+    if (state.reportId !== reportId) return null;
+    if (Date.now() - state.ts > 5 * 60 * 1000) return null;
+
+    const currentFiles = await listCacheFiles();
+    const previousSet = new Set(state.files);
+    const newFiles = currentFiles.filter((f) => !previousSet.has(f));
+    if (newFiles.length === 0) return null;
+
+    const dir = getImagePickerCacheDir();
+    if (!dir) return null;
+
+    const newest = newFiles.sort().pop()!;
+    const uri = `${dir}${newest}`;
+    const info = await FileSystem.getInfoAsync(uri);
+    if (!info.exists || info.size === 0) return null;
+
+    const asset: ImagePicker.ImagePickerAsset = {
+      uri,
+      width: 0,
+      height: 0,
+      type: 'image',
+      assetId: null,
+      fileName: newest,
+      fileSize: info.size,
+      mimeType: 'image/jpeg',
+    };
+
+    return addAssetsToReport(reportId, [asset], isPro);
+  } catch {
+    await clearCameraLaunchState();
+    return null;
+  }
+}
+
 export async function addPhotosFromCamera(
   reportId: string,
   isPro: boolean,
@@ -198,11 +275,15 @@ export async function addPhotosFromCamera(
     return { photos: [], blocked: false, canceled: false, failedCount: 0, reason: 'permission' };
   }
 
+  await saveCameraLaunchState(reportId);
+
   const result = await ImagePicker.launchCameraAsync({
     mediaTypes: ['images'],
     allowsEditing: false,
-    quality: 1,
+    quality: 0.7,
   });
+
+  await clearCameraLaunchState();
 
   if (result.canceled) {
     return { photos: [], blocked: false, canceled: true, failedCount: 0 };
