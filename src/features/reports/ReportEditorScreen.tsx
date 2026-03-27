@@ -33,6 +33,7 @@ import {
 } from '@tamagui/lucide-icons';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import type { IconProps } from '@tamagui/helpers-icon';
+import ImageViewing from 'react-native-image-viewing';
 
 import type { AddressSource, Photo, Report, WeatherType } from '@/src/types/models';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -136,6 +137,8 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [saving, setSaving] = useState(false);
   const [report, setReport] = useState<Report | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [viewerVisible, setViewerVisible] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
   const isPro = useProStore((s) => s.isPro);
   const initPro = useProStore((s) => s.init);
 
@@ -751,7 +754,9 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
               <Text style={[styles.photoDeleteButtonText, { color: colors.textPrimary }]}>×</Text>
             </Pressable>
           </View>
-          <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
+          <Pressable onPress={() => { setViewerIndex(index); setViewerVisible(true); }}>
+            <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
+          </Pressable>
         </View>
       );
     },
@@ -772,6 +777,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   }
 
   return (
+    <>
     <SafeAreaView style={[styles.screen, { backgroundColor: colors.screenBg }]} edges={['top', 'bottom']}>
       <View style={[styles.screen, { backgroundColor: colors.screenBg }]} testID="e2e_report_editor_screen">
         <View style={[styles.header, { borderBottomColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
@@ -988,6 +994,13 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         </View>
       </View>
     </SafeAreaView>
+    <ImageViewing
+      images={photos.map((p) => ({ uri: p.localUri }))}
+      imageIndex={viewerIndex}
+      visible={viewerVisible}
+      onRequestClose={() => setViewerVisible(false)}
+    />
+  </>
   );
 }
 

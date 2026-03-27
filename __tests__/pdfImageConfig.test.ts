@@ -16,4 +16,19 @@ describe('PDF image config', () => {
       PDF_IMAGE_CONFIGS.large.maxEdge,
     );
   });
+
+  describe('DPI validation (A4)', () => {
+    // A4: 210mm width, page padding 12mm each side → photo width = 186mm
+    const A4_PHOTO_WIDTH_INCH = (210 - 24) / 25.4; // 7.32 inches
+
+    test('standard layout achieves >= 150 DPI on A4', () => {
+      const dpi = PDF_IMAGE_CONFIGS.standard.maxEdge / A4_PHOTO_WIDTH_INCH;
+      expect(dpi).toBeGreaterThanOrEqual(150);
+    });
+
+    test('large layout achieves >= 150 DPI on A4', () => {
+      const dpi = PDF_IMAGE_CONFIGS.large.maxEdge / A4_PHOTO_WIDTH_INCH;
+      expect(dpi).toBeGreaterThanOrEqual(150);
+    });
+  });
 });

@@ -75,7 +75,7 @@ const IMAGE_SIZE_STANDARD: ImageSizeConfig = { maxEdge: 1200, quality: 0.80 };
 const IMAGE_SIZE_LARGE: ImageSizeConfig = { maxEdge: 1600, quality: 0.80 };
 const IMAGE_SIZE_REDUCED_STANDARD: ImageSizeConfig = { maxEdge: 800, quality: 0.65 };
 const IMAGE_SIZE_REDUCED_LARGE: ImageSizeConfig = { maxEdge: 1000, quality: 0.65 };
-const IMAGE_SIZE_PREVIEW: ImageSizeConfig = { maxEdge: 200, quality: 0.3 };
+const IMAGE_SIZE_PREVIEW: ImageSizeConfig = { maxEdge: 400, quality: 0.4 };
 
 export const PDF_IMAGE_CONFIGS = {
   standard: IMAGE_SIZE_STANDARD,
@@ -93,10 +93,30 @@ const resolveImageSizeConfig = (input: PdfTemplateInput): ImageSizeConfig => {
   return getImageSizeConfig(input.layout, input.preview);
 };
 
-const fileToDataUri = async (uri: string, config: ImageSizeConfig) => {
+const fileToDataUri = async (
+  uri: string,
+  config: ImageSizeConfig,
+  photoWidth?: number | null,
+  photoHeight?: number | null,
+) => {
+  const w = photoWidth ?? 0;
+  const h = photoHeight ?? 0;
+  const longestEdge = Math.max(w, h);
+
+  const actions: ImageManipulator.Action[] = [];
+  if (longestEdge === 0) {
+    actions.push({ resize: { width: config.maxEdge } });
+  } else if (longestEdge > config.maxEdge) {
+    if (w >= h) {
+      actions.push({ resize: { width: config.maxEdge } });
+    } else {
+      actions.push({ resize: { height: config.maxEdge } });
+    }
+  }
+
   const compressed = await ImageManipulator.manipulateAsync(
     uri,
-    [{ resize: { width: config.maxEdge } }],
+    actions,
     { compress: config.quality, format: ImageManipulator.SaveFormat.JPEG },
   );
   const base64 = await FileSystem.readAsStringAsync(compressed.uri, {
@@ -232,7 +252,7 @@ const buildPhotoPages = async (
       photoCounter += 1;
       try {
         const config = resolveImageSizeConfig(input);
-        const src = await fileToDataUri(photo.localUri, config);
+        const src = await fileToDataUri(photo.localUri, config, photo.width, photo.height);
         slots.push(`
             <div class="photo-slot">
               <div class="photo-frame">
