@@ -96,6 +96,19 @@
   2. `echo "$PATH" | grep -q ".nvm/versions/node"` で nvm PATH の有無を検出し、なければ直接追加
   3. `.nvmrc` や `engines` フィールドは「警告」であり「強制」ではない。PATH 自体の設定が根本対策
 
+### 2026-03-27: Claude Code Bash 環境で ANDROID_HOME / JAVA_HOME / Node PATH が未設定（再発 #244）
+- **状況**: #234 で `.bashrc` にフォールバックを追加したが、Claude Code から `eas build --local` や `./gradlew assembleRelease` を実行すると再び失敗。`ANDROID_HOME` 未設定 → SDK not found、`node -v` → v18 → `toReversed is not a function`
+- **根本原因（5 Whys）**:
+  1. `.bashrc` が読み込まれない → Claude Code は「非インタラクティブ・非ログイン」シェルを実行するため `.bashrc`（インタラクティブ用）も `.profile`（ログイン用）も読み込まれない
+  2. 前回の修正が `.bashrc` にのみ追加された → Claude Code がこの特殊な環境であることをテストで検証していなかった
+  3. 追加要因: Gradle デーモンは初回起動時の PATH をキャッシュするため、手動 export 後もデーモン再起動なしでは反映されない（[gradle/gradle#10483](https://github.com/gradle/gradle/issues/10483)）
+- **対策（実施済み）**: `.claude/settings.local.json` の `env` ブロックに `ANDROID_HOME`, `JAVA_HOME`, `ANDROID_SDK_ROOT`, `PATH`（Node 20 先頭）を設定
+- **ルール**:
+  1. **シェル初期化ファイルに依存しない**: 環境変数は `.bashrc` / `.profile` ではなく、ツール固有の設定（Claude Code の `settings.local.json` の `env`）で設定する
+  2. **修正後は失敗コンテキストで検証する**: ターミナルで動いても Claude Code の Bash で動くとは限らない
+  3. **Gradle ビルド前は `./gradlew --stop` + `--no-daemon`**: PATH 変更がデーモンにキャッシュされる問題を回避する
+  4. **nvm バージョン更新時は `settings.local.json` も更新する**: `v20.19.6` がハードコードされているため、nvm で新しいパッチを入れたら env の PATH も更新が必要
+
 ---
 
 ### Claude Code トリガーフレーズ
