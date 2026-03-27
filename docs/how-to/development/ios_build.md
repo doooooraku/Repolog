@@ -1,14 +1,18 @@
-# iOS_ビルド手順（Debug運用 / Release提出）
-最終更新: 2026-02-10（JST）
+# iOS ビルド手順（Debug / Release / TestFlight提出）
+最終更新: 2026-03-27（JST）
 
-> この文書は **最低限のたたき台** です。  
-> 正確な手順・必要要件は **EAS / Apple 公式ドキュメント** を正としてください。
+この文書は iOS アプリのビルドと提出に関する手順をまとめたものです。
+
+> **TestFlight 提出のCI/CDワークフロー**については `docs/how-to/workflow/ios_testflight_release.md` を参照。
+> GitHub Actions macOS ランナーでの .ipa ビルド → TestFlight 自動提出の全工程を記載しています。
 
 ---
 
 ## 1. タグ運用（リリース可視化）
-リリース前に必ずタグとノートを作成する。  
+リリース前に必ずタグとノートを作成する。
 正は `docs/how-to/workflow/release_notes_template.md`。
+
+タグを push すると `build-ios-testflight.yml` ワークフローが自動実行される（`v*` パターン）。
 
 ### 1-1. 候補版タグ（RC）を作る
 ```bash
@@ -68,49 +72,43 @@ npx expo start --clear
 - Xcode の Simulator から端末を起動
 - Metro の案内に従って iOS でアプリを開く
 
-## 3. Release（提出用）: EAS で署名済みビルド
-> ここは **プロジェクトごとの証明書/プロビジョニング** で差分が出ます。  
-> まずは公式手順を確認してから進める。
+## 3. Release（提出用）: GitHub Actions で TestFlight 提出
 
-### 3-1. “prebuild が必要か？”判定
-ネイティブに効く変更をしたら：
+> 詳細は `docs/how-to/workflow/ios_testflight_release.md` を参照。
+
+### 3-1. CI/CD による自動提出（推奨）
+
+タグを push するとワークフローが自動実行され、TestFlight に提出される：
+
 ```bash
-npx expo prebuild --platform ios
+git switch main
+git pull --ff-only origin main
+git tag -a v1.0.0-rc.1 -m “Repolog v1.0.0-rc.1”
+git push origin v1.0.0-rc.1
 ```
 
 意味：
-- `expo prebuild`：ネイティブ（ios/）を設定に合わせて更新
-- `--platform ios`：iOSのみ対象
+- `git tag -a`：注釈付きタグを作成（リリース候補の目印）
+- `git push origin <tag>`：タグをリモートに push → `build-ios-testflight.yml` が自動実行
 
-### 3-2. iOS ビルド（EAS）
-```bash
-eas build -p ios --profile production --local --non-interactive --output=app.ipa
-```
+手動実行も可能：GitHub Actions 画面 →「Build iOS & Submit to TestFlight」→「Run workflow」
 
-意味：
-- `eas build`：ビルドを実行
-- `-p ios`：iOS向け
-- `--profile production`：提出用の設定
-- `--local`：ローカルビルド
-- `--non-interactive`：対話なし
-- `--output`：成果物名
+### 3-2. ワークフローの処理内容
 
-### 3-3. 提出（EAS Submit を使う場合）
-```bash
-eas submit -p ios --profile production
-```
+1. macOS ランナー上で `eas build --local` により .ipa をビルド（約12分）
+2. GitHub Secret から .p8 ファイルを復元
+3. `eas submit` で TestFlight に自動提出
+4. .ipa を Artifacts に7日間保存
 
-意味：
-- `eas submit`：ストア提出を実行
-- `-p ios`：iOS向け
-- `--profile production`：提出用の設定
+### 3-3. 事前に必要なもの
 
----
-
-## 4. 事前に必要になりやすいもの
-- Apple Developer Program への登録
-- 証明書 / プロビジョニングプロファイル
-- App Store Connect でのアプリ登録
+| 項目 | 設定場所 | 詳細 |
+|------|---------|------|
+| Apple Developer Program | https://developer.apple.com/ | 年額 $99 |
+| App Store Connect アプリ登録 | https://appstoreconnect.apple.com/ | ascAppId の取得 |
+| EAS 証明書 | `eas credentials --platform ios` | WSL2 から対話式で実行 |
+| GitHub Secrets | リポジトリ Settings → Secrets | EXPO_TOKEN, ASC_API_KEY_P8_BASE64 等 |
+| eas.json submit 設定 | `eas.json` | ascAppId, ascApiKeyId 等 |
 
 ---
 
@@ -146,10 +144,11 @@ pnpm config:check
 
 ---
 
-## 5. 参考（正は公式）
+## 5. 参考（一次情報）
 - Expo EAS Build（iOS）: https://docs.expo.dev/build/introduction/
-- Expo EAS Submit（iOS）: https://docs.expo.dev/submit/introduction/
+- Expo EAS Submit（iOS）: https://docs.expo.dev/submit/ios/
 - Apple Developer: https://developer.apple.com/
+- TestFlight 提出フロー: `docs/how-to/workflow/ios_testflight_release.md`
 
 ---
 
