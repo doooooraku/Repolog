@@ -40,6 +40,23 @@ const paywallKeys = [
   'paywallOrDivider',
   'paywallRestoreTitle',
   'paywallRestoreDesc',
+  'paywallFreeLabel',
+  'paywallProLabel',
+  'paywallFeaturePhotos',
+  'paywallFeaturePhotosFree',
+  'paywallFeaturePhotosPro',
+  'paywallFeaturePdf',
+  'paywallFeaturePdfFree',
+  'paywallFeaturePdfPro',
+  'paywallFeatureLayout',
+  'paywallFeatureLayoutFree',
+  'paywallFeatureLayoutPro',
+  'paywallFeatureWatermark',
+  'paywallFeatureWatermarkFree',
+  'paywallFeatureWatermarkPro',
+  'paywallFeatureAds',
+  'paywallFeatureAdsFree',
+  'paywallFeatureAdsPro',
 ] as const;
 
 describe('paywall copy', () => {

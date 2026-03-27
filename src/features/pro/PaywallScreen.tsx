@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Purchases from 'react-native-purchases';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ArrowLeft } from '@tamagui/lucide-icons';
 
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -19,6 +21,8 @@ import { getLegalLinks, openExternalLink } from '@/src/services/legalService';
 import { useProStore } from '@/src/stores/proStore';
 
 const DEFAULT_BADGE = '#ffb800';
+const TOUCH_HIT_SLOP = { top: 6, bottom: 6, left: 6, right: 6 } as const;
+const ICON_STROKE_WIDTH = 1.85;
 
 export default function PaywallScreen() {
   const router = useRouter();
@@ -154,28 +158,76 @@ export default function PaywallScreen() {
     }
   };
 
+  const featureRows = [
+    { label: t.paywallFeaturePhotos, free: t.paywallFeaturePhotosFree, pro: t.paywallFeaturePhotosPro },
+    { label: t.paywallFeaturePdf, free: t.paywallFeaturePdfFree, pro: t.paywallFeaturePdfPro },
+    { label: t.paywallFeatureLayout, free: t.paywallFeatureLayoutFree, pro: t.paywallFeatureLayoutPro },
+    { label: t.paywallFeatureWatermark, free: t.paywallFeatureWatermarkFree, pro: t.paywallFeatureWatermarkPro },
+    { label: t.paywallFeatureAds, free: t.paywallFeatureAdsFree, pro: t.paywallFeatureAdsPro },
+  ];
+
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]} keyboardShouldPersistTaps="handled">
-      <View style={styles.headerRow}>
-        <Pressable onPress={() => router.back()} style={[styles.backButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
-          <Text style={[styles.backText, { color: colors.textSecondary }]}>{'‹'}</Text>
-        </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>{t.paywallHeaderTitle}</Text>
+    <SafeAreaView edges={['top', 'bottom']} style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]}>
+      {/* --- Unified header (matches ReportEditor / PdfPreview) --- */}
+      <View style={[styles.header, { borderBottomColor: colors.borderDefault, backgroundColor: colors.surfaceBg }]}>
+        <View style={styles.headerLeft}>
+          <Pressable
+            accessibilityLabel={t.a11yGoBack}
+            accessibilityRole="button"
+            onPress={() => router.back()}
+            style={styles.backButton}
+            hitSlop={TOUCH_HIT_SLOP}>
+            <ArrowLeft size={18} color={colors.textPrimary} strokeWidth={ICON_STROKE_WIDTH} />
+          </Pressable>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>
+            {t.paywallHeaderTitle}
+          </Text>
+        </View>
       </View>
 
-      <View style={[styles.hero, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
-        <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>{t.paywallHeaderTitle}</Text>
-        <Text style={[styles.heroSubtitle, { color: colors.textMuted }]}>{t.paywallHeroSubtitle}</Text>
-        {isPro && (
-          <View style={[styles.activeBadge, { backgroundColor: colors.activeBadgeBg, borderColor: colors.activeBadgeBorder }]}>
-            <Text style={[styles.activeBadgeText, { color: colors.activeBadgeText }]}>{t.paywallBadgeShort}</Text>
-            <Text style={[styles.activeBadgeSub, { color: colors.activeBadgeText }]}>{t.purchaseSuccess}</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        {/* --- Hero --- */}
+        <View style={[styles.hero, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+          <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>{t.paywallHeaderTitle}</Text>
+          <Text style={[styles.heroSubtitle, { color: colors.textMuted }]}>{t.paywallHeroSubtitle}</Text>
+          {isPro && (
+            <View style={[styles.activeBadge, { backgroundColor: colors.activeBadgeBg, borderColor: colors.activeBadgeBorder }]}>
+              <Text style={[styles.activeBadgeText, { color: colors.activeBadgeText }]}>{t.paywallBadgeShort}</Text>
+              <Text style={[styles.activeBadgeSub, { color: colors.activeBadgeText }]}>{t.purchaseSuccess}</Text>
+            </View>
+          )}
+        </View>
+
+        {/* --- Free vs Pro comparison table --- */}
+        <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.paywallPlansTitle}</Text>
+          <View style={styles.compareTable}>
+            {/* Table header */}
+            <View style={[styles.compareRow, styles.compareHeaderRow]}>
+              <View style={styles.compareLabel} />
+              <Text style={[styles.compareColHeader, { color: colors.textMuted }]}>{t.paywallFreeLabel}</Text>
+              <Text style={[styles.compareColHeader, styles.compareColHeaderPro, { color: colors.textPrimary }]}>{t.paywallProLabel}</Text>
+            </View>
+            {/* Feature rows */}
+            {featureRows.map((row, i) => (
+              <View
+                key={row.label}
+                style={[
+                  styles.compareRow,
+                  i < featureRows.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderLight },
+                ]}>
+                <Text style={[styles.compareLabel, { color: colors.textPrimary }]} numberOfLines={2}>{row.label}</Text>
+                <Text style={[styles.compareValue, { color: colors.textMuted }]} numberOfLines={2}>{row.free}</Text>
+                <View style={styles.compareProCell}>
+                  <Text style={[styles.compareCheckmark, { color: colors.activeBadgeText }]}>{'✓ '}</Text>
+                  <Text style={[styles.compareValuePro, { color: colors.textPrimary }]} numberOfLines={2}>{row.pro}</Text>
+                </View>
+              </View>
+            ))}
           </View>
-        )}
-      </View>
+        </View>
 
-      <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
-        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.paywallPlansTitle}</Text>
+        {/* --- Monthly plan --- */}
         <View style={[styles.planCard, { borderColor: colors.borderLight, backgroundColor: colors.surfaceBgAlt }]}>
           <View style={styles.planRow}>
             <Text style={[styles.planTitle, { color: colors.textPrimary }]}>{t.paywallPlanMonthlyTitle}</Text>
@@ -197,7 +249,8 @@ export default function PaywallScreen() {
           </Pressable>
         </View>
 
-        <View style={[styles.planCard, styles.planHighlight, { borderColor: colors.planHighlightBorder, backgroundColor: colors.planHighlightBg }]}>
+        {/* --- Yearly plan (highlighted) --- */}
+        <View style={[styles.planCard, { borderColor: colors.planHighlightBorder, backgroundColor: colors.planHighlightBg }]}>
           <View style={styles.planRow}>
             <Text style={[styles.planTitle, { color: colors.textPrimary }]}>{t.paywallPlanYearlyTitle}</Text>
             <View style={styles.badge}>
@@ -208,7 +261,7 @@ export default function PaywallScreen() {
           {yearlyPerMonth && (
             <Text style={[styles.planSub, { color: colors.textMuted }]}>{`${t.paywallPricePerMonthLabel}: ${yearlyPerMonth}`}</Text>
           )}
-          <Text style={[styles.planSub, { color: colors.textMuted }]}>{t.paywallYearlySavings}</Text>
+          <Text style={[styles.planSub, { color: colors.textPrimary, fontWeight: '600' }]}>{t.paywallYearlySavings}</Text>
           <Pressable
             onPress={() => handlePurchase('yearly')}
             style={[
@@ -224,17 +277,15 @@ export default function PaywallScreen() {
             )}
           </Pressable>
         </View>
-      </View>
 
-      {/* --- or divider --- */}
-      <View style={styles.dividerRow}>
-        <View style={[styles.dividerLine, { backgroundColor: colors.borderLight }]} />
-        <Text style={[styles.dividerText, { color: colors.textMuted }]}>{t.paywallOrDivider}</Text>
-        <View style={[styles.dividerLine, { backgroundColor: colors.borderLight }]} />
-      </View>
+        {/* --- or divider --- */}
+        <View style={styles.dividerRow}>
+          <View style={[styles.dividerLine, { backgroundColor: colors.borderLight }]} />
+          <Text style={[styles.dividerText, { color: colors.textMuted }]}>{t.paywallOrDivider}</Text>
+          <View style={[styles.dividerLine, { backgroundColor: colors.borderLight }]} />
+        </View>
 
-      {/* --- Lifetime plan --- */}
-      <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+        {/* --- Lifetime plan --- */}
         <View style={[styles.planCard, { borderColor: colors.borderLight, backgroundColor: colors.surfaceBgAlt }]}>
           <View style={styles.planRow}>
             <Text style={[styles.planTitle, { color: colors.textPrimary }]}>{t.paywallPlanLifetimeTitle}</Text>
@@ -260,67 +311,79 @@ export default function PaywallScreen() {
           </Pressable>
         </View>
         <Text style={[styles.finePrint, { color: colors.textMuted }]}>{t.paywallLifetimeFinePrint}</Text>
-      </View>
 
-      <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
-        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.paywallRestoreTitle}</Text>
-        <Text style={[styles.sectionSub, { color: colors.textMuted }]}>{t.paywallRestoreDesc}</Text>
-        <Pressable
-          onPress={handleRestore}
-          style={[styles.secondaryButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, action === 'restore' && styles.disabledButton]}
-          disabled={action !== null}>
-          {action === 'restore' ? (
-            <ActivityIndicator />
-          ) : (
-            <Text style={[styles.secondaryText, { color: colors.textPrimary }]}>{t.restore}</Text>
-          )}
+        {/* --- Restore --- */}
+        <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.paywallRestoreTitle}</Text>
+          <Text style={[styles.sectionSub, { color: colors.textMuted }]}>{t.paywallRestoreDesc}</Text>
+          <Pressable
+            onPress={handleRestore}
+            style={[styles.secondaryButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, action === 'restore' && styles.disabledButton]}
+            disabled={action !== null}>
+            {action === 'restore' ? (
+              <ActivityIndicator />
+            ) : (
+              <Text style={[styles.secondaryText, { color: colors.textPrimary }]}>{t.restore}</Text>
+            )}
+          </Pressable>
+        </View>
+
+        <Text style={[styles.finePrint, { color: colors.textMuted }]}>{t.paywallFinePrint}</Text>
+
+        <View style={styles.legalRow}>
+          <Pressable onPress={() => openPrivacyPolicy()}>
+            <Text style={[styles.legalLink, { color: colors.primaryBg }]}>{t.legalPrivacyPolicyLabel}</Text>
+          </Pressable>
+          <Text style={[styles.legalSeparator, { color: colors.textMuted }]}>{'|'}</Text>
+          <Pressable onPress={() => openTerms()}>
+            <Text style={[styles.legalLink, { color: colors.primaryBg }]}>{t.legalTermsOfUseLabel}</Text>
+          </Pressable>
+        </View>
+
+        <Pressable onPress={() => router.back()} style={[styles.stayFreeButton, { backgroundColor: colors.surfaceBg, borderColor: colors.borderMedium }]}>
+          <Text style={[styles.stayFreeText, { color: colors.textSecondary }]}>{t.paywallCtaStayFree}</Text>
         </Pressable>
-      </View>
-
-      <Text style={[styles.finePrint, { color: colors.textMuted }]}>{t.paywallFinePrint}</Text>
-
-      <View style={styles.legalRow}>
-        <Pressable onPress={() => openPrivacyPolicy()}>
-          <Text style={[styles.legalLink, { color: colors.primaryBg }]}>{t.legalPrivacyPolicyLabel}</Text>
-        </Pressable>
-        <Text style={[styles.legalSeparator, { color: colors.textMuted }]}>{'|'}</Text>
-        <Pressable onPress={() => openTerms()}>
-          <Text style={[styles.legalLink, { color: colors.primaryBg }]}>{t.legalTermsOfUseLabel}</Text>
-        </Pressable>
-      </View>
-
-      <Pressable onPress={() => router.back()} style={[styles.stayFreeButton, { backgroundColor: colors.surfaceBg, borderColor: colors.borderMedium }]}>
-        <Text style={[styles.stayFreeText, { color: colors.textSecondary }]}>{t.paywallCtaStayFree}</Text>
-      </Pressable>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    paddingBottom: 40,
-    gap: 16,
+  safeArea: {
+    flex: 1,
   },
-  headerRow: {
+  header: {
+    height: 60,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  headerLeft: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
   backButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 1,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backText: {
-    fontSize: 20,
-  },
   headerTitle: {
+    flex: 1,
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
+  },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 40,
+    gap: 16,
   },
   hero: {
     padding: 16,
@@ -363,13 +426,57 @@ const styles = StyleSheet.create({
   sectionSub: {
     fontSize: 12,
   },
+  /* --- Comparison table --- */
+  compareTable: {
+    gap: 0,
+  },
+  compareRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  compareHeaderRow: {
+    paddingBottom: 6,
+  },
+  compareLabel: {
+    flex: 2,
+    fontSize: 13,
+  },
+  compareColHeader: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  compareColHeaderPro: {
+    fontWeight: '700',
+  },
+  compareValue: {
+    flex: 1,
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  compareProCell: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  compareCheckmark: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  compareValuePro: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  /* --- Plan cards --- */
   planCard: {
     padding: 14,
     borderRadius: 14,
     borderWidth: 1,
     gap: 8,
   },
-  planHighlight: {},
   planRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
