@@ -39,7 +39,8 @@ export function AdBanner() {
     <View style={styles.container}>
       <BannerAd
         unitId={unitId}
-        size={BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER}
+        size={BannerAdSize.INLINE_ADAPTIVE_BANNER}
+        maxHeight={90}
         onAdFailedToLoad={handleAdFailedToLoad}
       />
     </View>
