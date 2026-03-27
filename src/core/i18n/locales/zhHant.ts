@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: '隱私',
   settingsSectionPurchases: '購買',
   settingsSectionBackup: '備份',
-  settingsBackupDesc: '匯出或匯入備份ZIP檔案（manifest.json + photos/）。',
+  settingsBackupDesc: '匯出或匯入報告和照片的備份。',
   settingsBackupOpen: '開啟備份',
   settingsLegalDesc: '開啟隱私權政策及使用條款頁面。',
   adPrivacyOptionsHelp: '管理免費方案中廣告顯示的同意選項。',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: '備份',
   backupExportTitle: '匯出備份',
-  backupExportDesc: '建立包含 manifest.json 和 photos/ 的 ZIP 檔案。不包含 PDF。',
+  backupExportDesc: '建立包含所有報告和照片的備份檔案。不包含 PDF。',
   backupExportAction: '匯出',
   backupExportSuccess: '備份已匯出。',
   backupExportFailed: '匯出備份失敗。',

@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
@@ -18,6 +19,7 @@ export default function BackupScreen() {
   const router = useRouter();
   const { colors } = useAppTheme();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
 
@@ -80,7 +82,8 @@ export default function BackupScreen() {
   };
 
   return (
-    <ScrollView testID="e2e_backup_screen" contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt }]} keyboardShouldPersistTaps="handled">
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]} edges={['top']}>
+    <ScrollView testID="e2e_backup_screen" contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt, paddingBottom: 40 + insets.bottom }]} keyboardShouldPersistTaps="handled">
       <View style={styles.headerRow}>
         <Pressable testID="e2e_backup_back" onPress={() => router.back()} style={[styles.backButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
           <Text style={[styles.backText, { color: colors.textSecondary }]}>{'‹'}</Text>
@@ -118,13 +121,16 @@ export default function BackupScreen() {
         </Pressable>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     padding: 16,
-    paddingBottom: 40,
     gap: 16,
   },
   headerRow: {

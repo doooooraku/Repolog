@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: 'गोपनीयता',
   settingsSectionPurchases: 'खरीदारी',
   settingsSectionBackup: 'बैकअप',
-  settingsBackupDesc: 'बैकअप ZIP फ़ाइल (manifest.json + photos/) निर्यात या आयात करें।',
+  settingsBackupDesc: 'अपनी रिपोर्ट और फ़ोटो का बैकअप निर्यात या आयात करें।',
   settingsBackupOpen: 'बैकअप खोलें',
   settingsLegalDesc: 'गोपनीयता नीति और उपयोग की शर्तें पृष्ठ खोलें।',
   adPrivacyOptionsHelp: 'Free प्लान में दिखाए जाने वाले विज्ञापनों की सहमति सेटिंग्स देखें।',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'बैकअप',
   backupExportTitle: 'बैकअप निर्यात करें',
-  backupExportDesc: 'manifest.json और photos/ के साथ ZIP बनाता है। PDF शामिल नहीं है।',
+  backupExportDesc: 'सभी रिपोर्ट और फ़ोटो के साथ एक बैकअप फ़ाइल बनाता है। PDF शामिल नहीं है।',
   backupExportAction: 'निर्यात करें',
   backupExportSuccess: 'बैकअप निर्यात हो गया।',
   backupExportFailed: 'बैकअप निर्यात करने में विफल।',

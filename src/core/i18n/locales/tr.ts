@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: 'Gizlilik',
   settingsSectionPurchases: 'Satın Almalar',
   settingsSectionBackup: 'Yedekleme',
-  settingsBackupDesc: 'Yedek ZIP dosyasını (manifest.json + photos/) dışa veya içe aktarın.',
+  settingsBackupDesc: 'Raporlarınızın ve fotoğraflarınızın yedeğini dışa veya içe aktarın.',
   settingsBackupOpen: 'Yedeği aç',
   settingsLegalDesc: 'Gizlilik Politikası ve Kullanım Koşulları sayfalarını açar.',
   adPrivacyOptionsHelp: 'Ücretsiz planda gösterilen reklamlar için reklam onay tercihlerini gözden geçir.',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'Yedekleme',
   backupExportTitle: 'Yedeği dışa aktar',
-  backupExportDesc: 'manifest.json ve photos/ içeren bir ZIP oluşturur. PDF dahil değildir.',
+  backupExportDesc: 'Tüm raporları ve fotoğrafları içeren bir yedek dosyası oluşturur. PDF dahil değildir.',
   backupExportAction: 'Dışa aktar',
   backupExportSuccess: 'Yedek dışa aktarıldı.',
   backupExportFailed: 'Yedek dışa aktarılamadı.',
