@@ -62,7 +62,7 @@ const resizeIfNeeded = async (asset: ImagePicker.ImagePickerAsset) => {
   if (!width || !height) {
     return ImageManipulator.manipulateAsync(
       asset.uri,
-      [],
+      [{ resize: { width: MAX_EDGE } }],
       { compress: JPEG_QUALITY, format: ImageManipulator.SaveFormat.JPEG },
     );
   }
@@ -280,7 +280,7 @@ export async function addPhotosFromCamera(
   const result = await ImagePicker.launchCameraAsync({
     mediaTypes: ['images'],
     allowsEditing: false,
-    quality: 0.7,
+    quality: 1,
   });
 
   await clearCameraLaunchState();
