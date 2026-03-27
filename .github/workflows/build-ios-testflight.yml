@@ -1,0 +1,77 @@
+name: Build iOS & Submit to TestFlight
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-submit:
+    name: Build & Submit IPA
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+        with:
+          version: "10"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create .env file
+        run: |
+          cat <<'DOTENV' > .env
+          ADMOB_IOS_APP_ID=${{ secrets.ADMOB_IOS_APP_ID }}
+          ADMOB_IOS_BANNER_ID=${{ secrets.ADMOB_IOS_BANNER_ID }}
+          REVENUECAT_IOS_API_KEY=${{ secrets.REVENUECAT_IOS_API_KEY }}
+          DOTENV
+
+      - name: Verify code quality
+        run: pnpm verify
+
+      - name: Build iOS IPA
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas build --platform ios --profile production --local --non-interactive --output=Repolog.ipa
+
+      - name: Submit to TestFlight
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas submit --platform ios --path Repolog.ipa --profile production --non-interactive --no-wait
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Repolog-iOS-IPA-${{ github.run_id }}
+          path: Repolog.ipa
+          retention-days: 7
+
+      - name: Post build summary
+        if: success()
+        run: |
+          echo "## iOS Build & Submit Successful" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **IPA**: Repolog.ipa" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Profile**: production" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Submitted to**: TestFlight" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "App Store Connect → TestFlight で新しいビルドを確認してください" >> "$GITHUB_STEP_SUMMARY"
