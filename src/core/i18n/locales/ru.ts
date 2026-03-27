@@ -9,7 +9,7 @@ const dict = {
   settingsSectionPrivacy: 'Конфиденциальность',
   settingsSectionPurchases: 'Покупки',
   settingsSectionBackup: 'Резервная копия',
-  settingsBackupDesc: 'Экспорт или импорт ZIP-архива (manifest.json + photos/).',
+  settingsBackupDesc: 'Экспорт или импорт резервной копии отчётов и фотографий.',
   settingsBackupOpen: 'Открыть резервную копию',
   settingsLegalDesc: 'Открыть страницы Политики конфиденциальности и Условий использования.',
   adPrivacyOptionsHelp: 'Просмотри настройки согласия на рекламу в бесплатном тарифе.',
@@ -81,7 +81,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'Резервная копия',
   backupExportTitle: 'Экспорт резервной копии',
-  backupExportDesc: 'Создаёт ZIP с manifest.json и photos/. PDF не включаются.',
+  backupExportDesc: 'Создаёт файл резервной копии со всеми отчётами и фотографиями. PDF не включаются.',
   backupExportAction: 'Экспорт',
   backupExportSuccess: 'Резервная копия экспортирована.',
   backupExportFailed: 'Не удалось экспортировать резервную копию.',

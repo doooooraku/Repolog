@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: 'Quyền riêng tư',
   settingsSectionPurchases: 'Mua hàng',
   settingsSectionBackup: 'Sao lưu',
-  settingsBackupDesc: 'Xuất hoặc nhập tệp ZIP sao lưu (manifest.json + photos/).',
+  settingsBackupDesc: 'Xuất hoặc nhập bản sao lưu báo cáo và ảnh của bạn.',
   settingsBackupOpen: 'Mở sao lưu',
   settingsLegalDesc: 'Mở trang Chính sách Quyền riêng tư và Điều khoản Sử dụng.',
   adPrivacyOptionsHelp: 'Xem lại lựa chọn đồng ý quảng cáo cho quảng cáo trong gói Miễn phí.',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'Sao lưu',
   backupExportTitle: 'Xuất sao lưu',
-  backupExportDesc: 'Tạo tệp ZIP với manifest.json và photos/. Không bao gồm PDF.',
+  backupExportDesc: 'Tạo tệp sao lưu với tất cả báo cáo và ảnh. Không bao gồm PDF.',
   backupExportAction: 'Xuất',
   backupExportSuccess: 'Đã xuất sao lưu.',
   backupExportFailed: 'Xuất sao lưu thất bại.',

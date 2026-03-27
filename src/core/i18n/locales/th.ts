@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: 'ความเป็นส่วนตัว',
   settingsSectionPurchases: 'การซื้อ',
   settingsSectionBackup: 'สำรองข้อมูล',
-  settingsBackupDesc: 'ส่งออกหรือนำเข้าไฟล์ ZIP สำรอง (manifest.json + photos/)',
+  settingsBackupDesc: 'ส่งออกหรือนำเข้าข้อมูลสำรองของรายงานและรูปภาพ',
   settingsBackupOpen: 'เปิดการสำรองข้อมูล',
   settingsLegalDesc: 'เปิดหน้านโยบายความเป็นส่วนตัวและข้อกำหนดการใช้งาน',
   adPrivacyOptionsHelp: 'ตรวจสอบตัวเลือกความยินยอมสำหรับโฆษณาในแพ็กเกจ Free',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'สำรองข้อมูล',
   backupExportTitle: 'ส่งออกข้อมูลสำรอง',
-  backupExportDesc: 'สร้างไฟล์ ZIP ที่มี manifest.json และ photos/ ไม่รวม PDF',
+  backupExportDesc: 'สร้างไฟล์สำรองที่มีรายงานและรูปภาพทั้งหมด ไม่รวม PDF',
   backupExportAction: 'ส่งออก',
   backupExportSuccess: 'ส่งออกข้อมูลสำรองแล้ว',
   backupExportFailed: 'ส่งออกข้อมูลสำรองไม่สำเร็จ',

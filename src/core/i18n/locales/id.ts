@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: 'Privasi',
   settingsSectionPurchases: 'Pembelian',
   settingsSectionBackup: 'Cadangan',
-  settingsBackupDesc: 'Ekspor atau impor file ZIP cadangan (manifest.json + photos/).',
+  settingsBackupDesc: 'Ekspor atau impor cadangan laporan dan foto Anda.',
   settingsBackupOpen: 'Buka cadangan',
   settingsLegalDesc: 'Buka halaman Kebijakan Privasi dan Ketentuan Penggunaan.',
   adPrivacyOptionsHelp: 'Tinjau pilihan persetujuan iklan pada paket Free.',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'Cadangan',
   backupExportTitle: 'Ekspor cadangan',
-  backupExportDesc: 'Membuat file ZIP berisi manifest.json dan photos/. PDF tidak disertakan.',
+  backupExportDesc: 'Membuat file cadangan berisi semua laporan dan foto. PDF tidak disertakan.',
   backupExportAction: 'Ekspor',
   backupExportSuccess: 'Cadangan berhasil diekspor.',
   backupExportFailed: 'Gagal mengekspor cadangan.',

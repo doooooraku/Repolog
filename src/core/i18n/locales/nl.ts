@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: 'Privacy',
   settingsSectionPurchases: 'Aankopen',
   settingsSectionBackup: 'Back-up',
-  settingsBackupDesc: 'Exporteer of importeer een back-up ZIP (manifest.json + photos/).',
+  settingsBackupDesc: 'Exporteer of importeer een back-up van je rapporten en foto\'s.',
   settingsBackupOpen: 'Back-up openen',
   settingsLegalDesc: 'Open het Privacybeleid en de Gebruiksvoorwaarden.',
   adPrivacyOptionsHelp: 'Bekijk je advertentietoestemmingen voor advertenties in het gratis abonnement.',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'Back-up',
   backupExportTitle: 'Back-up exporteren',
-  backupExportDesc: 'Maakt een ZIP met manifest.json en photos/. PDF\'s worden niet meegenomen.',
+  backupExportDesc: 'Maakt een back-upbestand met alle rapporten en foto\'s. PDF\'s worden niet meegenomen.',
   backupExportAction: 'Exporteren',
   backupExportSuccess: 'Back-up geëxporteerd.',
   backupExportFailed: 'Exporteren van back-up mislukt.',

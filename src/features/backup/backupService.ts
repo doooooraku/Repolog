@@ -52,6 +52,7 @@ export type BackupReport = {
   comment: string;
   tags: string[];
   pinned: boolean;
+  authorName?: string | null;
 };
 
 export type BackupPhoto = {
@@ -177,6 +178,7 @@ export async function exportBackup(): Promise<void> {
     comment: report.comment ?? '',
     tags: report.tags ?? [],
     pinned: report.pinned,
+    authorName: report.authorName ?? null,
   }));
 
   const backupPhotos: BackupPhoto[] = [];
@@ -304,8 +306,8 @@ export async function importBackup(): Promise<BackupImportResult | null> {
             `INSERT INTO reports (
               id, created_at, updated_at, report_name, weather, location_enabled,
               lat, lng, lat_lng_captured_at, address, address_source, address_locale,
-              comment, tags_json, pinned
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+              comment, tags_json, pinned, author_name
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             report.id,
             report.createdAt,
             report.updatedAt,
@@ -321,6 +323,7 @@ export async function importBackup(): Promise<BackupImportResult | null> {
             clampComment(report.comment ?? ''),
             JSON.stringify(tags),
             report.pinned ? 1 : 0,
+            report.authorName ?? null,
           );
         }
 

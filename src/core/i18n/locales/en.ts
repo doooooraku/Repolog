@@ -8,7 +8,7 @@ const baseEn = {
   settingsSectionPrivacy: 'Privacy',
   settingsSectionPurchases: 'Purchases',
   settingsSectionBackup: 'Backup',
-  settingsBackupDesc: 'Export or import a backup zip (manifest.json + photos/).',
+  settingsBackupDesc: 'Export or import a backup of your reports and photos.',
   settingsBackupOpen: 'Open Backup',
   settingsLegalDesc: 'Open the Privacy Policy and Terms of Use pages.',
   adPrivacyOptionsHelp: 'Review ad consent choices for ads shown in the Free plan.',
@@ -82,7 +82,7 @@ const baseEn = {
   // --- Backup ---
   backupTitle: 'Backup',
   backupExportTitle: 'Export backup',
-  backupExportDesc: 'Creates a zip with manifest.json and photos/. PDFs are not included.',
+  backupExportDesc: 'Creates a backup file with all reports and photos. PDFs are not included.',
   backupExportAction: 'Export',
   backupExportSuccess: 'Backup exported.',
   backupExportFailed: 'Failed to export backup.',

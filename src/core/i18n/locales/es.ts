@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: 'Privacidad',
   settingsSectionPurchases: 'Compras',
   settingsSectionBackup: 'Respaldo',
-  settingsBackupDesc: 'Exporta o importa un ZIP de respaldo (manifest.json + photos/).',
+  settingsBackupDesc: 'Exporta o importa una copia de seguridad de tus informes y fotos.',
   settingsBackupOpen: 'Abrir respaldo',
   settingsLegalDesc: 'Abre las páginas de política de privacidad y condiciones de uso.',
   adPrivacyOptionsHelp: 'Revisa las opciones de consentimiento de anuncios del plan gratuito.',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'Respaldo',
   backupExportTitle: 'Exportar respaldo',
-  backupExportDesc: 'Crea un ZIP con manifest.json y photos/. Los PDF no se incluyen.',
+  backupExportDesc: 'Crea un archivo de respaldo con todos los informes y fotos. Los PDF no se incluyen.',
   backupExportAction: 'Exportar',
   backupExportSuccess: 'Respaldo exportado.',
   backupExportFailed: 'Error al exportar el respaldo.',

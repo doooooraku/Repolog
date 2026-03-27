@@ -9,7 +9,7 @@ const dict = {
   settingsSectionPrivacy: '개인정보',
   settingsSectionPurchases: '구매',
   settingsSectionBackup: '백업',
-  settingsBackupDesc: '백업 ZIP 파일(manifest.json + photos/)을 내보내거나 가져옵니다.',
+  settingsBackupDesc: '보고서와 사진의 백업을 내보내거나 가져옵니다.',
   settingsBackupOpen: '백업 열기',
   settingsLegalDesc: '개인정보 처리방침 및 이용약관 페이지를 엽니다.',
   adPrivacyOptionsHelp: '무료 플랜에서 표시되는 광고에 대한 동의 설정을 확인하세요.',
@@ -81,7 +81,7 @@ const dict = {
   // --- Backup ---
   backupTitle: '백업',
   backupExportTitle: '백업 내보내기',
-  backupExportDesc: 'manifest.json과 photos/가 포함된 ZIP을 생성합니다. PDF는 포함되지 않습니다.',
+  backupExportDesc: '모든 보고서와 사진이 포함된 백업 파일을 생성합니다. PDF는 포함되지 않습니다.',
   backupExportAction: '내보내기',
   backupExportSuccess: '백업을 내보냈습니다.',
   backupExportFailed: '백업 내보내기에 실패했습니다.',

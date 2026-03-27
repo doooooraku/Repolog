@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: 'Integritet',
   settingsSectionPurchases: 'Köp',
   settingsSectionBackup: 'Säkerhetskopiering',
-  settingsBackupDesc: 'Exportera eller importera en säkerhetskopia (manifest.json + photos/).',
+  settingsBackupDesc: 'Exportera eller importera en säkerhetskopia av dina rapporter och foton.',
   settingsBackupOpen: 'Öppna säkerhetskopia',
   settingsLegalDesc: 'Öppna sidan för Integritetspolicy och Användarvillkor.',
   adPrivacyOptionsHelp: 'Granska annonssamtycken för annonser som visas i gratisplanen.',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'Säkerhetskopiering',
   backupExportTitle: 'Exportera säkerhetskopia',
-  backupExportDesc: 'Skapar en ZIP med manifest.json och photos/. PDF:er inkluderas inte.',
+  backupExportDesc: 'Skapar en säkerhetskopia med alla rapporter och foton. PDF:er inkluderas inte.',
   backupExportAction: 'Exportera',
   backupExportSuccess: 'Säkerhetskopia exporterad.',
   backupExportFailed: 'Misslyckades med att exportera säkerhetskopia.',

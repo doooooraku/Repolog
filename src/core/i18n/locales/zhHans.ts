@@ -9,7 +9,7 @@ const dict = {
   settingsSectionPrivacy: '隐私',
   settingsSectionPurchases: '购买',
   settingsSectionBackup: '备份',
-  settingsBackupDesc: '导出或导入备份ZIP文件（manifest.json + photos/）。',
+  settingsBackupDesc: '导出或导入报告和照片的备份。',
   settingsBackupOpen: '打开备份',
   settingsLegalDesc: '打开隐私政策和使用条款页面。',
   adPrivacyOptionsHelp: '查看免费方案中广告展示的同意设置。',
@@ -81,7 +81,7 @@ const dict = {
   // --- Backup ---
   backupTitle: '备份',
   backupExportTitle: '导出备份',
-  backupExportDesc: '创建包含manifest.json和photos/的ZIP文件。不包含PDF。',
+  backupExportDesc: '创建包含所有报告和照片的备份文件。不包含PDF。',
   backupExportAction: '导出',
   backupExportSuccess: '备份已导出。',
   backupExportFailed: '导出备份失败。',

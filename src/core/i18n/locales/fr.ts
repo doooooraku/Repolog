@@ -10,7 +10,7 @@ const dict = {
   settingsSectionPrivacy: 'Confidentialité',
   settingsSectionPurchases: 'Achats',
   settingsSectionBackup: 'Sauvegarde',
-  settingsBackupDesc: 'Exportez ou importez un ZIP de sauvegarde (manifest.json + photos/).',
+  settingsBackupDesc: 'Exportez ou importez une sauvegarde de vos rapports et photos.',
   settingsBackupOpen: 'Ouvrir la sauvegarde',
   settingsLegalDesc: 'Ouvrir les pages de politique de confidentialité et de conditions d\'utilisation.',
   adPrivacyOptionsHelp: 'Consultez les choix de consentement publicitaire pour les annonces du plan gratuit.',
@@ -82,7 +82,7 @@ const dict = {
   // --- Backup ---
   backupTitle: 'Sauvegarde',
   backupExportTitle: 'Exporter la sauvegarde',
-  backupExportDesc: 'Crée un ZIP avec manifest.json et photos/. Les PDF ne sont pas inclus.',
+  backupExportDesc: 'Crée un fichier de sauvegarde avec tous les rapports et photos. Les PDF ne sont pas inclus.',
   backupExportAction: 'Exporter',
   backupExportSuccess: 'Sauvegarde exportée.',
   backupExportFailed: 'Échec de l\'exportation de la sauvegarde.',
