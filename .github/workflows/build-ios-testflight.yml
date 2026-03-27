@@ -52,6 +52,11 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas build --platform ios --profile production --local --non-interactive --output=Repolog.ipa
 
+      - name: Setup ASC API Key
+        run: |
+          mkdir -p secrets
+          echo "${{ secrets.ASC_API_KEY_P8_BASE64 }}" | base64 -d > secrets/AuthKey.p8
+
       - name: Submit to TestFlight
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
