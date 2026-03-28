@@ -17,7 +17,7 @@ jest.mock('expo-secure-store', () => ({
   deleteItemAsync: jest.fn(),
 }));
 
-import { _toProState, _findPackage } from '@/src/services/proService';
+import { _toProState, _findPackage, _derivePlanType } from '@/src/services/proService';
 import type { CustomerInfo, PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 
 /* ---------- toProState ---------- */
@@ -60,6 +60,9 @@ describe('toProState', () => {
     const info = fakeCustomerInfo();
     const state = _toProState(info);
     expect(state.isPro).toBe(false);
+    expect(state.planType).toBeNull();
+    expect(state.expirationDate).toBeNull();
+    expect(state.managementURL).toBeNull();
   });
 
   test('returns isPro=false when different entitlement is active', () => {
@@ -72,6 +75,98 @@ describe('toProState', () => {
     });
     const state = _toProState(info);
     expect(state.isPro).toBe(false);
+  });
+
+  test('extracts planType=lifetime when expirationDate is null', () => {
+    const info = fakeCustomerInfo({
+      entitlements: {
+        all: {},
+        active: {
+          Pro_Plan: {
+            productIdentifier: 'repolog_pro_lifetime',
+            expirationDate: null,
+          } as any,
+        },
+        verification: 'NOT_REQUESTED' as any,
+      },
+      managementURL: 'https://play.google.com/store/account/subscriptions',
+    });
+    const state = _toProState(info);
+    expect(state.isPro).toBe(true);
+    expect(state.planType).toBe('lifetime');
+    expect(state.expirationDate).toBeNull();
+    expect(state.managementURL).toBe('https://play.google.com/store/account/subscriptions');
+  });
+
+  test('extracts planType=yearly with expirationDate', () => {
+    const info = fakeCustomerInfo({
+      entitlements: {
+        all: {},
+        active: {
+          Pro_Plan: {
+            productIdentifier: 'repolog_pro_yearly',
+            expirationDate: '2027-03-28T00:00:00Z',
+          } as any,
+        },
+        verification: 'NOT_REQUESTED' as any,
+      },
+      managementURL: 'https://apps.apple.com/account/subscriptions',
+    });
+    const state = _toProState(info);
+    expect(state.isPro).toBe(true);
+    expect(state.planType).toBe('yearly');
+    expect(state.expirationDate).toBe('2027-03-28T00:00:00Z');
+    expect(state.managementURL).toBe('https://apps.apple.com/account/subscriptions');
+  });
+
+  test('extracts planType=monthly with expirationDate', () => {
+    const info = fakeCustomerInfo({
+      entitlements: {
+        all: {},
+        active: {
+          Pro_Plan: {
+            productIdentifier: 'repolog_pro_monthly',
+            expirationDate: '2026-04-28T00:00:00Z',
+          } as any,
+        },
+        verification: 'NOT_REQUESTED' as any,
+      },
+    });
+    const state = _toProState(info);
+    expect(state.planType).toBe('monthly');
+    expect(state.expirationDate).toBe('2026-04-28T00:00:00Z');
+  });
+});
+
+/* ---------- derivePlanType ---------- */
+
+describe('derivePlanType', () => {
+  test('returns lifetime when no expiration', () => {
+    expect(_derivePlanType('repolog_pro_lifetime', false)).toBe('lifetime');
+  });
+
+  test('returns lifetime for product ID containing "lifetime"', () => {
+    expect(_derivePlanType('repolog_pro_lifetime', true)).toBe('lifetime');
+  });
+
+  test('returns yearly for product ID containing "annual"', () => {
+    expect(_derivePlanType('repolog_pro_annual', true)).toBe('yearly');
+  });
+
+  test('returns yearly for product ID containing "yearly"', () => {
+    expect(_derivePlanType('repolog_pro_yearly', true)).toBe('yearly');
+  });
+
+  test('returns monthly for product ID containing "monthly"', () => {
+    expect(_derivePlanType('repolog_pro_monthly', true)).toBe('monthly');
+  });
+
+  test('returns null for undefined product ID', () => {
+    expect(_derivePlanType(undefined, true)).toBeNull();
+  });
+
+  test('returns null for unrecognized product ID', () => {
+    expect(_derivePlanType('unknown_product', true)).toBeNull();
   });
 });
 

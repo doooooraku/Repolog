@@ -27,6 +27,22 @@ const dict = {
   restoreFailed: '구매 복원에 실패했습니다.',
   restoreDesc: '이 계정으로 구매한 내역을 복원합니다.',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: '현재 플랜',
+  settingsPlanFree: '무료',
+  settingsRenewsOn: '갱신일: {date}',
+  settingsLifetimeAccess: '평생 이용',
+  settingsViewProPlans: 'Pro 플랜 보기',
+  settingsManageSubDesc: '스토어의 구독 관리 페이지를 엽니다.',
+  settingsManageSubFailed: '구독 관리를 열 수 없습니다.',
+  settingsProBenefitPhotos: '보고서당 사진 무제한',
+  settingsProBenefitPdf: 'PDF 내보내기 무제한',
+  settingsProBenefitLayout: '큰 레이아웃 내보내기',
+  settingsProBenefitWatermark: '워터마크 없음',
+  settingsProBenefitAds: '광고 없음',
+  settingsDescFree: 'Pro로 업그레이드하면 무제한 사진, 내보내기 등 이용 가능.',
+  settingsDescPro: 'Repolog를 지원해 주셔서 감사합니다!',
+
   // --- Pro Screen (Paywall) ---
   paywallHeaderTitle: 'Repolog Pro',
   paywallHeroSubtitle: '깔끔한 사진 보고서를 작성하고 제한 없이 PDF를 내보내세요.',

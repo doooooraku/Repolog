@@ -28,6 +28,22 @@ const dict = {
   restoreFailed: 'Satın alımlar yüklenemedi.',
   restoreDesc: 'Bu hesaptaki satın alımları geri yükle.',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: 'Mevcut plan',
+  settingsPlanFree: 'Ücretsiz',
+  settingsRenewsOn: 'Yenileme tarihi: {date}',
+  settingsLifetimeAccess: 'Ömür boyu erişim',
+  settingsViewProPlans: 'Pro planları gör',
+  settingsManageSubDesc: 'Mağazanın abonelik yönetim sayfasını açar.',
+  settingsManageSubFailed: 'Abonelik yönetimi açılamadı.',
+  settingsProBenefitPhotos: 'Rapor başına sınırsız fotoğraf',
+  settingsProBenefitPdf: 'Sınırsız PDF dışa aktarma',
+  settingsProBenefitLayout: 'Büyük düzen dışa aktarma',
+  settingsProBenefitWatermark: 'Filigran yok',
+  settingsProBenefitAds: 'Reklam yok',
+  settingsDescFree: 'Sınırsız fotoğraf, dışa aktarma ve daha fazlası için Pro\u2019ya yükseltin.',
+  settingsDescPro: 'Repolog\u2019u desteklediğiniz için teşekkürler!',
+
   // --- Pro Screen (Paywall) ---
   paywallHeaderTitle: 'Repolog Pro',
   paywallHeroSubtitle: 'Net fotoğraf raporları oluştur ve daha az sınırlamayla profesyonel PDF\'ler dışa aktar.',

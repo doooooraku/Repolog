@@ -27,6 +27,22 @@ const dict = {
   restoreFailed: 'Не удалось восстановить покупки.',
   restoreDesc: 'Восстановить покупки, сделанные с этого аккаунта.',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: 'Текущий план',
+  settingsPlanFree: 'Бесплатный',
+  settingsRenewsOn: 'Продлевается {date}',
+  settingsLifetimeAccess: 'Пожизненный доступ',
+  settingsViewProPlans: 'Посмотреть планы Pro',
+  settingsManageSubDesc: 'Открывает страницу управления подпиской в магазине.',
+  settingsManageSubFailed: 'Не удалось открыть управление подпиской.',
+  settingsProBenefitPhotos: 'Безлимитные фото в отчёте',
+  settingsProBenefitPdf: 'Безлимитный экспорт PDF',
+  settingsProBenefitLayout: 'Экспорт в крупном формате',
+  settingsProBenefitWatermark: 'Без водяного знака',
+  settingsProBenefitAds: 'Без рекламы',
+  settingsDescFree: 'Обновите до Pro: безлимитные фото, экспорт и другое.',
+  settingsDescPro: 'Спасибо за поддержку Repolog!',
+
   // --- Pro Screen (Paywall) ---
   paywallHeaderTitle: 'Repolog Pro',
   paywallHeroSubtitle: 'Создавай наглядные фотоотчёты и экспортируй качественные PDF с меньшими ограничениями.',

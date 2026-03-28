@@ -28,6 +28,22 @@ const dict = {
   restoreFailed: 'Khôi phục thất bại.',
   restoreDesc: 'Khôi phục các giao dịch mua hàng trên tài khoản này.',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: 'Gói hiện tại',
+  settingsPlanFree: 'Miễn phí',
+  settingsRenewsOn: 'Gia hạn vào {date}',
+  settingsLifetimeAccess: 'Truy cập trọn đời',
+  settingsViewProPlans: 'Xem gói Pro',
+  settingsManageSubDesc: 'Mở trang quản lý đăng ký của cửa hàng.',
+  settingsManageSubFailed: 'Không thể mở quản lý đăng ký.',
+  settingsProBenefitPhotos: 'Ảnh không giới hạn mỗi báo cáo',
+  settingsProBenefitPdf: 'Xuất PDF không giới hạn',
+  settingsProBenefitLayout: 'Xuất bố cục lớn',
+  settingsProBenefitWatermark: 'Không có watermark',
+  settingsProBenefitAds: 'Không có quảng cáo',
+  settingsDescFree: 'Nâng cấp lên Pro để có ảnh, xuất không giới hạn và nhiều hơn.',
+  settingsDescPro: 'Cảm ơn bạn đã ủng hộ Repolog!',
+
   // --- Pro Screen (Paywall) ---
   paywallHeaderTitle: 'Repolog Pro',
   paywallHeroSubtitle: 'Tạo báo cáo ảnh rõ ràng và xuất PDF chuyên nghiệp với ít giới hạn hơn.',

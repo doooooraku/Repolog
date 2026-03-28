@@ -28,6 +28,22 @@ const dict = {
   restoreFailed: 'Gagal memulihkan pembelian.',
   restoreDesc: 'Pulihkan pembelian yang dilakukan dengan akun ini.',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: 'Paket saat ini',
+  settingsPlanFree: 'Gratis',
+  settingsRenewsOn: 'Perpanjangan: {date}',
+  settingsLifetimeAccess: 'Akses seumur hidup',
+  settingsViewProPlans: 'Lihat paket Pro',
+  settingsManageSubDesc: 'Membuka halaman manajemen langganan toko.',
+  settingsManageSubFailed: 'Gagal membuka manajemen langganan.',
+  settingsProBenefitPhotos: 'Foto tak terbatas per laporan',
+  settingsProBenefitPdf: 'Ekspor PDF tak terbatas',
+  settingsProBenefitLayout: 'Ekspor tata letak besar',
+  settingsProBenefitWatermark: 'Tanpa tanda air',
+  settingsProBenefitAds: 'Tanpa iklan',
+  settingsDescFree: 'Tingkatkan ke Pro untuk foto dan ekspor tak terbatas, dan lainnya.',
+  settingsDescPro: 'Terima kasih telah mendukung Repolog!',
+
   // --- Pro Screen (Paywall) ---
   paywallHeaderTitle: 'Repolog Pro',
   paywallHeroSubtitle: 'Buat laporan foto yang jelas dan ekspor PDF berkualitas dengan lebih sedikit batasan.',
