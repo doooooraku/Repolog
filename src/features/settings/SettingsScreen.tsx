@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Linking,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -44,6 +46,11 @@ const LANGUAGE_OPTIONS: { code: Lang; labelKey: TranslationKey }[] = [
 
 const toLangTestId = (code: string) => code.toLowerCase().replace(/-/g, '_');
 
+const SUBSCRIPTION_FALLBACK_URL = Platform.select({
+  ios: 'https://apps.apple.com/account/subscriptions',
+  android: 'https://play.google.com/store/account/subscriptions',
+}) ?? 'https://play.google.com/store/account/subscriptions';
+
 export default function SettingsScreen() {
   const router = useRouter();
   const { t, lang, setLang } = useTranslation();
@@ -53,6 +60,13 @@ export default function SettingsScreen() {
   const setIncludeLocation = useSettingsStore((s) => s.setIncludeLocation);
   const themeMode = useSettingsStore((s) => s.themeMode);
   const setThemeMode = useSettingsStore((s) => s.setThemeMode);
+
+  const isPro = useProStore((s) => s.isPro);
+  const planType = useProStore((s) => s.planType);
+  const expirationDate = useProStore((s) => s.expirationDate);
+  const managementURL = useProStore((s) => s.managementURL);
+  const initPro = useProStore((s) => s.init);
+  const refreshPro = useProStore((s) => s.refresh);
   const restorePurchases = useProStore((s) => s.restore);
 
   const [showLanguages, setShowLanguages] = useState(false);
@@ -61,6 +75,34 @@ export default function SettingsScreen() {
 
   const currentLanguageLabel = ENDONYMS[lang] ?? lang;
   const legalLinks = useMemo(() => getLegalLinks(), []);
+
+  useEffect(() => {
+    void initPro();
+    refreshPro().catch(() => null);
+  }, [initPro, refreshPro]);
+
+  const planLabel = useMemo(() => {
+    if (!isPro) return t.settingsPlanFree;
+    if (planType === 'monthly') return t.paywallPlanMonthlyTitle;
+    if (planType === 'yearly') return t.paywallPlanYearlyTitle;
+    if (planType === 'lifetime') return t.paywallPlanLifetimeTitle;
+    return t.paywallProLabel;
+  }, [isPro, planType, t]);
+
+  const renewalLabel = useMemo(() => {
+    if (!isPro) return null;
+    if (planType === 'lifetime' || !expirationDate) return t.settingsLifetimeAccess;
+    try {
+      const formatted = new Date(expirationDate).toLocaleDateString(lang, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+      return t.settingsRenewsOn.replace('{date}', formatted);
+    } catch {
+      return t.settingsRenewsOn.replace('{date}', expirationDate);
+    }
+  }, [isPro, planType, expirationDate, lang, t]);
 
   const handleRestore = async () => {
     if (restoring) return;
@@ -97,6 +139,22 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleManageSubscription = async () => {
+    const url = managementURL ?? SUBSCRIPTION_FALLBACK_URL;
+    const opened = await Linking.canOpenURL(url).then((can) => (can ? Linking.openURL(url).then(() => true) : false)).catch(() => false);
+    if (!opened) {
+      Alert.alert(t.settingsManageSubFailed);
+    }
+  };
+
+  const proBenefits = [
+    t.settingsProBenefitPhotos,
+    t.settingsProBenefitPdf,
+    t.settingsProBenefitLayout,
+    t.settingsProBenefitWatermark,
+    t.settingsProBenefitAds,
+  ];
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.screenBgAlt }]} edges={['top']}>
       <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.screenBgAlt, paddingBottom: 40 + insets.bottom }]} testID="e2e_settings_screen" keyboardShouldPersistTaps="handled">
@@ -107,6 +165,7 @@ export default function SettingsScreen() {
           <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>{t.settings}</Text>
         </View>
 
+        {/* --- General --- */}
         <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.settingsSectionGeneral}</Text>
           <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.languageChange}</Text>
@@ -152,6 +211,7 @@ export default function SettingsScreen() {
           )}
         </View>
 
+        {/* --- Theme --- */}
         <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.theme}</Text>
           <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.themeDesc}</Text>
@@ -180,6 +240,7 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* --- Privacy --- */}
         <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.settingsSectionPrivacy}</Text>
           <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.includeLocationHelp}</Text>
@@ -203,21 +264,68 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
 
+        {/* --- Purchases --- */}
         <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.settingsSectionPurchases}</Text>
+
+          <View style={styles.rowBetween}>
+            <Text style={[styles.valueText, { color: colors.textMuted }]}>{t.settingsCurrentPlan}</Text>
+            <Text style={[styles.valueText, { color: colors.textPrimary, fontWeight: '600' }]}>{planLabel}</Text>
+          </View>
+
+          {renewalLabel && (
+            <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{renewalLabel}</Text>
+          )}
+
+          <Text style={[styles.sectionBody, { color: colors.textMuted }]}>
+            {isPro ? t.settingsDescPro : t.settingsDescFree}
+          </Text>
+
+          {!isPro && (
+            <View style={styles.benefitList}>
+              {proBenefits.map((benefit) => (
+                <Text key={benefit} style={[styles.sectionBody, { color: colors.textMuted }]}>
+                  {`\u2022 ${benefit}`}
+                </Text>
+              ))}
+            </View>
+          )}
+
+          {!isPro && (
+            <Pressable
+              testID="e2e_view_pro_plans"
+              onPress={() => router.push('/pro')}
+              style={[styles.primaryButton, { backgroundColor: colors.primaryBg }]}>
+              <Text style={[styles.primaryButtonText, { color: colors.primaryText }]}>{t.settingsViewProPlans}</Text>
+            </Pressable>
+          )}
+
+          {isPro && planType !== 'lifetime' && (
+            <>
+              <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.settingsManageSubDesc}</Text>
+              <Pressable
+                testID="e2e_manage_subscription"
+                onPress={() => { void handleManageSubscription(); }}
+                style={[styles.secondaryButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }]}>
+                <Text style={[styles.secondaryButtonText, { color: colors.textPrimary }]}>{t.manageSubscription}</Text>
+              </Pressable>
+            </>
+          )}
+
           <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.restoreDesc}</Text>
           <Pressable
             onPress={handleRestore}
-            style={[styles.primaryButton, { backgroundColor: colors.primaryBg }, restoring && styles.disabledButton]}
+            style={[styles.secondaryButton, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, restoring && styles.disabledButton]}
             disabled={restoring}>
             {restoring ? (
-              <ActivityIndicator color={colors.primaryText} />
+              <ActivityIndicator />
             ) : (
-              <Text style={[styles.primaryButtonText, { color: colors.primaryText }]}>{t.restore}</Text>
+              <Text style={[styles.secondaryButtonText, { color: colors.textPrimary }]}>{t.restore}</Text>
             )}
           </Pressable>
         </View>
 
+        {/* --- Backup --- */}
         <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.settingsSectionBackup}</Text>
           <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.settingsBackupDesc}</Text>
@@ -226,6 +334,7 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
 
+        {/* --- Legal --- */}
         <View style={[styles.section, { backgroundColor: colors.surfaceBg, borderColor: colors.borderLight }]}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.legalSectionTitle}</Text>
           <Text style={[styles.sectionBody, { color: colors.textMuted }]}>{t.settingsLegalDesc}</Text>
@@ -367,5 +476,8 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.6,
+  },
+  benefitList: {
+    gap: 4,
   },
 });

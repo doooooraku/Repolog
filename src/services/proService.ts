@@ -9,7 +9,7 @@ import Purchases, {
   type PurchasesStoreProduct,
 } from 'react-native-purchases';
 
-import type { ProState } from '@/src/types/models';
+import type { PlanKind, ProState } from '@/src/types/models';
 import { IAP_DEBUG } from '@/src/core/debug';
 
 export type PlanType = 'monthly' | 'yearly' | 'lifetime';
@@ -55,12 +55,28 @@ async function saveState(state: ProState) {
   await SecureStore.setItemAsync(PRO_STATE_KEY, JSON.stringify(state));
 }
 
+function derivePlanType(productId: string | undefined, hasExpiration: boolean): PlanKind | null {
+  if (!productId) return null;
+  if (!hasExpiration) return 'lifetime';
+  const id = productId.toLowerCase();
+  if (id.includes('lifetime') || id.includes('lt')) return 'lifetime';
+  if (id.includes('annual') || id.includes('yearly') || id.includes('year')) return 'yearly';
+  if (id.includes('monthly') || id.includes('month')) return 'monthly';
+  return null;
+}
+
 function toProState(info: CustomerInfo): ProState {
-  const isPro = Boolean(info.entitlements.active[ENTITLEMENT_ID]);
+  const entitlement = info.entitlements.active[ENTITLEMENT_ID];
+  const isPro = Boolean(entitlement);
   return {
     isPro,
     anonUserId: info.originalAppUserId ?? null,
     lastCheckAt: new Date().toISOString(),
+    planType: isPro
+      ? derivePlanType(entitlement?.productIdentifier, entitlement?.expirationDate != null)
+      : null,
+    expirationDate: entitlement?.expirationDate ?? null,
+    managementURL: info.managementURL ?? null,
   };
 }
 
@@ -143,7 +159,7 @@ async function getPriceStrings(): Promise<{ monthly?: string; yearly?: string; l
 }
 
 /** Exported for unit testing only. */
-export { toProState as _toProState, findPackage as _findPackage };
+export { toProState as _toProState, findPackage as _findPackage, derivePlanType as _derivePlanType };
 
 export const proService = {
   /** Register a listener that fires whenever RevenueCat delivers updated CustomerInfo. */

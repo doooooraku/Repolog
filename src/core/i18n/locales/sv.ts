@@ -28,6 +28,22 @@ const dict = {
   restoreFailed: 'Misslyckades med att återställa köp.',
   restoreDesc: 'Återställ köp som gjorts med detta konto.',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: 'Nuvarande plan',
+  settingsPlanFree: 'Gratis',
+  settingsRenewsOn: 'Förnyas {date}',
+  settingsLifetimeAccess: 'Livstidsåtkomst',
+  settingsViewProPlans: 'Visa Pro-planer',
+  settingsManageSubDesc: 'Öppnar butikens sida för prenumerationshantering.',
+  settingsManageSubFailed: 'Kunde inte öppna prenumerationshantering.',
+  settingsProBenefitPhotos: 'Obegränsade foton per rapport',
+  settingsProBenefitPdf: 'Obegränsad PDF-export',
+  settingsProBenefitLayout: 'Export i stort format',
+  settingsProBenefitWatermark: 'Inget vattenmärke',
+  settingsProBenefitAds: 'Inga annonser',
+  settingsDescFree: 'Uppgradera till Pro för obegränsade foton, exporter och mer.',
+  settingsDescPro: 'Tack för att du stödjer Repolog!',
+
   // --- Pro Screen (Paywall) ---
   paywallHeaderTitle: 'Repolog Pro',
   paywallHeroSubtitle: 'Skapa tydliga fotorapporter och exportera snygga PDF:er med färre begränsningar.',

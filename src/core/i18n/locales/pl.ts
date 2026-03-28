@@ -37,6 +37,23 @@ const dict = {
   legalOpenFailed: 'Nie udało się otworzyć linku prawnego.',
   restore: 'Przywróć zakupy',
   restoreDesc: 'Przywróć zakupy wykonane na tym koncie.',
+
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: 'Aktualny plan',
+  settingsPlanFree: 'Bezpłatny',
+  settingsRenewsOn: 'Odnawia się {date}',
+  settingsLifetimeAccess: 'Dożywotni dostęp',
+  settingsViewProPlans: 'Zobacz plany Pro',
+  settingsManageSubDesc: 'Otwiera stronę zarządzania subskrypcją w sklepie.',
+  settingsManageSubFailed: 'Nie udało się otworzyć zarządzania subskrypcją.',
+  settingsProBenefitPhotos: 'Nieograniczone zdjęcia na raport',
+  settingsProBenefitPdf: 'Nieograniczony eksport PDF',
+  settingsProBenefitLayout: 'Eksport w dużym formacie',
+  settingsProBenefitWatermark: 'Bez znaku wodnego',
+  settingsProBenefitAds: 'Bez reklam',
+  settingsDescFree: 'Ulepsz do Pro: nieograniczone zdjęcia, eksporty i więcej.',
+  settingsDescPro: 'Dziękujemy za wsparcie Repolog!',
+
   restoreSuccess: 'Historia zakupów została przywrócona.',
   restoreNotFound: 'Nie znaleziono zakupów do przywrócenia.',
   restoreFailed: 'Nie udało się przywrócić zakupów.',

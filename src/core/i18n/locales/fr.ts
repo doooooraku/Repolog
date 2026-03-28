@@ -28,6 +28,22 @@ const dict = {
   restoreFailed: 'Échec de la restauration des achats.',
   restoreDesc: 'Restaurer les achats effectués avec ce compte.',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: 'Plan actuel',
+  settingsPlanFree: 'Gratuit',
+  settingsRenewsOn: 'Renouvellement le {date}',
+  settingsLifetimeAccess: 'Accès à vie',
+  settingsViewProPlans: 'Voir les plans Pro',
+  settingsManageSubDesc: 'Ouvre la page de gestion d\u2019abonnement du store.',
+  settingsManageSubFailed: 'Impossible d\u2019ouvrir la gestion d\u2019abonnement.',
+  settingsProBenefitPhotos: 'Photos illimitées par rapport',
+  settingsProBenefitPdf: 'Exports PDF illimités',
+  settingsProBenefitLayout: 'Export en grand format',
+  settingsProBenefitWatermark: 'Sans filigrane',
+  settingsProBenefitAds: 'Sans publicité',
+  settingsDescFree: 'Passez à Pro pour des photos et exports illimités, et plus encore.',
+  settingsDescPro: 'Merci de soutenir Repolog\u00a0!',
+
   // --- Pro Screen (Paywall) ---
   paywallHeaderTitle: 'Repolog Pro',
   paywallHeroSubtitle: 'Créez des rapports photo clairs et exportez des PDF soignés avec moins de limites.',

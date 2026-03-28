@@ -26,6 +26,22 @@ const baseEn = {
   restoreFailed: 'Failed to restore purchases.',
   restoreDesc: 'Restore purchases made with this account.',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: 'Current plan',
+  settingsPlanFree: 'Free',
+  settingsRenewsOn: 'Renews on {date}',
+  settingsLifetimeAccess: 'Lifetime access',
+  settingsViewProPlans: 'View Pro Plans',
+  settingsManageSubDesc: 'Opens your store\u2019s subscription management page.',
+  settingsManageSubFailed: 'Failed to open subscription management.',
+  settingsProBenefitPhotos: 'Unlimited photos per report',
+  settingsProBenefitPdf: 'Unlimited PDF exports',
+  settingsProBenefitLayout: 'Large layout export',
+  settingsProBenefitWatermark: 'No watermark',
+  settingsProBenefitAds: 'No ads',
+  settingsDescFree: 'Upgrade to Pro for unlimited photos, exports, and more.',
+  settingsDescPro: 'Thank you for supporting Repolog!',
+
   // --- Settings (Sound & Info) ---
 
   // --- Pro Screen (Paywall) ---

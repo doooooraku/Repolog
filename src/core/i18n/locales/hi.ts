@@ -28,6 +28,22 @@ const dict = {
   restoreFailed: 'खरीद बहाल करने में विफल।',
   restoreDesc: 'इस खाते की खरीदारी बहाल करें।',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: 'वर्तमान प्लान',
+  settingsPlanFree: 'मुफ़्त',
+  settingsRenewsOn: 'नवीनीकरण तिथि: {date}',
+  settingsLifetimeAccess: 'आजीवन एक्सेस',
+  settingsViewProPlans: 'Pro प्लान देखें',
+  settingsManageSubDesc: 'स्टोर का सदस्यता प्रबंधन पेज खोलता है।',
+  settingsManageSubFailed: 'सदस्यता प्रबंधन खोलने में विफल।',
+  settingsProBenefitPhotos: 'प्रति रिपोर्ट असीमित फ़ोटो',
+  settingsProBenefitPdf: 'असीमित PDF निर्यात',
+  settingsProBenefitLayout: 'बड़ा लेआउट निर्यात',
+  settingsProBenefitWatermark: 'वॉटरमार्क नहीं',
+  settingsProBenefitAds: 'विज्ञापन नहीं',
+  settingsDescFree: 'असीमित फ़ोटो, निर्यात और बहुत कुछ के लिए Pro में अपग्रेड करें।',
+  settingsDescPro: 'Repolog का समर्थन करने के लिए धन्यवाद!',
+
   // --- Pro Screen (Paywall) ---
   paywallHeaderTitle: 'Repolog Pro',
   paywallHeroSubtitle: 'स्पष्ट फ़ोटो रिपोर्ट बनाएँ और कम सीमाओं के साथ पॉलिश PDF निर्यात करें।',

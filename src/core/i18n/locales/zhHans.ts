@@ -27,6 +27,22 @@ const dict = {
   restoreFailed: '恢复购买失败。',
   restoreDesc: '恢复此账户的购买记录。',
 
+  // --- Settings Purchases (plan status) ---
+  settingsCurrentPlan: '当前方案',
+  settingsPlanFree: '免费',
+  settingsRenewsOn: '续期日期：{date}',
+  settingsLifetimeAccess: '永久使用',
+  settingsViewProPlans: '查看 Pro 方案',
+  settingsManageSubDesc: '打开商店的订阅管理页面。',
+  settingsManageSubFailed: '无法打开订阅管理。',
+  settingsProBenefitPhotos: '每份报告照片无限制',
+  settingsProBenefitPdf: 'PDF 导出无限制',
+  settingsProBenefitLayout: '大尺寸布局导出',
+  settingsProBenefitWatermark: '无水印',
+  settingsProBenefitAds: '无广告',
+  settingsDescFree: '升级至 Pro，畅享无限照片、导出等更多功能。',
+  settingsDescPro: '感谢您支持 Repolog！',
+
   // --- Pro Screen (Paywall) ---
   paywallHeaderTitle: 'Repolog Pro',
   paywallHeroSubtitle: '创建清晰的现场照片报告，轻松导出精美PDF，限制更少。',
