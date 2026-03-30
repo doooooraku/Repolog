@@ -52,7 +52,10 @@ app-example
 .tamagui/
 
 # Debug artifacts (screenshots, crash logs)
-docs/reference/Debug/
+.debug-sessions/
 
 # Windows Zone.Identifier metadata files
 *:Zone.Identifier
+
+# Store screenshot raw captures (Maestro output)
+screenshots/

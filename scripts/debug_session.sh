@@ -17,7 +17,7 @@
 #   - スマホがUSB接続され、USBデバッグが許可されていること
 #
 # セッション成果物（stop 時に自動生成）:
-#   docs/reference/Debug/session_YYYYMMDD_HHMMSS/
+#   .debug-sessions/session_YYYYMMDD_HHMMSS/
 #   ├── before.png       操作前スクリーンショット
 #   ├── after.png        操作後スクリーンショット
 #   ├── logcat.log       セッション中の全ログ
@@ -32,7 +32,7 @@ set -uo pipefail
 PACKAGE="com.dooooraku.repolog"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-DEBUG_DIR="$PROJECT_ROOT/docs/reference/Debug"
+DEBUG_DIR="$PROJECT_ROOT/.debug-sessions"
 SESSION_FILE="/tmp/repolog_debug_session"
 DEVICE_RECORDING_PATH="/sdcard/repolog_debug_recording.mp4"
 
@@ -358,7 +358,7 @@ cmd_help() {
   echo "  1. bash scripts/debug_session.sh start"
   echo "  2. （アプリを操作する）"
   echo "  3. bash scripts/debug_session.sh stop"
-  echo "  4. docs/reference/Debug/session_*/ を確認"
+  echo "  4. .debug-sessions/session_*/ を確認"
 }
 
 # =============================================================================

@@ -113,7 +113,7 @@ bash scripts/monitor_repolog.sh
 #   --help      ヘルプ
 ```
 
-クラッシュ検出時に `docs/reference/Debug/` にログが自動保存される。
+クラッシュ検出時に `.debug-sessions/` にログが自動保存される。
 
 ---
 
@@ -201,7 +201,7 @@ pidcat com.dooooraku.repolog
 env -u ADB_SERVER_SOCKET adb exec-out screencap -p > screenshot.png
 
 # タイムスタンプ付き（Issue/PR 添付用）
-env -u ADB_SERVER_SOCKET adb exec-out screencap -p > docs/reference/Debug/screenshot_$(date +%Y%m%d_%H%M%S).png
+env -u ADB_SERVER_SOCKET adb exec-out screencap -p > .debug-sessions/screenshot_$(date +%Y%m%d_%H%M%S).png
 ```
 
 ### 7-2. 画面ミラーリング・録画（scrcpy）
@@ -247,7 +247,7 @@ bash scripts/debug_session.sh status
 
 ### 8-3. 成果物
 
-stop 時に `docs/reference/Debug/session_YYYYMMDD_HHMMSS/` に自動生成:
+stop 時に `.debug-sessions/session_YYYYMMDD_HHMMSS/` に自動生成:
 
 | ファイル | 内容 |
 |---------|------|
@@ -313,9 +313,9 @@ env -u ADB_SERVER_SOCKET adb install -r dist/repolog-dev.apk
 
 | 種類 | 保存先 |
 |------|--------|
-| 自動保存（monitor_repolog.sh） | `docs/reference/Debug/` |
-| デバッグセッション（debug_session.sh） | `docs/reference/Debug/session_YYYYMMDD_HHMMSS/` |
-| スクリーンショット | `docs/reference/Debug/` または任意 |
+| 自動保存（monitor_repolog.sh） | `.debug-sessions/` |
+| デバッグセッション（debug_session.sh） | `.debug-sessions/session_YYYYMMDD_HHMMSS/` |
+| スクリーンショット | `.debug-sessions/` または任意 |
 | 画面録画（scrcpy） | コマンド引数で指定 |
 | 手動保存 | プロジェクトルート（任意） |
 | バグレポート | 指定したパス |

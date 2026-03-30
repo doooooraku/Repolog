@@ -6,6 +6,10 @@
 
 ## ファイルマップ
 
+### 🔰 初めての方の読む順番
+
+1. `how-to/quickstart.md` → 2. `how-to/development/coding_rules.md` → 3. `how-to/workflow/git_workflow.md` → 4. `reference/basic_spec.md`
+
 ```
 docs/
 ├── README.md                 ← このファイル（ナビゲーション）
@@ -20,11 +24,14 @@ docs/
 │   ├── glossary.md                用語辞書
 │   ├── pdf_template.md            PDF HTML/CSS テンプレ（SSoT）
 │   ├── wireframes.md              画面設計ワイヤーフレーム
-│   ├── UI_Figma/                  Figma 連携・画面ノード台帳
-│   └── Debug/                     デバッグ成果物（ログ/画像/動画。通常はgit管理外）
+│   ├── marketing-text.md          ストアスクリーンショット文言（19言語）
+│   ├── lessons.md                 開発教訓ログ
+│   └── UI_Figma/                  Figma 連携・画面ノード台帳
+│       ├── README.md
+│       └── screen_node_ledger.md
 │
 ├── adr/                      ── なぜそうしたか（意思決定ログ）
-│   ├── ADR-0001  初期アーキテクチャ
+│   ├── ADR-0001  初期アーキテクチャ（Superseded）
 │   ├── ADR-0002  PDFフォント選定
 │   ├── ADR-0003  AdMob バナー配置
 │   ├── ADR-0004  バックアップ ZIP 形式
@@ -32,40 +39,55 @@ docs/
 │   ├── ADR-0006  AsyncStorage/SecureStore 使い分け
 │   ├── ADR-0007  バックアップ Import 追記戦略
 │   ├── ADR-0008  AdMob UMP 同意プリフライト
-│   ├── ADR-0009  デバッグワークフロー v2
 │   └── ADR-0010  iOS暗号化輸出コンプライアンス
 │
 ├── how-to/                   ── 手順・レシピ
+│   ├── quickstart.md              セットアップ（30分で動く）
 │   ├── development/               ビルド・実機・コーディング
 │   │   ├── android_build.md
 │   │   ├── android_debug.md
 │   │   ├── android_device.md
 │   │   ├── ios_build.md
-│   │   └── coding_rules.md
+│   │   ├── coding_rules.md
+│   │   ├── admob_advertising_setup.md
+│   │   ├── dev_vs_preview_builds.md
+│   │   └── scrcpy_screen_mirror.md
 │   ├── workflow/                  開発〜リリースの流れ
 │   │   ├── whole_workflow.md        Issue→PR→CI→Release 全体像
 │   │   ├── git_workflow.md          ブランチ/コミット規約
-│   │   ├── google_play_release.md   Google Play公開フロー（AAB→内部テスト→製品版）
+│   │   ├── google_play_release.md   Google Play公開フロー
+│   │   ├── ios_testflight_release.md  TestFlight CI/CDセットアップ
 │   │   ├── release_notes_template.md
 │   │   ├── backup_restore.md        バックアップ運用と障害対応
-│   │   └── figma_mcp_prompt.md
+│   │   ├── figma_mcp_prompt.md
+│   │   └── store_screenshots.md     ストアスクリーンショット撮影
 │   ├── testing/                   テスト・ベンチマーク
 │   │   ├── testing.md             テスト戦略と実行手順
-│   │   ├── pdf_font_benchmark.md  フォント性能計測
-│   │   └── benchmarks/            計測結果 (JSON/MD)
-│   │       └── debug_analysis_20260307_log_video_image.md
-│   │       └── user_feedback_improvement_analysis_20260308.md
+│   │   └── pdf_font_benchmark.md  フォント性能計測
 │   ├── i18n/                      多言語
-│   │   ├── i18n_key_inventory.md
-│   │   └── i18n_pl_fallback_audit.md
 │   └── archive/                   完了済み / 一時的
 │       ├── legal_pages_github_pages.md
 │       └── figma_ui_issue_pr_review.md
+│
+├── reports/                  ── 自動生成レポート（pnpm i18n:audit 等の出力）
+│   ├── i18n/                      i18n 監査結果
+│   └── benchmarks/                性能計測結果
+│
+├── store-listing/            ── ストア掲載資料
+│   ├── data-safety/               Google Play データ安全性申告
+│   ├── iarc-rating/               IARC コンテンツレーティング
+│   └── android/                   Google Play 掲載文・スクリーンショット
+│       ├── en-US/
+│       ├── ja-JP/
+│       ├── screenshots/
+│       └── feature-graphic/
 │
 ├── index.html                ── GitHub Pages: 利用規約ルーター
 ├── privacy/index.html        ── GitHub Pages: プライバシーポリシー
 └── terms/index.html          ── GitHub Pages: 利用規約
 ```
+
+> デバッグ成果物（ログ/画像/動画）は `.debug-sessions/` に保存（gitignore 対象）。
 
 ---
 
@@ -79,7 +101,7 @@ docs/
 | 「なぜそうしたか」が議論になる | `adr/ADR-XXXX.md` を追加 |
 | 合否条件が変わる | テスト (Jest / Maestro) を追加/更新 |
 | 運用手順が変わる | `how-to/` の該当ファイル |
-| 障害調査の結果を残す | `how-to/testing/benchmarks/debug_analysis_*.md` |
+| 障害調査の結果を残す | `reports/benchmarks/` |
 
 > PRテンプレ (`.github/pull_request_template.md`) のセクション8にも同じチェックリストがあります。
 

@@ -26,10 +26,10 @@ PACKAGE="com.dooooraku.repolog"
 
 # LOG_DIR: クラッシュログの保存先ディレクトリ
 # $(dirname "$0") = このスクリプトが置かれているフォルダ
-# /../docs/reference/Debug = プロジェクトのdocs配下に保存
+# /../.debug-sessions = プロジェクトルートの .debug-sessions に保存（gitignore対象）
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-LOG_DIR="$PROJECT_ROOT/docs/reference/Debug"
+LOG_DIR="$PROJECT_ROOT/.debug-sessions"
 
 # --- 誤検知除外パターン -----------------------------------------------------
 # システムイベントがパッケージ名を含むが、アプリのクラッシュではないもの。
