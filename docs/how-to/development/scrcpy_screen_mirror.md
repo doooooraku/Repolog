@@ -159,10 +159,10 @@ env -u ADB_SERVER_SOCKET adb exec-out screencap -p > "screenshot_$(date +%Y%m%d_
 ### 3-3. プロジェクト内に保存（Issue/PR 添付用）
 
 ```bash
-env -u ADB_SERVER_SOCKET adb exec-out screencap -p > docs/reference/Debug/screenshot_$(date +%Y%m%d_%H%M%S).png
+env -u ADB_SERVER_SOCKET adb exec-out screencap -p > .debug-sessions/screenshot_$(date +%Y%m%d_%H%M%S).png
 ```
 
-> `docs/reference/Debug/` はクラッシュログの自動保存先としても使用されている。
+> `.debug-sessions/` はクラッシュログの自動保存先としても使用されている。
 
 ---
 

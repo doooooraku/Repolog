@@ -519,7 +519,7 @@ bash scripts/monitor_repolog.sh
 - bash: シェルスクリプトを実行
 - scripts/monitor_repolog.sh: Repolog 専用の自動監視スクリプト
 - adb logcat を内部で実行し、クラッシュ・エラーキーワードを検出
-- 検出時に自動で docs/reference/Debug/ にログファイルを保存
+- 検出時に自動で .debug-sessions/ にログファイルを保存
 - 放置しておくだけでクラッシュが自動記録される
 ```
 
@@ -530,7 +530,7 @@ bash scripts/monitor_repolog.sh --crash  # クラッシュバッファのみ
 bash scripts/monitor_repolog.sh --help   # ヘルプ表示
 ```
 
-**出力先:** `docs/reference/Debug/`
+**出力先:** `.debug-sessions/`
 
 | ファイル | 内容 |
 |---------|------|

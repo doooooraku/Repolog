@@ -9,7 +9,7 @@
   - 画像添付（写真リスト並び替え時の挙動）
   - `C:\Users\doooo\Downloads\20260307_2111_カンフル剤_Repolog.pdf`
   - `C:\Users\doooo\Downloads\20260307_2111_カンフル剤_Repolog (1).pdf`
-  - `docs/reference/Debug/session_20260307_211041/logcat.log`
+  - `.debug-sessions/session_20260307_211041/logcat.log`
 
 ---
 
