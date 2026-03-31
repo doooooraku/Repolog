@@ -67,18 +67,18 @@ export function buildHtml(opts: BuildHtmlOptions): string {
   .text-area {
     flex-shrink: 0;
     width: 100%;
-    padding: 5vh 8vw 0 8vw;
+    padding: 2.5vh 6vw 0 6vw;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 12vh;
-    max-height: 18vh;
+    min-height: 8vh;
+    max-height: 12vh;
   }
 
   #marketing-text {
     color: #1A1A1A;
     font-weight: 700;
-    font-size: 4.5vw;
+    font-size: 6vw;
     line-height: 1.35;
     text-align: center;
     word-break: keep-all;
@@ -92,19 +92,24 @@ export function buildHtml(opts: BuildHtmlOptions): string {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 2vh 0 3vh 0;
+    padding: 1vh 0 1vh 0;
   }
 
-  .screenshot-area img {
-    height: 78vh;
-    width: auto;
-    max-width: 85vw;
+  .screenshot-frame {
+    width: 92vw;
+    height: 85vh;
     border-radius: 2.5vw;
-    object-fit: contain;
+    overflow: hidden;
     box-shadow:
       0 0.3vh 0.8vh rgba(0, 0, 0, 0.06),
       0 0.8vh 2vh rgba(0, 0, 0, 0.08),
       0 1.5vh 4vh rgba(0, 0, 0, 0.10);
+  }
+
+  .screenshot-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 </style>
 </head>
@@ -114,7 +119,9 @@ export function buildHtml(opts: BuildHtmlOptions): string {
       <p id="marketing-text">${escapeHtml(marketingText)}</p>
     </div>
     <div class="screenshot-area">
-      <img src="${screenshotBase64}" alt="app screenshot" />
+      <div class="screenshot-frame">
+        <img src="${screenshotBase64}" alt="app screenshot" />
+      </div>
     </div>
   </div>
 
@@ -125,10 +132,10 @@ export function buildHtml(opts: BuildHtmlOptions): string {
       var area = el.parentElement;
       var maxH = area.clientHeight;
       var vw = window.innerWidth / 100;
-      var size = 4.5; // vw units
+      var size = 6; // vw units
       el.style.fontSize = size * vw + 'px';
 
-      while (el.scrollHeight > maxH && size > 2.5) {
+      while (el.scrollHeight > maxH && size > 3) {
         size -= 0.15;
         el.style.fontSize = size * vw + 'px';
       }
