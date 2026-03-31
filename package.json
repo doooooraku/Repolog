@@ -28,7 +28,8 @@
     "build:android:apk:cloud": "npx eas-cli@latest build -p android --profile preview-cloud-apk",
     "build:android:aab:local": "npx eas-cli@latest build -p android --profile production --local --output dist/repolog-production.aab",
     "build:android:aab:cloud": "npx eas-cli@latest build -p android --profile production",
-    "install:device": "adb install -r \"$(wslpath -w dist/repolog-preview-local.apk)\""
+    "install:device": "adb install -r \"$(wslpath -w dist/repolog-preview-local.apk)\"",
+    "store-screenshots": "npx tsx scripts/store-screenshots/generate.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -108,6 +109,9 @@
     "prettier": "^3.6.2",
     "react-test-renderer": "19.1.0",
     "ts-jest": "^29.4.5",
+    "playwright": "1.52.0",
+    "sharp": "^0.33.0",
+    "tsx": "^4.19.0",
     "typescript": "~5.9.2"
   },
   "jest": {
