@@ -57,8 +57,8 @@ pnpm pdf:font:benchmark
 node --expose-gc scripts/pdf-font-benchmark.mjs \
   --iterations 9 \
   --sample-image assets/images/icon.png \
-  --out-json docs/how-to/testing/benchmarks/pdf_font_benchmark.custom.json \
-  --out-md docs/how-to/testing/benchmarks/pdf_font_benchmark.custom.md
+  --out-json docs/reports/benchmarks/pdf_font_benchmark.custom.json \
+  --out-md docs/reports/benchmarks/pdf_font_benchmark.custom.md
 ```
 
 各オプションの意味:
@@ -77,8 +77,8 @@ node --expose-gc scripts/pdf-font-benchmark.mjs \
 
 デフォルトでは次に保存されます。
 
-- `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.json`
-- `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.md`
+- `docs/reports/benchmarks/pdf_font_benchmark.latest.json`
+- `docs/reports/benchmarks/pdf_font_benchmark.latest.md`
 
 ---
 

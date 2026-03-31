@@ -68,7 +68,7 @@
 - [x] PDF生成パフォーマンス計測（Issue #72）
 
 ### 2026-02-10 Follow-up結果（Issue #72）
-- 実測結果（`docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.md`）:
+- 実測結果（`docs/reports/benchmarks/pdf_font_benchmark.latest.md`）:
   - 短文シナリオ：`all_fonts` 66.93MB → `script_subset` 2.61MB（font payload）
   - 多言語シナリオ：`all_fonts` 66.93MB → `script_subset` 29.14MB
   - warm中央値：短文で約96.8%短縮、多言語で約54.7%短縮
@@ -86,7 +86,7 @@
   - `PDF_FONT_SUBSET_EXPERIMENT` フラグを追加（`app.config.ts` の `extra`）
   - フラグON時のみ runtime script subset を試行
   - 未知スクリプト（判定対象外文字）が含まれる場合は all-fonts へ自動フォールバック
-- ベンチ再計測（`docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.md`）:
+- ベンチ再計測（`docs/reports/benchmarks/pdf_font_benchmark.latest.md`）:
   - 短文シナリオ: warm中央値 `all_fonts 33.19ms` → `script_subset 1.14ms`
   - 多写真シナリオ: 推定入力 `all_fonts 106.96MB` → `script_subset 42.64MB`
   - 多言語シナリオ: warm中央値 `all_fonts 32.69ms` → `script_subset 14.76ms`
@@ -121,7 +121,7 @@
 - Issue: #72
 - PR: (初期実装に含まれる)
 - Benchmark runbook: `docs/how-to/testing/pdf_font_benchmark.md`
-- Benchmark result: `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.md`
+- Benchmark result: `docs/reports/benchmarks/pdf_font_benchmark.latest.md`
 - External docs: https://scripts.sil.org/OFL
 
 ---

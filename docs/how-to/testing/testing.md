@@ -50,9 +50,7 @@ pnpm i18n:check
 pnpm config:check
 ```
 
-> `pnpm type-check` はアプリ本体を対象にします。  
-> `docs/reference/UI_Figma` は「Figma由来の別コード束」なので、ルートの型検査から除外しています。  
-> UI_Figma 側を編集したときは `docs/reference/UI_Figma` で個別に `npm run build` して確認します。
+> `pnpm type-check` はアプリ本体を対象にします。
 
 > もし「まだテストが1本も無い」状態なら  
 > まずは **最低限のテストを1本追加**するのが本筋。  
@@ -304,8 +302,8 @@ CIが落ちたステップだけを、まずローカルで叩く：
 # 1) 対象言語のフォールバック監査（標準）
 pnpm i18n:audit -- pl
 
-# 2) 監査結果を保存（PR添付用）
-pnpm i18n:audit -- pl --out docs/how-to/i18n/i18n_pl_fallback_audit.md
+# 2) 監査結果を保存（オンデマンド生成、CIではartifactとして出力）
+pnpm i18n:audit -- pl --out /tmp/i18n_pl_fallback_audit.md
 
 # 3) en.ts のキー棚卸し（使用中 / 未使用候補）
 pnpm i18n:inventory
@@ -313,7 +311,7 @@ pnpm i18n:inventory
 
 `pnpm i18n:inventory` は次と同じです。
 ```bash
-pnpm i18n:audit -- --inventory --out docs/how-to/i18n/i18n_key_inventory.md
+pnpm i18n:audit -- --inventory --out /tmp/i18n_key_inventory.md
 ```
 
 コマンドの意味:
@@ -323,10 +321,10 @@ pnpm i18n:audit -- --inventory --out docs/how-to/i18n/i18n_key_inventory.md
 - `--inventory`: `en.ts` キーを「使用中 / 未使用候補」に分類して出力する
 
 ### 6.2 監査成果物（正）
-- `docs/how-to/i18n/i18n_pl_fallback_audit.md`
-  - 対象言語で上書きされていないキー（フォールバック）を一覧化
-- `docs/how-to/i18n/i18n_key_inventory.md`
-  - `en.ts` の全キーを、次の3分類で一覧化
+- 監査レポートはオンデマンドで生成し、CIでは **Actions Artifact** として保存されます。
+- ローカル実行時は `--out` で任意のパスに出力してください（例: `/tmp/i18n_pl_fallback_audit.md`）。
+- フォールバック監査: 対象言語で上書きされていないキー（フォールバック）を一覧化
+- キー棚卸し: `en.ts` の全キーを、次の3分類で一覧化
   - `Used Keys (Direct)`：`t.key` 参照
   - `Used Keys (Dynamic)`：`labelKey` / `t['key']` 参照
   - `Unused Candidates`：コード参照が見つからないキー
@@ -340,7 +338,7 @@ pnpm i18n:audit -- --inventory --out docs/how-to/i18n/i18n_key_inventory.md
   - 実行者：該当PRの作者
   - レビュー責任：リリース担当（またはPRレビュアー）
 - 記録：
-  - PR本文に `i18n_pl_fallback_audit.md` と `i18n_key_inventory.md` のリンクを貼る
+  - PR本文に監査結果のサマリーを貼る（ローカル実行時は `--out` の出力を添付、CI実行時はArtifactリンクを貼る）
 
 ### 6.4 未使用候補キーの削除方針（段階削除）
 1. `Unused Candidates` に3回連続で出現し、かつ対応Issue/実装予定が無いキーを削除候補にする
@@ -554,16 +552,16 @@ pnpm pdf:font:benchmark
   - NodeのGC呼び出しを有効化し、cold run計測のノイズを減らす
 
 成果物（デフォルト）:
-- `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.json`
-- `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.md`
+- `docs/reports/benchmarks/pdf_font_benchmark.latest.json`
+- `docs/reports/benchmarks/pdf_font_benchmark.latest.md`
 
 追加オプション例:
 ```bash
 node --expose-gc scripts/pdf-font-benchmark.mjs \
   --iterations 9 \
   --sample-image assets/images/icon.png \
-  --out-json docs/how-to/testing/benchmarks/pdf_font_benchmark.custom.json \
-  --out-md docs/how-to/testing/benchmarks/pdf_font_benchmark.custom.md
+  --out-json docs/reports/benchmarks/pdf_font_benchmark.custom.json \
+  --out-md docs/reports/benchmarks/pdf_font_benchmark.custom.md
 ```
 
 オプションの意味:

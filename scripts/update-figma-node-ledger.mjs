@@ -10,7 +10,7 @@ const PRIORITY_ORDER = new Map([
   ['P3', 3],
 ]);
 
-const DEFAULT_LEDGER_PATH = 'docs/reference/UI_Figma/screen_node_ledger.md';
+const DEFAULT_LEDGER_PATH = 'docs/reference/screen_node_ledger.md';
 
 const parseArgs = (argv) => {
   const args = {

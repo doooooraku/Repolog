@@ -70,7 +70,7 @@ inject-locale.mjs <locale>
 
 ### マーケティングテキスト
 
-→ [`marketing-text.md`](../../reference/marketing-text.md) に一覧あり
+→ [`marketing-text.md`](../../store-listing/marketing-text.md) に一覧あり
 
 設計原則:
 - ペルソナ準拠: 現場作業者が日常で使う言葉を使用
@@ -93,7 +93,7 @@ scripts/store-screenshots/
 maestro/flows/
 └── store-screenshots.yaml         # 4画面撮影フロー（Dev Client対応済み）
 
-docs/reference/
+docs/store-listing/
 └── marketing-text.md              # 19言語マーケティングテキスト一覧
 
 docs/store-listing/android/screenshots/

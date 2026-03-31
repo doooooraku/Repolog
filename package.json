@@ -17,7 +17,7 @@
     "test:e2e": "maestro test maestro/flows",
     "i18n:audit": "node scripts/i18n-audit.mjs",
     "i18n:check": "node scripts/i18n-check.mjs",
-    "i18n:inventory": "node scripts/i18n-audit.mjs --inventory --out docs/how-to/i18n/i18n_key_inventory.md",
+    "i18n:inventory": "node scripts/i18n-audit.mjs --inventory",
     "verify": "pnpm lint && pnpm type-check && pnpm test && pnpm i18n:check && pnpm config:check",
     "config:check": "node scripts/config-check.mjs",
     "ump:consent:check": "node scripts/ump-consent-check.mjs",
