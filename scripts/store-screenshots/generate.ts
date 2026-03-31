@@ -23,7 +23,6 @@ import {
   SCREEN_MAP,
   RAW_DIR,
   STORE_DIR,
-  type ScreenKey,
 } from './lib/config.js';
 import { cropToBase64 } from './lib/postprocess.js';
 import { flattenAndVerify } from './lib/postprocess.js';
@@ -138,7 +137,7 @@ async function main() {
           continue;
         }
 
-        const marketingText = text[screen.key as ScreenKey];
+        const marketingText = text[screen.key as keyof typeof text];
 
         for (const store of storeNames) {
           const size = STORE_SIZES[store];
