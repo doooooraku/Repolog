@@ -1,13 +1,13 @@
 # ストアスクリーンショット生成手順（Apple App Store / Google Play）
 
-> ステータス: 運用中（Phase 1 + Phase 2 完了）
+> ステータス: 運用中（Phase 0 + Phase 1 + Phase 2 完了）
 > 初版: 2026-03-30 / 最終更新: 2026-03-31
 
-19言語 × 4画面 × 2ストア = 152枚のストア提出用スクリーンショットを生成する手順です。
-アプリUIが変わったとき・言語を追加したときに再実行してください。
+多言語 × 複数画面 × 2ストアのストア提出用スクリーンショットを自動生成する手順です。
+**アプリ非依存** — `screenshot-config.ts` を変更するだけで任意のアプリに適用できます。
 
 想定:
-- WSL2 (Ubuntu) + Pixel 8a 実機（ADB接続済み）
+- WSL2 (Ubuntu) + Android 実機（ADB接続済み）
 - Expo SDK 54 Dev Build（SCREENSHOT_MODE=1）
 - Maestro CLI インストール済み
 - Node.js 22.x（Metro bundler 用）
@@ -20,15 +20,29 @@
 ### ワークフローの全体像
 
 ```
-Phase 1: 撮影 (自動)               Phase 2: 合成 (自動)
-┌───────────────────────┐         ┌────────────────────────────────────┐
-│ Maestro + ADB          │         │ Playwright + Sharp                  │
-│ → raw スクショ 76枚     │────────►│ → Apple 用 76枚 (1320×2868)         │
-│   (screenshots/raw/)   │         │ → Google Play 用 76枚 (1080×1920)   │
-└───────────────────────┘         │   (screenshots/store/)              │
-                                  └────────────────────────────────────┘
-                                    ↑ コマンド1つ、約1分で完了
+Phase 0: テキスト生成        Phase 1: 撮影 (自動)          Phase 2: 合成 (自動)
+┌─────────────────────┐   ┌───────────────────────┐   ┌──────────────────────────┐
+│ Claude Code が        │   │ Maestro + ADB          │   │ Playwright + Sharp        │
+│ screenshot-config.ts │──►│ → raw スクショ N枚      │──►│ → Apple 用 (1320×2868)    │
+│ を基にテキスト生成    │   │   (screenshots/raw/)   │   │ → Google Play (1080×1920) │
+│ → marketing-text.ts  │   └───────────────────────┘   │   (screenshots/store/)    │
+└─────────────────────┘                                └──────────────────────────┘
 ```
+
+### アプリ固有の設定
+
+すべてのアプリ固有の値は **`scripts/store-screenshots/screenshot-config.ts`** に集約されている。
+別アプリに転用する場合は、このファイルだけを書き換える。
+
+| 設定項目 | 説明 | 例（Repolog） |
+|---|---|---|
+| `app` | アプリ名・パッケージID・説明 | Repolog, com.dooooraku.repolog |
+| `persona` | ターゲットユーザー・トーン | 現場作業者、実務的・簡潔 |
+| `screens` | 撮影する画面の定義 | Home, Editor上部, Editor下部, PDFプレビュー |
+| `textGuidelines` | テキスト生成のルール | 翻訳ではなく独立作成、ASO対応 |
+| `locales` | 対応言語リスト | 19言語 |
+| `localeDirMap` | ロケールコード→ディレクトリ名 | ja → ja_日本語 |
+| `capture` | クロップ値・撮影デバイス | 上56px/下32px, Pixel 8a |
 
 ### ストア仕様比較
 
@@ -45,14 +59,14 @@ Phase 1: 撮影 (自動)               Phase 2: 合成 (自動)
 
 > **ポイント:** Apple は 6.9" の画像さえあれば、6.7" / 6.5" / 6.1" / 5.5" は自動縮小される。
 
-### 撮影する4画面
+### 撮影する画面
 
-| # | 画面 | 内容 | マーケティングテキストの主旨 |
-|---|---|---|---|
-| 1 | Home | レポート一覧 + 写真カード | 記録がまとまる |
-| 2 | Editor（上部） | 基本情報・天気・位置情報 | すぐ完成する |
-| 3 | Editor（下部） | コメント・写真セクション | 証拠がまとまる |
-| 4 | PDFプレビュー | 表紙ビュー（スクロールなし） | 提出できるPDF |
+`screenshot-config.ts` の `screens` 配列で定義。各画面には以下が含まれる:
+- `id`: ファイル名（例: `01_home`）
+- `description`: 画面の内容説明
+- `marketingFocus`: マーケティングメッセージの方向性
+
+> 画面数・内容はアプリごとに異なる。`screenshot-config.ts` を変更すれば自動的にパイプライン全体に反映される。
 
 ### データ投入方式
 
@@ -77,21 +91,23 @@ inject-locale.mjs <locale>
 
 ### マーケティングテキスト
 
-→ [`marketing-text.md`](../../store-listing/marketing-text.md) に一覧あり
+`scripts/store-screenshots/data/marketing-text.ts` に格納。
+**Phase 0 で Claude Code が `screenshot-config.ts` を基に自動生成する。**
 
-設計原則:
-- ペルソナ準拠: 現場作業者が日常で使う言葉を使用
-- 画面対応: 各テキストはスクショの内容と1:1で対応
-- ASO意識: 各言語の建設/現場系検索キーワードを自然に含む
+設計原則（`screenshot-config.ts` の `textGuidelines` に定義）:
+- ペルソナ準拠: `persona.target` が日常で使う言葉を使用
+- 画面対応: 各テキストは `screens[].marketingFocus` と1:1で対応
+- ASO意識: 各言語の関連検索キーワードを自然に含む
 - 独立作成: 日本語からの翻訳ではなく各言語で独自に作成
 
 ### ファイル構成
 
 ```
 scripts/store-screenshots/
+├── screenshot-config.ts           # アプリ固有の設定（ペルソナ・画面定義・言語）★ここを変更
 ├── data/
-│   └── marketing-text.ts          # 19言語×4枚分のキャッチコピー（TypeScript）
-├── lib/                           # Phase 2: 合成スクリプト群
+│   └── marketing-text.ts          # Phase 0 で生成されるキャッチコピー
+├── lib/                           # Phase 2: 合成スクリプト群（汎用・変更不要）
 │   ├── config.ts                  # ストアサイズ・ロケール・パス定数
 │   ├── template.ts                # HTMLテンプレート生成（白背景+テキスト+角丸スクショ）
 │   ├── fonts.ts                   # ロケール別Noto Sans @font-face生成
@@ -125,16 +141,88 @@ screenshots/                       # .gitignore済み
 ## 0. 全体像
 
 ```
+[Phase 0] マーケティングテキスト生成（Claude Code が自律実行）
+    ↓ screenshot-config.ts を基に marketing-text.ts を生成
 [Step 1] 準備（初回のみ / APK未ビルド時のみ）
     ↓ .env設定 → Dev APK ビルド → インストール → Playwright + Sharp インストール
 [Step 2] Metro起動 + ADB接続確認
     ↓ Metro bundler起動 → ポートフォワーディング
-[Step 3] 撮影（Phase 1: 19言語一括 or 1言語ずつ）
-    ↓ データ注入 → Demo Mode → Maestro → raw PNG 76枚
+[Step 3] 撮影（Phase 1: 多言語一括 or 1言語ずつ）
+    ↓ データ注入 → Demo Mode → Maestro → raw PNG
 [Step 4] 合成（Phase 2: 自動）
-    ↓ pnpm store-screenshots → Apple 76枚 + Google Play 76枚 = 152枚
+    ↓ pnpm store-screenshots → Apple + Google Play
 [Step 5] 後片付け
 ```
+
+---
+
+## Phase 0: マーケティングテキスト生成
+
+> **実行者: Claude Code（自律実行）**
+> marketing-text.ts が既に存在し、テキスト更新が不要な場合はスキップ可能。
+
+### 0-1. screenshot-config.ts の確認・作成
+
+`scripts/store-screenshots/screenshot-config.ts` がアプリ固有の設定ファイル。
+以下の情報が定義されている:
+
+- **app**: アプリ名、パッケージID、説明文
+- **persona**: ターゲットユーザー、利用コンテキスト、トーン、避けるべき表現
+- **screens**: 撮影する各画面の ID・説明・マーケティングの方向性
+- **textGuidelines**: テキスト生成ルール（文字数上限、翻訳ではなく独立作成、ASO方針）
+- **locales**: 対応言語リスト
+- **localeDirMap**: ロケールコード→ディレクトリ名のマッピング
+- **capture**: クロップ値、撮影デバイス情報
+
+**新規アプリの場合**: Claude Code がアプリのコードベース（app.config.ts, 主要画面コンポーネント等）を読み、screenshot-config.ts を新規作成する。
+
+**既存アプリの場合**: 既存の screenshot-config.ts をレビューし、変更が必要な箇所を更新する。
+
+### 0-2. marketing-text.ts の生成
+
+Claude Code が `screenshot-config.ts` を読み、以下のルールでマーケティングテキストを生成する:
+
+1. **`persona`** を理解し、ターゲットユーザーの言葉遣い・語彙でテキストを書く
+2. **`screens`** の各 `marketingFocus` に対応するキャッチコピーを作成
+3. **`textGuidelines`** に従い:
+   - CJK言語: 約 `maxChars.cjk` 文字以内
+   - ラテン文字言語: 約 `maxChars.latin` 文字以内
+   - 各言語で**独立に作成**（日本語から翻訳しない）
+   - その国のネイティブスピーカーが自然に使う表現
+   - ASO（アプリストア検索最適化）を意識したキーワードを含む
+4. **`locales`** の全言語分を生成
+5. `scripts/store-screenshots/data/marketing-text.ts` に `MarketingText` インターフェースに従って書き出す
+
+**生成される marketing-text.ts の構造:**
+
+```typescript
+export interface MarketingText {
+  locale: string;
+  screen1: string;  // screens[0] に対応
+  screen2: string;  // screens[1] に対応
+  screen3: string;  // screens[2] に対応
+  screen4: string;  // screens[3] に対応
+}
+
+export const marketingTexts: MarketingText[] = [
+  { locale: 'ja', screen1: '...', screen2: '...', ... },
+  { locale: 'en', screen1: '...', screen2: '...', ... },
+  // ... 全言語分
+];
+
+export const marketingTextMap: Record<string, MarketingText> = {};
+for (const entry of marketingTexts) {
+  marketingTextMap[entry.locale] = entry;
+}
+```
+
+### 0-3. テキストのレビュー
+
+生成したテキストをユーザーに提示し、フィードバックを反映する。
+特に確認すべき点:
+- ペルソナのトーンが適切か
+- 各言語のネイティブ感（不自然な翻訳調になっていないか）
+- ASO キーワードの自然さ
 
 ---
 

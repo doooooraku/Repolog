@@ -1,14 +1,11 @@
 /**
- * Marketing text for Google Play Store screenshot overlays.
+ * Marketing text for store screenshot overlays (Apple App Store / Google Play).
  *
- * Persona-driven, culturally authentic — NOT machine-translated.
- * Each phrase uses words the target user (field/construction worker) naturally says.
+ * Generated based on screenshot-config.ts — persona, screen definitions, and guidelines.
+ * Each phrase is independently crafted per language (NOT translated from Japanese).
  *
- * Screens:
- *   1 = Home (report timeline)
- *   2 = Editor top (basic info, weather, GPS)
- *   3 = Editor bottom (comments + photos)
- *   4 = PDF Preview (export)
+ * To regenerate: Claude Code reads screenshot-config.ts and produces this file.
+ * See docs/how-to/workflow/store_screenshots.md Phase 0 for the full procedure.
  */
 
 export interface MarketingText {

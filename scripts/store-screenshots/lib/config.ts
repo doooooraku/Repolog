@@ -1,10 +1,11 @@
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { screenshotConfig } from '../screenshot-config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ---------------------------------------------------------------------------
-// Store target sizes
+// Store target sizes (generic — not app-specific)
 // ---------------------------------------------------------------------------
 
 export interface StoreSize {
@@ -24,56 +25,28 @@ export const STORE_SIZES: Record<string, StoreSize> = {
 };
 
 // ---------------------------------------------------------------------------
-// Raw screenshot crop values (Maestro on Pixel 8a: 720 x 1520)
+// App-specific values (from screenshot-config.ts)
 // ---------------------------------------------------------------------------
 
 /** Pixels to remove from top (Android status bar in Demo Mode) */
-export const CROP_TOP = 56;
+export const CROP_TOP = screenshotConfig.capture.cropTop;
 
 /** Pixels to remove from bottom (Android gesture bar) */
-export const CROP_BOTTOM = 32;
+export const CROP_BOTTOM = screenshotConfig.capture.cropBottom;
 
-// ---------------------------------------------------------------------------
-// Screen filename <-> marketing-text key mapping
-// ---------------------------------------------------------------------------
-
-export const SCREEN_MAP = [
-  { key: 'screen1' as const, filename: '01_home.png' },
-  { key: 'screen2' as const, filename: '02_editor_top.png' },
-  { key: 'screen3' as const, filename: '03_editor_bottom.png' },
-  { key: 'screen4' as const, filename: '04_pdf_preview.png' },
-] as const;
+/** Screen filename <-> marketing-text key mapping */
+export const SCREEN_MAP = screenshotConfig.screens.map((s) => ({
+  key: s.key as `screen${number}`,
+  filename: `${s.id}.png`,
+}));
 
 export type ScreenKey = (typeof SCREEN_MAP)[number]['key'];
 
-// ---------------------------------------------------------------------------
-// Locale code -> raw screenshot directory name
-// ---------------------------------------------------------------------------
-
-export const LOCALE_DIR_MAP: Record<string, string> = {
-  en: 'en_English',
-  ja: 'ja_日本語',
-  fr: 'fr_Français',
-  es: 'es_Español',
-  de: 'de_Deutsch',
-  it: 'it_Italiano',
-  pt: 'pt_Português',
-  ru: 'ru_Русский',
-  'zh-Hans': 'zh-Hans_简体中文',
-  'zh-Hant': 'zh-Hant_繁體中文',
-  ko: 'ko_한국어',
-  hi: 'hi_हिन्दी',
-  id: 'id_Indonesia',
-  th: 'th_ไทย',
-  vi: 'vi_Tiếng-Việt',
-  tr: 'tr_Türkçe',
-  nl: 'nl_Nederlands',
-  pl: 'pl_Polski',
-  sv: 'sv_Svenska',
-};
+/** Locale code -> raw screenshot directory name */
+export const LOCALE_DIR_MAP = screenshotConfig.localeDirMap;
 
 // ---------------------------------------------------------------------------
-// Paths
+// Paths (generic)
 // ---------------------------------------------------------------------------
 
 const SCRIPTS_DIR = path.resolve(__dirname, '..');
