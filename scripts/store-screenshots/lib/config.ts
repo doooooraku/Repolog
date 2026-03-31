@@ -1,4 +1,7 @@
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ---------------------------------------------------------------------------
 // Store target sizes
@@ -21,14 +24,14 @@ export const STORE_SIZES: Record<string, StoreSize> = {
 };
 
 // ---------------------------------------------------------------------------
-// Raw screenshot crop values (Pixel 8a: 1080 x 2400)
+// Raw screenshot crop values (Maestro on Pixel 8a: 720 x 1520)
 // ---------------------------------------------------------------------------
 
 /** Pixels to remove from top (Android status bar in Demo Mode) */
-export const CROP_TOP = 100;
+export const CROP_TOP = 56;
 
 /** Pixels to remove from bottom (Android gesture bar) */
-export const CROP_BOTTOM = 60;
+export const CROP_BOTTOM = 32;
 
 // ---------------------------------------------------------------------------
 // Screen filename <-> marketing-text key mapping
@@ -73,7 +76,7 @@ export const LOCALE_DIR_MAP: Record<string, string> = {
 // Paths
 // ---------------------------------------------------------------------------
 
-const SCRIPTS_DIR = path.resolve(import.meta.dirname, '..');
+const SCRIPTS_DIR = path.resolve(__dirname, '..');
 export const PROJECT_ROOT = path.resolve(SCRIPTS_DIR, '../..');
 export const RAW_DIR = path.join(PROJECT_ROOT, 'screenshots/raw');
 export const STORE_DIR = path.join(PROJECT_ROOT, 'screenshots/store');
