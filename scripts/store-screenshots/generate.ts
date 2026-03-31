@@ -70,122 +70,129 @@ if (missingLocales.length > 0) {
   process.exit(1);
 }
 
-// Check that raw screenshots exist
-const missingFiles: string[] = [];
-for (const locale of locales) {
-  const dir = LOCALE_DIR_MAP[locale];
-  for (const screen of SCREEN_MAP) {
-    const rawPath = path.join(RAW_DIR, dir, screen.filename);
-    try {
-      await fs.access(rawPath);
-    } catch {
-      missingFiles.push(rawPath);
-    }
-  }
-}
-
-if (missingFiles.length > 0) {
-  console.error(
-    `\n${missingFiles.length} raw screenshot(s) missing:\n` +
-      missingFiles.map((f) => `  - ${f}`).join('\n') +
-      '\n\nRun the Maestro capture scripts first (see docs/how-to/workflow/store_screenshots.md).\n',
-  );
-  process.exit(1);
-}
-
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
-const startTime = Date.now();
-let count = 0;
-let errors = 0;
-
-console.log(
-  `\nGenerating store screenshots...` +
-    `\n  Stores:  ${storeNames.join(', ')}` +
-    `\n  Locales: ${locales.length} (${locales.join(', ')})` +
-    `\n  Screens: ${SCREEN_MAP.length}` +
-    `\n  Total:   ${storeNames.length * locales.length * SCREEN_MAP.length} images\n`,
-);
-
-const browser = await chromium.launch({ headless: true });
-
-try {
+async function main() {
+  // Check that raw screenshots exist
+  const missingFiles: string[] = [];
   for (const locale of locales) {
-    const localeDir = LOCALE_DIR_MAP[locale];
-    const text = marketingTextMap[locale];
-    if (!text) {
-      console.error(`  [SKIP] No marketing text for locale: ${locale}`);
-      continue;
-    }
-
-    // Pre-build font CSS once per locale (reused across screens × stores)
-    const fontCss = buildFontCss(locale);
-    const fontStack = getFontStack(locale);
-
+    const dir = LOCALE_DIR_MAP[locale];
     for (const screen of SCREEN_MAP) {
-      const rawPath = path.join(RAW_DIR, localeDir, screen.filename);
-
-      // Crop once per screen (reused across stores)
-      let croppedBase64: string;
+      const rawPath = path.join(RAW_DIR, dir, screen.filename);
       try {
-        croppedBase64 = await cropToBase64(rawPath);
-      } catch (err) {
-        console.error(`  [ERROR] Crop failed: ${rawPath}`, err);
-        errors++;
+        await fs.access(rawPath);
+      } catch {
+        missingFiles.push(rawPath);
+      }
+    }
+  }
+
+  if (missingFiles.length > 0) {
+    console.error(
+      `\n${missingFiles.length} raw screenshot(s) missing:\n` +
+        missingFiles.map((f) => `  - ${f}`).join('\n') +
+        '\n\nRun the Maestro capture scripts first (see docs/how-to/workflow/store_screenshots.md).\n',
+    );
+    process.exit(1);
+  }
+
+  const startTime = Date.now();
+  let count = 0;
+  let errors = 0;
+
+  console.log(
+    `\nGenerating store screenshots...` +
+      `\n  Stores:  ${storeNames.join(', ')}` +
+      `\n  Locales: ${locales.length} (${locales.join(', ')})` +
+      `\n  Screens: ${SCREEN_MAP.length}` +
+      `\n  Total:   ${storeNames.length * locales.length * SCREEN_MAP.length} images\n`,
+  );
+
+  const browser = await chromium.launch({ headless: true });
+
+  try {
+    for (const locale of locales) {
+      const localeDir = LOCALE_DIR_MAP[locale];
+      const text = marketingTextMap[locale];
+      if (!text) {
+        console.error(`  [SKIP] No marketing text for locale: ${locale}`);
         continue;
       }
 
-      const marketingText = text[screen.key as ScreenKey];
+      // Pre-build font CSS once per locale (reused across screens × stores)
+      const fontCss = buildFontCss(locale);
+      const fontStack = getFontStack(locale);
 
-      for (const store of storeNames) {
-        const size = STORE_SIZES[store];
+      for (const screen of SCREEN_MAP) {
+        const rawPath = path.join(RAW_DIR, localeDir, screen.filename);
 
+        // Crop once per screen (reused across stores)
+        let croppedBase64: string;
         try {
-          // Build HTML
-          const html = buildHtml({
-            marketingText,
-            screenshotBase64: croppedBase64,
-            fontCss,
-            fontStack,
-            locale,
-          });
-
-          // Render
-          const rawPng = await renderPage(browser, html, size);
-
-          // Post-process
-          const finalPng = await flattenAndVerify(rawPng, size.width, size.height);
-
-          // Write
-          const outDir = path.join(STORE_DIR, store, localeDir);
-          await fs.mkdir(outDir, { recursive: true });
-          const outPath = path.join(outDir, screen.filename);
-          await fs.writeFile(outPath, finalPng);
-
-          count++;
+          croppedBase64 = await cropToBase64(rawPath);
         } catch (err) {
-          console.error(
-            `  [ERROR] ${store}/${localeDir}/${screen.filename}`,
-            err,
-          );
+          console.error(`  [ERROR] Crop failed: ${rawPath}`, err);
           errors++;
+          continue;
+        }
+
+        const marketingText = text[screen.key as ScreenKey];
+
+        for (const store of storeNames) {
+          const size = STORE_SIZES[store];
+
+          try {
+            // Build HTML
+            const html = buildHtml({
+              marketingText,
+              screenshotBase64: croppedBase64,
+              fontCss,
+              fontStack,
+              locale,
+            });
+
+            // Render
+            const rawPng = await renderPage(browser, html, size);
+
+            // Post-process
+            const finalPng = await flattenAndVerify(rawPng, size.width, size.height);
+
+            // Write
+            const outDir = path.join(STORE_DIR, store, localeDir);
+            await fs.mkdir(outDir, { recursive: true });
+            const outPath = path.join(outDir, screen.filename);
+            await fs.writeFile(outPath, finalPng);
+
+            count++;
+          } catch (err) {
+            console.error(
+              `  [ERROR] ${store}/${localeDir}/${screen.filename}`,
+              err,
+            );
+            errors++;
+          }
         }
       }
-    }
 
-    console.log(`  ${locale} done`);
+      console.log(`  ${locale} done`);
+    }
+  } finally {
+    await browser.close();
   }
-} finally {
-  await browser.close();
+
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+  console.log(
+    `\nComplete: ${count} images generated in ${elapsed}s` +
+      (errors > 0 ? ` (${errors} errors)` : '') +
+      `\nOutput:   ${STORE_DIR}/\n`,
+  );
+
+  if (errors > 0) process.exit(1);
 }
 
-const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-console.log(
-  `\nComplete: ${count} images generated in ${elapsed}s` +
-    (errors > 0 ? ` (${errors} errors)` : '') +
-    `\nOutput:   ${STORE_DIR}/\n`,
-);
-
-if (errors > 0) process.exit(1);
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
