@@ -10,7 +10,7 @@
   - docs/adr/adr_template.md（ADRテンプレ）
   - docs/reference/basic_spec.md / docs/reference/functional_spec.md / docs/reference/constraints.md（初期仕様の参照元）
   - ADR-0006-storage-policy-asyncstorage-securestore（データ保存方針の更新）
-- Note: 本ADRの「データ保存方針」はADR-0006で更新。その他の項目は引き続き有効。
+- Note: 本ADRの「データ保存方針」はADR-0006で更新。その他の方針（ローカルファースト、収益モデル等）は constraints.md に引き継がれている。
 
 ---
 

@@ -6,7 +6,7 @@
 
 - 目的: 実装者が「このまま組めば崩れない」状態にするための"骨格テンプレ"
 - 注意: ここでは **レイアウトとルール** を固定する。装飾（色・フォントサイズ微調整）はFigma側で詰める
-- 関連: `docs/reference/basic_spec.md`（F-06）/ `docs/reference/functional_spec.md`（F-05）/ `docs/adr/ADR-0002-pdf-fonts.md`
+- 関連: `docs/reference/basic_spec.md`（PDF生成）/ `docs/reference/functional_spec.md`（PDF）/ `docs/adr/ADR-0002-pdf-fonts.md`
 
 ---
 

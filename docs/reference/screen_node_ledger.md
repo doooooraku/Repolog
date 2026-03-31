@@ -1,5 +1,7 @@
 # Figma Screen Node Ledger
 
+> Figma が UI の正（Source of Truth）。このファイルは画面名と Figma node-id の対応表。
+
 - fileKey: `RcsV1DyuUCczBKElTtMbw6`
 - updatedAt: 2026-02-15
 
@@ -9,3 +11,5 @@
 | Home | `17:352` | レポート一覧・検索・クイック操作 | P1 | 2026-02-15 |
 | ReportEditor (Long) | `17:436` | 長尺編集画面 | P1 | 2026-02-15 |
 | Settings | `17:564` | 設定・課金・バックアップ | P2 | 2026-02-15 |
+
+> Figma でフレームを作り直すと node-id は変わる。変わった場合は `get_metadata` で最新 ID を取り直すこと。

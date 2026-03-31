@@ -164,11 +164,10 @@ pnpm test __tests__/backupImportPlanner.test.ts
 ### 7.2 PR前の最低ライン
 ```bash
 pnpm install --frozen-lockfile
-pnpm lint
-pnpm test
+pnpm verify   # 5ゲート一括実行（lint, type-check, test, i18n:check, config:check）
 ```
 意味:
-- CIと同じ順序で依存解決・静的検査・テストを行う
+- `pnpm verify` でCIと同じ5ゲートをローカルで一括実行する
 
 ---
 

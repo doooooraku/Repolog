@@ -41,7 +41,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 - タイムライン（Homeで“手帳みたいに”見返す）
 - PDFプレビュー（無制限）
 - PDF出力（Free/Pro の制限あり）
-- バックアップ（manifest.json + photos/ + settings.json）
+- バックアップ（manifest.json + photos/）
 - 多言語（最低: UIとPDF表記の翻訳文字列）
 
 
@@ -51,9 +51,11 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 ## 2. 用語（初心者でも迷子にならない）
 - レポート（Report）: 1回の提出単位。写真＋コメント＋メタ情報を持つ。
 - 写真（Photo）: レポートに紐づく画像。順序が重要。
-- 表紙（Cover）: PDF 1ページ目。提出・確認の“入り口”。
+- 表紙（Cover）: PDF 1ページ目。提出・確認の”入り口”。
 - コメントページ（Comment Pages）: コメントのみのページ。長い場合は複数ページになってよい。
 - 写真ページ（Photo Pages）: 写真だけ載せるページ（＋ページ番号、＋写真番号の極小ラベル）。
+- タグ（Tag）: レポートに付与する文字ラベル。検索・フィルタに使う。
+- ピン留め（Pinned）: 重要レポートをHome上部に固定表示する機能。
 - Free/Pro: 課金プラン。制限ポイントは constraints + ADR + テストで “正” を固定する。
 
 ---
@@ -73,7 +75,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 - レポート詳細（編集・写真管理・PDF）
 - PDFプレビュー（設定: 用紙サイズA4/Letter、標準/大きく）
 - 課金（Paywall）
-- 設定（言語、位置情報ON/OFF、広告のプライバシー設定、バックアップ、利用規約）
+- 設定（言語、テーマ（system/light/dark）、作成者名、位置情報ON/OFF、広告のプライバシー設定、購入セクション、バックアップ、利用規約）
 
 
 ### 4.2 Home（タイムライン “手帳体験”）
@@ -81,7 +83,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 - 縦にスクロールしてレポートを時系列で見返す
 - 各レポートカードは「レポートの1番上の画像 + レポート名 + 日時 」を表示
 - 右上: 新規レポート作成（＋）
-- 検索: レポート名/コメントの部分一致/日時
+- 検索: レポート名/コメント/タグの部分一致/日時
 
 #### 重要な理由（なぜHomeで見返す？）
 - “提出がない日”でも、未来の自分/チームのために価値が残る（継続利用の理由になる）
@@ -130,22 +132,22 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 ## 5. 機能仕様（F）
 > 受け入れ条件（合否）はテストで固定し、この文書は「境界」と「ルール」を持つ。
 
-### F-01 レポート CRUD
+### レポート CRUD
 - 作成: Homeの＋から新規
 - 更新: レポート詳細で編集
 - 削除: Homeでスワイプ or メニュー（確認ダイアログ必須）
 
-### F-02 写真追加（カメラ / アルバム）
+### 写真追加（カメラ / アルバム）
 - カメラ: 1枚撮影 → 即レポートに追加（順序末尾）
 - アルバム: 複数選択 → 選んだ順 or 撮影日時順（選択肢はADRで固定）
 - 画像形式: JPG/PNG/HEIC（端末依存）を想定。PDFに入れる前に “最終的にJPEGへ正規化” して容量を安定させる（画質設計で吸収）。
 
-### F-03 写真削除・順序変更
+### 写真削除・順序変更
 - 削除: 取り消し（Undo）を1回だけ出す（誤削除事故対策）
 - 並べ替え: ↑↓ボタン
 - 並べ替えの“正”は配列順（DBに orderIndex を持つ）
 
-### F-04 メタ情報
+### メタ情報
 #### 作成日時（必須）
 - 表示形式: `YYYY-MM-DD HH:mm`（端末ローカル）
 - ファイル名にも使う（後述）
@@ -165,13 +167,13 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 #### 天気（任意）
 - UIはアイコン、PDFは翻訳済み文字列（例: ☀️→「晴れ」）
 
-### F-05 コメント（最大4000文字）
+### コメント（最大4000文字）
 - 改行OK、絵文字OK
 - カウンタ表示（残り文字数）
 - カウント: `Array.from(text).length`（絵文字ズレを減らす）
 - 4000超えは入力を止める（仕様が明快）
 
-### F-06 PDF生成（A4/Letter）
+### PDF生成（A4/Letter）
 #### 目的
 - “提出に強い” A4/Letter縦PDFを、崩れずに生成する。
 
@@ -205,7 +207,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 - 表紙のみ
 - 右下に薄く `Created by Repolog`（目立ちすぎない）
 
-### F-07 出力回数 / プラン制限
+### 出力回数 / プラン制限
 > 具体制限は constraints を正にし、ADRで理由を書き、テストで固定する。
 - Free:
   - 1レポート 10枚まで（出力時の上限）
@@ -217,7 +219,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
   - テンプレ/表紙/ロゴ/透かしOFF（必要に応じて）
   - 広告なし
 
-### F-08 50枚超え警告（Pro向けの安全装置）
+### 50枚超え警告（Pro向けの安全装置）
 - 発火条件: PDF作成ボタン押下時に `photoCount > 50`
 - モーダル:
   - タイトル: 写真枚数が多いです
@@ -226,11 +228,10 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
     - 作成する（Generate） → 続行
     - 戻る → レポート編集へ戻る（減らす/分ける検討ができる）
 
-### F-09 バックアップ（エクスポート/インポート）
+### バックアップ（エクスポート/インポート）
 - エクスポート内容（最小）:
   - manifest.json（バージョン、作成日時、レポート一覧、各写真の順序/ファイル名など）
   - photos/（画像）
-  - settings.json（言語、位置情報ON/OFFなど）
 - PDFは含めない（pdf/ は不要）
 - 保存先選択UIはPDF出力と同じ仕組みを流用
 - インポート時の安全:
@@ -239,7 +240,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
   - 同じバックアップを再インポートしても重複登録しない（ID基準で冪等）
   - DB書き込みは transaction で実行し、失敗時は rollback する
 
-### F-10 広告（Free）
+### 広告（Free）
 - Freeは広告あり / Proは広告なし（明確な価値）
 - UMP同意（EEA想定）で `canRequestAds=true` になるまで広告は出さない
 - ポリシー対応は ADR + constraints で固定（配置・頻度・禁止画面など）
@@ -255,13 +256,16 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 
 ### 6.2 データモデル（概略）
 - reports:
-  - id, reportName, createdAtLocal, updatedAtLocal, weatherKey, comment
+  - id, reportName, createdAt, updatedAt, weatherKey, comment
+  - authorName(string | null)
+  - tags(string[] — tags_json in DB)
+  - pinned(boolean)
   - locationEnabledAtCreation(bool), lat, lng, latLngCapturedAt(optional)
   - address, addressSource(auto/manual), addressLocale(optional)
 - photos:
-  - id, reportId, orderIndex, localUri, width, height, capturedAt(optional), compressedUri(optional)
+  - id, reportId, orderIndex, localUri, width, height
 - exports:
-  - id, reportId, exportedAtLocal, layoutMode, pageCount, photoCount, paperSize(A4/Letter), planAtExport(Free/Pro)
+  - id, reportId, exportedAt, layoutMode, pageCount, photoCount, paperSize(A4/Letter), planAtExport(Free/Pro)
 
 ---
 
@@ -274,7 +278,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 ### 7.2 アクセシビリティ（最低ライン）
 - タップ領域を小さくしすぎない
 - 重要文言はアイコンだけにしない（ラベル併記）
-- ダークモード対応（任意だが“現場”では有効）
+- ダークモード対応（実装済み: system/light/dark 切替）
 
 ### 7.3 セキュリティ/プライバシー（最低ライン）
 - 位置情報はユーザーがON/OFFできる（OFFなら権限要求しない）
@@ -308,7 +312,7 @@ en（英語） / ja（日本語） / fr（フランス語） / es（スペイン
 
 ---
 
-## 10. PDF HTMLテンプレ（A4/Letter縦 / 崩れない最小構成）
+## 9. PDF HTMLテンプレ（A4/Letter縦 / 崩れない最小構成）
 
 > **正（Single Source of Truth）は [`docs/reference/pdf_template.md`](pdf_template.md) に集約しています。**
 > テンプレートの変更は必ず pdf_template.md 側で行ってください。
@@ -319,7 +323,7 @@ pdf_template.md に含まれる内容:
 - 画像の差し込みルール（base64推奨）
 - 計算ルール（ページ数 / 写真番号）
 
-## 9. 参照（一次情報リンク）
+## 10. 参照（一次情報リンク）
 - Expo Print: https://docs.expo.dev/versions/latest/sdk/print/
 - Expo Sharing: https://docs.expo.dev/versions/latest/sdk/sharing/
 - Expo FileSystem (legacy / SAF): https://docs.expo.dev/versions/latest/sdk/filesystem-legacy/

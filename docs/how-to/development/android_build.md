@@ -74,6 +74,7 @@ pnpm type-check
 
 補足:
 - CI は `pnpm install -> pnpm lint -> pnpm test -> pnpm type-check` 順です。
+- `pnpm verify` で上記を含む5ゲート（lint, type-check, test, i18n:check, config:check）を一括実行できます。
 
 ---
 
@@ -166,7 +167,7 @@ adb install -r "$(wslpath -w dist/repolog-preview-local.apk)"
 
 前提:
 - スマホがUSB接続されている
-- USBデバッグが ON（`android_デバッグ手順.md` 参照）
+- USBデバッグが ON（`android_debug.md` 参照）
 - `adb devices` で `device` と表示される
 
 ### 5-2. ビルド＆インストール一括実行

@@ -6,7 +6,7 @@ Repolog is a local-first app. No user accounts. No cloud backend. No data collec
 ## Data Safety Questionnaire Answers
 
 ### Does your app collect or share any of the required user data types?
-**No** — the app does not collect or share user data with third parties.
+**Yes** — the app shares purchase history with RevenueCat (payment processor) and device IDs with Google AdMob (ad network, Free plan only, with UMP consent). See "Data Types Breakdown" below for details.
 
 ### Is all of the user data collected by your app encrypted in transit?
 **Yes** — all network communication uses HTTPS (RevenueCat, AdMob).
