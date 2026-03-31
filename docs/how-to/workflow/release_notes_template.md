@@ -86,9 +86,7 @@ gh release create v1.0.0 \
 - docs/chore:
 
 ## 4. Verification
-- pnpm lint: ✅/❌
-- pnpm test: ✅/❌
-- pnpm type-check: ✅/❌
+- pnpm verify: ✅/❌ (lint, type-check, test, i18n:check, config:check)
 - Actions URL:
 
 ## 5. Rollback

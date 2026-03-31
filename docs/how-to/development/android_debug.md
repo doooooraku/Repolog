@@ -33,7 +33,7 @@ USB 接続した Android 実機から、WSL2 環境でクラッシュログや
 
 ### 1-1. Windows 側の ADB
 
-`android_ビルド手順.md` の事前準備で Android SDK を導入済みなら ADB も入っている。
+`android_build.md` の事前準備で Android SDK を導入済みなら ADB も入っている。
 確認:
 
 ```powershell

@@ -217,8 +217,10 @@
   - Maestroの代表フロー（最低限の受け入れ確認）
 
 ### 10.4 ビルド（Android）
-- `pnpm build:android`
-  - Androidのリリース用ビルド（配布物の生成）
+- `pnpm build:android:apk:local`
+  - Android APK をローカルビルド（実機確認用）
+- `pnpm build:android:aab:local`
+  - Android AAB をローカルビルド（Play Console 提出用）
   - 失敗したらGradle/署名/環境差分を疑う
 
 ---
@@ -228,7 +230,7 @@
 
 - [ ] 変更の目的が説明できる（なぜ）
 - [ ] 受け入れ条件が書ける（合否）
-- [ ] `lint` `test`（必要なら type-check / e2e）が通る
+- [ ] `pnpm verify`（lint, type-check, test, i18n:check, config:check）が通る
 - [ ] 仕様に関わる変更なら docs 更新（ただし“正”は守る）
 - [ ] 意思決定が発生したなら ADR を追加/更新
 

@@ -1,9 +1,7 @@
-
-
-# docs/how-to/workflow/git_workflow.md
-
-
 # Git Workflow（Issue → Branch → Commit → PR → Merge）
+
+> Git 操作の手順（戦術レベル）。全体の流れは `whole_workflow.md` を参照。
+
 この文書は **How-to（やり方）** です。  
 「なぜそうするか（背景・議論）」は ADR に、  
 「合格/不合格の条件」は テスト（Jest/Maestro/CI）に寄せます。
@@ -172,23 +170,16 @@ git switch -c feat/123-add-admob-skeleton
 ### 4.5 ローカルテスト（CIと同じ順にする）
 
 詳細は `docs/how-to/testing/testing.md` を参照。
-最低限はこの順番：
+一括実行（推奨）：
 
 ```bash
-pnpm lint
-pnpm test
+pnpm verify   # lint, type-check, test, i18n:check, config:check の5ゲート
 ```
 
-（E2Eが必要なら）
+（E2Eが必要なら追加で）
 
 ```bash
 pnpm test:e2e
-```
-
-（型チェックを運用している場合）
-
-```bash
-pnpm type-check
 ```
 
 ---

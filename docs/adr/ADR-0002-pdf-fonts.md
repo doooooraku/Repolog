@@ -5,7 +5,7 @@
 - Status: Accepted
 - Date: 2026-01-31
 - Deciders: @doooooraku
-- Related: Issue #5 / PR #TBD / constraints / basic_spec / functional_spec
+- Related: Issue #5 / PR: (初期実装に含まれる) / constraints / basic_spec / functional_spec
 
 ---
 
@@ -94,6 +94,8 @@
   - **デフォルトは引き続き all-fonts（フラグOFF）を維持**
   - subset は検証用途で段階運用し、実機品質が担保できるまで既定値は変更しない
 
+> 2026-03 時点: app.json で `PDF_FONT_SUBSET_EXPERIMENT=1`（ON）に変更済み。サブセット化がデフォルト動作。
+
 ---
 
 ## Acceptance / Tests（合否：テストに寄せる）
@@ -117,7 +119,7 @@
 - reference: `docs/reference/basic_spec.md` / `docs/reference/functional_spec.md`
 - Issue: #5
 - Issue: #72
-- PR: #TBD
+- PR: (初期実装に含まれる)
 - Benchmark runbook: `docs/how-to/testing/pdf_font_benchmark.md`
 - Benchmark result: `docs/how-to/testing/benchmarks/pdf_font_benchmark.latest.md`
 - External docs: https://scripts.sil.org/OFL

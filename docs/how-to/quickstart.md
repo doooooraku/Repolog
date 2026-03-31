@@ -48,6 +48,7 @@ WSL2 + Windows ADB 環境の場合は `docs/how-to/development/android_device.md
 
 | コマンド | 用途 |
 |---------|------|
+| `pnpm verify` | **5ゲート一括実行**（lint, type-check, test, i18n:check, config:check） |
 | `pnpm lint` | ESLint 実行 |
 | `pnpm type-check` | TypeScript 型チェック（`tsc --noEmit`） |
 | `pnpm test` | Jest 単体テスト |

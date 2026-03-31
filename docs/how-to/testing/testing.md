@@ -1,9 +1,6 @@
 
 
-# docs/how-to/testing/testing.md
-
-
-# Testing（CIと同じようにテストして、落ちたら直す）
+# テスト戦略と実行手順
 この文書は **How-to（やり方）** です。  
 「なぜこのテストが必要か」は Explanation / ADR 側に寄せます。  
 ここでは **“どうやってテストを回して合否を見るか”** だけを扱います。
@@ -35,14 +32,22 @@ Repolog の scripts（例）：
 
 ---
 
-## 2. 最短ルート：まずは「CIと同じ4つ」
+## 2. 最短ルート：まずは「CIと同じ5つ」
 PR前に最低限これを通します（CIでも必ず走る）。
 
 ```bash
 pnpm install --frozen-lockfile
+pnpm verify   # 以下5ゲートを一括実行
+```
+
+`pnpm verify` は内部で以下を順に実行します:
+
+```bash
 pnpm lint
-pnpm test
 pnpm type-check
+pnpm test
+pnpm i18n:check
+pnpm config:check
 ```
 
 > `pnpm type-check` はアプリ本体を対象にします。  
@@ -308,7 +313,7 @@ pnpm i18n:inventory
 
 `pnpm i18n:inventory` は次と同じです。
 ```bash
-pnpm i18n:audit -- pl --inventory --out docs/how-to/i18n/i18n_key_inventory.md
+pnpm i18n:audit -- --inventory --out docs/how-to/i18n/i18n_key_inventory.md
 ```
 
 コマンドの意味:
@@ -577,8 +582,6 @@ node --expose-gc scripts/pdf-font-benchmark.mjs \
 
 ## 11. 最後のチェックリスト（PR前）
 
-* [ ] `pnpm lint` OK
-* [ ] `pnpm type-check` OK
-* [ ] `pnpm test` OK
+* [ ] `pnpm verify` OK（lint, type-check, test, i18n:check, config:check の5ゲート）
 * [ ] 必要なら `pnpm test:e2e` OK
 * [ ] 受け入れ条件が満たされた（PR本文に証拠を書く）

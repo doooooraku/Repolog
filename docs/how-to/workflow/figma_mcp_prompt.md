@@ -11,15 +11,13 @@
 
 ---
 
-## 2. Repologの固定nodeId（2026-02-15時点）
-- Home: `17:352`
-- ReportEditor（長い画面）: `17:436`
-- Settings: `17:564`
-- ReportEditor（短い画面）: `17:650`
+## 2. Repologの固定nodeId
+
+node-id は `docs/reference/screen_node_ledger.md` を参照。
 
 注記:
 - Figmaでフレームを作り直すと `nodeId` は変わることがあります。
-- 変わった場合は `get_metadata` で最新IDを取り直してください。
+- 変わった場合は `get_metadata` で最新IDを取り直し、台帳を更新してください。
 
 ---
 

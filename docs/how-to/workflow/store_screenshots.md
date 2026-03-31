@@ -342,7 +342,7 @@ SCREENSHOT_MODE=0
 
 ```bash
 env -u ADB_SERVER_SOCKET adb uninstall com.dooooraku.repolog
-env -u ADB_SERVER_SOCKET adb install dist/repolog-preview.apk  # または本番APK
+env -u ADB_SERVER_SOCKET adb install dist/repolog-preview-local.apk  # または本番APK
 ```
 
 ### 5-3. Metro を停止

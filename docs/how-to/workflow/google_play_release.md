@@ -148,6 +148,12 @@ npx eas-cli@latest env:pull --environment production
 
 ```bash
 pnpm install --frozen-lockfile  # 依存関係を完全一致でインストール
+pnpm verify                     # 5ゲート一括実行（lint, type-check, test, i18n:check, config:check）
+```
+
+個別に実行する場合:
+
+```bash
 pnpm lint                       # ESLintでコード品質チェック
 pnpm test                       # Jestでユニットテスト実行
 pnpm type-check                 # TypeScriptの型チェック

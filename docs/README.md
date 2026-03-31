@@ -1,6 +1,8 @@
 # Repolog Documentation Index
 
 > **docs-as-code**: ドキュメントは Git で管理し、PR + CI で品質を担保する。
+>
+> **棚卸ベースライン (2026-03-31)**: 60 ファイル / 約 11,700 行
 
 ---
 
@@ -23,12 +25,8 @@ docs/
 │   ├── constraints.md             前提/制約/非ゴール
 │   ├── glossary.md                用語辞書
 │   ├── pdf_template.md            PDF HTML/CSS テンプレ（SSoT）
-│   ├── wireframes.md              画面設計ワイヤーフレーム
-│   ├── marketing-text.md          ストアスクリーンショット文言（19言語）
-│   ├── lessons.md                 開発教訓ログ
-│   └── UI_Figma/                  Figma 連携・画面ノード台帳
-│       ├── README.md
-│       └── screen_node_ledger.md
+│   ├── screen_node_ledger.md      Figma 画面ノード台帳
+│   └── lessons.md                 開発教訓ログ
 │
 ├── adr/                      ── なぜそうしたか（意思決定ログ）
 │   ├── ADR-0001  初期アーキテクチャ（Superseded）
@@ -39,7 +37,8 @@ docs/
 │   ├── ADR-0006  AsyncStorage/SecureStore 使い分け
 │   ├── ADR-0007  バックアップ Import 追記戦略
 │   ├── ADR-0008  AdMob UMP 同意プリフライト
-│   └── ADR-0010  iOS暗号化輸出コンプライアンス
+│   ├── ADR-0010  iOS暗号化輸出コンプライアンス
+│   └── (ADR-0009 は欠番)
 │
 ├── how-to/                   ── 手順・レシピ
 │   ├── quickstart.md              セットアップ（30分で動く）
@@ -64,16 +63,18 @@ docs/
 │   ├── testing/                   テスト・ベンチマーク
 │   │   ├── testing.md             テスト戦略と実行手順
 │   │   └── pdf_font_benchmark.md  フォント性能計測
-│   ├── i18n/                      多言語
-│   └── archive/                   完了済み / 一時的
+│   └── archive/                   完了済み / 歴史的文書
 │       ├── legal_pages_github_pages.md
-│       └── figma_ui_issue_pr_review.md
+│       ├── figma_ui_issue_pr_review.md
+│       └── wireframes.md           テキスト版ワイヤーフレーム（Figma移行済み）
 │
-├── reports/                  ── 自動生成レポート（pnpm i18n:audit 等の出力）
-│   ├── i18n/                      i18n 監査結果
-│   └── benchmarks/                性能計測結果
+├── reports/                  ── 自動生成レポート（ベンチマーク結果）
+│   └── benchmarks/
+│       ├── pdf_font_benchmark.latest.json
+│       └── pdf_font_benchmark.latest.md
 │
 ├── store-listing/            ── ストア掲載資料
+│   ├── marketing-text.md          スクリーンショット文言（19言語）
 │   ├── data-safety/               Google Play データ安全性申告
 │   ├── iarc-rating/               IARC コンテンツレーティング
 │   └── android/                   Google Play 掲載文・スクリーンショット
@@ -82,8 +83,9 @@ docs/
 │       ├── screenshots/
 │       └── feature-graphic/
 │
-├── index.html                ── GitHub Pages: 利用規約ルーター
+├── index.html                ── GitHub Pages: 法的ページルーター
 ├── privacy/index.html        ── GitHub Pages: プライバシーポリシー
+├── support/index.html        ── GitHub Pages: サポートページ
 └── terms/index.html          ── GitHub Pages: 利用規約
 ```
 
