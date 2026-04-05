@@ -62,6 +62,7 @@ export type Photo = {
   height: number | null;
   createdAt: string;
   orderIndex: number;
+  caption: string | null;
 };
 
 export type NewPhotoInput = {
@@ -71,6 +72,7 @@ export type NewPhotoInput = {
   height?: number | null;
   createdAt?: string;
   orderIndex: number;
+  caption?: string | null;
 };
 
 export type UpdatePhotoInput = {
@@ -79,6 +81,7 @@ export type UpdatePhotoInput = {
   width?: number | null;
   height?: number | null;
   orderIndex?: number;
+  caption?: string | null;
 };
 
 export type PlanKind = 'monthly' | 'yearly' | 'lifetime';

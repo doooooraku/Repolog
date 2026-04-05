@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'Abonelik yönetimi açılamadı.',
   settingsProBenefitPhotos: 'Rapor başına sınırsız fotoğraf',
   settingsProBenefitPdf: 'Sınırsız PDF dışa aktarma',
-  settingsProBenefitLayout: 'Büyük düzen dışa aktarma',
+
   settingsProBenefitWatermark: 'Filigran yok',
   settingsProBenefitAds: 'Reklam yok',
   settingsDescFree: 'Sınırsız fotoğraf, dışa aktarma ve daha fazlası için Pro\u2019ya yükseltin.',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'En avantajlı',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Aylık fiyat',
-  paywallYearlySavings: 'Yaklaşık 2 ay bedava!',
+  paywallYearlySavings: 'Yaklaşık 5 ay bedava!',
   paywallFreeLabel: 'Ücretsiz',
   paywallProLabel: 'Pro',
   paywallFeaturePhotos: 'Rapor başına fotoğraf',
@@ -62,9 +62,8 @@ const dict = {
   paywallFeaturePdf: 'PDF dışa aktarma',
   paywallFeaturePdfFree: 'Ayda 5',
   paywallFeaturePdfPro: 'Sınırsız',
-  paywallFeatureLayout: 'Büyük düzen',
-  paywallFeatureLayoutFree: 'Sadece önizleme',
-  paywallFeatureLayoutPro: 'Dışa aktarılabilir',
+
+
   paywallFeatureWatermark: 'Filigran',
   paywallFeatureWatermarkFree: 'Görünür',
   paywallFeatureWatermarkPro: 'Yok',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'Fotoğraf silinemedi.',
   photoDeletedNotice: 'Fotoğraf kaldırıldı.',
   undoAction: 'Geri al',
+  photoCaptionPlaceholder: 'Açıklama ekle...',
 
   // --- Home ---
   homeSearchPlaceholder: 'Rapor ara...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'PDF Önizleme',
   pdfLayoutStandard: 'Standart',
-  pdfLayoutLarge: 'Büyük',
+  pdfLayoutComment: 'Yorum',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDF Dışa Aktar',
   pdfGenerating: 'PDF oluşturuluyor...',
-  pdfLargeProTitle: 'Yalnızca Pro düzeni',
-  pdfLargeProBody: 'Büyük düzen yalnızca Pro\'ya özeldir. Bunun yerine Standart kullanılsın mı?',
-  pdfLargeUseStandard: 'Standart Kullan',
-  pdfLargeUpgrade: 'Yükselt',
+
+
   pdfExportLimitTitle: 'Aylık sınıra ulaşıldı',
   pdfExportLimitBody: 'Ücretsiz plan ayda 5 dışa aktarmaya izin verir.',
   pdfExportFailed: 'PDF dışa aktarılamadı.',

@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'Kan abonnementsbeheer niet openen.',
   settingsProBenefitPhotos: 'Onbeperkt foto\u2019s per rapport',
   settingsProBenefitPdf: 'Onbeperkt PDF-exports',
-  settingsProBenefitLayout: 'Groot formaat export',
+
   settingsProBenefitWatermark: 'Geen watermerk',
   settingsProBenefitAds: 'Geen advertenties',
   settingsDescFree: 'Upgrade naar Pro voor onbeperkte foto\u2019s, exports en meer.',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'Beste waarde',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Prijs per maand',
-  paywallYearlySavings: 'Bespaar circa 2 maanden!',
+  paywallYearlySavings: 'Bespaar circa 5 maanden!',
   paywallFreeLabel: 'Gratis',
   paywallProLabel: 'Pro',
   paywallFeaturePhotos: 'Foto\'s per rapport',
@@ -62,9 +62,8 @@ const dict = {
   paywallFeaturePdf: 'PDF-exports',
   paywallFeaturePdfFree: '5 per maand',
   paywallFeaturePdfPro: 'Onbeperkt',
-  paywallFeatureLayout: 'Grote lay-out',
-  paywallFeatureLayoutFree: 'Alleen voorbeeld',
-  paywallFeatureLayoutPro: 'Exporteerbaar',
+
+
   paywallFeatureWatermark: 'Watermerk',
   paywallFeatureWatermarkFree: 'Zichtbaar',
   paywallFeatureWatermarkPro: 'Geen',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'Kon foto niet verwijderen.',
   photoDeletedNotice: 'Foto verwijderd.',
   undoAction: 'Ongedaan maken',
+  photoCaptionPlaceholder: 'Bijschrift toevoegen...',
 
   // --- Home ---
   homeSearchPlaceholder: 'Rapporten zoeken...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'PDF-voorbeeld',
   pdfLayoutStandard: 'Standaard',
-  pdfLayoutLarge: 'Groot',
+  pdfLayoutComment: 'Opmerking',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDF exporteren',
   pdfGenerating: 'PDF wordt gemaakt...',
-  pdfLargeProTitle: 'Alleen voor Pro',
-  pdfLargeProBody: 'Groot formaat is alleen voor Pro. In plaats daarvan Standaard gebruiken?',
-  pdfLargeUseStandard: 'Standaard gebruiken',
-  pdfLargeUpgrade: 'Upgraden',
+
+
   pdfExportLimitTitle: 'Maandlimiet bereikt',
   pdfExportLimitBody: 'Het gratis abonnement staat 5 exports per maand toe.',
   pdfExportFailed: 'PDF exporteren mislukt.',

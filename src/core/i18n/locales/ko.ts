@@ -37,7 +37,7 @@ const dict = {
   settingsManageSubFailed: '구독 관리를 열 수 없습니다.',
   settingsProBenefitPhotos: '보고서당 사진 무제한',
   settingsProBenefitPdf: 'PDF 내보내기 무제한',
-  settingsProBenefitLayout: '큰 레이아웃 내보내기',
+
   settingsProBenefitWatermark: '워터마크 없음',
   settingsProBenefitAds: '광고 없음',
   settingsDescFree: 'Pro로 업그레이드하면 무제한 사진, 내보내기 등 이용 가능.',
@@ -52,7 +52,7 @@ const dict = {
   paywallBestValueBadge: '최고 가성비',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: '월 가격',
-  paywallYearlySavings: '약 2개월분 무료!',
+  paywallYearlySavings: '약 5개월분 무료!',
   paywallCtaYearly: '연간 플랜 시작',
   paywallCtaMonthly: '월간 플랜 시작',
   paywallCtaStayFree: '무료로 사용',
@@ -77,9 +77,8 @@ const dict = {
   paywallFeaturePdf: 'PDF 내보내기',
   paywallFeaturePdfFree: '월 5회',
   paywallFeaturePdfPro: '무제한',
-  paywallFeatureLayout: '큰 레이아웃',
-  paywallFeatureLayoutFree: '미리보기만',
-  paywallFeatureLayoutPro: '내보내기 가능',
+
+
   paywallFeatureWatermark: '워터마크',
   paywallFeatureWatermarkFree: '있음',
   paywallFeatureWatermarkPro: '없음',
@@ -206,6 +205,7 @@ const dict = {
   photoDeleteFailed: '사진 삭제에 실패했습니다.',
   photoDeletedNotice: '사진이 삭제되었습니다.',
   undoAction: '실행 취소',
+  photoCaptionPlaceholder: '캡션 추가...',
 
   // --- Home ---
   homeSearchPlaceholder: '보고서 검색...',
@@ -224,15 +224,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'PDF 미리보기',
   pdfLayoutStandard: '표준',
-  pdfLayoutLarge: '크게',
+  pdfLayoutComment: '코멘트',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDF 내보내기',
   pdfGenerating: 'PDF 생성 중...',
-  pdfLargeProTitle: 'Pro 전용 레이아웃',
-  pdfLargeProBody: '크게 레이아웃은 Pro 전용입니다. 표준 레이아웃을 사용할까요?',
-  pdfLargeUseStandard: '표준 사용',
-  pdfLargeUpgrade: '업그레이드',
+
+
   pdfExportLimitTitle: '월간 한도 초과',
   pdfExportLimitBody: '무료 플랜은 월 5회 내보내기가 가능합니다.',
   pdfExportFailed: 'PDF 내보내기에 실패했습니다.',

@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'Impossible d\u2019ouvrir la gestion d\u2019abonnement.',
   settingsProBenefitPhotos: 'Photos illimitées par rapport',
   settingsProBenefitPdf: 'Exports PDF illimités',
-  settingsProBenefitLayout: 'Export en grand format',
+
   settingsProBenefitWatermark: 'Sans filigrane',
   settingsProBenefitAds: 'Sans publicité',
   settingsDescFree: 'Passez à Pro pour des photos et exports illimités, et plus encore.',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'Meilleur rapport qualité-prix',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Prix par mois',
-  paywallYearlySavings: 'Environ 2 mois offerts !',
+  paywallYearlySavings: 'Environ 5 mois offerts !',
   paywallCtaYearly: 'Choisir le forfait annuel',
   paywallCtaMonthly: 'Choisir le forfait mensuel',
   paywallCtaStayFree: 'Rester en version gratuite',
@@ -78,9 +78,8 @@ const dict = {
   paywallFeaturePdf: 'Exports PDF',
   paywallFeaturePdfFree: '5 par mois',
   paywallFeaturePdfPro: 'Illimités',
-  paywallFeatureLayout: 'Mise en page grande',
-  paywallFeatureLayoutFree: 'Aperçu seul',
-  paywallFeatureLayoutPro: 'Exportable',
+
+
   paywallFeatureWatermark: 'Filigrane',
   paywallFeatureWatermarkFree: 'Visible',
   paywallFeatureWatermarkPro: 'Aucun',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'Échec de la suppression de la photo.',
   photoDeletedNotice: 'Photo supprimée.',
   undoAction: 'Annuler',
+  photoCaptionPlaceholder: 'Ajouter une légende...',
 
   // --- Home ---
   homeSearchPlaceholder: 'Rechercher des rapports...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'Aperçu du PDF',
   pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Grand',
+  pdfLayoutComment: 'Commentaire',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Lettre',
   pdfExport: 'Exporter le PDF',
   pdfGenerating: 'Génération du PDF...',
-  pdfLargeProTitle: 'Mise en page Pro uniquement',
-  pdfLargeProBody: 'La mise en page Grand est réservée au Pro. Utiliser Standard à la place ?',
-  pdfLargeUseStandard: 'Utiliser Standard',
-  pdfLargeUpgrade: 'Passer à Pro',
+
+
   pdfExportLimitTitle: 'Limite mensuelle atteinte',
   pdfExportLimitBody: 'Le plan gratuit autorise 5 exportations par mois.',
   pdfExportFailed: 'Échec de l\'exportation du PDF.',

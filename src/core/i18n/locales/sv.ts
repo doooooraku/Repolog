@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'Kunde inte öppna prenumerationshantering.',
   settingsProBenefitPhotos: 'Obegränsade foton per rapport',
   settingsProBenefitPdf: 'Obegränsad PDF-export',
-  settingsProBenefitLayout: 'Export i stort format',
+
   settingsProBenefitWatermark: 'Inget vattenmärke',
   settingsProBenefitAds: 'Inga annonser',
   settingsDescFree: 'Uppgradera till Pro för obegränsade foton, exporter och mer.',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'Bästa värdet',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Pris per månad',
-  paywallYearlySavings: 'Spara ca 2 månader!',
+  paywallYearlySavings: 'Spara ca 5 månader!',
   paywallFreeLabel: 'Gratis',
   paywallProLabel: 'Pro',
   paywallFeaturePhotos: 'Foton per rapport',
@@ -62,9 +62,8 @@ const dict = {
   paywallFeaturePdf: 'PDF-exporter',
   paywallFeaturePdfFree: '5 per månad',
   paywallFeaturePdfPro: 'Obegränsat',
-  paywallFeatureLayout: 'Stor layout',
-  paywallFeatureLayoutFree: 'Bara förhandsgranskning',
-  paywallFeatureLayoutPro: 'Kan exporteras',
+
+
   paywallFeatureWatermark: 'Vattenstämpel',
   paywallFeatureWatermarkFree: 'Synlig',
   paywallFeatureWatermarkPro: 'Ingen',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'Kunde inte ta bort foto.',
   photoDeletedNotice: 'Foto borttaget.',
   undoAction: 'Ångra',
+  photoCaptionPlaceholder: 'Lägg till bildtext...',
 
   // --- Home ---
   homeSearchPlaceholder: 'Sök rapporter...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'PDF-förhandsgranskning',
   pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Stor',
+  pdfLayoutComment: 'Kommentar',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'Exportera PDF',
   pdfGenerating: 'Skapar PDF...',
-  pdfLargeProTitle: 'Endast Pro-layout',
-  pdfLargeProBody: 'Stor layout är bara för Pro. Använda Standard istället?',
-  pdfLargeUseStandard: 'Använd Standard',
-  pdfLargeUpgrade: 'Uppgradera',
+
+
   pdfExportLimitTitle: 'Månadsgräns nådd',
   pdfExportLimitBody: 'Gratisplanen tillåter 5 exporter per månad.',
   pdfExportFailed: 'Misslyckades med att exportera PDF.',

@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'Không thể mở quản lý đăng ký.',
   settingsProBenefitPhotos: 'Ảnh không giới hạn mỗi báo cáo',
   settingsProBenefitPdf: 'Xuất PDF không giới hạn',
-  settingsProBenefitLayout: 'Xuất bố cục lớn',
+
   settingsProBenefitWatermark: 'Không có watermark',
   settingsProBenefitAds: 'Không có quảng cáo',
   settingsDescFree: 'Nâng cấp lên Pro để có ảnh, xuất không giới hạn và nhiều hơn.',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'Tiết kiệm nhất',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Giá mỗi tháng',
-  paywallYearlySavings: 'Tiết kiệm khoảng 2 tháng!',
+  paywallYearlySavings: 'Tiết kiệm khoảng 5 tháng!',
   paywallFreeLabel: 'Miễn phí',
   paywallProLabel: 'Pro',
   paywallFeaturePhotos: 'Ảnh mỗi báo cáo',
@@ -62,9 +62,8 @@ const dict = {
   paywallFeaturePdf: 'Xuất PDF',
   paywallFeaturePdfFree: '5 lần/tháng',
   paywallFeaturePdfPro: 'Không giới hạn',
-  paywallFeatureLayout: 'Bố cục lớn',
-  paywallFeatureLayoutFree: 'Chỉ xem trước',
-  paywallFeatureLayoutPro: 'Xuất được',
+
+
   paywallFeatureWatermark: 'Hình mờ',
   paywallFeatureWatermarkFree: 'Có',
   paywallFeatureWatermarkPro: 'Không',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'Không thể xóa ảnh.',
   photoDeletedNotice: 'Đã xóa ảnh.',
   undoAction: 'Hoàn tác',
+  photoCaptionPlaceholder: 'Thêm chú thích...',
 
   // --- Home ---
   homeSearchPlaceholder: 'Tìm kiếm báo cáo...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'Xem trước PDF',
   pdfLayoutStandard: 'Tiêu chuẩn',
-  pdfLayoutLarge: 'Lớn',
+  pdfLayoutComment: 'Bình luận',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'Xuất PDF',
   pdfGenerating: 'Đang tạo PDF...',
-  pdfLargeProTitle: 'Bố cục chỉ dành cho Pro',
-  pdfLargeProBody: 'Bố cục Lớn chỉ dành cho Pro. Dùng Tiêu chuẩn thay thế?',
-  pdfLargeUseStandard: 'Dùng Tiêu chuẩn',
-  pdfLargeUpgrade: 'Nâng cấp',
+
+
   pdfExportLimitTitle: 'Đã đạt giới hạn hàng tháng',
   pdfExportLimitBody: 'Gói Miễn phí cho phép 5 lần xuất mỗi tháng.',
   pdfExportFailed: 'Xuất PDF thất bại.',

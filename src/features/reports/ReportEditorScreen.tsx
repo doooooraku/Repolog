@@ -45,13 +45,15 @@ import {
 } from '@/src/db/reportRepository';
 import {
   clampComment,
+  countCommentChars,
+  MAX_CAPTION_CHARS,
   remainingCommentChars,
 } from '@/src/features/reports/reportUtils';
 import { formatDateTime } from '@/src/features/pdf/pdfUtils';
 import { useSettingsStore } from '@/src/stores/settingsStore';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { getCurrentLocationWithAddress } from '@/src/services/locationService';
-import { createPhoto, listPhotosByReport, updatePhotoOrderByIds } from '@/src/db/photoRepository';
+import { createPhoto, listPhotosByReport, updatePhoto, updatePhotoOrderByIds } from '@/src/db/photoRepository';
 import {
   addPhotosFromCamera,
   addPhotosFromLibrary,
@@ -151,6 +153,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const [locationState, setLocationState] = useState<LocationState>(emptyLocation);
   const [locationLoading, setLocationLoading] = useState(false);
   const [undoVisible, setUndoVisible] = useState(false);
+  const [captions, setCaptions] = useState<Record<string, string>>({});
 
   const autoLocationRequested = useRef(false);
   const reportNameSeeded = useRef(false);
@@ -188,7 +191,12 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           addressLocale: existing.addressLocale,
         });
         const photoList = await listPhotosByReport(existing.id);
-        if (mounted) setPhotos(photoList);
+        if (mounted) {
+          setPhotos(photoList);
+          const captionMap: Record<string, string> = {};
+          photoList.forEach((p) => { captionMap[p.id] = p.caption ?? ''; });
+          setCaptions(captionMap);
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -336,7 +344,31 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
   const refreshPhotos = useCallback(async (reportIdValue: string) => {
     const list = await listPhotosByReport(reportIdValue);
     setPhotos(list);
+    setCaptions((prev) => {
+      const next = { ...prev };
+      list.forEach((p) => {
+        if (!(p.id in next)) next[p.id] = p.caption ?? '';
+      });
+      return next;
+    });
   }, []);
+
+  const handleCaptionChange = useCallback(
+    (photoId: string, text: string) => {
+      setCaptions((prev) => ({ ...prev, [photoId]: clampComment(text, MAX_CAPTION_CHARS) }));
+    },
+    [],
+  );
+
+  const persistCaptions = useCallback(async () => {
+    for (const photo of photos) {
+      const next = captions[photo.id] ?? '';
+      const prev = photo.caption ?? '';
+      if (next !== prev) {
+        await updatePhoto({ id: photo.id, caption: next || null });
+      }
+    }
+  }, [photos, captions]);
 
   const handleSeedPhotosForE2E = useCallback(async () => {
     try {
@@ -540,6 +572,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
         setReport(created);
         setCreatedAt(created.createdAt);
       }
+      await persistCaptions();
       router.back();
     } catch {
       Alert.alert(t.errorSaveFailed);
@@ -552,6 +585,7 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
     const finalized = await finalizePendingDeletion();
     if (!finalized) return;
     const current = await ensureReport();
+    await persistCaptions();
     router.push(`/reports/${current.id}/pdf`);
   };
 
@@ -757,10 +791,25 @@ export default function ReportEditorScreen({ reportId }: ReportEditorScreenProps
           <Pressable onPress={() => { setViewerIndex(index); setViewerVisible(true); }}>
             <Image source={{ uri: item.localUri }} style={[styles.photoThumb, { backgroundColor: colors.photoCardBg }]} contentFit="cover" />
           </Pressable>
+          <View style={styles.captionArea}>
+            <TextInput
+              style={[styles.captionInput, { color: colors.textPrimary, backgroundColor: colors.surfaceHighlight }]}
+              value={captions[item.id] ?? ''}
+              onChangeText={(text) => handleCaptionChange(item.id, text)}
+              placeholder={t.photoCaptionPlaceholder}
+              placeholderTextColor={colors.textPlaceholder}
+              multiline
+              maxLength={250}
+              textAlignVertical="top"
+            />
+            <Text style={[styles.captionCounter, { color: colors.textMuted }]}>
+              {`${countCommentChars(captions[item.id] ?? '')}/${MAX_CAPTION_CHARS}`}
+            </Text>
+          </View>
         </View>
       );
     },
-    [colors.photoCardBg, colors.surfaceHighlight, colors.textMuted, colors.textPrimary, colors.textSecondary, confirmDeletePhoto, handleDeletePhoto, handleMovePhoto, photos.length, t.a11yPhotoMoveDown, t.a11yPhotoMoveUp],
+    [captions, colors.photoCardBg, colors.surfaceHighlight, colors.textMuted, colors.textPlaceholder, colors.textPrimary, colors.textSecondary, confirmDeletePhoto, handleCaptionChange, handleDeletePhoto, handleMovePhoto, photos.length, t.a11yPhotoMoveDown, t.a11yPhotoMoveUp, t.photoCaptionPlaceholder],
   );
 
   const remaining = remainingCommentChars(comment);
@@ -1278,6 +1327,24 @@ const styles = StyleSheet.create({
   photoIndexLabel: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  captionArea: {
+    paddingHorizontal: 8,
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  captionInput: {
+    minHeight: 32,
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    fontSize: 13,
+  },
+  captionCounter: {
+    fontSize: 11,
+    textAlign: 'right',
+    marginTop: 2,
+    marginRight: 2,
   },
   footerBar: {
     borderTopWidth: 1,

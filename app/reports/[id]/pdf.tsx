@@ -160,31 +160,6 @@ export default function PdfPreviewScreen() {
       );
     });
 
-  const confirmLargeLayout = () =>
-    new Promise<boolean>((resolve) => {
-      Alert.alert(
-        t.pdfLargeProTitle,
-        t.pdfLargeProBody,
-        [
-          {
-            text: t.pdfLargeUseStandard,
-            onPress: () => {
-              setLayout('standard');
-              resolve(false);
-            },
-          },
-          {
-            text: t.pdfLargeUpgrade,
-            style: 'cancel',
-            onPress: () => {
-              router.push('/pro');
-              resolve(false);
-            },
-          },
-        ],
-      );
-    });
-
   // Generate PDF on-demand and export immediately
   const handleExport = async () => {
     if (!reportId) return;
@@ -199,11 +174,6 @@ export default function PdfPreviewScreen() {
       const photos = photosRef.current.length > 0
         ? photosRef.current
         : await listPhotosByReport(reportId);
-
-      if (!isPro && layout === 'large') {
-        await confirmLargeLayout();
-        return;
-      }
 
       if (!isPro) {
         const monthStart = new Date();
@@ -297,7 +267,7 @@ export default function PdfPreviewScreen() {
           <Pressable
             onPress={() => setLayout('large')}
             style={[styles.tab, { borderColor: colors.borderMedium, backgroundColor: colors.surfaceBg }, layout === 'large' && { borderColor: colors.tabActive, backgroundColor: colors.surfaceHighlight }]}>
-            <Text style={{ color: colors.textPrimary }}>{t.pdfLayoutLarge}</Text>
+            <Text style={{ color: colors.textPrimary }}>{t.pdfLayoutComment}</Text>
           </Pressable>
         </View>
         <View style={styles.row}>
