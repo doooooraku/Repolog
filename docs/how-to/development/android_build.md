@@ -57,6 +57,24 @@ echo "$ANDROID_HOME"
 
 ---
 
+## 1.5 プレビルド環境変数チェック（必須）
+
+本番/プレビュービルドの前に、必要な API キーが設定されていることを確認します。
+
+```bash
+# ローカル .env の確認
+node scripts/prebuild-env-check.mjs android
+```
+
+このチェックは `pnpm build:android:aab:local` 等のビルドコマンドに組み込み済みです。
+失敗した場合はビルドが開始されません。
+
+> **重要**: EAS local build（`eas build --local`）は `.env` を一時ビルドディレクトリにコピーしません。
+> API キーは **EAS サーバーの環境変数** から注入されます。
+> 新しいキーを追加した場合は `eas env:create --environment production --name KEY_NAME --value VALUE --visibility sensitive` で登録してください。
+>
+> 現在の EAS 環境変数を確認: `npx eas-cli env:list --environment production`
+
 ## 2. 品質チェック（CIと同じ順番）
 
 ```bash

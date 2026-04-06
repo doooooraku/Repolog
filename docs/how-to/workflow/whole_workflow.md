@@ -317,11 +317,14 @@ gh api repos/doooooraku/Repolog/milestones/<旧番号> --method PATCH -f state='
 * **作業内容**：
   * `docs/how-to/workflow/release_notes_template.md` に沿ってリリースノートを作成
   * `vX.Y.Z-rc.N` または `vX.Y.Z` のタグを作成し、`gh release create` で公開
+  * EAS環境変数の確認: `npx eas-cli env:list --environment production` で全APIキーが登録されているか確認
   * `docs/how-to/development/android_build.md`の実施
   * `docs/how-to/development/ios_build.md`の実施
+  * ビルド後検証: `assets/app.config` の `extra` フィールドでAPIキー埋め込みを確認
+  * IAP検証: RevenueCat Dashboard で全商品の Store Status が active であることを確認
 * **INPUT**：main、リリースノート、Storeメタ情報
 * **OUTPUT**：GitHub Release / TestFlight / Play内部テスト / 本番リリース
-* **完了条件**：ストアの審査/配信が通る。
+* **完了条件**：ストアの審査/配信が通る。Paywall画面で金額が表示され、購入ボタンが動作する。
 * **担当**：人間
 
 ---
