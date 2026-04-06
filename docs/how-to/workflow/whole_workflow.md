@@ -322,9 +322,10 @@ gh api repos/doooooraku/Repolog/milestones/<旧番号> --method PATCH -f state='
   * `docs/how-to/development/ios_build.md`の実施
   * ビルド後検証: `assets/app.config` の `extra` フィールドでAPIキー埋め込みを確認
   * IAP検証: RevenueCat Dashboard で全商品の Store Status が active であることを確認
+  * データ永続性検証: 旧バージョン→新バージョンへStore更新後に、既存のレポート・写真・設定が保持されていることを確認（写真パスの相対化はDB v5で対応済みだが、今後のDB変更時も同様に検証する）
 * **INPUT**：main、リリースノート、Storeメタ情報
 * **OUTPUT**：GitHub Release / TestFlight / Play内部テスト / 本番リリース
-* **完了条件**：ストアの審査/配信が通る。Paywall画面で金額が表示され、購入ボタンが動作する。
+* **完了条件**：ストアの審査/配信が通る。Paywall画面で金額が表示され、購入ボタンが動作する。データ永続性が確認できる。
 * **担当**：人間
 
 ---

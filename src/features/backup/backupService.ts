@@ -17,6 +17,7 @@ import {
   normalizeWeather,
   roundCoordinate,
 } from '@/src/features/reports/reportUtils';
+import { toRelativePath } from '@/src/db/photoPathUtils';
 import { buildAppendImportPlan } from '@/src/features/backup/backupImportPlanner';
 import type { AddressSource, WeatherType } from '@/src/types/models';
 
@@ -346,7 +347,7 @@ export async function importBackup(): Promise<BackupImportResult | null> {
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             photo.id,
             photo.reportId,
-            targetPath,
+            toRelativePath(targetPath),
             photo.width ?? null,
             photo.height ?? null,
             photo.createdAt,
