@@ -152,7 +152,7 @@ const dict = {
   save: '保存',
   photoDeletedNotice: '写真を削除しました。',
   undoAction: '元に戻す',
-  photoCaptionPlaceholder: 'キャプションを入力...',
+  photoCaptionPlaceholder: 'メモを入力...',
   reportEditorTitle: 'レポート編集',
   reportBasicInfoSection: '基本情報',
   reportNameLabel: 'レポート名',
