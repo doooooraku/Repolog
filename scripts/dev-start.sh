@@ -64,7 +64,7 @@ echo "=== Step 1: Checking ADB connection ==="
 # WSL2 workaround: unset ADB_SERVER_SOCKET to avoid router-IP socket issue
 ADB_CMD="env -u ADB_SERVER_SOCKET adb"
 
-if ! $ADB_CMD devices 2>/dev/null | grep -q 'device$'; then
+if ! $ADB_CMD devices 2>/dev/null | tr -d '\r' | grep -q 'device$'; then
   echo "ERROR: No Android device found."
   echo ""
   echo "Troubleshooting:"
@@ -75,7 +75,7 @@ if ! $ADB_CMD devices 2>/dev/null | grep -q 'device$'; then
   exit 1
 fi
 
-DEVICE=$($ADB_CMD devices | grep 'device$' | head -1 | awk '{print $1}')
+DEVICE=$($ADB_CMD devices | tr -d '\r' | grep 'device$' | head -1 | awk '{print $1}')
 echo "  Device found: $DEVICE"
 
 # --- Step 2: Set up port forwarding ---

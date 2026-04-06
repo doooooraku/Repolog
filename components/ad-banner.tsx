@@ -3,6 +3,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
 import { getBannerUnitId, initializeAds } from '@/src/services/adService';
+import { SCREENSHOT_MODE } from '@/src/core/screenshotMode';
 
 export function AdBanner() {
   const isWeb = Platform.OS === 'web';
@@ -33,7 +34,7 @@ export function AdBanner() {
     }
   }, []);
 
-  if (isWeb || !unitId || !ready) return null;
+  if (isWeb || !unitId || !ready || SCREENSHOT_MODE) return null;
 
   return (
     <View style={styles.container}>

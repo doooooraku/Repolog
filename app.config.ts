@@ -161,6 +161,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       REVENUECAT_IOS_API_KEY: process.env.REVENUECAT_IOS_API_KEY ?? '',
       REVENUECAT_ANDROID_API_KEY: process.env.REVENUECAT_ANDROID_API_KEY ?? '',
       IAP_DEBUG: process.env.IAP_DEBUG ?? '0',
+      SCREENSHOT_MODE: process.env.SCREENSHOT_MODE ?? '0',
       ADMOB_ANDROID_BANNER_ID: process.env.ADMOB_ANDROID_BANNER_ID ?? '',
       ADMOB_IOS_BANNER_ID: process.env.ADMOB_IOS_BANNER_ID ?? '',
       ADMOB_CONSENT_DEBUG_GEOGRAPHY: admobConsentDebugGeography,

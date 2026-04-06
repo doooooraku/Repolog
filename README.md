@@ -50,6 +50,16 @@ scripts/       Build, debug, i18n tools
 maestro/       E2E test flows
 ```
 
+### Rules of Conduct When Context Gets Tight (If You Start Panicking, Stop)
+
+* Do not write code without reading the code first.
+* Do not skip verification.
+* Do not skip Plan mode.
+* Use sub-agents to save context.
+* If you can only finish halfway, stop.
+* If you notice yourself getting flustered, say so explicitly.
+
+
 ## License
 
 Proprietary. All rights reserved.

@@ -74,6 +74,7 @@
       "REVENUECAT_IOS_API_KEY": "",
       "REVENUECAT_ANDROID_API_KEY": "",
       "IAP_DEBUG": "0",
+      "SCREENSHOT_MODE": "0",
       "ADMOB_ANDROID_BANNER_ID": "",
       "ADMOB_IOS_BANNER_ID": "",
       "ADMOB_CONSENT_DEBUG_GEOGRAPHY": "",
