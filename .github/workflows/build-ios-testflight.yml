@@ -44,6 +44,9 @@ jobs:
           REVENUECAT_IOS_API_KEY=${{ secrets.REVENUECAT_IOS_API_KEY }}
           DOTENV
 
+      - name: Verify required secrets are set
+        run: node scripts/prebuild-env-check.mjs ios
+
       - name: Verify code quality
         run: pnpm verify
 

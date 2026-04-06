@@ -167,13 +167,15 @@
 
 ### 2026-04-06: RevenueCat APIキーがビルドに含まれず課金画面が全プラン「Unavailable」
 - **状況**: クローズドテスト用 .aab をビルドしてGoogle Playにアップロードしたが、Paywall画面の全プランが「Unavailable」でボタンも反応しない。iOS・Android両方で発生
-- **根本原因**: .aab ビルド時に `.env` に `REVENUECAT_ANDROID_API_KEY` / `REVENUECAT_IOS_API_KEY` が未設定（空文字）だった。ビルド後にキーを追加したが、既にアップロード済みのバイナリには反映されない
+- **根本原因**: EAS local build（`eas build --local`）は `.gitignore` に従い `.env` を一時ビルドディレクトリにコピーしない。環境変数は EAS サーバーの environment 設定から注入されるが、RevenueCat の API キーが EAS production 環境に未登録だった。結果、`app.config.ts` の `process.env.REVENUECAT_ANDROID_API_KEY` が undefined → `?? ''` で空文字にフォールバック → バイナリに空文字が埋め込まれた
+- **なぜ ADMOB は動いたか**: ADMOB のキーは EAS production 環境変数に登録済みだったため正常に注入された
 - **診断方法**: APK の `assets/app.config` を抽出して `extra` フィールドを確認 → 空文字を確認。logcat で RevenueCat/BillingClient のログがゼロ → SDK未初期化を確認
 - **ルール**:
-  1. ビルドスクリプトに環境変数チェックを必ず入れる（`scripts/prebuild-env-check.mjs`）
-  2. `.env` を変更したら必ずリビルドする（設定変更はバイナリに自動反映されない）
-  3. ビルド後は `assets/app.config` の `extra` フィールドでAPIキーの埋め込みを検証する
-  4. RevenueCat SDKのログが出ない場合は、APIキーの不在を最初に疑う
+  1. 新しい API キーを追加したら **3 箇所を同時更新**: `.env`（ローカル開発）、EAS 環境変数（`eas env:create --environment production`）、`.env.example`（チーム共有）
+  2. ビルドスクリプトに環境変数チェックを必ず入れる（`scripts/prebuild-env-check.mjs`）
+  3. ビルド後は `assets/app.config` の `extra` フィールドで API キーの埋め込みを検証する
+  4. RevenueCat SDK のログが出ない場合は、API キーの不在を最初に疑う
+  5. EAS ビルドログの「Environment variables loaded from ... environment on EAS」行で、必要な変数がリストされているか確認する
 
 ---
 
