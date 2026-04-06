@@ -1,4 +1,5 @@
 import { getDb } from './db';
+import { toAbsolutePath, toRelativePath } from './photoPathUtils';
 import type { NewPhotoInput, Photo, UpdatePhotoInput } from '@/src/types/models';
 
 const PHOTO_COLUMNS = [
@@ -26,7 +27,7 @@ type PhotoRow = {
 const toPhoto = (row: PhotoRow): Photo => ({
   id: row.id,
   reportId: row.report_id,
-  localUri: row.local_uri,
+  localUri: toAbsolutePath(row.local_uri),
   width: row.width,
   height: row.height,
   createdAt: row.created_at,
@@ -104,6 +105,7 @@ export async function createPhoto(input: NewPhotoInput): Promise<Photo> {
   const height = input.height ?? null;
 
   const caption = input.caption ?? null;
+  const relativeUri = toRelativePath(input.localUri);
 
   const db = await getDb();
   await db.runAsync(
@@ -112,7 +114,7 @@ export async function createPhoto(input: NewPhotoInput): Promise<Photo> {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     id,
     input.reportId,
-    input.localUri,
+    relativeUri,
     width,
     height,
     createdAt,
@@ -123,7 +125,7 @@ export async function createPhoto(input: NewPhotoInput): Promise<Photo> {
   return {
     id,
     reportId: input.reportId,
-    localUri: input.localUri,
+    localUri: toAbsolutePath(relativeUri),
     width,
     height,
     createdAt,
@@ -140,10 +142,12 @@ export async function updatePhoto(input: UpdatePhotoInput): Promise<Photo | null
   );
   if (!row) return null;
 
+  const storedUri = input.localUri ? toRelativePath(input.localUri) : row.local_uri;
+
   const next: Photo = {
     id: row.id,
     reportId: row.report_id,
-    localUri: input.localUri ?? row.local_uri,
+    localUri: toAbsolutePath(storedUri),
     width: input.width !== undefined ? input.width : row.width,
     height: input.height !== undefined ? input.height : row.height,
     createdAt: row.created_at,
@@ -159,7 +163,7 @@ export async function updatePhoto(input: UpdatePhotoInput): Promise<Photo | null
       order_index = ?,
       caption = ?
     WHERE id = ?`,
-    next.localUri,
+    storedUri,
     next.width,
     next.height,
     next.orderIndex,

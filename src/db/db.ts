@@ -38,6 +38,15 @@ async function migrate(db: SQLite.SQLiteDatabase) {
     version = 4;
   }
 
+  if (version < 5) {
+    await db.execAsync(
+      `UPDATE photos SET local_uri = SUBSTR(local_uri, INSTR(local_uri, 'repolog/reports/'))
+       WHERE local_uri LIKE '%repolog/reports/%'
+         AND (local_uri LIKE 'file://%' OR local_uri LIKE '/%')`,
+    );
+    version = 5;
+  }
+
   await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION};`);
 }
 

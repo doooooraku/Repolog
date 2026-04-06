@@ -179,6 +179,21 @@
 
 ---
 
+## 画像・ファイルパス
+
+### 2026-04-06: Store更新後にレポートの全画像が表示不能
+- **状況**: App Store / Google Play 経由でアプリを更新すると、更新前に保存した全画像がレポート上で表示されなくなる。画像エリアが黒いプレースホルダー、タップするとローディングスピナーが無限回転
+- **根本原因**: `photos.local_uri` に**絶対パス**（`file:///var/mobile/Containers/Data/Application/UUID/Documents/repolog/reports/...`）を保存していた。iOSではStore更新時にコンテナUUIDが変更されうるため、DBの旧パスで画像ファイルを参照できなくなった。ファイル自体はディスク上に存在するが、パスが不一致
+- **なぜ開発中に気づかなかったか**: `expo run:ios` や `eas build --local` → `adb install` による更新ではコンテナUUIDが変わらない。Store経由の更新でしか再現しない
+- **対策（実施済み）**: DB v5 マイグレーションで `local_uri` を相対パス（`repolog/reports/...`）に変換。読み出し時に `FileSystem.documentDirectory` をプレフィックスして絶対パスに復元する設計に変更
+- **ルール**:
+  1. **ファイルシステムのパスをDBに保存するときは必ず相対パスを使う**（Apple公式も明記: 「アプリコンテナへの絶対パスを永続ストレージに保存してはいけない」）
+  2. `photoPathUtils.ts` の `toRelativePath()` / `toAbsolutePath()` を通じてパス変換を行う
+  3. リリース前にStore更新シナリオのテスト（旧バージョン→新バージョンアップデート後にデータが残っているか）を手動チェックリストに含める
+  4. DBにファイルパスを含むカラムを追加する場合は、必ず相対パスで保存されることをレビューする
+
+---
+
 ### Claude Code トリガーフレーズ
 - 有効なフレーズ: 「デバッグセッションを分析して」「rebuild して」「Maestro スクショ付きで E2E テストして」
 - 分析時は summary.md → app_logcat.log → screenshots/ の順に読むのが効率的
