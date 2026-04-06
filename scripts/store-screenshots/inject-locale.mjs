@@ -8,6 +8,7 @@
  * 出力:  /tmp/repolog_out.db,  /tmp/RKStorage_out.db
  */
 import { Buffer } from 'node:buffer';
+// eslint-disable-next-line import/no-unresolved -- sql.js is an optional devDependency for screenshot tooling
 import initSqlJs from 'sql.js';
 import { readFileSync, writeFileSync } from 'fs';
 
