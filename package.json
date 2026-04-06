@@ -24,9 +24,9 @@
     "pdf:font:benchmark": "node --expose-gc scripts/pdf-font-benchmark.mjs",
     "prebuild": "expo prebuild",
     "build:android": "expo prebuild --platform android && cd android && ./gradlew bundleRelease",
-    "build:android:apk:local": "node scripts/prebuild-env-check.mjs android && npx eas-cli@latest build -p android --profile preview-local-apk --local --output dist/repolog-preview-local.apk",
+    "build:android:apk:local": "node scripts/prebuild-env-check.mjs android && npx eas-cli@latest build -p android --profile preview-local-apk --local --output dist/repolog-preview-local.apk && node scripts/postbuild-verify.mjs dist/repolog-preview-local.apk",
     "build:android:apk:cloud": "node scripts/prebuild-env-check.mjs android && npx eas-cli@latest build -p android --profile preview-cloud-apk",
-    "build:android:aab:local": "node scripts/prebuild-env-check.mjs android && npx eas-cli@latest build -p android --profile production --local --output dist/repolog-production.aab",
+    "build:android:aab:local": "node scripts/prebuild-env-check.mjs android && npx eas-cli@latest build -p android --profile production --local --output dist/repolog-production.aab && node scripts/postbuild-verify.mjs dist/repolog-production.aab",
     "build:android:aab:cloud": "node scripts/prebuild-env-check.mjs android && npx eas-cli@latest build -p android --profile production",
     "install:device": "adb install -r \"$(wslpath -w dist/repolog-preview-local.apk)\"",
     "store-screenshots": "npx tsx scripts/store-screenshots/generate.ts"
