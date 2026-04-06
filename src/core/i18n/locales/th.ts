@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'ไม่สามารถเปิดการจัดการการสมัครสมาชิก',
   settingsProBenefitPhotos: 'รูปภาพไม่จำกัดต่อรายงาน',
   settingsProBenefitPdf: 'ส่งออก PDF ไม่จำกัด',
-  settingsProBenefitLayout: 'ส่งออกเลย์เอาต์ขนาดใหญ่',
+
   settingsProBenefitWatermark: 'ไม่มีลายน้ำ',
   settingsProBenefitAds: 'ไม่มีโฆษณา',
   settingsDescFree: 'อัปเกรดเป็น Pro เพื่อรูปภาพและการส่งออกไม่จำกัด และอื่นๆ',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'คุ้มค่าที่สุด',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'ราคาต่อเดือน',
-  paywallYearlySavings: 'ประหยัดประมาณ 2 เดือน!',
+  paywallYearlySavings: 'ประหยัดประมาณ 5 เดือน!',
   paywallFreeLabel: 'ฟรี',
   paywallProLabel: 'Pro',
   paywallFeaturePhotos: 'รูปต่อรายงาน',
@@ -62,9 +62,8 @@ const dict = {
   paywallFeaturePdf: 'ส่งออก PDF',
   paywallFeaturePdfFree: '5 ครั้ง/เดือน',
   paywallFeaturePdfPro: 'ไม่จำกัด',
-  paywallFeatureLayout: 'เลย์เอาต์ใหญ่',
-  paywallFeatureLayoutFree: 'ดูตัวอย่างเท่านั้น',
-  paywallFeatureLayoutPro: 'ส่งออกได้',
+
+
   paywallFeatureWatermark: 'ลายน้ำ',
   paywallFeatureWatermarkFree: 'มี',
   paywallFeatureWatermarkPro: 'ไม่มี',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'ลบรูปภาพไม่สำเร็จ',
   photoDeletedNotice: 'ลบรูปภาพแล้ว',
   undoAction: 'เลิกทำ',
+  photoCaptionPlaceholder: 'เพิ่มคำอธิบาย...',
 
   // --- Home ---
   homeSearchPlaceholder: 'ค้นหารายงาน...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'ตัวอย่าง PDF',
   pdfLayoutStandard: 'มาตรฐาน',
-  pdfLayoutLarge: 'ขนาดใหญ่',
+  pdfLayoutComment: 'ความคิดเห็น',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'ส่งออก PDF',
   pdfGenerating: 'กำลังสร้าง PDF...',
-  pdfLargeProTitle: 'เลย์เอาต์สำหรับ Pro เท่านั้น',
-  pdfLargeProBody: 'เลย์เอาต์ขนาดใหญ่สำหรับ Pro เท่านั้น ใช้แบบมาตรฐานแทนหรือไม่?',
-  pdfLargeUseStandard: 'ใช้แบบมาตรฐาน',
-  pdfLargeUpgrade: 'อัปเกรด',
+
+
   pdfExportLimitTitle: 'ถึงขีดจำกัดรายเดือนแล้ว',
   pdfExportLimitBody: 'แพ็กเกจ Free อนุญาตส่งออก 5 ครั้งต่อเดือน',
   pdfExportFailed: 'ส่งออก PDF ไม่สำเร็จ',

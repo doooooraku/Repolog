@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export const schemaV1 = `
 PRAGMA foreign_keys = ON;
@@ -55,3 +55,4 @@ CREATE INDEX IF NOT EXISTS idx_exports_exported_at ON exports(exported_at);
 
 // v3: author_name column added via idempotent migration in db.ts
 // (ALTER TABLE ADD COLUMN has no IF NOT EXISTS in SQLite)
+// v4: caption column added to photos via idempotent migration in db.ts

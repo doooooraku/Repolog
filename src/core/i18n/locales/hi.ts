@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'सदस्यता प्रबंधन खोलने में विफल।',
   settingsProBenefitPhotos: 'प्रति रिपोर्ट असीमित फ़ोटो',
   settingsProBenefitPdf: 'असीमित PDF निर्यात',
-  settingsProBenefitLayout: 'बड़ा लेआउट निर्यात',
+
   settingsProBenefitWatermark: 'वॉटरमार्क नहीं',
   settingsProBenefitAds: 'विज्ञापन नहीं',
   settingsDescFree: 'असीमित फ़ोटो, निर्यात और बहुत कुछ के लिए Pro में अपग्रेड करें।',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'सबसे किफ़ायती',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'प्रति माह मूल्य',
-  paywallYearlySavings: 'लगभग 2 महीने मुफ़्त!',
+  paywallYearlySavings: 'लगभग 5 महीने मुफ़्त!',
   paywallFreeLabel: 'मुफ़्त',
   paywallProLabel: 'Pro',
   paywallFeaturePhotos: 'प्रति रिपोर्ट फ़ोटो',
@@ -62,9 +62,8 @@ const dict = {
   paywallFeaturePdf: 'PDF निर्यात',
   paywallFeaturePdfFree: 'महीने में 5',
   paywallFeaturePdfPro: 'असीमित',
-  paywallFeatureLayout: 'बड़ा लेआउट',
-  paywallFeatureLayoutFree: 'केवल पूर्वावलोकन',
-  paywallFeatureLayoutPro: 'निर्यात योग्य',
+
+
   paywallFeatureWatermark: 'वॉटरमार्क',
   paywallFeatureWatermarkFree: 'दिखता है',
   paywallFeatureWatermarkPro: 'नहीं',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'फ़ोटो हटाने में विफल।',
   photoDeletedNotice: 'फ़ोटो हटाई गई।',
   undoAction: 'पूर्ववत करें',
+  photoCaptionPlaceholder: 'कैप्शन जोड़ें...',
 
   // --- Home ---
   homeSearchPlaceholder: 'रिपोर्ट खोजें...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'PDF पूर्वावलोकन',
   pdfLayoutStandard: 'स्टैंडर्ड',
-  pdfLayoutLarge: 'लार्ज',
+  pdfLayoutComment: 'टिप्पणी',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDF निर्यात करें',
   pdfGenerating: 'PDF बन रही है...',
-  pdfLargeProTitle: 'केवल Pro लेआउट',
-  pdfLargeProBody: 'लार्ज लेआउट केवल Pro के लिए है। स्टैंडर्ड का उपयोग करें?',
-  pdfLargeUseStandard: 'स्टैंडर्ड उपयोग करें',
-  pdfLargeUpgrade: 'अपग्रेड करें',
+
+
   pdfExportLimitTitle: 'मासिक सीमा पूरी',
   pdfExportLimitBody: 'Free प्लान में प्रति माह 5 बार निर्यात की अनुमति है।',
   pdfExportFailed: 'PDF निर्यात करने में विफल।',

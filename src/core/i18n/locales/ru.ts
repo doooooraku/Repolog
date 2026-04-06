@@ -37,7 +37,7 @@ const dict = {
   settingsManageSubFailed: 'Не удалось открыть управление подпиской.',
   settingsProBenefitPhotos: 'Безлимитные фото в отчёте',
   settingsProBenefitPdf: 'Безлимитный экспорт PDF',
-  settingsProBenefitLayout: 'Экспорт в крупном формате',
+
   settingsProBenefitWatermark: 'Без водяного знака',
   settingsProBenefitAds: 'Без рекламы',
   settingsDescFree: 'Обновите до Pro: безлимитные фото, экспорт и другое.',
@@ -52,7 +52,7 @@ const dict = {
   paywallBestValueBadge: 'Лучшая цена',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Цена в месяц',
-  paywallYearlySavings: 'Около 2 месяцев бесплатно!',
+  paywallYearlySavings: 'Около 5 месяцев бесплатно!',
   paywallCtaYearly: 'Оформить годовой план',
   paywallCtaMonthly: 'Оформить месячный план',
   paywallCtaStayFree: 'Остаться на бесплатном',
@@ -77,9 +77,8 @@ const dict = {
   paywallFeaturePdf: 'Экспорт PDF',
   paywallFeaturePdfFree: '5 в месяц',
   paywallFeaturePdfPro: 'Без ограничений',
-  paywallFeatureLayout: 'Крупный макет',
-  paywallFeatureLayoutFree: 'Только просмотр',
-  paywallFeatureLayoutPro: 'Экспорт доступен',
+
+
   paywallFeatureWatermark: 'Водяной знак',
   paywallFeatureWatermarkFree: 'Есть',
   paywallFeatureWatermarkPro: 'Нет',
@@ -206,6 +205,7 @@ const dict = {
   photoDeleteFailed: 'Не удалось удалить фото.',
   photoDeletedNotice: 'Фото удалено.',
   undoAction: 'Отменить',
+  photoCaptionPlaceholder: 'Добавить подпись...',
 
   // --- Home ---
   homeSearchPlaceholder: 'Поиск отчётов...',
@@ -224,15 +224,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'Предпросмотр PDF',
   pdfLayoutStandard: 'Стандартный',
-  pdfLayoutLarge: 'Крупный',
+  pdfLayoutComment: 'Комментарий',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'Экспорт PDF',
   pdfGenerating: 'Создание PDF...',
-  pdfLargeProTitle: 'Макет только для Pro',
-  pdfLargeProBody: 'Крупный макет доступен только в Pro. Использовать Стандартный?',
-  pdfLargeUseStandard: 'Стандартный',
-  pdfLargeUpgrade: 'Обновить',
+
+
   pdfExportLimitTitle: 'Месячный лимит исчерпан',
   pdfExportLimitBody: 'Бесплатный план позволяет 5 экспортов в месяц.',
   pdfExportFailed: 'Не удалось экспортировать PDF.',

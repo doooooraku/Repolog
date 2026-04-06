@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'Gagal membuka manajemen langganan.',
   settingsProBenefitPhotos: 'Foto tak terbatas per laporan',
   settingsProBenefitPdf: 'Ekspor PDF tak terbatas',
-  settingsProBenefitLayout: 'Ekspor tata letak besar',
+
   settingsProBenefitWatermark: 'Tanpa tanda air',
   settingsProBenefitAds: 'Tanpa iklan',
   settingsDescFree: 'Tingkatkan ke Pro untuk foto dan ekspor tak terbatas, dan lainnya.',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'Paling hemat',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Harga per bulan',
-  paywallYearlySavings: 'Hemat sekitar 2 bulan!',
+  paywallYearlySavings: 'Hemat sekitar 5 bulan!',
   paywallFreeLabel: 'Gratis',
   paywallProLabel: 'Pro',
   paywallFeaturePhotos: 'Foto per laporan',
@@ -62,9 +62,8 @@ const dict = {
   paywallFeaturePdf: 'Ekspor PDF',
   paywallFeaturePdfFree: '5 per bulan',
   paywallFeaturePdfPro: 'Tak terbatas',
-  paywallFeatureLayout: 'Tata letak besar',
-  paywallFeatureLayoutFree: 'Pratinjau saja',
-  paywallFeatureLayoutPro: 'Bisa diekspor',
+
+
   paywallFeatureWatermark: 'Watermark',
   paywallFeatureWatermarkFree: 'Ada',
   paywallFeatureWatermarkPro: 'Tidak ada',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'Gagal menghapus foto.',
   photoDeletedNotice: 'Foto dihapus.',
   undoAction: 'Urungkan',
+  photoCaptionPlaceholder: 'Tambahkan keterangan...',
 
   // --- Home ---
   homeSearchPlaceholder: 'Cari laporan...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'Pratinjau PDF',
   pdfLayoutStandard: 'Standar',
-  pdfLayoutLarge: 'Besar',
+  pdfLayoutComment: 'Komentar',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'Ekspor PDF',
   pdfGenerating: 'Membuat PDF...',
-  pdfLargeProTitle: 'Tata letak khusus Pro',
-  pdfLargeProBody: 'Tata letak Besar hanya untuk Pro. Gunakan Standar saja?',
-  pdfLargeUseStandard: 'Gunakan Standar',
-  pdfLargeUpgrade: 'Upgrade',
+
+
   pdfExportLimitTitle: 'Batas bulanan tercapai',
   pdfExportLimitBody: 'Paket Free memungkinkan 5 ekspor per bulan.',
   pdfExportFailed: 'Gagal mengekspor PDF.',

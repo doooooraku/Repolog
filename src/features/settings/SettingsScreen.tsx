@@ -150,7 +150,6 @@ export default function SettingsScreen() {
   const proBenefits = [
     t.settingsProBenefitPhotos,
     t.settingsProBenefitPdf,
-    t.settingsProBenefitLayout,
     t.settingsProBenefitWatermark,
     t.settingsProBenefitAds,
   ];

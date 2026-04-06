@@ -63,6 +63,7 @@ export type BackupPhoto = {
   height: number | null;
   createdAt: string;
   orderIndex: number;
+  caption?: string | null;
 };
 
 export type BackupSettings = {
@@ -198,6 +199,7 @@ export async function exportBackup(): Promise<void> {
       height: photo.height ?? null,
       createdAt: photo.createdAt,
       orderIndex: photo.orderIndex,
+      caption: photo.caption ?? null,
     });
   }
 
@@ -340,8 +342,8 @@ export async function importBackup(): Promise<BackupImportResult | null> {
           copiedPhotoPaths.push(targetPath);
           await db.runAsync(
             `INSERT INTO photos (
-              id, report_id, local_uri, width, height, created_at, order_index
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+              id, report_id, local_uri, width, height, created_at, order_index, caption
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             photo.id,
             photo.reportId,
             targetPath,
@@ -349,6 +351,7 @@ export async function importBackup(): Promise<BackupImportResult | null> {
             photo.height ?? null,
             photo.createdAt,
             photo.orderIndex,
+            photo.caption ?? null,
           );
         }
       });

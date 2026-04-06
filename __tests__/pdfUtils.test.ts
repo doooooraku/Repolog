@@ -23,6 +23,7 @@ const makePhoto = (id: number) => ({
   height: null,
   createdAt: new Date().toISOString(),
   orderIndex: id,
+  caption: null,
 });
 
 const mockTimeZone = (tz: string | undefined) => {

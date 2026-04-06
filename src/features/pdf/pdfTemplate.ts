@@ -151,6 +151,7 @@ const buildFontSelectionText = (input: PdfTemplateInput) => {
     labels.photos,
     labels.pages,
     labels.comment,
+    ...input.photos.map((p) => p.caption ?? ''),
   ];
   return chunks.join('\n');
 };
@@ -250,6 +251,9 @@ const buildPhotoPages = async (
     for (const photo of chunk) {
       const label = photoLabel(photoCounter);
       photoCounter += 1;
+      const captionHtml = layout === 'large' && photo.caption
+        ? `<div class="photo-caption">${escapeHtml(photo.caption)}</div>`
+        : '';
       try {
         const config = resolveImageSizeConfig(input);
         const src = await fileToDataUri(photo.localUri, config, photo.width, photo.height);
@@ -259,6 +263,7 @@ const buildPhotoPages = async (
                 <img class="photo" src="${src}" alt="${escapeHtml(label)}" />
               </div>
               <div class="photo-no">${escapeHtml(label)}</div>
+              ${captionHtml}
             </div>
           `);
       } catch {
@@ -267,6 +272,7 @@ const buildPhotoPages = async (
             <div class="photo-slot">
               <div class="photo-frame"></div>
               <div class="photo-no">${escapeHtml(label)}</div>
+              ${captionHtml}
             </div>
           `);
       }
@@ -454,6 +460,15 @@ const buildCss = async (input: PdfTemplateInput) => {
     padding-top: 1mm;
     padding-right: 2mm;
     line-height: 1;
+  }
+  .photo-caption {
+    padding: 2mm 2mm 0;
+    font-size: 9pt;
+    line-height: 1.35;
+    color: #333;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
   .watermark {
     position: absolute;

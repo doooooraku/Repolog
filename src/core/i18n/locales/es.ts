@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'No se pudo abrir la gestión de suscripciones.',
   settingsProBenefitPhotos: 'Fotos ilimitadas por informe',
   settingsProBenefitPdf: 'Exportaciones de PDF ilimitadas',
-  settingsProBenefitLayout: 'Exportación en formato grande',
+
   settingsProBenefitWatermark: 'Sin marca de agua',
   settingsProBenefitAds: 'Sin anuncios',
   settingsDescFree: 'Pasa a Pro para fotos y exportaciones ilimitadas y más.',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'Mejor precio',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Precio por mes',
-  paywallYearlySavings: '¡Ahorra unos 2 meses!',
+  paywallYearlySavings: '¡Ahorra unos 5 meses!',
   paywallCtaYearly: 'Iniciar plan anual',
   paywallCtaMonthly: 'Iniciar plan mensual',
   paywallCtaStayFree: 'Seguir con el plan gratuito',
@@ -78,9 +78,8 @@ const dict = {
   paywallFeaturePdf: 'Exportaciones PDF',
   paywallFeaturePdfFree: '5 al mes',
   paywallFeaturePdfPro: 'Ilimitadas',
-  paywallFeatureLayout: 'Diseño grande',
-  paywallFeatureLayoutFree: 'Solo vista previa',
-  paywallFeatureLayoutPro: 'Exportable',
+
+
   paywallFeatureWatermark: 'Marca de agua',
   paywallFeatureWatermarkFree: 'Visible',
   paywallFeatureWatermarkPro: 'Sin marca',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'Error al eliminar la foto.',
   photoDeletedNotice: 'Foto eliminada.',
   undoAction: 'Deshacer',
+  photoCaptionPlaceholder: 'Agregar un pie de foto...',
 
   // --- Home ---
   homeSearchPlaceholder: 'Buscar informes...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'Vista previa del PDF',
   pdfLayoutStandard: 'Estándar',
-  pdfLayoutLarge: 'Grande',
+  pdfLayoutComment: 'Comentario',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Carta',
   pdfExport: 'Exportar PDF',
   pdfGenerating: 'Generando PDF...',
-  pdfLargeProTitle: 'Diseño solo para Pro',
-  pdfLargeProBody: 'El diseño Grande es solo para Pro. ¿Usar Estándar en su lugar?',
-  pdfLargeUseStandard: 'Usar Estándar',
-  pdfLargeUpgrade: 'Mejorar a Pro',
+
+
   pdfExportLimitTitle: 'Límite mensual alcanzado',
   pdfExportLimitBody: 'El plan gratuito permite 5 exportaciones al mes.',
   pdfExportFailed: 'Error al exportar el PDF.',

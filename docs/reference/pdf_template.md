@@ -141,9 +141,9 @@
 
 
   <!-- =========================
-       Photo pages (Large: 1 photo / page)
+       Photo pages (Comment layout: 1 photo / page + caption)
        photoPages1: [
-         { pageNo: 3, p:{src,index} }, ...
+         { pageNo: 3, p:{src,index,caption} }, ...
        ]
        ========================= -->
   {{#if isLargeLayout}}
@@ -158,6 +158,9 @@
                 <img class="photo" src="{{p.src}}" alt="" />
                 <div class="photo-no">Photo {{p.index}}</div>
               </div>
+              {{#if p.caption}}
+              <div class="photo-caption">{{p.caption}}</div>
+              {{/if}}
             </div>
           </div>
         </div>
@@ -386,7 +389,7 @@ body {
   grid-template-rows: 1fr 1fr;
 }
 
-/* 大きく：1枚 */
+/* コメント：1枚 + キャプション */
 .photo-grid.one {
   grid-template-rows: 1fr;
 }
@@ -431,6 +434,17 @@ body {
   font-size: 8pt;
   color: rgba(0,0,0,0.70);
 }
+
+/* キャプション（コメントレイアウト時のみ表示） */
+.photo-caption {
+  padding: 2mm 2mm 0;
+  font-size: 9pt;
+  line-height: 1.35;
+  color: #333;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 ```
 
 ---
@@ -452,5 +466,5 @@ body {
   - コメント: commentPagesCount（1以上）
   - 写真:
     - 標準（2枚/ページ）: `ceil(photoCount / 2)`
-    - 大きく（1枚/ページ）: `photoCount`
+    - コメント（1枚/ページ）: `photoCount`
 - 写真番号（Photo 12）は **レポート内の順序（orderIndex）+1** を使う（PDF上の見た目と一致する）

@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: 'Impossibile aprire la gestione abbonamenti.',
   settingsProBenefitPhotos: 'Foto illimitate per rapporto',
   settingsProBenefitPdf: 'Esportazioni PDF illimitate',
-  settingsProBenefitLayout: 'Esportazione formato grande',
+
   settingsProBenefitWatermark: 'Nessuna filigrana',
   settingsProBenefitAds: 'Nessuna pubblicità',
   settingsDescFree: 'Passa a Pro per foto e esportazioni illimitate e altro.',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: 'Miglior offerta',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: 'Prezzo al mese',
-  paywallYearlySavings: 'Circa 2 mesi gratis!',
+  paywallYearlySavings: 'Circa 5 mesi gratis!',
   paywallCtaYearly: 'Inizia il piano annuale',
   paywallCtaMonthly: 'Inizia il piano mensile',
   paywallCtaStayFree: 'Resta con il piano gratuito',
@@ -78,9 +78,8 @@ const dict = {
   paywallFeaturePdf: 'Esportazioni PDF',
   paywallFeaturePdfFree: '5 al mese',
   paywallFeaturePdfPro: 'Illimitate',
-  paywallFeatureLayout: 'Layout grande',
-  paywallFeatureLayoutFree: 'Solo anteprima',
-  paywallFeatureLayoutPro: 'Esportabile',
+
+
   paywallFeatureWatermark: 'Filigrana',
   paywallFeatureWatermarkFree: 'Visibile',
   paywallFeatureWatermarkPro: 'Nessuna',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: 'Impossibile eliminare la foto.',
   photoDeletedNotice: 'Foto rimossa.',
   undoAction: 'Annulla',
+  photoCaptionPlaceholder: 'Aggiungi una didascalia...',
 
   // --- Home ---
   homeSearchPlaceholder: 'Cerca report...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'Anteprima PDF',
   pdfLayoutStandard: 'Standard',
-  pdfLayoutLarge: 'Grande',
+  pdfLayoutComment: 'Commento',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Lettera',
   pdfExport: 'Esporta PDF',
   pdfGenerating: 'Generazione PDF...',
-  pdfLargeProTitle: 'Layout solo per Pro',
-  pdfLargeProBody: 'Il layout Grande è solo per Pro. Usare Standard?',
-  pdfLargeUseStandard: 'Usa Standard',
-  pdfLargeUpgrade: 'Passa a Pro',
+
+
   pdfExportLimitTitle: 'Limite mensile raggiunto',
   pdfExportLimitBody: 'Il piano gratuito consente 5 esportazioni al mese.',
   pdfExportFailed: 'Impossibile esportare il PDF.',

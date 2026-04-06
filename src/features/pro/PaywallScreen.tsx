@@ -161,7 +161,6 @@ export default function PaywallScreen() {
   const featureRows = [
     { label: t.paywallFeaturePhotos, free: t.paywallFeaturePhotosFree, pro: t.paywallFeaturePhotosPro },
     { label: t.paywallFeaturePdf, free: t.paywallFeaturePdfFree, pro: t.paywallFeaturePdfPro },
-    { label: t.paywallFeatureLayout, free: t.paywallFeatureLayoutFree, pro: t.paywallFeatureLayoutPro },
     { label: t.paywallFeatureWatermark, free: t.paywallFeatureWatermarkFree, pro: t.paywallFeatureWatermarkPro },
     { label: t.paywallFeatureAds, free: t.paywallFeatureAdsFree, pro: t.paywallFeatureAdsPro },
   ];

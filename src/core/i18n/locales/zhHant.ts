@@ -38,7 +38,7 @@ const dict = {
   settingsManageSubFailed: '無法開啟訂閱管理。',
   settingsProBenefitPhotos: '每份報告照片無限制',
   settingsProBenefitPdf: 'PDF 匯出無限制',
-  settingsProBenefitLayout: '大尺寸版面匯出',
+
   settingsProBenefitWatermark: '無浮水印',
   settingsProBenefitAds: '無廣告',
   settingsDescFree: '升級至 Pro，暢享無限照片、匯出等更多功能。',
@@ -53,7 +53,7 @@ const dict = {
   paywallBestValueBadge: '最划算',
   paywallBadgeShort: 'PRO',
   paywallPricePerMonthLabel: '每月價格',
-  paywallYearlySavings: '約省2個月費用！',
+  paywallYearlySavings: '約省5個月費用！',
   paywallCtaYearly: '開始年付方案',
   paywallCtaMonthly: '開始月付方案',
   paywallCtaStayFree: '維持免費方案',
@@ -78,9 +78,8 @@ const dict = {
   paywallFeaturePdf: 'PDF匯出',
   paywallFeaturePdfFree: '每月5次',
   paywallFeaturePdfPro: '無限制',
-  paywallFeatureLayout: '大版面',
-  paywallFeatureLayoutFree: '僅預覽',
-  paywallFeatureLayoutPro: '可匯出',
+
+
   paywallFeatureWatermark: '浮水印',
   paywallFeatureWatermarkFree: '有',
   paywallFeatureWatermarkPro: '無',
@@ -207,6 +206,7 @@ const dict = {
   photoDeleteFailed: '刪除照片失敗。',
   photoDeletedNotice: '照片已刪除。',
   undoAction: '復原',
+  photoCaptionPlaceholder: '新增說明...',
 
   // --- Home ---
   homeSearchPlaceholder: '搜尋報告...',
@@ -225,15 +225,13 @@ const dict = {
   // --- PDF ---
   pdfPreviewTitle: 'PDF 預覽',
   pdfLayoutStandard: '標準',
-  pdfLayoutLarge: '大型',
+  pdfLayoutComment: '備註',
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: '匯出 PDF',
   pdfGenerating: '正在產生 PDF...',
-  pdfLargeProTitle: '僅限 Pro 版面',
-  pdfLargeProBody: '大型版面僅限 Pro 方案。改用標準版面嗎？',
-  pdfLargeUseStandard: '使用標準',
-  pdfLargeUpgrade: '升級',
+
+
   pdfExportLimitTitle: '已達每月匯出上限',
   pdfExportLimitBody: '免費方案每月限匯出 5 次。',
   pdfExportFailed: '匯出 PDF 失敗。',

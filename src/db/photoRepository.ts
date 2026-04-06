@@ -9,6 +9,7 @@ const PHOTO_COLUMNS = [
   'height',
   'created_at',
   'order_index',
+  'caption',
 ] as const;
 
 type PhotoRow = {
@@ -19,6 +20,7 @@ type PhotoRow = {
   height: number | null;
   created_at: string;
   order_index: number;
+  caption: string | null;
 };
 
 const toPhoto = (row: PhotoRow): Photo => ({
@@ -29,6 +31,7 @@ const toPhoto = (row: PhotoRow): Photo => ({
   height: row.height,
   createdAt: row.created_at,
   orderIndex: row.order_index,
+  caption: row.caption,
 });
 
 const createId = () => {
@@ -100,11 +103,13 @@ export async function createPhoto(input: NewPhotoInput): Promise<Photo> {
   const width = input.width ?? null;
   const height = input.height ?? null;
 
+  const caption = input.caption ?? null;
+
   const db = await getDb();
   await db.runAsync(
     `INSERT INTO photos (
-      id, report_id, local_uri, width, height, created_at, order_index
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      id, report_id, local_uri, width, height, created_at, order_index, caption
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     id,
     input.reportId,
     input.localUri,
@@ -112,6 +117,7 @@ export async function createPhoto(input: NewPhotoInput): Promise<Photo> {
     height,
     createdAt,
     input.orderIndex,
+    caption,
   );
 
   return {
@@ -122,6 +128,7 @@ export async function createPhoto(input: NewPhotoInput): Promise<Photo> {
     height,
     createdAt,
     orderIndex: input.orderIndex,
+    caption,
   };
 }
 
@@ -141,6 +148,7 @@ export async function updatePhoto(input: UpdatePhotoInput): Promise<Photo | null
     height: input.height !== undefined ? input.height : row.height,
     createdAt: row.created_at,
     orderIndex: input.orderIndex ?? row.order_index,
+    caption: input.caption !== undefined ? input.caption : row.caption,
   };
 
   await db.runAsync(
@@ -148,12 +156,14 @@ export async function updatePhoto(input: UpdatePhotoInput): Promise<Photo | null
       local_uri = ?,
       width = ?,
       height = ?,
-      order_index = ?
+      order_index = ?,
+      caption = ?
     WHERE id = ?`,
     next.localUri,
     next.width,
     next.height,
     next.orderIndex,
+    next.caption,
     next.id,
   );
 

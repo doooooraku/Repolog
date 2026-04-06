@@ -1,6 +1,7 @@
 import type { AddressSource, WeatherType } from '@/src/types/models';
 
 export const MAX_COMMENT_CHARS = 4000;
+export const MAX_CAPTION_CHARS = 200;
 
 export const countCommentChars = (text: string) => Array.from(text).length;
 

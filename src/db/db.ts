@@ -31,6 +31,13 @@ async function migrate(db: SQLite.SQLiteDatabase) {
     version = 3;
   }
 
+  if (version < 4) {
+    if (!(await hasColumn(db, 'photos', 'caption'))) {
+      await db.execAsync('ALTER TABLE photos ADD COLUMN caption TEXT;');
+    }
+    version = 4;
+  }
+
   await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION};`);
 }
 
