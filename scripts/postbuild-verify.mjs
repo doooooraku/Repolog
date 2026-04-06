@@ -13,10 +13,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { inflateRawSync } from 'node:zlib';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { resolve } from 'node:path';
 
 const REQUIRED_KEYS = [
   'REVENUECAT_ANDROID_API_KEY',
