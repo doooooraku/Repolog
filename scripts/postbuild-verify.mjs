@@ -2,21 +2,29 @@
 /**
  * Post-build verification script.
  *
- * Extracts assets/app.config from an APK or AAB and verifies that
+ * Extracts assets/app.config from an APK, AAB, or IPA and verifies that
  * required API keys are embedded (not empty).  Exits with code 1 if
  * any required key is missing so CI / build scripts can catch it.
  *
  * Usage:
- *   node scripts/postbuild-verify.mjs <path-to-apk-or-aab>
+ *   node scripts/postbuild-verify.mjs <path-to-apk-aab-or-ipa>
  *   node scripts/postbuild-verify.mjs dist/repolog-production.aab
  *   node scripts/postbuild-verify.mjs dist/repolog-preview-local.apk
+ *   node scripts/postbuild-verify.mjs Repolog.ipa
  */
 import { readFileSync } from 'node:fs';
 import { inflateRawSync } from 'node:zlib';
-import { resolve } from 'node:path';
+import { resolve, extname } from 'node:path';
 
-const REQUIRED_KEYS = [
+// ---------------------------------------------------------------------------
+// Platform-specific required keys
+// ---------------------------------------------------------------------------
+const REQUIRED_KEYS_ANDROID = [
   'REVENUECAT_ANDROID_API_KEY',
+  'REVENUECAT_IOS_API_KEY',
+];
+
+const REQUIRED_KEYS_IOS = [
   'REVENUECAT_IOS_API_KEY',
 ];
 
@@ -32,11 +40,14 @@ const INFO_KEYS = [
 
 const archivePath = process.argv[2];
 if (!archivePath) {
-  console.error('Usage: node scripts/postbuild-verify.mjs <path-to-apk-or-aab>');
+  console.error('Usage: node scripts/postbuild-verify.mjs <path-to-apk-aab-or-ipa>');
   process.exit(1);
 }
 
 const absPath = resolve(process.cwd(), archivePath);
+const ext = extname(absPath).toLowerCase();
+const isIOS = ext === '.ipa';
+const REQUIRED_KEYS = isIOS ? REQUIRED_KEYS_IOS : REQUIRED_KEYS_ANDROID;
 
 let buf;
 try {
@@ -47,7 +58,7 @@ try {
 }
 
 // ---------------------------------------------------------------------------
-// Extract assets/app.config from the ZIP (APK and AAB are both ZIP format)
+// Extract assets/app.config from the ZIP (APK, AAB, and IPA are all ZIP format)
 // ---------------------------------------------------------------------------
 function extractAppConfig(buffer) {
   let offset = 0;
@@ -65,7 +76,9 @@ function extractAppConfig(buffer) {
       const extraLen = buffer.readUInt16LE(offset + 28);
       const name = buffer.toString('utf8', offset + 30, offset + 30 + nameLen);
 
-      if (name === 'assets/app.config' || name === 'base/assets/app.config') {
+      // Android: assets/app.config or base/assets/app.config
+      // iOS IPA: Payload/AppName.app/assets/app.config
+      if (name.endsWith('assets/app.config')) {
         const dataStart = offset + 30 + nameLen + extraLen;
         const compData = buffer.slice(dataStart, dataStart + compSize);
 
@@ -88,7 +101,7 @@ function extractAppConfig(buffer) {
 const raw = extractAppConfig(buf);
 if (!raw) {
   console.error('\x1b[31m✗ assets/app.config not found in the archive.\x1b[0m');
-  console.error('  This file should be present in any Expo-built APK or AAB.');
+  console.error('  This file should be present in any Expo-built APK, AAB, or IPA.');
   process.exit(1);
 }
 
@@ -105,7 +118,8 @@ const extra = config.extra ?? {};
 // ---------------------------------------------------------------------------
 // Report
 // ---------------------------------------------------------------------------
-console.log(`\n  Post-build verification: ${archivePath}\n`);
+const platform = isIOS ? 'iOS' : 'Android';
+console.log(`\n  Post-build verification (${platform}): ${archivePath}\n`);
 
 const missing = [];
 

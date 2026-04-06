@@ -194,6 +194,19 @@
 
 ---
 
+## CI/CD
+
+### 2026-04-06: postbuild-verify.mjs がiOS IPA未対応でTestFlightパイプライン失敗
+- **状況**: GitHub Actions の `Build iOS & Submit to TestFlight` ワークフロー初回実行時、IPAビルドは成功するがpostbuild-verify.mjsのステップで `assets/app.config not found` エラーが発生。TestFlightへの提出がブロックされた
+- **根本原因**: postbuild-verify.mjs はAndroid APK/AAB用に設計され、`assets/app.config` と `base/assets/app.config` のみ検索していた。IPA内ではパスが `Payload/AppName.app/assets/app.config` であり不一致。加えて `REQUIRED_KEYS` にAndroid専用キーが含まれておりiOS検証時に不適切だった
+- **対策（実施済み）**: (1) パスマッチを `endsWith('assets/app.config')` に変更しIPA対応 (2) ファイル拡張子でプラットフォーム判別し必須キーを切り替え (3) JSDoc・エラーメッセージをAPK/AAB/IPA対応に更新
+- **ルール**:
+  1. ビルド検証スクリプトを新プラットフォームのCIワークフローで使う前に、スクリプトのJSDocとコード内パスパターンを確認する
+  2. プラットフォーム固有のCIステップは、対象プラットフォームのアーカイブ形式（APK/AAB/IPA）で事前にローカルテストする
+  3. 必須チェックキーはプラットフォーム別に分離する（iOSビルドにAndroid APIキーは不要）
+
+---
+
 ### Claude Code トリガーフレーズ
 - 有効なフレーズ: 「デバッグセッションを分析して」「rebuild して」「Maestro スクショ付きで E2E テストして」
 - 分析時は summary.md → app_logcat.log → screenshots/ の順に読むのが効率的
