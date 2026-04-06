@@ -110,7 +110,7 @@
 - 同義語：Appearance、外観
 
 ### 買い切り（Lifetime）
-- 定義：サブスクリプションではなく一回払いの購入オプション（$39.99）。
+- 定義：サブスクリプションではなく一回払いの購入オプション（$49.99）。
 - 注意：PlanKind は 'monthly' | 'yearly' | 'lifetime' の3種。
 
 ### 逆ジオコーディング（Reverse Geocoding）

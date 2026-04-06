@@ -1,0 +1,102 @@
+appId: "com.dooooraku.repolog"
+name: "Store Screenshots - 4 screens"
+tags:
+  - store
+  - screenshots
+
+# ─── 前提条件 ───────────────────────────────────────────
+# 1. アプリにレポートデータがインポート済みであること
+# 2. ADB Demo Mode でステータスバーがクリーン化済みであること
+# 3. SCREENSHOT_MODE=1 でビルドされた APK であること
+# ────────────────────────────────────────────────────────
+
+---
+
+# ━━━ Screen 1: Home 画面 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- launchApp:
+    clearState: false
+    label: "アプリ起動（データ保持）"
+
+# Dev Build の場合、開発者メニューが表示されることがある
+- runFlow:
+    when:
+      visible: "Continue"
+    commands:
+      - tapOn:
+          text: "Continue"
+          label: "Dev Clientのウェルカムダイアログを閉じる"
+
+- runFlow:
+    when:
+      visible: "Go home"
+    commands:
+      - tapOn:
+          text: "Go home"
+          label: "Dev Clientメニューからホームへ戻る"
+
+- extendedWaitUntil:
+    visible:
+      id: "e2e_home_screen"
+    timeout: 60000
+    label: "Home画面の初期描画を待機"
+
+# レポートカードが表示されるのを待つ
+- extendedWaitUntil:
+    visible:
+      id: "e2e_home_report_card_0"
+    timeout: 30000
+    label: "レポートカードの表示を待機"
+
+- takeScreenshot: 01_home
+
+# ━━━ Screen 2: レポート編集（上部）━━━━━━━━━━━━━━━━━━━
+- tapOn:
+    id: "e2e_home_report_card_0"
+    label: "最初のレポートカードをタップ"
+    retryTapIfNoChange: true
+    waitUntilVisible: true
+
+- extendedWaitUntil:
+    visible:
+      id: "e2e_report_editor_screen"
+    timeout: 30000
+    label: "レポート編集画面を待機"
+
+# 編集画面が安定するのを少し待つ
+- waitForAnimationToEnd:
+    timeout: 2000
+
+- takeScreenshot: 02_editor_top
+
+# ━━━ Screen 3: レポート編集（下部 = コメント+写真）━━━━━━
+- scrollUntilVisible:
+    element:
+      id: "e2e_add_photo_camera"
+    direction: DOWN
+    timeout: 10000
+    label: "写真セクションまでスクロール"
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+- takeScreenshot: 03_editor_bottom
+
+# ━━━ Screen 4: PDF プレビュー ━━━━━━━━━━━━━━━━━━━━━━━
+- tapOn:
+    id: "e2e_report_pdf_preview"
+    label: "PDFプレビューを開く"
+    retryTapIfNoChange: true
+    waitUntilVisible: true
+
+- extendedWaitUntil:
+    visible:
+      id: "e2e_pdf_preview_screen"
+    timeout: 30000
+    label: "PDFプレビュー画面を待機"
+
+# PDFのレンダリング完了を待つ（表紙が表示されるまで待機）
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# スクロールしない — 表紙（サイズ選択+レポート情報）がそのまま見える状態で撮影
+- takeScreenshot: 04_pdf_preview
