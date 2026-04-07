@@ -230,6 +230,9 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDF exporteren',
   pdfGenerating: 'PDF wordt gemaakt...',
+  pdfGeneratingProgress: 'PDF wordt gemaakt… {percent}%',
+  pdfStorageLowTitle: 'Onvoldoende opslagruimte',
+  pdfStorageLowBody: 'Voor het maken van een PDF is minimaal 100 MB vrije opslagruimte nodig. Maak ruimte vrij en probeer het opnieuw.',
 
 
   pdfExportLimitTitle: 'Maandlimiet bereikt',

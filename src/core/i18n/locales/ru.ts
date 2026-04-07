@@ -229,6 +229,9 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'Экспорт PDF',
   pdfGenerating: 'Создание PDF...',
+  pdfGeneratingProgress: 'Создание PDF… {percent}%',
+  pdfStorageLowTitle: 'Недостаточно памяти',
+  pdfStorageLowBody: 'Для создания PDF требуется не менее 100 МБ свободного места. Освободите место и попробуйте снова.',
 
 
   pdfExportLimitTitle: 'Месячный лимит исчерпан',

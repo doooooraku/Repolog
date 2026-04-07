@@ -11,6 +11,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft } from '@tamagui/lucide-icons';
+import { Image as ExpoImage } from 'expo-image';
 
 import * as LegacyFileSystem from 'expo-file-system/legacy';
 
@@ -20,7 +21,11 @@ import { getReportById } from '@/src/db/reportRepository';
 import { listPhotosByReport } from '@/src/db/photoRepository';
 import { recordExport, countExportsSince, countAllExports } from '@/src/db/exportRepository';
 import { useProStore } from '@/src/stores/proStore';
-import { exportPdfFile, generatePdfFile } from '@/src/features/pdf/pdfService';
+import {
+  exportPdfFile,
+  generatePdfFile,
+  PdfStorageLowError,
+} from '@/src/features/pdf/pdfService';
 import { maybeRequestReview } from '@/src/services/reviewPromptService';
 import { buildPdfHtml } from '@/src/features/pdf/pdfTemplate';
 import {
@@ -72,6 +77,11 @@ export default function PdfPreviewScreen() {
   const isPro = useProStore((s) => s.isPro);
   const initPro = useProStore((s) => s.init);
   const [exporting, setExporting] = useState(false);
+  // 0–100 の単一プログレスバー。null = 非表示。
+  // 0–80% は写真処理ループの実進捗、80–95% は印刷フェーズの擬似進捗、
+  // 100% は exportPdfFile 完了時にスナップする。
+  // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md
+  const [exportProgress, setExportProgress] = useState<number | null>(null);
 
   // Cache report + photos so we don't re-fetch for export
   const reportRef = useRef<Report | null>(null);
@@ -166,6 +176,17 @@ export default function PdfPreviewScreen() {
     if (!reportId) return;
     if (exporting) return;
     setExporting(true);
+    setExportProgress(0);
+    // 印刷フェーズ用の擬似進捗タイマー。80% → 95% を滑らかに進める。
+    // 写真数に比例して間隔を長くすることで「写真が多いほど印刷が長引く」体感に合わせる。
+    let printPhaseTimer: ReturnType<typeof setInterval> | undefined;
+    const stopPrintPhaseTimer = () => {
+      if (printPhaseTimer) {
+        clearInterval(printPhaseTimer);
+        printPhaseTimer = undefined;
+      }
+    };
+
     try {
       const report = reportRef.current ?? await getReportById(reportId);
       if (!report) {
@@ -195,22 +216,47 @@ export default function PdfPreviewScreen() {
         if (!proceed) return;
       }
 
-      // Free preview WebView memory before PDF generation (~100-150MB)
+      // メモリを徹底的に空ける:
+      // (1) プレビュー WebView の参照を null にして React に unmount を予約
+      // (2) expo-image のメモリキャッシュを解放（編集画面が抱えていた写真ビットマップ）
+      // (3) 350ms 待って native の compositor surface 解放を待つ
+      // 100ms では Android WebView の解放に間に合わないことがあった。
+      // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md
       setPreviewHtml(null);
-      await new Promise((r) => setTimeout(r, 100));
+      await ExpoImage.clearMemoryCache().catch(() => undefined);
+      await new Promise((r) => setTimeout(r, 350));
 
       // Generate full-resolution PDF (on-demand, not during preview)
-      const uri = await generatePdfFile({
-        report,
-        photos,
-        layout,
-        paperSize,
-        isPro,
-        localeHint: lang,
-        appName: 'Repolog',
-        weatherLabel: weatherLabelMap[report.weather],
-        labels: labelMap,
-      });
+      const photoCount = photos.length;
+      const uri = await generatePdfFile(
+        {
+          report,
+          photos,
+          layout,
+          paperSize,
+          isPro,
+          localeHint: lang,
+          appName: 'Repolog',
+          weatherLabel: weatherLabelMap[report.weather],
+          labels: labelMap,
+        },
+        (processed, total) => {
+          // 写真処理フェーズ: 0% → 80%
+          const denom = Math.max(total, 1);
+          const ratio = Math.min(1, processed / denom);
+          setExportProgress(Math.round(ratio * 80));
+        },
+      );
+
+      // 写真処理が終わったら 80% で固定し、印刷フェーズの擬似進捗タイマーを起動する。
+      setExportProgress(80);
+      const tickIntervalMs = Math.max(200, photoCount * 5);
+      printPhaseTimer = setInterval(() => {
+        setExportProgress((prev) => {
+          if (prev == null || prev >= 95) return prev;
+          return prev + 1;
+        });
+      }, tickIntervalMs);
 
       const fileName = buildPdfExportFileName({
         createdAt: report.createdAt,
@@ -218,6 +264,9 @@ export default function PdfPreviewScreen() {
         appName: 'Repolog',
       });
       const success = await exportPdfFile(uri, fileName);
+
+      stopPrintPhaseTimer();
+      setExportProgress(100);
 
       // Cleanup generated PDF file
       LegacyFileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
@@ -242,13 +291,31 @@ export default function PdfPreviewScreen() {
       const cumulativeCount = await countAllExports();
       void maybeRequestReview({ isPro, cumulativeCount });
 
+      // 出力成功後はナビゲーションスタックを丸ごとリセットしてホーム画面に戻る。
+      // 編集画面 + プレビュー画面の両方を unmount することで、次回の出力時に
+      // メモリが確実にクリーンな状態から始まる（70 枚 hang シナリオの恒久対策）。
+      // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md
+      try {
+        router.dismissAll();
+      } catch {
+        router.replace('/(tabs)');
+      }
+
     } catch (e) {
-      console.error('[PDF] Export failed:', e);
-      Alert.alert(t.pdfExportFailed);
+      stopPrintPhaseTimer();
+      if (e instanceof PdfStorageLowError) {
+        Alert.alert(t.pdfStorageLowTitle, t.pdfStorageLowBody);
+      } else {
+        console.error('[PDF] Export failed:', e);
+        Alert.alert(t.pdfExportFailed);
+      }
     } finally {
+      stopPrintPhaseTimer();
       setExporting(false);
-      // Restore preview after export
-      void loadPreview();
+      setExportProgress(null);
+      // 出力後のプレビュー自動再生成は廃止。
+      // 連続出力時にメモリが累積して 3 回目に hang する原因になっていた。
+      // ホーム遷移するため、ここで再描画する必要もない。
     }
   };
 
@@ -310,7 +377,21 @@ export default function PdfPreviewScreen() {
           </View>
         ) : null}
         <Pressable testID="e2e_pdf_export" style={[styles.exportButton, { backgroundColor: colors.primaryBg }]} onPress={handleExport} disabled={exporting}>
-          {exporting ? (
+          {exporting && exportProgress != null ? (
+            <View style={styles.progressContent}>
+              <Text style={[styles.progressText, { color: colors.primaryText }]} numberOfLines={1}>
+                {t.pdfGeneratingProgress.replace('{percent}', String(exportProgress))}
+              </Text>
+              <View style={[styles.progressTrack, { backgroundColor: 'rgba(255,255,255,0.25)' }]}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    { width: `${exportProgress}%`, backgroundColor: colors.primaryText },
+                  ]}
+                />
+              </View>
+            </View>
+          ) : exporting ? (
             <ActivityIndicator color={colors.primaryText} />
           ) : (
             <Text style={[styles.exportText, { color: colors.primaryText }]}>{t.pdfExport}</Text>
@@ -387,11 +468,33 @@ const styles = StyleSheet.create({
   exportButton: {
     marginTop: 12,
     paddingVertical: 12,
+    paddingHorizontal: 16,
     borderRadius: 12,
     alignItems: 'center',
+    minHeight: 48,
+    justifyContent: 'center',
   },
   exportText: {
     fontWeight: '600',
+  },
+  progressContent: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 6,
+  },
+  progressText: {
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  progressTrack: {
+    width: '100%',
+    height: 6,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 3,
   },
   subtle: {
     fontSize: 12,

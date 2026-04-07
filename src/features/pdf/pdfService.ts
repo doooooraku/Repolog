@@ -36,10 +36,50 @@ export type PdfGenerateInput = {
 const MM_TO_POINTS = 72 / 25.4;
 const MIN_REASONABLE_PDF_BYTES = 1024;
 
+// 動的タイムアウト: 30 秒の固定オーバーヘッド + 写真 1 枚あたり 1 秒。
+// 動的にする理由は ADR-0013-pdf-export-resilience-and-progress.md を参照。
+const PRINT_TIMEOUT_BASE_MS = 30_000;
+const PRINT_TIMEOUT_PER_PHOTO_MS = 1_000;
+
+// PDF 生成に最低限必要と想定するディスク空き容量。
+// expo-image-manipulator の temp JPEG (写真数 × ~500KB) と
+// expo-print の temp PDF (~50MB) を合わせた安全側マージン。
+const MIN_FREE_DISK_BYTES = 100 * 1024 * 1024;
+
+// フォールバック切替の前に少し待って native heap を解放させる。
+const FALLBACK_COOLDOWN_MS = 300;
+
+const calculatePrintTimeoutMs = (photoCount: number): number =>
+  PRINT_TIMEOUT_BASE_MS + PRINT_TIMEOUT_PER_PHOTO_MS * Math.max(photoCount, 0);
+
 class BlankPdfError extends Error {
   constructor(sizeBytes: number) {
     super(`[PDF] Generated blank or truncated PDF (${sizeBytes} bytes).`);
     this.name = 'BlankPdfError';
+  }
+}
+
+/**
+ * Print.printToFileAsync が指定タイムアウト内に応答しなかったときに throw される。
+ * フォールバックチェーン（reduced → tiny）でリトライ可能。
+ */
+export class PdfHangError extends Error {
+  constructor(timeoutMs: number) {
+    super(`[PDF] printToFileAsync did not respond within ${timeoutMs}ms.`);
+    this.name = 'PdfHangError';
+  }
+}
+
+/**
+ * 端末のディスク空き容量が PDF 生成に必要な最小値を下回っているときに throw される。
+ * リトライしても改善しないため、フォールバックチェーンには載せず即座にユーザーへ通知する。
+ */
+export class PdfStorageLowError extends Error {
+  constructor(freeBytes: number, requiredBytes: number) {
+    super(
+      `[PDF] Insufficient free disk storage. Free=${freeBytes}, Required=${requiredBytes}.`,
+    );
+    this.name = 'PdfStorageLowError';
   }
 }
 
@@ -54,9 +94,15 @@ function isBlankPdfError(error: unknown): boolean {
   return error instanceof BlankPdfError;
 }
 
-function isRecoverablePdfError(error: unknown): boolean {
-  return isOomError(error) || isBlankPdfError(error);
+function isHangError(error: unknown): boolean {
+  return error instanceof PdfHangError;
 }
+
+function isRecoverablePdfError(error: unknown): boolean {
+  return isOomError(error) || isBlankPdfError(error) || isHangError(error);
+}
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 async function assertPdfLooksValid(uri: string) {
   const info = await LegacyFileSystem.getInfoAsync(uri);
@@ -65,13 +111,28 @@ async function assertPdfLooksValid(uri: string) {
   throw new BlankPdfError(sizeBytes);
 }
 
-async function printHtml(html: string, paperSize: PaperSize) {
+async function printHtml(html: string, paperSize: PaperSize, timeoutMs: number) {
   const size = PAPER_SIZES[paperSize];
-  const file = await Print.printToFileAsync({
-    html,
-    width: Math.round(size.widthMm * MM_TO_POINTS),
-    height: Math.round(size.heightMm * MM_TO_POINTS),
+  // Print.printToFileAsync は OS 側で hang する場合があり (写真数 × メモリ圧迫)、
+  // resolve も reject も来ないため Promise.race でタイムアウトを必ずかける。
+  // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md
+  let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutHandle = setTimeout(() => reject(new PdfHangError(timeoutMs)), timeoutMs);
   });
+  let file: { uri: string };
+  try {
+    file = await Promise.race([
+      Print.printToFileAsync({
+        html,
+        width: Math.round(size.widthMm * MM_TO_POINTS),
+        height: Math.round(size.heightMm * MM_TO_POINTS),
+      }),
+      timeoutPromise,
+    ]);
+  } finally {
+    if (timeoutHandle) clearTimeout(timeoutHandle);
+  }
   try {
     await assertPdfLooksValid(file.uri);
   } catch (error) {
@@ -81,22 +142,41 @@ async function printHtml(html: string, paperSize: PaperSize) {
   return file.uri;
 }
 
-export async function generatePdfFile(input: PdfGenerateInput) {
+export async function generatePdfFile(
+  input: PdfGenerateInput,
+  onProgress?: (processed: number, total: number) => void,
+) {
+  // ストレージ事前チェック: temp ファイル書き込みが詰まる前に明示エラーで止める。
+  // フォールバックで救えないので最初の 1 回だけ確認する。
+  try {
+    const freeBytes = await LegacyFileSystem.getFreeDiskStorageAsync();
+    if (freeBytes < MIN_FREE_DISK_BYTES) {
+      throw new PdfStorageLowError(freeBytes, MIN_FREE_DISK_BYTES);
+    }
+  } catch (error) {
+    if (error instanceof PdfStorageLowError) throw error;
+    // getFreeDiskStorageAsync 自体が失敗した場合はチェックをスキップして続行する
+    // （古い端末や権限問題で取得できないことがあるため）。
+    console.warn('[PDF] getFreeDiskStorageAsync failed, skipping storage check:', error);
+  }
+
+  const timeoutMs = calculatePrintTimeoutMs(input.photos.length);
+
   const attempts: {
     label: string;
     options: Parameters<typeof buildPdfHtml>[0];
   }[] = [
     {
       label: 'full quality',
-      options: { ...input },
+      options: { ...input, onProgress },
     },
     {
       label: 'reduced images + no custom fonts',
-      options: { ...input, skipFontEmbedding: true, imagePreset: 'reduced' },
+      options: { ...input, onProgress, skipFontEmbedding: true, imagePreset: 'reduced' },
     },
     {
       label: 'tiny images + no custom fonts',
-      options: { ...input, skipFontEmbedding: true, imagePreset: 'tiny' },
+      options: { ...input, onProgress, skipFontEmbedding: true, imagePreset: 'tiny' },
     },
   ];
 
@@ -107,7 +187,7 @@ export async function generatePdfFile(input: PdfGenerateInput) {
     const attempt = attempts[index];
     try {
       const html = await buildPdfHtml(attempt.options);
-      return await printHtml(html, input.paperSize);
+      return await printHtml(html, input.paperSize, timeoutMs);
     } catch (error) {
       lastError = error;
       const recoverable = isRecoverablePdfError(error);
@@ -115,8 +195,14 @@ export async function generatePdfFile(input: PdfGenerateInput) {
       if (!recoverable || !hasNext) {
         throw error;
       }
-      const reason = isOomError(error) ? 'OOM' : 'blank PDF';
+      const reason = isHangError(error)
+        ? 'hang detected'
+        : isOomError(error)
+          ? 'OOM'
+          : 'blank PDF';
       console.warn(`[PDF] ${reason} on attempt ${attemptNumber} (${attempt.label}), retrying...`);
+      // フォールバック前に少し待って native heap が解放される時間を確保する。
+      await sleep(FALLBACK_COOLDOWN_MS);
     } finally {
       clearFontCache();
     }

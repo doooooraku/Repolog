@@ -75,6 +75,41 @@
 - **状況**: `Promise.all(chunk.map(...))` で同一ページの画像を並列処理 → メモリピークが2倍
 - **ルール**: 大きなバイナリデータ（画像のbase64等）を扱う場合は逐次処理（`for...of`）を使う
 
+### 2026-04-08: PDF 出力ハングの 3 層原因（ストレージ・メモリ・WebView 共存）
+
+- **状況**: ユーザーから次の 3 シナリオで PDF 出力ボタンが永久スピナーになる報告:
+  1. 連続 3 回目の出力（写真 10 枚）でスピナーが止まらない
+  2. 写真 40 枚（Pro）でも同症状。**ストレージを空けたら 40 枚は通った**
+  3. 写真 70 枚は編集画面 → PDF プレビュー直行だと hang。「保存 → ホームに戻る → 保存済をタップ → プレビュー → 出力」だと成功する
+  - スクリーンショットでは PDF プレビューが空白のまま 6 分以上スピナーで停止
+- **観測**: `handleExport` の `finally` ブロックで `setExporting(false)` が呼ばれていない＝try ブロックの `Print.printToFileAsync` が **resolve も reject もしていない (hang)** ことが確定
+- **根本原因（3 層モデル）**:
+  1. **L1: タイムアウト不在** — `Print.printToFileAsync` は OS で hang したとき Promise が孤児化する。`pdfService.ts` には Promise.race ベースのタイムアウトが無く、JS 側で永久ブロック
+  2. **L2: メモリ圧迫** — `router.push` で PDF プレビューを開いても編集画面はナビスタックに**生きたまま**残る。編集画面が抱える 70 枚の `expo-image` ビットマップ + プレビュー WebView (~100-150MB) + Print エンジンが起動する追加 WebView の **3 層共存** で native heap が枯渇。「保存 → 再オープン」が効くのは編集画面が unmount されて L2 が消えるから
+  3. **L3: ストレージ圧迫** — `expo-image-manipulator` と Print エンジンが temp ファイル書き込みを試みる際、空き容量が不足すると書き込みが進まず hang
+- **なぜ気付かなかったか（5 層）**:
+  1. 自動テストは HTML 構造レベル（`pdfTemplate.test.ts`）のみで、ランタイム / メモリ / 連続出力の振る舞いをカバーしていなかった
+  2. 手動 QA は「単発出力 1 回」しか行っておらず、「連続 3 回」「40 枚」「70 枚」の負荷シナリオがチェックリストになかった
+  3. `expo-print` を「壊れない外部 SDK」として暗黙に信頼し、「resolve も reject も来ない」第 3 の状態への防御策（タイムアウト）が設計時に想定されていなかった
+  4. ストレージ容量という「OS リソース」が PDF 生成の前提条件であることが ADR / lessons に明文化されていなかった
+  5. ナビゲーションスタックの「複数画面同時生存」がメモリ問題の温床になり得ることが、画面遷移の設計時に考慮されていなかった
+- **対策（実施済み・ADR-0013）**:
+  1. `pdfService.ts:printHtml` に `Promise.race([printToFileAsync, timeout])` でラップし、タイムアウトは `30秒 + 1秒 × 写真数` の動的計算
+  2. タイムアウト発火時は `PdfHangError` を throw → 既存の OOM/blank PDF リトライチェーン（full → reduced → tiny）に乗せる。フォールバック切替前に 300ms sleep
+  3. `pdf.tsx:handleExport` 開始時に `setPreviewHtml(null)` + `Image.clearMemoryCache()` を呼び、WebView 解放待ちを 100ms → 350ms に延長
+  4. 出力成功後は `router.dismissAll()`（フォールバック `router.replace('/(tabs)')`）で**ナビゲーションスタック全体をリセット**し、編集画面 + プレビュー画面の両方を確実に unmount
+  5. `LegacyFileSystem.getFreeDiskStorageAsync()` で空き 100MB 未満なら `PdfStorageLowError` を即 throw し、明示的な Alert 表示
+  6. 出力ボタンを単一プログレスバー（0-100%）に置換。写真処理 0-80%、印刷フェーズ 80-95%（擬似タイマー）、完了で 100%。**段階別ラベルは出さず**「あと何 % で終わるか」だけ見せる
+  7. `finally` 内の `loadPreview()` 自動再呼び出しを廃止（連続出力時のメモリ累積を断つ）
+- **ルール**:
+  1. **native bridge をまたぐ Promise には必ず `Promise.race` でタイムアウトをかける**。「resolve も reject も来ない」状態を JS 側で必ず検出できるようにする
+  2. **複数画面が同時に生存することによるメモリ累積を意識する**。重い画面 (WebView, 大量画像) を持つ画面遷移では、前画面の unmount を強制する手段（`router.dismissAll` / `Image.clearMemoryCache`）を組み合わせる
+  3. **OS リソース（ディスク空き容量・メモリ）は PDF / 画像処理の前提条件**。事前チェックして、不足なら明示的に止める。fallback で救おうとしない
+  4. **UI 進捗は「ユーザーが理解できる単位」に集約する**。段階別の技術ラベルは出さず、単一パーセンテージで残量だけ伝える
+  5. **PDF 出力のような重い経路は、連続実行・大量データの負荷シナリオを手動 QA チェックリストに必ず入れる**
+
+---
+
 ### 2026-04-07: iOS WebKit print の subpixel overflow による空白ページ（#286）
 - **状況**: iOS で `expo-print` 経由で出力した PDF において、写真ページ（standard / large 共通）の直後に必ず空白ページが挿入される。Android では発生しない。空白ページには `<footer class="page-footer">` の `X/Y` ページ番号文字列だけが描画されており、本来 flex 末尾にあるべきフッターが次の PDF ページに押し出されている
 - **観測（実体PDF確認）**:

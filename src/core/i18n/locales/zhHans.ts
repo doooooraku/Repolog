@@ -229,6 +229,9 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: '导出 PDF',
   pdfGenerating: '正在生成 PDF...',
+  pdfGeneratingProgress: '正在生成 PDF… {percent}%',
+  pdfStorageLowTitle: '存储空间不足',
+  pdfStorageLowBody: '生成 PDF 至少需要 100 MB 的可用存储空间。请清理空间后重试。',
 
 
   pdfExportLimitTitle: '已达月度上限',

@@ -230,6 +230,9 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'Xuất PDF',
   pdfGenerating: 'Đang tạo PDF...',
+  pdfGeneratingProgress: 'Đang tạo PDF… {percent}%',
+  pdfStorageLowTitle: 'Không đủ dung lượng lưu trữ',
+  pdfStorageLowBody: 'Tạo PDF cần ít nhất 100 MB dung lượng trống. Vui lòng giải phóng dung lượng và thử lại.',
 
 
   pdfExportLimitTitle: 'Đã đạt giới hạn hàng tháng',

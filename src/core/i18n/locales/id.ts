@@ -230,6 +230,9 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'Ekspor PDF',
   pdfGenerating: 'Membuat PDF...',
+  pdfGeneratingProgress: 'Membuat PDF… {percent}%',
+  pdfStorageLowTitle: 'Penyimpanan tidak cukup',
+  pdfStorageLowBody: 'Pembuatan PDF memerlukan setidaknya 100 MB ruang kosong. Harap kosongkan ruang lalu coba lagi.',
 
 
   pdfExportLimitTitle: 'Batas bulanan tercapai',
