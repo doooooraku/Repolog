@@ -31,6 +31,13 @@ type PdfTemplateInput = {
   skipFontEmbedding?: boolean;
   /** Explicit image preset to control memory usage during PDF generation. */
   imagePreset?: 'default' | 'reduced' | 'tiny';
+  /**
+   * Called after each photo is processed (resize + base64 encode).
+   * Use to drive a UI progress bar. Always optional and side-effect-only;
+   * the build pipeline ignores any return value.
+   * 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md
+   */
+  onProgress?: (processed: number, total: number) => void;
 };
 
 type PdfLabels = {
@@ -122,7 +129,11 @@ const fileToDataUri = async (
   const base64 = await FileSystem.readAsStringAsync(compressed.uri, {
     encoding: 'base64',
   });
-  FileSystem.deleteAsync(compressed.uri, { idempotent: true }).catch(() => {});
+  // 連続出力時に Android cacheDir に temp JPEG が積み上がるのを防ぐため
+  // fire-and-forget をやめて await で削除完了まで待つ。
+  // 削除失敗自体は致命的ではないので catch して続行する。
+  // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md
+  await FileSystem.deleteAsync(compressed.uri, { idempotent: true }).catch(() => undefined);
   return `data:image/jpeg;base64,${base64}`;
 };
 
@@ -241,6 +252,7 @@ const buildPhotoPages = async (
   const layout = input.layout === 'large' ? 'large' : 'standard';
   const gridClass = layout === 'large' ? 'one' : 'two';
   const chunks = chunkPhotos(input.photos, perPage);
+  const totalPhotos = input.photos.length;
   const out: string[] = [];
   let photoCounter = 0;
 
@@ -276,6 +288,9 @@ const buildPhotoPages = async (
             </div>
           `);
       }
+      // 1 枚処理し終えるごとに UI 進捗を発火する。
+      // 失敗した写真もカウントに含めることで、バーが必ず 0% → 100% に到達する。
+      input.onProgress?.(photoCounter, totalPhotos);
     }
 
     // Add empty slot for odd photo count in standard layout
@@ -501,6 +516,9 @@ export async function buildPdfHtml(input: PdfTemplateInput) {
   const commentPageCount = isCommentOnCover ? 0 : splitCommentIntoPages(comment).length;
   const photoPageCount = Math.ceil(input.photos.length / perPage);
   const pageCount = 1 + commentPageCount + photoPageCount;
+  // 進捗バーを即時 0% から表示するため、写真処理ループに入る前に
+  // 1 度だけコールバックを発火しておく。
+  input.onProgress?.(0, input.photos.length);
   const cover = buildCover(input, pageCount, isCommentOnCover ? comment : undefined);
   const commentPageHtml = isCommentOnCover ? [] : buildCommentPages(input, 2, pageCount);
   const photoStartIndex = 2 + commentPageHtml.length;

@@ -230,6 +230,9 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'Exportera PDF',
   pdfGenerating: 'Skapar PDF...',
+  pdfGeneratingProgress: 'Skapar PDF… {percent}%',
+  pdfStorageLowTitle: 'Otillräckligt lagringsutrymme',
+  pdfStorageLowBody: 'PDF-skapande kräver minst 100 MB ledigt utrymme. Frigör utrymme och försök igen.',
 
 
   pdfExportLimitTitle: 'Månadsgräns nådd',

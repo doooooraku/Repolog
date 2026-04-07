@@ -230,6 +230,9 @@ const dict = {
   pdfPaperLetter: 'Carta',
   pdfExport: 'Exportar PDF',
   pdfGenerating: 'Generando PDF...',
+  pdfGeneratingProgress: 'Generando PDF… {percent}%',
+  pdfStorageLowTitle: 'Almacenamiento insuficiente',
+  pdfStorageLowBody: 'La generación de PDF requiere al menos 100 MB de espacio libre. Libera espacio e inténtalo de nuevo.',
 
 
   pdfExportLimitTitle: 'Límite mensual alcanzado',

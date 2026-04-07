@@ -230,6 +230,9 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDF Dışa Aktar',
   pdfGenerating: 'PDF oluşturuluyor...',
+  pdfGeneratingProgress: 'PDF oluşturuluyor… %{percent}',
+  pdfStorageLowTitle: 'Depolama alanı yetersiz',
+  pdfStorageLowBody: 'PDF oluşturmak için en az 100 MB boş alan gereklidir. Lütfen alan açıp tekrar deneyin.',
 
 
   pdfExportLimitTitle: 'Aylık sınıra ulaşıldı',

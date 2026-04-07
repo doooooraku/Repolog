@@ -182,6 +182,9 @@ const dict = {
   pdfExportLimitTitle: 'Osiągnięto miesięczny limit',
   pdfExportLimitBody: 'Plan Free pozwala na 5 eksportów miesięcznie.',
   pdfGenerating: 'Tworzenie PDF...',
+  pdfGeneratingProgress: 'Tworzenie PDF… {percent}%',
+  pdfStorageLowTitle: 'Za mało miejsca',
+  pdfStorageLowBody: 'Tworzenie PDF wymaga co najmniej 100 MB wolnego miejsca. Zwolnij miejsce i spróbuj ponownie.',
 
 
   pdfPhotoWarningTitle: 'Za dużo zdjęć',
