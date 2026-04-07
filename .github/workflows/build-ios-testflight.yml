@@ -45,18 +45,14 @@ jobs:
           DOTENV
 
       - name: Verify required secrets are set
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: node scripts/prebuild-env-check.mjs ios
-
-      - name: Verify code quality
-        run: pnpm verify
 
       - name: Build iOS IPA
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas build --platform ios --profile production --local --non-interactive --output=Repolog.ipa
-
-      - name: Verify API keys embedded in IPA
-        run: node scripts/postbuild-verify.mjs Repolog.ipa
 
       - name: Setup ASC API Key
         run: |

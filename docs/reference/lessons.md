@@ -205,6 +205,21 @@
   2. プラットフォーム固有のCIステップは、対象プラットフォームのアーカイブ形式（APK/AAB/IPA）で事前にローカルテストする
   3. 必須チェックキーはプラットフォーム別に分離する（iOSビルドにAndroid APIキーは不要）
 
+### 2026-04-07: postbuild-verifyをiOSパイプラインから撤去（自作ZIPパーサーの限界＋検証戦略の見直し）
+- **状況**: 上記 2026-04-06 の修正後の初回実行（run 24036753240）でも依然として `assets/app.config not found` で失敗。実物 IPA を artifact からダウンロードして調査した結果、修正アプローチそのものが二重に外していたことが判明
+- **根本原因（事実ベースで2層）**:
+  1. **パス前提が間違っていた**: 前回の commit message は「IPA は `Payload/AppName.app/assets/app.config` に置く」と書いていたが、実際には Expo の `expo-constants` が iOS では `get-app-config-ios.sh` を介して `Payload/AppName.app/EXConstants.bundle/app.config` に置く（[公式スクリプト](https://github.com/expo/expo/blob/main/packages/expo-constants/scripts/get-app-config-ios.sh)）。前回の修正は実物 IPA を `unzip -l` で1度も確認せずに推測ベースで書かれていた
+  2. **自作 ZIP パーサーが Data Descriptor 形式に未対応**: 仮に上記パスマッチを正しく直しても、IPA 内の `EXConstants.bundle/app.config` エントリは Local File Header の `compSize=0` ＋ general purpose bit flag bit 3 = ON（Data Descriptor 形式、PKWARE APPNOTE 4.4.4）で書かれており、自作の LFH ベース ZIP 走査ロジックは zlib `Z_BUF_ERROR: unexpected end of file` で必ず落ちる。Android の APK/AAB は普通の格納形式（`flags=0`）なので、Android では問題が顕在化していなかった
+- **対策（実施済み）**:
+  1. iOS パイプラインから postbuild-verify ステップを撤去（Android 用は package.json scripts でそのまま使用継続）
+  2. `prebuild-env-check.mjs` に **EAS サーバー側の環境変数を直接確認する Layer 2** を追加（`eas env:list production --json --non-interactive` の出力をパース）。これは「ビルドが本当に拾う変数」を直接見る検証なので、postbuild の IPA 中身検証より信頼度が高い。CI 上 (`process.env.CI === 'true'`) でのみ fatal、ローカルでは warning
+  3. iOS リリースワークフローから `pnpm verify` も撤去（PR の `ci.yml` で同等チェック済み。リリースワークフローは build & ship に専念）
+- **ルール**:
+  1. **ZIP 系アーカイブのパス前提を変更する変更は、必ず実物の `unzip -l` 出力を1回以上確認した証拠を PR 本文に貼る**。実機未確認の推測ベースの修正は禁止
+  2. **自作 ZIP パーサーは Android (APK/AAB) でしか使わない**。iOS の IPA は `unzip -p` か yauzl 等の Central Directory ベースのライブラリ経由で読む（Data Descriptor 対応のため）
+  3. **ビルドキー検証は「手元の .env」ではなく「実際にビルドが使う EAS 環境変数」を直接見る**。`.env` チェックは下位互換のために残してよいが、本物の検証はサーバー側 env:list を使う
+  4. リリースワークフローは build & ship に絞り、品質チェックは PR ワークフロー（`ci.yml`）に集約する
+
 ---
 
 ### Claude Code トリガーフレーズ
