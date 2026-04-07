@@ -77,6 +77,11 @@ export default function PdfPreviewScreen() {
   const isPro = useProStore((s) => s.isPro);
   const initPro = useProStore((s) => s.init);
   const [exporting, setExporting] = useState(false);
+  // 同一 JS tick 内での二重発火を同期的に防ぐための ref ベース guard。
+  // setState は次の render まで反映されないため、state ベースの `if (exporting) return`
+  // は iOS Fabric + React Compiler 環境で Pressable の急速 2 連発火を取りこぼす。
+  // 詳細: docs/adr/ADR-0014-pdf-export-count-policy.md / docs/reference/lessons.md
+  const exportingRef = useRef(false);
   // 0–100 の単一プログレスバー。null = 非表示。
   // 0–80% は写真処理ループの実進捗、80–95% は印刷フェーズの擬似進捗、
   // 100% は exportPdfFile 完了時にスナップする。
@@ -174,7 +179,10 @@ export default function PdfPreviewScreen() {
   // Generate PDF on-demand and export immediately
   const handleExport = async () => {
     if (!reportId) return;
-    if (exporting) return;
+    // 同期的 ref guard。state ベースだと iOS Fabric の急速 2 連発火で取りこぼすため。
+    if (exportingRef.current) return;
+    exportingRef.current = true;
+    console.warn('[PDF] handleExport invoked', new Date().toISOString());
     setExporting(true);
     setExportProgress(0);
     // 印刷フェーズ用の擬似進捗タイマー。80% → 95% を滑らかに進める。
@@ -258,6 +266,28 @@ export default function PdfPreviewScreen() {
         });
       }, tickIntervalMs);
 
+      // [ADR-0014] PDF ファイルが生成できた時点で 1 回の出力としてカウントする。
+      // iOS の expo-sharing は共有シートの cancel/share を区別できないため
+      // （expo/expo#5713）、「保存成功をカウント」だと iOS だけプラットフォーム差が出る。
+      // 生成完了を Source of Truth にすれば両プラットフォームで統一できる。
+      const pageCount = calculatePageCount(report.comment ?? '', photos.length, layout);
+      console.warn('[PDF] recordExport called', new Date().toISOString());
+      await recordExport({
+        reportId,
+        exportedAt: new Date().toISOString(),
+        layoutMode: layout,
+        pageCount,
+        photoCount: photos.length,
+        paperSize,
+        planAtExport: isPro ? 'pro' : 'free',
+      });
+
+      // PDF 出力成功というハッピーモーメントでアプリ内レビュー依頼を試みる（fire-and-forget、ADR-0012）
+      // 注: TestFlight ビルドでは Apple の仕様によりダイアログは一切表示されない。
+      // App Store Production または Xcode dev ビルドでのみ表示される。
+      const cumulativeCount = await countAllExports();
+      void maybeRequestReview({ isPro, cumulativeCount });
+
       const fileName = buildPdfExportFileName({
         createdAt: report.createdAt,
         reportName: report.reportName,
@@ -272,24 +302,12 @@ export default function PdfPreviewScreen() {
       LegacyFileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
 
       if (!success) {
+        // 生成は成功したが OS の保存 UI が提供できなかった稀なケース
+        // （Sharing.isAvailableAsync が false、Android で SAF 権限要求が拒否された等）。
+        // 既に recordExport は済んでいるので、回数は消費されたまま失敗通知だけ出す。
         Alert.alert(t.pdfExportFailed);
         return;
       }
-
-      const pageCount = calculatePageCount(report.comment ?? '', photos.length, layout);
-      await recordExport({
-        reportId,
-        exportedAt: new Date().toISOString(),
-        layoutMode: layout,
-        pageCount,
-        photoCount: photos.length,
-        paperSize,
-        planAtExport: isPro ? 'pro' : 'free',
-      });
-
-      // PDF 出力成功というハッピーモーメントでアプリ内レビュー依頼を試みる（fire-and-forget、ADR-0012）
-      const cumulativeCount = await countAllExports();
-      void maybeRequestReview({ isPro, cumulativeCount });
 
       // 出力成功後はナビゲーションスタックを丸ごとリセットしてホーム画面に戻る。
       // 編集画面 + プレビュー画面の両方を unmount することで、次回の出力時に
@@ -313,6 +331,8 @@ export default function PdfPreviewScreen() {
       stopPrintPhaseTimer();
       setExporting(false);
       setExportProgress(null);
+      // Ref guard の解放。state ではなく ref なので次 render を待たず次の押下が通る。
+      exportingRef.current = false;
       // 出力後のプレビュー自動再生成は廃止。
       // 連続出力時にメモリが累積して 3 回目に hang する原因になっていた。
       // ホーム遷移するため、ここで再描画する必要もない。
