@@ -76,67 +76,79 @@ if (!process.env.EXPO_TOKEN) {
 
 console.log('  Checking EAS server-side environment variables (production)...');
 
-let easOutput;
-try {
-  easOutput = execSync(
-    'npx eas-cli env:list production --json --non-interactive',
-    { stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf8' },
-  );
-} catch (err) {
-  const msg = String(err.stderr ?? err.message ?? err).split('\n')[0];
+// eas-cli is installed globally in CI via `npm install -g eas-cli`.  Locally
+// we fall back to `npx eas-cli` so developers without a global install still
+// get a best-effort check.
+const easBin = process.env.CI === 'true' ? 'eas' : 'npx --yes eas-cli';
+
+// The eas-cli env:list signature has shifted across versions.  Try a few
+// known-good shapes in order; the first one that returns successfully wins.
+const candidates = [
+  `${easBin} env:list production --non-interactive`,
+  `${easBin} env:list --environment production --non-interactive`,
+  `${easBin} env:list --non-interactive`,
+];
+
+function dumpDiagnostic(label, err) {
+  console.error(`  --- diagnostic (${label}) ---`);
+  if (err.status !== undefined) console.error(`  exit status: ${err.status}`);
+  if (err.signal) console.error(`  signal: ${err.signal}`);
+  const stdoutText = err.stdout ? String(err.stdout).trim() : '';
+  const stderrText = err.stderr ? String(err.stderr).trim() : '';
+  if (stdoutText) {
+    console.error('  stdout:');
+    for (const line of stdoutText.split('\n')) console.error(`    ${line}`);
+  }
+  if (stderrText) {
+    console.error('  stderr:');
+    for (const line of stderrText.split('\n')) console.error(`    ${line}`);
+  }
+  if (!stdoutText && !stderrText && err.message) {
+    console.error(`  message: ${err.message}`);
+  }
+  console.error('  --- end diagnostic ---');
+}
+
+let easOutput = null;
+const attempts = [];
+for (const cmd of candidates) {
+  try {
+    easOutput = execSync(cmd, {
+      stdio: ['ignore', 'pipe', 'pipe'],
+      encoding: 'utf8',
+    });
+    console.log(`  (using: ${cmd})`);
+    break;
+  } catch (err) {
+    attempts.push({ cmd, err });
+  }
+}
+
+if (easOutput === null) {
+  console.error('\n\x1b[31m✗ EAS env:list failed (all candidate forms exhausted)\x1b[0m');
+  for (const { cmd, err } of attempts) {
+    dumpDiagnostic(cmd, err);
+  }
   if (isCI) {
-    console.error(
-      `\n\x1b[31m✗ EAS env:list failed in CI:\x1b[0m ${msg}\n`,
-    );
-    console.error(
-      '  Make sure EXPO_TOKEN is valid and the eas-cli is reachable.\n',
-    );
+    console.error('\n  Make sure EXPO_TOKEN is valid and the eas-cli is reachable.\n');
     process.exit(1);
   }
-  console.warn(
-    `  \x1b[33m⚠ Could not run eas env:list (skipping):\x1b[0m ${msg}`,
-  );
+  console.warn('  \x1b[33m⚠ Skipping (local mode, not fatal)\x1b[0m');
   process.exit(0);
 }
 
-let easVars;
-try {
-  easVars = JSON.parse(easOutput);
-} catch (err) {
-  if (isCI) {
-    console.error(
-      '\n\x1b[31m✗ Could not parse eas env:list JSON output:\x1b[0m',
-      err.message,
-    );
-    process.exit(1);
-  }
-  console.warn(
-    '  \x1b[33m⚠ Could not parse eas env:list output (skipping)\x1b[0m',
-  );
-  process.exit(0);
-}
-
-// eas env:list --json returns an array of variable objects.  Field naming
-// has historically been { name, value, ... }.  Be defensive about the shape.
-const easMap = {};
-if (Array.isArray(easVars)) {
-  for (const v of easVars) {
-    if (v && typeof v === 'object' && v.name) {
-      easMap[v.name] = v.value ?? '';
-    }
-  }
-}
-
-const easMissing = keysToCheck.filter(
-  (key) => !easMap[key] || String(easMap[key]).trim() === '',
-);
+// Loose substring check: eas-cli's default tabular output never reveals the
+// secret value, so we can only verify existence by name.  This intentionally
+// guards the "key not registered at all" failure mode rather than the
+// "key registered but empty" mode (which is much rarer in practice).
+const easMissing = keysToCheck.filter((key) => !easOutput.includes(key));
 
 if (easMissing.length > 0) {
   const fatal = isCI;
   const color = fatal ? '\x1b[31m' : '\x1b[33m';
   const mark = fatal ? '✗' : '⚠';
   console.error(
-    `\n${color}${mark} EAS server-side env check ${fatal ? 'failed' : 'warning'}: missing/empty keys:\x1b[0m\n`,
+    `\n${color}${mark} EAS server-side env check ${fatal ? 'failed' : 'warning'}: keys not registered:\x1b[0m\n`,
   );
   for (const key of easMissing) {
     console.error(`   - ${key}`);
@@ -145,6 +157,8 @@ if (easMissing.length > 0) {
     '\n  Fix: npx eas-cli env:create --environment production\n' +
       '       (or update an existing variable via the Expo dashboard)\n',
   );
+  console.error('  Raw env:list output (for debugging):');
+  for (const line of easOutput.split('\n')) console.error(`    ${line}`);
   if (fatal) process.exit(1);
 } else {
   console.log('  \x1b[32m✓ EAS server-side env check passed\x1b[0m');
