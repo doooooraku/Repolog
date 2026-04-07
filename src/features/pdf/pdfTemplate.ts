@@ -336,7 +336,13 @@ const buildCss = async (input: PdfTemplateInput) => {
   }
   .page {
     width: var(--page-w);
-    height: var(--page-h);
+    /* iOS WebKit print (UIPrintPageRenderer + WKWebView) は subpixel 丸めで
+     * .page-inner 末尾の .page-footer を次の PDF ページに押し出すバグがある。
+     * 1mm のスラックを確保して累積丸め誤差を吸収する。
+     * Android Chromium 印刷エンジンには無影響。
+     * 詳細: docs/reference/lessons.md > PDF生成 > 2026-04-07
+     * 意思決定: docs/adr/ADR-0009-pdf-print-engine-compat.md */
+    height: calc(var(--page-h) - 1mm);
     box-sizing: border-box;
     padding: var(--page-pad);
     background: #fff;
@@ -356,6 +362,12 @@ const buildCss = async (input: PdfTemplateInput) => {
   }
   .page-footer {
     height: var(--footer-h);
+    /* footer の border-top + padding-top を 10mm に内包させ、外形高を固定する。
+     * これにより .page-inner 内で flex に渡る footer の outer height が
+     * 12.265mm → 10mm に縮み、.page-main にさらに 2.265mm のスラックが生まれる。
+     * iOS WebKit subpixel overflow 対策の一環。
+     * 詳細: docs/adr/ADR-0009-pdf-print-engine-compat.md */
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;

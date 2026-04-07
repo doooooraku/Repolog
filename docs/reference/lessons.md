@@ -75,6 +75,32 @@
 - **状況**: `Promise.all(chunk.map(...))` で同一ページの画像を並列処理 → メモリピークが2倍
 - **ルール**: 大きなバイナリデータ（画像のbase64等）を扱う場合は逐次処理（`for...of`）を使う
 
+### 2026-04-07: iOS WebKit print の subpixel overflow による空白ページ（#286）
+- **状況**: iOS で `expo-print` 経由で出力した PDF において、写真ページ（standard / large 共通）の直後に必ず空白ページが挿入される。Android では発生しない。空白ページには `<footer class="page-footer">` の `X/Y` ページ番号文字列だけが描画されており、本来 flex 末尾にあるべきフッターが次の PDF ページに押し出されている
+- **観測（実体PDF確認）**:
+  - iOS 標準 / 写真2枚: 期待 2 → 実体 **3**（末尾に空白）
+  - iOS コメント / 写真1枚: 期待 2 → 実体 **3**（末尾に空白）
+  - iOS コメント / 写真2枚: 期待 3 → 実体 **5**（写真間と末尾に空白）
+  - 表紙・コメント分割ページでは発生せず、**写真ページでだけ**発生
+- **根本原因**: `pdfTemplate.ts:buildCss()` の `.page` ルールで `.page` の高さが `@page` サイズと完全一致しており、さらに `.photo-grid { height: 100% }` が `.page-main` を埋め尽くすため、サブピクセル丸めを吸収するスラックがゼロ。iOS WebKit (UIPrintPageRenderer + WKWebView) は累積 0.5px の overflow を「次ページに送る」と判定し、flex 末尾の `.page-footer` 単体を新ページに押し出す。Android Chromium 印刷エンジンは同じ overflow を吸収して同一ページに収める。さらに `.page-footer` 自身も `box-sizing` 未指定（default content-box）なので、`height: 10mm + padding-top: 2mm + border-top: 1px = 12.265mm` の outer height となり設計値より 2.265mm 大きく、スラックを更に圧迫していた
+- **なぜ気付かなかったか（5層）**:
+  1. Android では Chromium 印刷エンジンが subpixel 丸めを吸収するため同じ CSS で問題が顕在化しなかった
+  2. 自動テストは `calculatePageCount` のロジックレベルだけで、`buildPdfHtml()` 出力 HTML の構造（`<section class="page"` 数）を検証していなかった
+  3. iOS 実機テストはマニュアル中心で、ページ数差分まで毎リリースで確認するチェックリストになっていなかった
+  4. CI で実 PDF を生成して検証する仕組みがなかった（macOS + 実機/シミュ必須のため難しい）
+  5. SSoT (`pdf_template.md`) に「`.page` の高さが境界条件である」ことが明文化されていなかった
+- **対策（実施済み）**:
+  1. `pdfTemplate.ts:buildCss()` の `.page` を `height: calc(var(--page-h) - 1mm)` に変更（1mm のスラック）
+  2. `.page-footer` に `box-sizing: border-box` を追加（footer の outer height を設計値 10mm に固定し 2.265mm のスラック追加）
+  3. `__tests__/pdfTemplate.test.ts` を新規追加し、`<section class="page"` 数 = `calculatePageCount` を全レイアウト × 用紙 × 写真枚数 × コメント長で網羅検証
+  4. SSoT (`docs/reference/pdf_template.md`) を同じ修正に同期し、理由をコメントで明記
+  5. ADR-0009 で意思決定を恒久記録
+- **ルール**:
+  1. **PDF テンプレ CSS の `.page` の高さは `@page` のサイズより必ず小さく設定する**（subpixel 丸めの吸収余地を確保）
+  2. **HTML 出力ロジックを変更したら、出力 HTML の構造不変条件をユニットテストで固定する**（snapshot か数値 assertion）
+  3. **複数の印刷エンジンを跨ぐ CSS は、Chromium / WebKit 両方の境界条件を意識する**。一方で動いても他方で動く保証はない
+  4. PDF テンプレ層の変更時は SSoT (`pdf_template.md`) と実装 (`pdfTemplate.ts`) の両方を必ず同時更新する
+
 ---
 
 ## Android 戻るジェスチャー
