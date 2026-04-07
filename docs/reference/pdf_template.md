@@ -241,10 +241,20 @@ body {
   print-color-adjust: exact;
 }
 
-/* 1ページ（用紙そのもの） */
+/* 1ページ（用紙そのもの）
+ *
+ * 重要: height は @page のサイズより 1mm 小さく設定する。
+ * iOS WebKit print (UIPrintPageRenderer + WKWebView) は subpixel 丸めで
+ * .page-inner 末尾の .page-footer を次の PDF ページに押し出すバグがあり、
+ * .page の border-box が @page と完全一致するとスラックがゼロになる。
+ * 1mm のスラックで累積丸め誤差を吸収する。
+ * Android Chromium 印刷エンジンには無影響。
+ * 詳細: docs/reference/lessons.md > PDF生成 > 2026-04-07
+ * 意思決定: docs/adr/ADR-0009-pdf-print-engine-compat.md
+ */
 .page {
   width: var(--page-w);
-  height: var(--page-h);
+  height: calc(var(--page-h) - 1mm);
   box-sizing: border-box;
   padding: var(--page-pad);
   background: #fff;
@@ -280,9 +290,17 @@ body {
   min-height: 0; /* 長文でレイアウトが破綻しないため */
 }
 
-/* フッター（ページ番号） */
+/* フッター（ページ番号）
+ *
+ * box-sizing: border-box が必須。
+ * これがないと border-top + padding-top の 2.265mm 分だけ outer height が
+ * 設計値 10mm を超え、.page-inner の flex 配分でスラックを圧迫し、
+ * iOS WebKit subpixel 丸めで footer が次ページに押し出されやすくなる。
+ * 詳細: docs/adr/ADR-0009-pdf-print-engine-compat.md
+ */
 .page-footer {
   height: var(--footer-h);
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;

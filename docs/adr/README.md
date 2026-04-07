@@ -65,8 +65,6 @@
   - 4桁連番（0001から）
   - タイトルは短く（例：`revenue-model-admob-and-subscription`）
 
-> ADR-0009 は欠番（ドラフト段階で不採用）。
-
 例：
 - `ADR-0002-revenue-model-admob-and-subscription.md`
 - `ADR-0003-language-code-nl-is-canonical.md`
