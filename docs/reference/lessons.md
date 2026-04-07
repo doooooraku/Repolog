@@ -283,6 +283,46 @@
 
 ---
 
+## iOS 固有 API 仕様
+
+### 2026-04-08: SKStoreReviewController は TestFlight 配布では表示されない（Issue #289）
+- **状況**: PR #285 で `expo-store-review` を導入して累計 4 回目の PDF 出力直後にレビュー依頼を出す仕組みを入れたが、iOS TestFlight ビルドで**一度もダイアログが表示されない**ことが判明
+- **根本原因**: Apple の公式仕様として `SKStoreReviewController.requestReview()` は **TestFlight 配布アプリではダイアログを一切表示しない**。これはアプリ側で回避する手段がない
+- **一次情報**:
+  - [Apple Developer Forums: Potential Issue with SKStoreReview](https://developer.apple.com/forums/thread/794961)
+  - [Critical Moments: SKStoreReviewController Guide with Examples](https://criticalmoments.io/blog/skstorereviewcontroller_guide_with_examples)
+  - [react-native-rate Issue #52: not showing up in testflight](https://github.com/KjellConnelly/react-native-rate/issues/52)
+- **検証可能なビルド種別**: **App Store Production 配信版** または **Xcode dev ビルド**（`expo run:ios`）のみ
+- **ルール**:
+  1. iOS の `expo-store-review` / `SKStoreReviewController` の動作確認は **絶対に TestFlight で行わない**
+  2. 新機能 ADR の Acceptance セクションには iOS / Android を別行で書き、iOS 側には「TestFlight で確認できないもの」を明示する
+  3. TestFlight でしか検証環境がない機能は、ドキュメント注記を優先する（次善策を取らず、仕様として受容する）
+
+### 2026-04-08: expo-sharing の iOS 実装は cancel/share を区別できない（Issue #289）
+- **状況**: `src/features/pdf/pdfService.ts:exportPdfFile` が iOS で無条件 `return true` を返していたため、共有シートを閉じただけで `recordExport` が走り、Free ユーザーの月次上限が実質 1 回分少なくなる事例があった
+- **根本原因**: `expo-sharing` の iOS 実装は `UIActivityViewController.completionWithItemsHandler` の `(activityType, completed, returnedItems, error)` を JS 層に伝えず、Promise を undefined で resolve するだけ。ユーザーが「共有」「キャンセル」のどちらを選んだかは判別不能
+- **一次情報**:
+  - [expo/expo Issue #5713: Status callback for share/cancel](https://github.com/expo/expo/issues/5713)
+  - [Expo Forums: Detect if canceled or closed the Sharing.shareAsync](https://forums.expo.dev/t/detect-if-canceled-or-closed-the-sharing-shareasync/24368)
+- **対策（実施済み）**: ADR-0014 で「計上タイミングを PDF 生成成功直後に前倒し」することで、保存 UI の戻り値に依存しない設計に変更
+- **ルール**:
+  1. iOS で「OS UI のキャンセルを検知する必要がある」機能は、`expo-sharing` 以外の API を検討する（`expo-document-picker` や自作ネイティブモジュール）
+  2. もしくは、**戻り値に依存しない計上ポリシー**（生成時点・試行時点）を ADR で固定する
+  3. Android の SAF (`StorageAccessFramework`) は `permissions.granted` で区別できる点を忘れずに仕様書に明記する
+
+### 2026-04-08: React state ベース reentrancy guard は同一 tick 内の 2 連発火を取りこぼす（Issue #289）
+- **状況**: `app/reports/[id]/pdf.tsx:handleExport` 冒頭に `if (exporting) return; setExporting(true);` があったが、iOS Fabric + React Compiler 環境で Pressable が急速 2 連発火した場合、2 つ目の呼び出しが前 render の closure を見て guard を素通りしてしまう
+- **根本原因**: `setState` は同期的に反映されない。同一 JS event loop tick 内では closure の state 値は render 時点のスナップショット
+- **対策（実施済み）**: `useRef<boolean>` ベースの guard に置換（ADR-0014）。`.current` への代入は同期的なので同一 tick 2 回目は即 return
+- **一次情報（参考）**: React 公式「State as a Snapshot」 / React Compiler の auto-memoize 仕様
+- **ルール**:
+  1. **event handler 内の二重呼び出し防止に React state を使わない**。必ず `useRef` で同期的に guard する
+  2. Pressable の `disabled={state}` プロパティも同じ理由で state flush 待ちの race window を持つため、state 単独では不十分
+  3. try-catch-finally で ref の解放を保証する。早期 return でも finally は走るので安全
+  4. 将来この pattern を捨てようとしたら `__tests__/pdfExportGuard.test.ts` が落ちる設計にしてある
+
+---
+
 ### Claude Code トリガーフレーズ
 - 有効なフレーズ: 「デバッグセッションを分析して」「rebuild して」「Maestro スクショ付きで E2E テストして」
 - 分析時は summary.md → app_logcat.log → screenshots/ の順に読むのが効率的

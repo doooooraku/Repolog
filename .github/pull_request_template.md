@@ -63,5 +63,7 @@ Repolog PR Template
 - [ ] CI が通っている
 - [ ] 必要に応じて docs を更新した
 - [ ] 手動で動作確認を完了した
+- [ ] **iOS / Android 両方の実機で動作確認した**（片方しか触らない修正でも、もう片方の smoke は通す）
 - [ ] DBにファイルパスを保存する変更がある場合、相対パスで保存している（`toRelativePath()` 経由）
 - [ ] DBスキーマ変更がある場合、バックアップ export/import に反映した
+- [ ] iOS の OS 標準 UI に依存する機能（レビュー依頼・共有・保存）を追加した場合、**TestFlight で挙動が変わらないもの**を `docs/how-to/workflow/ios_testflight_release.md` §7-4 と照合した
