@@ -11,6 +11,10 @@ type SettingsState = {
   setThemeMode: (mode: ThemeMode) => void;
   authorName: string;
   setAuthorName: (name: string) => void;
+  reviewPromptShownFreeAt: string | null;
+  setReviewPromptShownFreeAt: (iso: string) => void;
+  reviewPromptShownProAt: string | null;
+  setReviewPromptShownProAt: (iso: string) => void;
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -22,6 +26,10 @@ export const useSettingsStore = create<SettingsState>()(
       setThemeMode: (mode) => set({ themeMode: mode }),
       authorName: '',
       setAuthorName: (name) => set({ authorName: name }),
+      reviewPromptShownFreeAt: null,
+      setReviewPromptShownFreeAt: (iso) => set({ reviewPromptShownFreeAt: iso }),
+      reviewPromptShownProAt: null,
+      setReviewPromptShownProAt: (iso) => set({ reviewPromptShownProAt: iso }),
     }),
     {
       name: 'repolog-settings',

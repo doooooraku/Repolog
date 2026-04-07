@@ -42,3 +42,11 @@ export async function countExportsSince(isoStart: string): Promise<number> {
   );
   return row?.count ?? 0;
 }
+
+export async function countAllExports(): Promise<number> {
+  const db = await getDb();
+  const row = await db.getFirstAsync<{ count: number }>(
+    'SELECT COUNT(*) as count FROM exports',
+  );
+  return row?.count ?? 0;
+}

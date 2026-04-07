@@ -147,8 +147,6 @@ const baseEn = {
 
   // --- Reminder ---
 
-  // --- Review (7-day streak) ---
-
   // --- Language labels ---
   languageChange: 'Change language',
   currentLanguage: 'Current',

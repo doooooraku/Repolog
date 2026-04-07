@@ -18,9 +18,10 @@ import { useAppTheme } from '@/hooks/useAppTheme';
 import { useTranslation } from '@/src/core/i18n/i18n';
 import { getReportById } from '@/src/db/reportRepository';
 import { listPhotosByReport } from '@/src/db/photoRepository';
-import { recordExport, countExportsSince } from '@/src/db/exportRepository';
+import { recordExport, countExportsSince, countAllExports } from '@/src/db/exportRepository';
 import { useProStore } from '@/src/stores/proStore';
 import { exportPdfFile, generatePdfFile } from '@/src/features/pdf/pdfService';
+import { maybeRequestReview } from '@/src/services/reviewPromptService';
 import { buildPdfHtml } from '@/src/features/pdf/pdfTemplate';
 import {
   buildPdfExportFileName,
@@ -236,6 +237,10 @@ export default function PdfPreviewScreen() {
         paperSize,
         planAtExport: isPro ? 'pro' : 'free',
       });
+
+      // PDF 出力成功というハッピーモーメントでアプリ内レビュー依頼を試みる（fire-and-forget、ADR-0012）
+      const cumulativeCount = await countAllExports();
+      void maybeRequestReview({ isPro, cumulativeCount });
 
     } catch (e) {
       console.error('[PDF] Export failed:', e);
