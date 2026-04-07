@@ -81,12 +81,14 @@ console.log('  Checking EAS server-side environment variables (production)...');
 // get a best-effort check.
 const easBin = process.env.CI === 'true' ? 'eas' : 'npx --yes eas-cli';
 
-// The eas-cli env:list signature has shifted across versions.  Try a few
-// known-good shapes in order; the first one that returns successfully wins.
+// The eas-cli env:list signature has shifted across versions.  As of the
+// latest CLI, env:list does NOT accept --non-interactive (it's only valid
+// on env:create and a few others) — passing it produces "Nonexistent flag:
+// --non-interactive".  Try the bare forms in order.
 const candidates = [
-  `${easBin} env:list production --non-interactive`,
-  `${easBin} env:list --environment production --non-interactive`,
-  `${easBin} env:list --non-interactive`,
+  `${easBin} env:list production`,
+  `${easBin} env:list --environment production`,
+  `${easBin} env:list`,
 ];
 
 function dumpDiagnostic(label, err) {
