@@ -75,6 +75,26 @@
 - **状況**: `Promise.all(chunk.map(...))` で同一ページの画像を並列処理 → メモリピークが2倍
 - **ルール**: 大きなバイナリデータ（画像のbase64等）を扱う場合は逐次処理（`for...of`）を使う
 
+### 2026-04-09: PDF 出力進捗バーがフォールバック時に逆戻りする
+
+- **状況**: ユーザー報告「PDF プレビュー画面で出力ボタンを押すと、進捗バーが `0% → 80% → 0% → 80% → 完了` と逆戻りし、**全ての PDF 出力で同じ挙動**」。ADR-0013 で導入したばかりの進捗バーの UX 退行
+- **根本原因**: ADR-0013 のフォールバックチェーン（full → reduced → tiny）下で attempt 1 が回復可能エラー（`PdfHangError` / `OutOfMemoryError` / `BlankPdfError`）を投げると、attempt 2 の `buildPdfHtml()` 冒頭で `input.onProgress?.(0, input.photos.length)` (`pdfTemplate.ts:521`) が再発火し、UI 層の進捗バー state が 80% → 0% にリセットされていた。ユーザー報告「全 PDF 出力で同じ」から、**この環境では attempt 1 が毎回失敗している**ことも確定（別 Issue で追跡）
+- **なぜ気付かなかったか（5 層）**:
+  1. ADR-0013 の設計時、「フォールバックは例外時のみ」前提で、attempt 跨ぎの `onProgress` 挙動が仕様化されていなかった
+  2. `pdfService.test.ts` の onProgress pass-through テストは呼び出し回数しか見ておらず、**monotonic 性を検証していなかった**
+  3. 手動 QA チェックリストに「進捗バーが 0 → 100 まで単調に進むか」の項目がなかった
+  4. 「全 PDF 出力で attempt 1 が失敗する」という別の異常（本丸）の存在に気付く観測性がなかった（フォールバック発火率のログ/テレメトリが存在しない）
+  5. そもそも「非同期進捗コールバックは monotonic non-decreasing であるべき」という設計原則がチームのコーディングルールに文書化されていなかった
+- **対策（本 PR）**:
+  1. `app/reports/[id]/pdf.tsx` の `handleExport` 内で `setExportProgress` を functional setState に変え、`(prev) => prev == null ? next : Math.max(prev, next)` で monotonic にクランプ
+  2. 新規テスト `__tests__/pdfExportProgressClamp.test.ts`（7 ケース）で clamp ロジックを検証
+  3. ADR-0013 Notes セクションに「進捗バーは UI 層でクランプ」方針を追記
+- **Follow-up（別 Issue）**: attempt 1 が毎回失敗する根本原因を実機 Logcat で調査。`skipFontEmbedding: false` のフォント埋め込みが特定の条件で fail している疑いが最有力。本 PR の UX 修正で見た目は解決するが、**画質劣化版 PDF が常時配信されている可能性**があるため優先度は中〜高
+- **ルール**:
+  1. **進捗コールバックは常に monotonic non-decreasing を保証する**。多層リトライ/フォールバックと共存する UI 進捗は、上流で必ずクランプする
+  2. **フォールバック発火率の観測性を持つ**。日常的にフォールバックが走っている異常事態を検知できる仕組み（ログ・ラウンドトリップ計測）を設計時に組み込む
+  3. ADR-0013 の手動 QA チェックリストに「進捗バーが一度も後退しないこと」を追加する
+
 ### 2026-04-08: PDF 出力ハングの 3 層原因（ストレージ・メモリ・WebView 共存）
 
 - **状況**: ユーザーから次の 3 シナリオで PDF 出力ボタンが永久スピナーになる報告:
