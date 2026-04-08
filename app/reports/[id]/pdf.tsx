@@ -194,6 +194,27 @@ export default function PdfPreviewScreen() {
         printPhaseTimer = undefined;
       }
     };
+    // 擬似タイマーを起動するヘルパー（二重起動ガード付き）。
+    // Issue #296: 旧実装ではこのタイマーを `generatePdfFile()` の await 後に起動していたため、
+    // Print.printToFileAsync 実行中（= 実際に 80→95% が動いてほしい時間帯）にタイマーが
+    // 走っておらず、ユーザー視点で 80% 停滞に見えていた。
+    // 現在は onProgress が写真処理完了（processed === total）を検知した瞬間に起動し、
+    // printHtml と並走させる。フォールバック or 0 枚レポート用に generatePdfFile 後の
+    // 呼び出しも安全ネットとして残している（二重起動ガードで冪等）。
+    // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md 2026-04-10 補遺
+    const startPrintPhaseTimer = (photoCount: number) => {
+      if (printPhaseTimer) return;
+      // tick 間隔: 写真数に比例し、下限 500ms。10 枚で 7.5s / 40 枚で 18s / 70 枚で 31.5s で
+      // 95% に到達する計算。実印刷時間より保守側（遅め）に倒すのは、早く終わった場合に
+      // 100% スナップで追い越せば済むが、早く 95% に到達すると再度停滞に見えるため。
+      const tickIntervalMs = Math.max(500, photoCount * 30);
+      printPhaseTimer = setInterval(() => {
+        setExportProgress((prev) => {
+          if (prev == null || prev >= 95) return prev;
+          return prev + 1;
+        });
+      }, tickIntervalMs);
+    };
 
     try {
       const report = reportRef.current ?? await getReportById(reportId);
@@ -259,19 +280,21 @@ export default function PdfPreviewScreen() {
           // ユーザー視点では「80% まで進んだのに 0 に戻って再度 80%」という
           // 逆戻りに見えるため、UI 層で monotonic non-decreasing にクランプする。
           setExportProgress((prev) => (prev == null ? next : Math.max(prev, next)));
+          // Issue #296: 写真処理フェーズが完了した瞬間（processed === total）に
+          // 擬似タイマーを起動し、直後に開始する printHtml (= Print.printToFileAsync)
+          // と並走させる。これ以前は generatePdfFile() 呼び出し後に起動していたため、
+          // 印刷フェーズ中は bar が 80% で停止して見えていた。
+          if (total > 0 && processed >= total) {
+            startPrintPhaseTimer(total);
+          }
         },
       );
 
-      // 写真処理が終わったら 80% で固定し、印刷フェーズの擬似進捗タイマーを起動する。
-      // 上の onProgress で既に 80 に達している場合を考慮し、monotonic にクランプする。
+      // 安全ネット: 0 枚レポート・onProgress 未発火の例外経路でも必ず 80% スナップを当て、
+      // タイマーが未起動なら起動する。通常経路では上の onProgress 内で起動済みのため
+      // `startPrintPhaseTimer` は二重起動ガードにより無害に no-op となる。
       setExportProgress((prev) => (prev == null ? 80 : Math.max(prev, 80)));
-      const tickIntervalMs = Math.max(200, photoCount * 5);
-      printPhaseTimer = setInterval(() => {
-        setExportProgress((prev) => {
-          if (prev == null || prev >= 95) return prev;
-          return prev + 1;
-        });
-      }, tickIntervalMs);
+      startPrintPhaseTimer(photoCount);
 
       // [ADR-0014] PDF ファイルが生成できた時点で 1 回の出力としてカウントする。
       // iOS の expo-sharing は共有シートの cancel/share を区別できないため
