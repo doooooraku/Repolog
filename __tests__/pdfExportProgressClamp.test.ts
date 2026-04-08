@@ -6,10 +6,13 @@
  * 既知のリセット挙動に対し、UI 層の clamp ロジックが進捗を逆戻りさせないことを
  * 保証する。
  *
+ * 加えて Issue #296 の修正として、印刷フェーズ用の擬似進捗タイマーが
+ * 写真処理完了のタイミング（processed === total）で起動すべきことを検証する。
+ *
  * 関連:
  * - docs/adr/ADR-0013-pdf-export-resilience-and-progress.md
- * - docs/reference/lessons.md 2026-04-09 セクション
- * - app/reports/[id]/pdf.tsx の handleExport 内 onProgress ハンドラ
+ * - docs/reference/lessons.md 2026-04-09 / 2026-04-10 セクション
+ * - app/reports/[id]/pdf.tsx の handleExport 内 onProgress / startPrintPhaseTimer
  */
 
 // pdf.tsx の handleExport 内 onProgress ハンドラと同じロジックを純関数として再現する。
@@ -126,5 +129,123 @@ describe('PDF export progress — monotonic clamp', () => {
     // 万一 processed が total を超えて呼ばれても 80 を超えない
     const state = clampProgress(null, 15, 10);
     expect(state).toBe(80);
+  });
+});
+
+/**
+ * Issue #296: 印刷フェーズ擬似タイマーの起動タイミングを検証する。
+ *
+ * pdf.tsx の handleExport 内 onProgress ハンドラが持つ「写真処理完了で
+ * タイマーを起動する」判定ロジックと、「startPrintPhaseTimer の tick 間隔
+ * 計算 + キャップ挙動」を純関数として再現し、単体で検証する。
+ */
+
+// pdf.tsx と完全に同じ判定式（processed >= total && total > 0）を再現する。
+const shouldStartPrintPhaseTimer = (processed: number, total: number): boolean =>
+  total > 0 && processed >= total;
+
+// pdf.tsx の startPrintPhaseTimer と同じ tick 間隔計算式。
+const computeTickIntervalMs = (photoCount: number): number =>
+  Math.max(500, photoCount * 30);
+
+// pdf.tsx の setExportProgress functional setState と同じロジックを純関数化する。
+// 95 キャップと null ガードも完全一致させる。
+const tickPrintPhase = (prev: number | null): number | null => {
+  if (prev == null || prev >= 95) return prev;
+  return prev + 1;
+};
+
+describe('PDF export print-phase timer — start condition', () => {
+  test('returns true only when processed reaches total', () => {
+    expect(shouldStartPrintPhaseTimer(0, 10)).toBe(false);
+    expect(shouldStartPrintPhaseTimer(5, 10)).toBe(false);
+    expect(shouldStartPrintPhaseTimer(9, 10)).toBe(false);
+    expect(shouldStartPrintPhaseTimer(10, 10)).toBe(true);
+  });
+
+  test('returns false when total is 0 (zero-photo report uses safety net)', () => {
+    expect(shouldStartPrintPhaseTimer(0, 0)).toBe(false);
+  });
+
+  test('returns true for processed > total edge case', () => {
+    // 万一 processed が total を超えて呼ばれても起動する（安全側）
+    expect(shouldStartPrintPhaseTimer(11, 10)).toBe(true);
+  });
+
+  test('returns false when both are 0', () => {
+    expect(shouldStartPrintPhaseTimer(0, 0)).toBe(false);
+  });
+});
+
+describe('PDF export print-phase timer — tick interval', () => {
+  test('has 500ms floor for small photo counts', () => {
+    expect(computeTickIntervalMs(0)).toBe(500);
+    expect(computeTickIntervalMs(1)).toBe(500);
+    expect(computeTickIntervalMs(10)).toBe(500);
+    expect(computeTickIntervalMs(16)).toBe(500); // 16 * 30 = 480 < 500 → 500
+  });
+
+  test('scales linearly with photo count above floor', () => {
+    expect(computeTickIntervalMs(17)).toBe(510); // 17 * 30 = 510
+    expect(computeTickIntervalMs(40)).toBe(1200);
+    expect(computeTickIntervalMs(70)).toBe(2100);
+  });
+
+  test('completes 80 → 95 in expected total duration', () => {
+    // 15 step × interval = 総所要時間
+    expect(computeTickIntervalMs(10) * 15).toBe(7500); // 7.5s
+    expect(computeTickIntervalMs(40) * 15).toBe(18000); // 18s
+    expect(computeTickIntervalMs(70) * 15).toBe(31500); // 31.5s
+  });
+});
+
+describe('PDF export print-phase timer — tick progression', () => {
+  test('advances by 1 each call until reaching 95 cap', () => {
+    let state: number | null = 80;
+    for (let i = 0; i < 15; i += 1) {
+      state = tickPrintPhase(state);
+    }
+    expect(state).toBe(95);
+  });
+
+  test('does not exceed 95 on further ticks', () => {
+    let state: number | null = 95;
+    state = tickPrintPhase(state);
+    expect(state).toBe(95);
+    state = tickPrintPhase(state);
+    expect(state).toBe(95);
+  });
+
+  test('no-op when state is null (before first tick)', () => {
+    expect(tickPrintPhase(null)).toBe(null);
+  });
+
+  test('advances from arbitrary starting point within range', () => {
+    expect(tickPrintPhase(80)).toBe(81);
+    expect(tickPrintPhase(85)).toBe(86);
+    expect(tickPrintPhase(94)).toBe(95);
+  });
+});
+
+describe('PDF export print-phase timer — integration with clamp', () => {
+  test('photo-phase clamp and print-phase tick do not collide', () => {
+    // 写真処理中: onProgress が bar を 0 → 80 に駆動
+    // その後印刷フェーズで tick が 80 → 95 に駆動
+    // 両者の値は監視対象レンジが重ならないため、clamp は壊れない
+    let state: number | null = null;
+
+    // 写真処理フェーズ (onProgress 発火)
+    for (const [p, t] of [[0, 10], [3, 10], [6, 10], [10, 10]] as const) {
+      const denom = Math.max(t, 1);
+      const next = Math.round(Math.min(1, p / denom) * 80);
+      state = state == null ? next : Math.max(state, next);
+    }
+    expect(state).toBe(80);
+
+    // 印刷フェーズ (setInterval tick 発火)
+    for (let i = 0; i < 10; i += 1) {
+      state = tickPrintPhase(state);
+    }
+    expect(state).toBe(90);
   });
 });
