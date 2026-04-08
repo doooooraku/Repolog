@@ -75,6 +75,36 @@
 - **状況**: `Promise.all(chunk.map(...))` で同一ページの画像を並列処理 → メモリピークが2倍
 - **ルール**: 大きなバイナリデータ（画像のbase64等）を扱う場合は逐次処理（`for...of`）を使う
 
+### 2026-04-09 (Phase 1 計測結果): PDF フォント埋め込みが Android WebView で silent failure (Issue #292 調査)
+
+- **状況**: PR #291 で attempt 1 が毎回 `blank PDF` で失敗することを確認した Issue #292 の根本調査。PR #293 で構造化診断ログ（`buildPdfFontCss`/`buildPdfHtml`/`printHtml`/`assertPdfLooksValid` の 4 箇所に cssBytes/htmlBytes/sizeBytes を出力）を追加し、Pixel 8a 実機で 4 シナリオ（日本語 × standard/A4、日本語 × large/A4、日本語 × large/Letter、中国語簡体 × standard/A4）を計測
+- **実測データ（主要値）**:
+  - **日本語 (latin + jp)**: fontCssBytes = 15,518,956 (~14.8 MB), totalHtmlBytes ≈ 17-18 MB, attempt 1 結果 PDF = **681 bytes** (blank), attempt 2 成功
+  - **中国語簡体 (latin + jp + sc)**: fontCssBytes = 39,215,504 (~37.4 MB), totalHtmlBytes = 40,942,486 (~39 MB), attempt 1 結果 PDF = **681 bytes** (blank), attempt 2 成功
+  - **共通**: HTML サイズが 17 MB でも 39 MB でも、失敗 PDF は **同じ 681 bytes**。1 〜 2.6 秒で素早く失敗 (hang ではない)
+- **根本原因（更新版）**:
+  1. HTML 全体サイズの単純な「境界超過」ではない（2.4 倍サイズ差でも同じ 681 bytes）
+  2. `@font-face { src: url('data:font/ttf;base64,...') }` を含む HTML を `Print.printToFileAsync` に渡すと、Android Chromium 印刷エンジンが **フォントを処理できず、中身のない最小 PDF を生成して返す**
+  3. attempt 2 (`skipFontEmbedding: true`) で成功するのは、data URI 付き `@font-face` が HTML から完全に消えるため
+  4. `file://` URI も過去にコミット #88b0bd9 で revert 済み (Android WebView がブロック)
+- **なぜ SDK 53 → 54 で顕在化したか (仮説)**: SDK 54 + expo-print 15 で Android Chromium のバージョンが上がり、data URI の処理閾値が厳格化された可能性。ADR / lessons に SDK アップグレード時の PDF 回帰テスト項目がなかったため検出遅れ
+- **Phase 1 で追加した観測性 (PR #293)**:
+  1. `[PDF] buildPdfFontCss: lang=xx strategy=xx fonts=[...] cssBytes=N`
+  2. `[PDF] buildPdfHtml: layout=xx paperSize=xx photos=N ... cssBytes=N totalHtmlBytes=N`
+  3. `[PDF] printHtml: htmlBytes=N paperSize=xx timeoutMs=N`
+  4. `[PDF] assertPdfLooksValid: sizeBytes=N status=valid/blank threshold=N`
+  - いずれも `__DEV__` ガード無しで production でも動作。ユーザー提供 logcat から類似問題を即特定できる
+- **Phase 2 (次セッション) で実施する修正方針**:
+  1. **ビルド時フォントサブセット化** (最有力): `pyftsubset`/`subset-font` で Noto Sans の不要グリフ + Variable axis を削り、各フォントを 1-2 MB に圧縮。cssBytes を現状の 1/10 以下（< 3 MB）に抑制
+  2. **コードポイント外検出**: 既存の `containsUnsupportedScripts` 同等のロジックを流用し、サブセット外文字を検知したら attempt 2 (skipFontEmbedding=true) にフォールバック
+  3. **数値目標**: JP の cssBytes ≤ 3 MB、totalHtmlBytes ≤ 5 MB、attempt 1 成功率 ≥ 95%
+  4. **ADR-0015 起票**: 「PDF フォント境界条件と build-time subset 戦略」を新規 ADR として意思決定を記録
+- **ルール**:
+  1. **外部 SDK の境界条件は実機で計測する**。`scripts/pdf-font-benchmark.mjs` のような JS 側計算だけでは足りない。`expo-print` のような native 橋渡し API は「入力がどこまでなら動くか」を実機ログで確認する
+  2. **SDK アップグレード時の回帰テストに PDF 生成を含める**。SDK 53→54 でフォント経路の挙動が変わった疑いがあるため、次回の SDK アップグレードでは「日本語 + 写真 5 枚の PDF 出力」を必須テスト項目に
+  3. **観測性はゲートの一部**。本番ログに構造化情報（size/time/strategy）を残しておくことで、ユーザー報告時の切り分けが劇的に速くなる (PR #293 で Phase 1 完了)
+  4. **ベンチマークに実機モードを追加する**。`pdf-font-benchmark` は純 JS の見積もりだけでなく、`expo-print` を実際に呼んで成功/失敗と実際の PDF バイト数を記録するモードを追加する (Phase 2 or 3 の宿題)
+
 ### 2026-04-09: PDF 出力進捗バーがフォールバック時に逆戻りする
 
 - **状況**: ユーザー報告「PDF プレビュー画面で出力ボタンを押すと、進捗バーが `0% → 80% → 0% → 80% → 完了` と逆戻りし、**全ての PDF 出力で同じ挙動**」。ADR-0013 で導入したばかりの進捗バーの UX 退行
