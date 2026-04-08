@@ -229,7 +229,6 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDF 내보내기',
   pdfGenerating: 'PDF 생성 중...',
-  pdfGeneratingProgress: 'PDF 생성 중… {percent}%',
   pdfStorageLowTitle: '저장 공간이 부족합니다',
   pdfStorageLowBody: 'PDF 생성에는 최소 100MB의 여유 저장 공간이 필요합니다. 공간을 확보한 후 다시 시도해 주세요.',
 

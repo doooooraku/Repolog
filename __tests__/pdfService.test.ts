@@ -6,7 +6,8 @@
  * 1. ストレージ事前チェック: 空き容量が 100MB 未満なら PdfStorageLowError を即 throw
  * 2. 動的タイムアウト: 写真数に応じて Print.printToFileAsync の応答待ち時間を計算し、
  *    超過したら PdfHangError を投げて next attempt にフォールバックする
- * 3. onProgress の pass-through: 写真ループの進捗が呼び出し側に伝わる
+ * 3. attempt 1 タイムアウト上限 (Issue #298 緩和): attempt 1 のみ 10 秒でキャップし
+ *    40 秒 hang を 10 秒で打ち切る。attempt 2 以降は通常の動的タイムアウトを維持する
  *
  * 関連: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md
  */
@@ -128,22 +129,27 @@ describe('generatePdfFile — dynamic timeout / hang fallback', () => {
     mockPrintToFileAsync.mockImplementation(() => new Promise(() => undefined));
 
     const input = makeInput(2);
-    // 動的タイムアウト = 30s + 1s × 2 = 32s
-    const expectedTimeoutMs = 30_000 + 1_000 * 2;
+    // attempt 1 は 10s キャップ、attempt 2/3 は 30+1×2 = 32s
+    const attempt1Timeout = 10_000;
+    const laterAttemptTimeout = 30_000 + 1_000 * 2;
     // unhandled rejection を出さないため、await の代わりに .catch() で結果を受ける
     const result = generatePdfFile(input).catch((e) => e);
-    // 各 attempt をタイムアウトさせる: 3 attempts × タイムアウト + フォールバック cooldown
-    for (let i = 0; i < 3; i += 1) {
-      await jest.advanceTimersByTimeAsync(expectedTimeoutMs);
-      await jest.advanceTimersByTimeAsync(300);
-    }
+    // attempt 1: 10 秒でキャップ
+    await jest.advanceTimersByTimeAsync(attempt1Timeout);
+    await jest.advanceTimersByTimeAsync(300);
+    // attempt 2: 通常タイムアウト
+    await jest.advanceTimersByTimeAsync(laterAttemptTimeout);
+    await jest.advanceTimersByTimeAsync(300);
+    // attempt 3: 通常タイムアウト
+    await jest.advanceTimersByTimeAsync(laterAttemptTimeout);
+    await jest.advanceTimersByTimeAsync(300);
     const error = await result;
     expect(error).toBeInstanceOf(PdfHangError);
     expect(mockPrintToFileAsync).toHaveBeenCalledTimes(3);
     jest.useRealTimers();
   });
 
-  test('falls back to next attempt when first hang then succeeds', async () => {
+  test('attempt 1 is capped at 10 seconds regardless of photo count (Issue #298 mitigation)', async () => {
     jest.useFakeTimers();
     let callCount = 0;
     mockPrintToFileAsync.mockImplementation(() => {
@@ -152,30 +158,43 @@ describe('generatePdfFile — dynamic timeout / hang fallback', () => {
       return Promise.resolve({ uri: 'file:///tmp/recovered.pdf' });
     });
 
-    const input = makeInput(0);
-    // 動的タイムアウト = 30s + 0 = 30s
+    // 写真 10 枚 → 素朴に動的タイムアウトを計算すると 30+10 = 40 秒になるが、
+    // attempt 1 のみ 10 秒でキャップされることを検証
+    const input = makeInput(10);
     const promise = generatePdfFile(input);
-    await jest.advanceTimersByTimeAsync(30_000);
+    // 10 秒ちょうどで attempt 1 がタイムアウトする
+    await jest.advanceTimersByTimeAsync(10_000);
     await jest.advanceTimersByTimeAsync(300); // fallback cooldown
     await expect(promise).resolves.toBe('file:///tmp/recovered.pdf');
     expect(callCount).toBe(2);
     jest.useRealTimers();
   });
-});
 
-describe('generatePdfFile — onProgress pass-through', () => {
-  test('forwards photo progress callbacks to caller', async () => {
-    const onProgress = jest.fn<void, [number, number]>();
-    await generatePdfFile(makeInput(3), onProgress);
-    // 初回 (0, 3) + 写真 3 枚分 = 4 回以上
-    expect(onProgress.mock.calls.length).toBeGreaterThanOrEqual(4);
-    expect(onProgress.mock.calls[0]).toEqual([0, 3]);
-    const last = onProgress.mock.calls[onProgress.mock.calls.length - 1];
-    expect(last).toEqual([3, 3]);
-  });
+  test('attempt 2+ uses full dynamic timeout (not capped)', async () => {
+    jest.useFakeTimers();
+    let callCount = 0;
+    mockPrintToFileAsync.mockImplementation(() => {
+      callCount += 1;
+      if (callCount === 1) return new Promise(() => undefined); // attempt 1 hang
+      if (callCount === 2) return new Promise(() => undefined); // attempt 2 hang
+      return Promise.resolve({ uri: 'file:///tmp/recovered.pdf' });
+    });
 
-  test('is optional (no throw when omitted)', async () => {
-    await expect(generatePdfFile(makeInput(2))).resolves.toBe('file:///tmp/output.pdf');
+    const input = makeInput(5);
+    // attempt 1: 10 秒 cap, attempt 2: 30+5 = 35 秒
+    const promise = generatePdfFile(input);
+    // attempt 1 消化
+    await jest.advanceTimersByTimeAsync(10_000);
+    await jest.advanceTimersByTimeAsync(300);
+    // attempt 2 は 10 秒では終わらないことを確認するため 10 秒進める
+    await jest.advanceTimersByTimeAsync(10_000);
+    expect(callCount).toBe(2); // attempt 3 にはまだ進まない
+    // 残り 25 秒進めて attempt 2 のタイムアウトを発火
+    await jest.advanceTimersByTimeAsync(25_000);
+    await jest.advanceTimersByTimeAsync(300);
+    await expect(promise).resolves.toBe('file:///tmp/recovered.pdf');
+    expect(callCount).toBe(3);
+    jest.useRealTimers();
   });
 });
 

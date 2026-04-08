@@ -82,11 +82,6 @@ export default function PdfPreviewScreen() {
   // は iOS Fabric + React Compiler 環境で Pressable の急速 2 連発火を取りこぼす。
   // 詳細: docs/adr/ADR-0014-pdf-export-count-policy.md / docs/reference/lessons.md
   const exportingRef = useRef(false);
-  // 0–100 の単一プログレスバー。null = 非表示。
-  // 0–80% は写真処理ループの実進捗、80–95% は印刷フェーズの擬似進捗、
-  // 100% は exportPdfFile 完了時にスナップする。
-  // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md
-  const [exportProgress, setExportProgress] = useState<number | null>(null);
 
   // Cache report + photos so we don't re-fetch for export
   const reportRef = useRef<Report | null>(null);
@@ -184,37 +179,6 @@ export default function PdfPreviewScreen() {
     exportingRef.current = true;
     console.warn('[PDF] handleExport invoked', new Date().toISOString());
     setExporting(true);
-    setExportProgress(0);
-    // 印刷フェーズ用の擬似進捗タイマー。80% → 95% を滑らかに進める。
-    // 写真数に比例して間隔を長くすることで「写真が多いほど印刷が長引く」体感に合わせる。
-    let printPhaseTimer: ReturnType<typeof setInterval> | undefined;
-    const stopPrintPhaseTimer = () => {
-      if (printPhaseTimer) {
-        clearInterval(printPhaseTimer);
-        printPhaseTimer = undefined;
-      }
-    };
-    // 擬似タイマーを起動するヘルパー（二重起動ガード付き）。
-    // Issue #296: 旧実装ではこのタイマーを `generatePdfFile()` の await 後に起動していたため、
-    // Print.printToFileAsync 実行中（= 実際に 80→95% が動いてほしい時間帯）にタイマーが
-    // 走っておらず、ユーザー視点で 80% 停滞に見えていた。
-    // 現在は onProgress が写真処理完了（processed === total）を検知した瞬間に起動し、
-    // printHtml と並走させる。フォールバック or 0 枚レポート用に generatePdfFile 後の
-    // 呼び出しも安全ネットとして残している（二重起動ガードで冪等）。
-    // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md 2026-04-10 補遺
-    const startPrintPhaseTimer = (photoCount: number) => {
-      if (printPhaseTimer) return;
-      // tick 間隔: 写真数に比例し、下限 500ms。10 枚で 7.5s / 40 枚で 18s / 70 枚で 31.5s で
-      // 95% に到達する計算。実印刷時間より保守側（遅め）に倒すのは、早く終わった場合に
-      // 100% スナップで追い越せば済むが、早く 95% に到達すると再度停滞に見えるため。
-      const tickIntervalMs = Math.max(500, photoCount * 30);
-      printPhaseTimer = setInterval(() => {
-        setExportProgress((prev) => {
-          if (prev == null || prev >= 95) return prev;
-          return prev + 1;
-        });
-      }, tickIntervalMs);
-    };
 
     try {
       const report = reportRef.current ?? await getReportById(reportId);
@@ -256,45 +220,17 @@ export default function PdfPreviewScreen() {
       await new Promise((r) => setTimeout(r, 350));
 
       // Generate full-resolution PDF (on-demand, not during preview)
-      const photoCount = photos.length;
-      const uri = await generatePdfFile(
-        {
-          report,
-          photos,
-          layout,
-          paperSize,
-          isPro,
-          localeHint: lang,
-          appName: 'Repolog',
-          weatherLabel: weatherLabelMap[report.weather],
-          labels: labelMap,
-        },
-        (processed, total) => {
-          // 写真処理フェーズ: 0% → 80%
-          const denom = Math.max(total, 1);
-          const ratio = Math.min(1, processed / denom);
-          const next = Math.round(ratio * 80);
-          // ADR-0013 のフォールバックチェーン（full → reduced → tiny）は
-          // attempt ごとに buildPdfHtml() を再実行し、pdfTemplate.ts:521 の
-          // onProgress?.(0, total) で進捗が 0 にリセットされる。
-          // ユーザー視点では「80% まで進んだのに 0 に戻って再度 80%」という
-          // 逆戻りに見えるため、UI 層で monotonic non-decreasing にクランプする。
-          setExportProgress((prev) => (prev == null ? next : Math.max(prev, next)));
-          // Issue #296: 写真処理フェーズが完了した瞬間（processed === total）に
-          // 擬似タイマーを起動し、直後に開始する printHtml (= Print.printToFileAsync)
-          // と並走させる。これ以前は generatePdfFile() 呼び出し後に起動していたため、
-          // 印刷フェーズ中は bar が 80% で停止して見えていた。
-          if (total > 0 && processed >= total) {
-            startPrintPhaseTimer(total);
-          }
-        },
-      );
-
-      // 安全ネット: 0 枚レポート・onProgress 未発火の例外経路でも必ず 80% スナップを当て、
-      // タイマーが未起動なら起動する。通常経路では上の onProgress 内で起動済みのため
-      // `startPrintPhaseTimer` は二重起動ガードにより無害に no-op となる。
-      setExportProgress((prev) => (prev == null ? 80 : Math.max(prev, 80)));
-      startPrintPhaseTimer(photoCount);
+      const uri = await generatePdfFile({
+        report,
+        photos,
+        layout,
+        paperSize,
+        isPro,
+        localeHint: lang,
+        appName: 'Repolog',
+        weatherLabel: weatherLabelMap[report.weather],
+        labels: labelMap,
+      });
 
       // [ADR-0014] PDF ファイルが生成できた時点で 1 回の出力としてカウントする。
       // iOS の expo-sharing は共有シートの cancel/share を区別できないため
@@ -325,9 +261,6 @@ export default function PdfPreviewScreen() {
       });
       const success = await exportPdfFile(uri, fileName);
 
-      stopPrintPhaseTimer();
-      setExportProgress(100);
-
       // Cleanup generated PDF file
       LegacyFileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
 
@@ -350,7 +283,6 @@ export default function PdfPreviewScreen() {
       }
 
     } catch (e) {
-      stopPrintPhaseTimer();
       if (e instanceof PdfStorageLowError) {
         Alert.alert(t.pdfStorageLowTitle, t.pdfStorageLowBody);
       } else {
@@ -358,9 +290,7 @@ export default function PdfPreviewScreen() {
         Alert.alert(t.pdfExportFailed);
       }
     } finally {
-      stopPrintPhaseTimer();
       setExporting(false);
-      setExportProgress(null);
       // Ref guard の解放。state ではなく ref なので次 render を待たず次の押下が通る。
       exportingRef.current = false;
       // 出力後のプレビュー自動再生成は廃止。
@@ -427,22 +357,18 @@ export default function PdfPreviewScreen() {
           </View>
         ) : null}
         <Pressable testID="e2e_pdf_export" style={[styles.exportButton, { backgroundColor: colors.primaryBg }]} onPress={handleExport} disabled={exporting}>
-          {exporting && exportProgress != null ? (
-            <View style={styles.progressContent}>
-              <Text style={[styles.progressText, { color: colors.primaryText }]} numberOfLines={1}>
-                {t.pdfGeneratingProgress.replace('{percent}', String(exportProgress))}
+          {exporting ? (
+            // Issue #296 / #298 で導入した数値プログレスバーを廃止。
+            // attempt 1 40 秒 hang の緩和（pdfService.ts の 10 秒キャップ）により総待機時間が
+            // 約 12 秒まで短縮されたため、スピナー + 静的メッセージで十分な UX を提供できる。
+            // 擬似進捗タイマー / monotonic clamp / onProgress pass-through を全て削除。
+            // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md 2026-04-11 補遺
+            <View style={styles.exportingContent}>
+              <ActivityIndicator color={colors.primaryText} />
+              <Text style={[styles.exportingText, { color: colors.primaryText }]} numberOfLines={2}>
+                {t.pdfGenerating}
               </Text>
-              <View style={[styles.progressTrack, { backgroundColor: 'rgba(255,255,255,0.25)' }]}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    { width: `${exportProgress}%`, backgroundColor: colors.primaryText },
-                  ]}
-                />
-              </View>
             </View>
-          ) : exporting ? (
-            <ActivityIndicator color={colors.primaryText} />
           ) : (
             <Text style={[styles.exportText, { color: colors.primaryText }]}>{t.pdfExport}</Text>
           )}
@@ -527,24 +453,15 @@ const styles = StyleSheet.create({
   exportText: {
     fontWeight: '600',
   },
-  progressContent: {
-    width: '100%',
+  exportingContent: {
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 10,
   },
-  progressText: {
-    fontWeight: '700',
+  exportingText: {
+    fontWeight: '600',
     fontSize: 14,
-  },
-  progressTrack: {
-    width: '100%',
-    height: 6,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 3,
+    textAlign: 'center',
   },
   subtle: {
     fontSize: 12,

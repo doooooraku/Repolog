@@ -230,7 +230,6 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: '匯出 PDF',
   pdfGenerating: '正在產生 PDF...',
-  pdfGeneratingProgress: '正在產生 PDF… {percent}%',
   pdfStorageLowTitle: '儲存空間不足',
   pdfStorageLowBody: '產生 PDF 至少需要 100 MB 的可用儲存空間。請釋放空間後再試一次。',
 

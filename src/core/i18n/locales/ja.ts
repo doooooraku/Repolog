@@ -213,8 +213,7 @@ const dict = {
   pdfPaperA4: 'A4',
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDFを出力',
-  pdfGenerating: 'PDFを作成中...',
-  pdfGeneratingProgress: 'PDFを作成中… {percent}%',
+  pdfGenerating: 'PDFを作成中です。しばらくお待ちください。',
   pdfStorageLowTitle: 'ストレージ容量が不足しています',
   pdfStorageLowBody: 'PDFの作成には100MB以上の空き容量が必要です。不要なアプリやファイルを削除してから、もう一度お試しください。',
 
