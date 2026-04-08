@@ -230,7 +230,6 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDF exportieren',
   pdfGenerating: 'PDF wird erstellt...',
-  pdfGeneratingProgress: 'PDF wird erstellt… {percent}%',
   pdfStorageLowTitle: 'Nicht genügend Speicherplatz',
   pdfStorageLowBody: 'Für die PDF-Erstellung werden mindestens 100 MB freier Speicherplatz benötigt. Bitte geben Sie Speicherplatz frei und versuchen Sie es erneut.',
 

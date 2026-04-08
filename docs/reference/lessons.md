@@ -130,6 +130,33 @@
   3. **ADR の前提が時間で崩れるのは自然なこと**: ADR-0002 (2026-01) の「フォント埋め込みで固定」という決定は当時正しかったが、SDK 54 + Android Chromium の挙動変化で前提が崩れた。ADR は Supersede 可能な生きたドキュメントとして扱う
   4. **リスク分離原則**: 1 行のコード修正と 10+ ファイルの dead code 削除を同一 PR に混ぜない。失敗時の切り分けが困難になる。本 PR では修正のみ、削除は Phase 2b に分離
 
+### 2026-04-11: プログレスバーを廃止し hang 緩和（Issue #298）
+
+- **状況**: PR #297 で Issue #296「80% 停滞」を修正し実機検証したところ、**ユーザーから「95% で 30 秒以上停滞する」と新たな報告**。logcat 解析で標準レイアウト + 写真 10 枚の場合 **attempt 1 (`full quality` = 画像 1200px @ 0.80) が `Print.printToFileAsync` で 40 秒 hang** することが判明。一方コメントレイアウト（写真 1 枚/ページ）+ 10 枚は attempt 1 が 0.95 秒で成功する。HTML サイズが 4.6 MB > 2.37 MB にもかかわらず大きい方が成功する反直感的挙動で、純粋なバイトサイズではなく **`photo-grid.two` の CSS grid 構造 × 大画像** が Android Chromium Print エンジンの何らかの閾値に引っかかる疑い。PR #295 (`skipFontEmbedding: true`) で解消したはずの attempt 1 問題が、blank PDF → hang という**違う症状で残留**していた
+- **意思決定（ユーザー提案・同意ベース）**:
+  1. **プログレスバーを廃止**。Decision 5 (0-100% 単一バー) と Decision 6 (`loadPreview()` 自動再呼び出し廃止) の後継決定として、PR #288 / #291 / #297 で積み上げてきた「写真処理 0-80% / 印刷 80-95% / 完了 100%」の多層フェーズ管理を **丸ごと削除**。実装・改修コストが hang 時の UX 改善に見合わない（95% 停滞は擬似タイマーでは根治できない）ため。代わりに ActivityIndicator + 静的メッセージ (`t.pdfGenerating` = "PDF作成中...") のみで応答性を示す
+  2. **attempt 1 のタイムアウトを 10 秒でキャップ**（`ATTEMPT_1_TIMEOUT_CAP_MS = 10_000`）。正常経路の attempt 1 は写真 10 枚でも 1 秒以内に完了する実測値（logcat）に対して 10 倍の安全マージン。40 秒 hang を 10 秒で打ち切って reduced preset にフォールバック。attempt 2 以降は安全網として従来の動的タイムアウト (`30 + 1 × N`) を維持
+- **効果**: 標準レイアウト + 10 枚 hang シナリオの合計待機時間が **44 秒 → 約 12 秒** に短縮。プログレスバーがないため停滞の視認もなくなり、ユーザーは「スピナーが回って静的メッセージが出ているから待てば終わる」という単純な期待値で使える
+- **削除したコード / 設定**:
+  - `app/reports/[id]/pdf.tsx`: `exportProgress` state、`startPrintPhaseTimer`/`stopPrintPhaseTimer`、擬似タイマー setInterval、monotonic clamp、onProgress callback
+  - `src/features/pdf/pdfService.ts`: `onProgress` 引数
+  - `src/features/pdf/pdfTemplate.ts`: `onProgress` type field + 発火ポイント（photo loop + 初期 0/total）
+  - 19 ロケールファイル: `pdfGeneratingProgress` キー
+  - `__tests__/pdfExportProgressClamp.test.ts`: 全 19 ケース（clamp 7 + timer 12）ファイル削除
+  - `__tests__/pdfService.test.ts`: onProgress pass-through テスト
+  - `__tests__/pdfTemplate.test.ts`: onProgress callback describe ブロック全体
+  - `pdf.tsx` styles: `progressContent`/`progressText`/`progressTrack`/`progressFill`
+- **追加したコード**:
+  - `pdfService.ts`: `ATTEMPT_1_TIMEOUT_CAP_MS` 定数、`calculatePrintTimeoutMs(photoCount, attemptIndex)` の attempt-aware 化
+  - `pdfService.test.ts`: attempt 1 キャップ検証 2 ケース（10 秒でフォールバック / attempt 2+ は 30+1×N を維持）
+  - `pdf.tsx` styles: `exportingContent`/`exportingText`
+- **未解決**: 根本原因（なぜ標準レイアウト 10 枚の 2.37 MB HTML が hang するのか）は Issue #298 で追跡継続。Phase 3a (発火閾値特定) / 3b (CSS isolation) / 3c (native 層観測) / 3d (修正) の計画は Issue #298 に記録
+- **ルール**:
+  1. **コストベースの意思決定を恐れない**。擬似進捗バーは ADR-0013 の時点では正しかったが、新たな hang バグの発見によって「バー自体が UX 問題を再現する」媒介になった。実装を守るより **ユーザー体験の単純化を優先する** 判断が正解の場合がある。「コードを削除する」ことは前進である
+  2. **根本原因が不明でも、境界条件での緩和は可能**。40 秒 hang の根本原因を特定する前でも、正常経路の実測時間（1 秒以内）から 10 倍のマージンで上限を切ることで、ユーザー体感を 44 秒 → 12 秒に改善できる。「完璧な修正」を待たずに「十分に良い緩和」を出す価値
+  3. **観測性への投資は複利で効く**。PR #293 で導入した構造化ログ（`[PDF] buildPdfHtml: ...` / `[PDF] printHtml: ...` / `[PDF] hang detected on attempt 1, retrying...`）が本 Issue の解析で決定的な役割を果たした。logcat 1 枚で `40.02 秒`の hang 時間と attempt 2 の成功が可視化された。**構造化ログは次のバグ調査でもそのまま使える資産**
+  4. **レイヤード根本原因には順次対応する**。Issue #296 の修正 (PR #297) によって Issue #298 の根本原因が露出した。このパターンは「レイヤードバグ」と呼ぶべきで、1 回のリリースで全部解決しようとしない。**上層から剥がしていくアプローチ** が安全
+
 ### 2026-04-10: PDF 出力進捗バーが印刷フェーズ中 80% で 10 数秒停滞する（Issue #296）
 
 - **状況**: ユーザー報告「写真 10 枚に各キャプションを入れて PDF プレビューから『PDFを作成』を押すと、進捗バーが 80% を維持したまま 10 数秒たってから PDF が作成される。80% でなにもなかったら不安を覚える」

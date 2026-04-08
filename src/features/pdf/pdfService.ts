@@ -41,6 +41,15 @@ const MIN_REASONABLE_PDF_BYTES = 1024;
 const PRINT_TIMEOUT_BASE_MS = 30_000;
 const PRINT_TIMEOUT_PER_PHOTO_MS = 1_000;
 
+// attempt 1 (full quality) の上限タイムアウト。
+// Issue #298: 標準レイアウト + 写真 10 枚で attempt 1 が 40 秒 hang する既知バグの
+// 緩和策として、最初の試行は 10 秒で打ち切って即座に reduced preset へフォールバックする。
+// 正常系の attempt 1 は写真 10 枚でも 1 秒以内に完了する（ログ実測）ため、10 秒は
+// 10 倍以上の安全マージンを持つ。attempt 2 以降は reduced/tiny なので通常通り
+// 30+1×N の長めのタイムアウトを使う（安全網としての時間確保）。
+// 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md 2026-04-11 補遺
+const ATTEMPT_1_TIMEOUT_CAP_MS = 10_000;
+
 // PDF 生成に最低限必要と想定するディスク空き容量。
 // expo-image-manipulator の temp JPEG (写真数 × ~500KB) と
 // expo-print の temp PDF (~50MB) を合わせた安全側マージン。
@@ -49,8 +58,16 @@ const MIN_FREE_DISK_BYTES = 100 * 1024 * 1024;
 // フォールバック切替の前に少し待って native heap を解放させる。
 const FALLBACK_COOLDOWN_MS = 300;
 
-const calculatePrintTimeoutMs = (photoCount: number): number =>
-  PRINT_TIMEOUT_BASE_MS + PRINT_TIMEOUT_PER_PHOTO_MS * Math.max(photoCount, 0);
+const calculatePrintTimeoutMs = (photoCount: number, attemptIndex: number): number => {
+  const dynamic =
+    PRINT_TIMEOUT_BASE_MS + PRINT_TIMEOUT_PER_PHOTO_MS * Math.max(photoCount, 0);
+  // attempt 1 (full quality) のみ 10 秒でキャップ。正常時は 1 秒以内に完了するため
+  // 10 秒は十分な余裕があり、Issue #298 の 40 秒 hang を 10 秒で打ち切れる。
+  if (attemptIndex === 0) {
+    return Math.min(dynamic, ATTEMPT_1_TIMEOUT_CAP_MS);
+  }
+  return dynamic;
+};
 
 class BlankPdfError extends Error {
   constructor(sizeBytes: number) {
@@ -158,10 +175,7 @@ async function printHtml(html: string, paperSize: PaperSize, timeoutMs: number) 
   return file.uri;
 }
 
-export async function generatePdfFile(
-  input: PdfGenerateInput,
-  onProgress?: (processed: number, total: number) => void,
-) {
+export async function generatePdfFile(input: PdfGenerateInput) {
   // ストレージ事前チェック: temp ファイル書き込みが詰まる前に明示エラーで止める。
   // フォールバックで救えないので最初の 1 回だけ確認する。
   try {
@@ -176,8 +190,6 @@ export async function generatePdfFile(
     console.warn('[PDF] getFreeDiskStorageAsync failed, skipping storage check:', error);
   }
 
-  const timeoutMs = calculatePrintTimeoutMs(input.photos.length);
-
   const attempts: {
     label: string;
     options: Parameters<typeof buildPdfHtml>[0];
@@ -191,15 +203,15 @@ export async function generatePdfFile(
       // @ 0.80 を維持）。19 言語の描画は pdfFontStack の system-ui /
       // -apple-system / Arial 系フォールバックで OS 標準フォントに委譲する。
       // 詳細: docs/adr/ADR-0015-pdf-font-strategy-shift.md
-      options: { ...input, onProgress, skipFontEmbedding: true },
+      options: { ...input, skipFontEmbedding: true },
     },
     {
       label: 'reduced images + no custom fonts',
-      options: { ...input, onProgress, skipFontEmbedding: true, imagePreset: 'reduced' },
+      options: { ...input, skipFontEmbedding: true, imagePreset: 'reduced' },
     },
     {
       label: 'tiny images + no custom fonts',
-      options: { ...input, onProgress, skipFontEmbedding: true, imagePreset: 'tiny' },
+      options: { ...input, skipFontEmbedding: true, imagePreset: 'tiny' },
     },
   ];
 
@@ -208,6 +220,8 @@ export async function generatePdfFile(
   for (let index = 0; index < attempts.length; index += 1) {
     const attemptNumber = index + 1;
     const attempt = attempts[index];
+    // Issue #298: attempt 1 は 10 秒でキャップ、attempt 2+ は従来どおり 30+1×N の動的計算
+    const timeoutMs = calculatePrintTimeoutMs(input.photos.length, index);
     try {
       const html = await buildPdfHtml(attempt.options);
       return await printHtml(html, input.paperSize, timeoutMs);

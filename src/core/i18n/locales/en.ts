@@ -235,7 +235,6 @@ const baseEn = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'Export PDF',
   pdfGenerating: 'Generating PDF...',
-  pdfGeneratingProgress: 'Generating PDF... {percent}%',
   pdfStorageLowTitle: 'Insufficient storage',
   pdfStorageLowBody: 'PDF generation requires at least 100 MB of free storage. Please free up space and try again.',
   pdfExportLimitTitle: 'Monthly limit reached',

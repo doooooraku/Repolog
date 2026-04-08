@@ -230,7 +230,6 @@ const dict = {
   pdfPaperLetter: 'Letter',
   pdfExport: 'PDF निर्यात करें',
   pdfGenerating: 'PDF बन रही है...',
-  pdfGeneratingProgress: 'PDF बन रही है… {percent}%',
   pdfStorageLowTitle: 'भंडारण अपर्याप्त',
   pdfStorageLowBody: 'PDF बनाने के लिए कम से कम 100 MB खाली स्थान आवश्यक है। कृपया स्थान खाली करें और पुनः प्रयास करें।',
 
