@@ -107,12 +107,28 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
 async function assertPdfLooksValid(uri: string) {
   const info = await LegacyFileSystem.getInfoAsync(uri);
   const sizeBytes = info.exists && typeof info.size === 'number' ? info.size : 0;
-  if (sizeBytes >= MIN_REASONABLE_PDF_BYTES) return;
+  if (sizeBytes >= MIN_REASONABLE_PDF_BYTES) {
+    // [Issue #292] 成功時もサイズを記録し「正常な PDF のバイト幅」を把握する。
+    // 将来 MIN_REASONABLE_PDF_BYTES の妥当性評価や PDF 品質回帰検知の基準値に使う。
+    console.warn(`[PDF] assertPdfLooksValid: sizeBytes=${sizeBytes} status=valid`);
+    return;
+  }
+  // [Issue #292] 失敗時は閾値も一緒に出してどの程度 blank か判別できるようにする。
+  console.warn(
+    `[PDF] assertPdfLooksValid: sizeBytes=${sizeBytes} status=blank threshold=${MIN_REASONABLE_PDF_BYTES}`,
+  );
   throw new BlankPdfError(sizeBytes);
 }
 
 async function printHtml(html: string, paperSize: PaperSize, timeoutMs: number) {
   const size = PAPER_SIZES[paperSize];
+  // [Issue #292] 構造化診断ログ: expo-print に渡す直前の HTML バイトサイズを観測。
+  // attempt 1 (full quality) が毎回 blank PDF を返す問題の原因として
+  // 「HTML が巨大すぎて Android WebView が silent truncate する」仮説を検証中。
+  // 詳細: docs/reference/lessons.md 2026-04-09 / Issue #292
+  console.warn(
+    `[PDF] printHtml: htmlBytes=${html.length} paperSize=${paperSize} timeoutMs=${timeoutMs}`,
+  );
   // Print.printToFileAsync は OS 側で hang する場合があり (写真数 × メモリ圧迫)、
   // resolve も reject も来ないため Promise.race でタイムアウトを必ずかける。
   // 詳細: docs/adr/ADR-0013-pdf-export-resilience-and-progress.md

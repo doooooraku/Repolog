@@ -87,7 +87,15 @@ export async function buildPdfFontCss(options: BuildPdfFontCssOptions) {
     }),
   );
 
-  return rules.join('\n');
+  const css = rules.join('\n');
+  // [Issue #292] 構造化診断ログ: 埋め込みフォント CSS の実バイトサイズを観測。
+  // expo-print の境界条件（巨大 HTML による silent truncate 疑惑）を継続観測し、
+  // 将来の類似問題をユーザー提供 logcat から即座に特定できるようにする。
+  // 詳細: docs/reference/lessons.md 2026-04-09 / Issue #292
+  console.warn(
+    `[PDF] buildPdfFontCss: lang=${options.lang} strategy=${selection.strategy} fonts=[${selection.selectedFontKeys.join(',')}] cssBytes=${css.length}`,
+  );
+  return css;
 }
 
 export const pdfFontStack = [
