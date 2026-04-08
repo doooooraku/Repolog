@@ -261,12 +261,17 @@ const buildPhotoPages = async (
       try {
         const config = resolveImageSizeConfig(input);
         const src = await fileToDataUri(photo.localUri, config, photo.width, photo.height);
+        // SSoT: photo-no must live INSIDE .photo-frame so it consumes zero in-flow
+        // height (absolute positioning). PR #212 (commit 963b7c7) moved it out as a
+        // flex sibling, which broke ADR-0009's slack budget on iOS WebKit (Issue: PDF
+        // 写真ページ直後の空白ページ再発, 2026-04-08). Do NOT move .photo-no out of
+        // .photo-frame again. See: docs/adr/ADR-0017-pdf-photo-no-flow-regression.md
         slots.push(`
             <div class="photo-slot">
               <div class="photo-frame">
                 <img class="photo" src="${src}" alt="${escapeHtml(label)}" />
+                <div class="photo-no">${escapeHtml(label)}</div>
               </div>
-              <div class="photo-no">${escapeHtml(label)}</div>
               ${captionHtml}
             </div>
           `);
@@ -274,8 +279,9 @@ const buildPhotoPages = async (
         console.warn(`[PDF] Failed to load photo: ${photo.localUri}`);
         slots.push(`
             <div class="photo-slot">
-              <div class="photo-frame"></div>
-              <div class="photo-no">${escapeHtml(label)}</div>
+              <div class="photo-frame">
+                <div class="photo-no">${escapeHtml(label)}</div>
+              </div>
               ${captionHtml}
             </div>
           `);
@@ -470,12 +476,38 @@ const buildCss = async (input: PdfTemplateInput) => {
     display: block;
   }
   .photo-no {
-    text-align: right;
+    /* SSoT (docs/reference/pdf_template.md): photo-no MUST overlay the image
+     * via absolute positioning so it consumes ZERO in-flow vertical height.
+     *
+     * Why this matters (regression history):
+     *   - PR #212 (commit 963b7c7, 2026-03-23) moved .photo-no out of .photo-frame
+     *     into .photo-slot as an in-flow flex sibling, adding ~3.82mm of vertical
+     *     content per slot (1mm padding-top + 8pt × line-height:1 ≒ 2.82mm).
+     *   - ADR-0009 (PR #287, 2026-04-07) computed its 1mm + 2.265mm = 3.265mm slack
+     *     budget against the SSoT structure (.photo-no inside .photo-frame, height 0).
+     *   - The PR #212 drift consumed the entire slack on every photo page:
+     *       standard layout (2 photos/page) = 2 × 3.82mm = 7.64mm
+     *       large    layout (1 photo/page)  = 1 × 3.82mm = 3.82mm
+     *     Both exceed 3.265mm, so iOS WebKit subpixel overflow pushed .page-footer
+     *     onto a new physical page on EVERY photo page.
+     *   - 2026-04-08 user report: 1-photo standard PDFs were 3 pages (expected 2),
+     *     70-photo large PDFs were 141 pages (expected 71).
+     *   - Restoring SSoT positioning (this CSS) fixes the regression at the source.
+     *
+     * The semi-transparent white pill background preserves PR #212's UX intent
+     * (number stays readable on dark photos) without sacrificing the slack budget.
+     *
+     * Reference: docs/adr/ADR-0017-pdf-photo-no-flow-regression.md
+     */
+    position: absolute;
+    right: 2mm;
+    bottom: 2mm;
     font-size: 8pt;
-    color: #666;
-    padding-top: 1mm;
-    padding-right: 2mm;
     line-height: 1;
+    color: #111;
+    background: rgba(255,255,255,0.85);
+    padding: 0.5mm 1.5mm;
+    border-radius: 1mm;
   }
   .photo-caption {
     padding: 2mm 2mm 0;

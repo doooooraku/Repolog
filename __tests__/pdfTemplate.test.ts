@@ -117,3 +117,85 @@ describe('buildPdfHtml — defensive CSS for iOS WebKit print (#286)', () => {
   });
 });
 
+/**
+ * SSoT 構造不変条件 — `.photo-no` は必ず `.photo-frame` の内側に存在し、
+ * `.photo-slot` の直接子として in-flow に並ばないこと。
+ *
+ * 背景: 2026-04-08 に「写真ページ直後に空白ページが入る」バグが iOS で再発した。
+ * 真因は PR #212 (commit 963b7c7) で `<div class="photo-no">` を `.photo-frame` の
+ * 外に出し、`.photo-slot` の flex sibling として in-flow に置いた構造ドリフトで、
+ * 1 スロットあたり ~3.82mm の縦消費が ADR-0009 の 3.265mm スラック予算を食い潰し
+ * 、iOS WebKit subpixel overflow で `.page-footer` が次ページに押し出されていた。
+ *
+ * 本 describe ブロックは「将来同じ罠に再び落ちない」ための CI ガード。
+ * 構造的に `.photo-no` が `.photo-frame` の内側に留まることを assert する。
+ *
+ * 関連: docs/adr/ADR-0017-pdf-photo-no-flow-regression.md
+ *      docs/reference/pdf_template.md (SSoT)
+ */
+describe('buildPdfHtml — .photo-no must remain inside .photo-frame (SSoT invariant)', () => {
+  const cases: Array<{ layout: PdfLayout; photos: number; label: string }> = [
+    { layout: 'standard', photos: 1, label: 'standard/1photo' },
+    { layout: 'standard', photos: 2, label: 'standard/2photos' },
+    { layout: 'standard', photos: 5, label: 'standard/5photos' },
+    { layout: 'large', photos: 1, label: 'large/1photo' },
+    { layout: 'large', photos: 3, label: 'large/3photos' },
+  ];
+
+  for (const c of cases) {
+    test(`${c.label}: .photo-no never appears as a direct sibling of .photo-frame`, async () => {
+      const html = await buildPdfHtml({
+        report: makeReport(),
+        photos: makePhotos(c.photos),
+        layout: c.layout,
+        paperSize: 'A4',
+        isPro: true,
+        skipFontEmbedding: true,
+      });
+      // bad pattern: </div> immediately followed by <div class="photo-no">
+      // means photo-no escaped photo-frame and is sitting at .photo-slot level.
+      // good pattern: photo-no is wrapped by photo-frame so the only </div>
+      // immediately preceding it (if any) is from the <img> closer — but img
+      // is self-closing in our template so there is none at all.
+      expect(html).not.toMatch(/<\/div>\s*<div class="photo-no"/);
+
+      // Every photo-no MUST sit inside a photo-frame. We assert this by
+      // counting frame-internal photo-nos vs total photo-nos.
+      const totalPhotoNo = (html.match(/<div class="photo-no">/g) ?? []).length;
+      // success path: <div class="photo-frame">  <img ... />  <div class="photo-no">
+      // catch  path: <div class="photo-frame">  <div class="photo-no">
+      const insideFramePattern =
+        /<div class="photo-frame">[\s\S]*?<div class="photo-no">/g;
+      const insideFrameCount = (html.match(insideFramePattern) ?? []).length;
+      expect(totalPhotoNo).toBeGreaterThan(0);
+      expect(insideFrameCount).toBe(totalPhotoNo);
+    });
+  }
+
+  test('.photo-no CSS rule uses position: absolute', async () => {
+    const html = await buildPdfHtml({
+      report: makeReport(),
+      photos: makePhotos(1),
+      layout: 'standard',
+      paperSize: 'A4',
+      isPro: true,
+      skipFontEmbedding: true,
+    });
+    // photo-no must be absolutely positioned so it consumes ZERO in-flow height
+    expect(html).toMatch(/\.photo-no\s*\{[^}]*position:\s*absolute/);
+  });
+
+  test('.photo-frame CSS rule retains position: relative as the absolute container', async () => {
+    const html = await buildPdfHtml({
+      report: makeReport(),
+      photos: makePhotos(1),
+      layout: 'standard',
+      paperSize: 'A4',
+      isPro: true,
+      skipFontEmbedding: true,
+    });
+    // photo-frame must establish a positioning context for the absolute photo-no
+    expect(html).toMatch(/\.photo-frame\s*\{[^}]*position:\s*relative/);
+  });
+});
+
