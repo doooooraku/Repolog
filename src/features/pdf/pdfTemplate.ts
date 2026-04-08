@@ -525,7 +525,7 @@ export async function buildPdfHtml(input: PdfTemplateInput) {
   const photoPages = await buildPhotoPages(input, photoStartIndex, perPage, pageCount);
   const lang = escapeHtml(input.localeHint ?? 'en');
 
-  return `
+  const html = `
   <!DOCTYPE html>
   <html lang="${lang}">
     <head>
@@ -542,4 +542,12 @@ export async function buildPdfHtml(input: PdfTemplateInput) {
     </body>
   </html>
   `;
+  // [Issue #292] 構造化診断ログ: 生成 HTML の総バイトサイズを観測。
+  // フォント CSS (cssBytes) + 画像 payload + レイアウト の寄与を切り分け、
+  // expo-print の境界条件 (日本語 report で ~18MB 付近の silent truncate 疑惑) を
+  // 数値で追跡する。詳細: docs/reference/lessons.md 2026-04-09 / Issue #292
+  console.warn(
+    `[PDF] buildPdfHtml: layout=${input.layout} paperSize=${input.paperSize} photos=${input.photos.length} skipFontEmbedding=${Boolean(input.skipFontEmbedding)} imagePreset=${input.imagePreset ?? 'default'} cssBytes=${css.length} totalHtmlBytes=${html.length}`,
+  );
+  return html;
 }
