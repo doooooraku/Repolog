@@ -130,6 +130,35 @@
   3. **ADR の前提が時間で崩れるのは自然なこと**: ADR-0002 (2026-01) の「フォント埋め込みで固定」という決定は当時正しかったが、SDK 54 + Android Chromium の挙動変化で前提が崩れた。ADR は Supersede 可能な生きたドキュメントとして扱う
   4. **リスク分離原則**: 1 行のコード修正と 10+ ファイルの dead code 削除を同一 PR に混ぜない。失敗時の切り分けが困難になる。本 PR では修正のみ、削除は Phase 2b に分離
 
+### 2026-04-08: ADR-0009 が修正したはずの iOS 空白ページが SSoT ドリフトで再発（ADR-0017）
+
+- **状況**: ユーザー報告「iOS で出力した PDF の写真ページ直後に空白ページが入る」。提供された 6 ファイル（iOS 18.6.2）を PyMuPDF で構造解析した結果、5 件は標準的な「1 photo / 期待 2 ページ → 実体 3 ページ」、1 件は「**70 photos / 期待 71 ページ → 実体 141 ページ**」（large レイアウトで全ての写真ページに空白ページペアが付く壊滅的状況）。各空白ページの実体は `</div>...</div>` の中に `N/M` フッターテキストだけが y=4pt（ページ最上部）に描画されており、ADR-0009 が修正したはずの「iOS WebKit subpixel フッター押し出し」現象が完全に再発していた
+- **真因（コミット単位で特定）**:
+  1. **2026-03-23 / commit `963b7c7` (PR #212)** が `<div class="photo-no">` を `<div class="photo-frame">` の **内側** から **外側** に出し、`.photo-slot` の flex 子として in-flow に組み込んだ。CSS も同 PR で `.photo-slot { display: flex; flex-direction: column }` / `.photo-no { padding-top: 1mm; line-height: 1; font-size: 8pt }` に変更
+  2. これにより 1 スロットあたり ~3.82mm の縦消費が発生（standard 7.64mm / large 3.82mm）
+  3. **2026-04-07 / commit `786d1c7` (PR #287, ADR-0009)** が 1mm + 2.265mm = **3.265mm** の slack budget を導入したが、この時点で既に PR #212 のドリフトがマージ済みだったことを **見落としていた**。ADR-0009 の slack 計算は SSoT (`docs/reference/pdf_template.md`) のゼロ in-flow 構造を前提に行われ、現実の構造（in-flow 3.82mm/slot）には不足していた → standard 7.64mm > 3.265mm / large 3.82mm > 3.265mm のいずれも slack を食い潰し、iOS WebKit が `.page-footer` を次の物理ページに押し出した
+- **5 層なぜなぜ**:
+  1. なぜ slack が効かなかった？ → photo-no が in-flow で 3.82mm 消費していたから
+  2. なぜ in-flow になっていた？ → PR #212 で SSoT (`pdf_template.md`) から逸脱した構造に変えたから
+  3. なぜ ADR-0009 起票時にこの逸脱を見落とした？ → SSoT と現コードの diff チェックを実施しなかったから
+  4. なぜ自動テストが検出しなかった？ → `pdfTemplate.test.ts` が `<section class="page">` の **数** だけを assert しており、`.photo-slot` の **内部構造**（photo-no が frame の内側か外側か）を一切検証していなかったから
+  5. なぜ「slack 予算に直結する構造」を CI で固定する仕組みがなかった？ → ADR-0009 の Acceptance/Tests が「自動 = section 数 / 手動 = 次回リリース前」になっており、手動チェックは運用忘れで形骸化していたから
+- **対策（ADR-0017, 本 PR）**:
+  1. **HTML 復元**: `<div class="photo-no">` を `<div class="photo-frame">` の内側に戻す（success / catch 両分岐）
+  2. **CSS 復元**: `.photo-no { position: absolute; right: 2mm; bottom: 2mm; ... }` で in-flow 縦消費を 3.82mm → 0mm に戻す
+  3. **視認性 pill**: PR #212 の UX 意図（暗い写真でも読める）を `background: rgba(255,255,255,0.85); padding: 0.5mm 1.5mm; border-radius: 1mm` で同時に実現
+  4. **構造不変条件テスト**: `__tests__/pdfTemplate.test.ts` に「`</div>` の直後に `<div class="photo-no">` が来ない」「`.photo-no` が `.photo-frame` の内側に存在する」「`.photo-no` CSS が `position: absolute`」「`.photo-frame` CSS が `position: relative`」を 5 ケース + 2 ケース = 計 7 ケース追加
+  5. **ADR-0009 補遺**: 「本 ADR の slack 設計は SSoT の photo-no 配置に依存する」前提を明文化
+- **検証**: `pnpm verify` で 20 suites / **256 tests** all pass、lint / type-check / i18n / config 全て green
+- **ルール**:
+  1. **SSoT (`docs/reference/pdf_template.md`) と実装 (`pdfTemplate.ts`) の同期は CI で機械的に担保する**。人間レビュー頼みでは必ず乖離する。差分テストの仕組みを次 Sprint で検討
+  2. **ADR の防御は前提条件と一緒に CI 不変条件に落とす**。ADR-0009 の「slack 3.265mm」は前提条件「`.photo-slot` の in-flow 縦消費がゼロ」とセットで成立する。前提条件側を CI で守らないと防御は意味がない
+  3. **「修正済み」とラベルされた不具合の再発は ADR の信頼性そのものを毀損する**。同じ症状が 2 回出たら、対症ではなく **真因（前提条件の崩壊）に降りる**こと
+  4. **PDF 改修の手動 QA は CI の結果が緑なだけでは保証されない**。HTML 構造レベルのテスト + iOS 実機 PDF の `/Count` 検証を併用する
+  5. **PyMuPDF (`fitz`) は 1 セッションで真因特定の決定打になった**。`page.get_text('dict')` で各テキスト要素の bbox を読めば、フッターが y=4pt（ページ最上端）に来ていることが一発で見える。実 PDF の構造観測ツールを開発環境に常備すべき
+  6. **コミット単位の真因特定は git log -p --follow が最強**。PR #212 の commit `963b7c7` を見つけたのは、photoTemplate.ts の全変更履歴を `--follow` で追ったから。「いつから挙動が変わったか」を詰める時の標準ツール
+- **ADR**: `docs/adr/ADR-0017-pdf-photo-no-flow-regression.md`
+
 ### 2026-04-11: プログレスバーを廃止し hang 緩和（Issue #298）
 
 - **状況**: PR #297 で Issue #296「80% 停滞」を修正し実機検証したところ、**ユーザーから「95% で 30 秒以上停滞する」と新たな報告**。logcat 解析で標準レイアウト + 写真 10 枚の場合 **attempt 1 (`full quality` = 画像 1200px @ 0.80) が `Print.printToFileAsync` で 40 秒 hang** することが判明。一方コメントレイアウト（写真 1 枚/ページ）+ 10 枚は attempt 1 が 0.95 秒で成功する。HTML サイズが 4.6 MB > 2.37 MB にもかかわらず大きい方が成功する反直感的挙動で、純粋なバイトサイズではなく **`photo-grid.two` の CSS grid 構造 × 大画像** が Android Chromium Print エンジンの何らかの閾値に引っかかる疑い。PR #295 (`skipFontEmbedding: true`) で解消したはずの attempt 1 問題が、blank PDF → hang という**違う症状で残留**していた
