@@ -105,6 +105,31 @@
   3. **観測性はゲートの一部**。本番ログに構造化情報（size/time/strategy）を残しておくことで、ユーザー報告時の切り分けが劇的に速くなる (PR #293 で Phase 1 完了)
   4. **ベンチマークに実機モードを追加する**。`pdf-font-benchmark` は純 JS の見積もりだけでなく、`expo-print` を実際に呼んで成功/失敗と実際の PDF バイト数を記録するモードを追加する (Phase 2 or 3 の宿題)
 
+### 2026-04-09 (Phase 2 完了): PDF フォント埋め込みを廃止しシステムフォントに切替 (Issue #292 クローズ)
+
+- **状況**: Phase 1 で確定した「attempt 1 が毎回 blank PDF」問題に対し、Phase 2 で採用する修正方針を決定・実装
+- **採用しなかった案 (Phase 1 で第一候補だった方針)**: **ビルド時フォントサブセット化** (`pyftsubset`/`subset-font` で Noto Sans を 1-2 MB に圧縮)。却下理由はユーザー確認「attempt 2 のフォント表示で問題なし、画質だけ戻したい」。ビルド系の新規依存・CI 統合・将来の SDK アップグレード時の再発リスクを避ける
+- **採用案 (ADR-0015)**: `pdfService.ts` の **attempt 1 options に `skipFontEmbedding: true` を追加**するだけの 1 行修正。画像は full quality (1200/1600 px @ quality 0.80) を維持し、19 言語の描画は `pdfFontStack` の `system-ui` / `-apple-system` / `Arial` 系フォールバック（= OS 標準フォント）に委譲する
+- **意思決定**: `docs/adr/ADR-0015-pdf-font-strategy-shift.md` を新規作成し、ADR-0002「PDF は Noto Sans 系フォントを埋め込みで固定する」を **Superseded** に変更
+- **追加した自動テスト**: `__tests__/pdfService.test.ts` に `'attempt 1 does not embed @font-face (system fonts only)'` を追加。`mockPrintToFileAsync` が 1 回だけ呼ばれること + 生成 HTML に `@font-face` と `data:font/ttf;base64` が含まれないことを assert
+- **期待アウトカム（定量）**:
+  - attempt 1 成功率 ≥ 95% (blank PDF が消える)
+  - 画像 DPI: A4 standard で 164 DPI / large で 219 DPI (≥150 DPI 目標)
+  - `totalHtmlBytes` が 17-18 MB → 数百 KB に激減 (副次効果：高速化)
+  - フォールバックチェーン (reduced / tiny) は OOM / hang 時の安全弁として維持
+- **Phase 2b 宿題 (別 PR)**: 本 PR で dead code になるファイルをまとめて削除して APK/AAB サイズを削減
+  - `src/features/pdf/pdfFonts.ts` / `pdfFontSelection.ts`
+  - `assets/fonts/NotoSans*-Variable.ttf` × 7 (+ `assets/fonts/licenses/OFL.txt`)
+  - `scripts/pdf-font-benchmark.mjs` / `docs/how-to/testing/pdf_font_benchmark.md` / `docs/reports/benchmarks/pdf_font_benchmark.latest.md`
+  - `__tests__/pdfFontSelection.test.ts` / `__tests__/pdfWarningI18n.test.ts` のフォント関連
+  - `app.json` の `PDF_FONT_SUBSET_EXPERIMENT: "1"` flag (**dead config** — `app.config.ts` / `src/` / `scripts/` から一切参照されていないことを grep 確認済み)
+  - `docs/how-to/testing/testing.md` / `docs/how-to/development/android_device.md` の `PDF_FONT_SUBSET_EXPERIMENT` 関連記述
+- **学び（自己改善ループ）**:
+  1. **観測性投資の ROI が極めて高い**: PR #293 の構造化ログ 4 点 (`cssBytes`/`htmlBytes`/`sizeBytes`/`strategy`) により、「どこで何が起きているか」が 1 セッションで特定できた。投資時間に対するリターンは実装工数の桁違い
+  2. **「ユーザーに聞く」は立派な意思決定軸**: Phase 1 lessons で planned していたサブセット化の大工事 (1-2 週間) を、**ユーザーへの 1 行の確認** (「attempt 2 のフォント表示は問題ないですか？」) で回避できた。実装前にユーザー要求の本質を問い直す価値
+  3. **ADR の前提が時間で崩れるのは自然なこと**: ADR-0002 (2026-01) の「フォント埋め込みで固定」という決定は当時正しかったが、SDK 54 + Android Chromium の挙動変化で前提が崩れた。ADR は Supersede 可能な生きたドキュメントとして扱う
+  4. **リスク分離原則**: 1 行のコード修正と 10+ ファイルの dead code 削除を同一 PR に混ぜない。失敗時の切り分けが困難になる。本 PR では修正のみ、削除は Phase 2b に分離
+
 ### 2026-04-09: PDF 出力進捗バーがフォールバック時に逆戻りする
 
 - **状況**: ユーザー報告「PDF プレビュー画面で出力ボタンを押すと、進捗バーが `0% → 80% → 0% → 80% → 完了` と逆戻りし、**全ての PDF 出力で同じ挙動**」。ADR-0013 で導入したばかりの進捗バーの UX 退行

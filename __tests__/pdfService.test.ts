@@ -178,3 +178,25 @@ describe('generatePdfFile — onProgress pass-through', () => {
     await expect(generatePdfFile(makeInput(2))).resolves.toBe('file:///tmp/output.pdf');
   });
 });
+
+describe('generatePdfFile — attempt 1 font strategy (Issue #292)', () => {
+  /**
+   * Phase 1 (PR #293) の実機計測で、attempt 1 が `@font-face` data URI を
+   * 含む HTML を Android Chromium 印刷エンジンに渡すと blank PDF (681 bytes)
+   * を返すことが確定した。ADR-0015 で attempt 1 を `skipFontEmbedding: true`
+   * に固定したため、本テストで「attempt 1 が生成する HTML に @font-face が
+   * 含まれない」ことを CI で保証する。
+   *
+   * 関連: docs/adr/ADR-0015-pdf-font-strategy-shift.md
+   *      docs/reference/lessons.md > PDF生成 > 2026-04-09
+   */
+  test('attempt 1 does not embed @font-face (system fonts only)', async () => {
+    await generatePdfFile(makeInput(2));
+    // attempt 1 で成功し、フォールバック (attempt 2 / 3) が走らないこと
+    expect(mockPrintToFileAsync).toHaveBeenCalledTimes(1);
+    // attempt 1 の HTML には @font-face も data URI フォントも含まれない
+    const firstCallArg = mockPrintToFileAsync.mock.calls[0][0] as { html: string };
+    expect(firstCallArg.html).not.toContain('@font-face');
+    expect(firstCallArg.html).not.toContain('data:font/ttf;base64');
+  });
+});

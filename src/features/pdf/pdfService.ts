@@ -183,8 +183,15 @@ export async function generatePdfFile(
     options: Parameters<typeof buildPdfHtml>[0];
   }[] = [
     {
-      label: 'full quality',
-      options: { ...input, onProgress },
+      label: 'full quality (system fonts)',
+      // Issue #292 / ADR-0015: Android Chromium 印刷エンジンは 15〜40MB の
+      // `@font-face { src: url('data:font/ttf;base64,...') }` を処理できず
+      // blank PDF (681 bytes) を silent failure で返す。このため attempt 1 では
+      // カスタムフォント埋め込みを使用しない（画像は full quality 1200/1600px
+      // @ 0.80 を維持）。19 言語の描画は pdfFontStack の system-ui /
+      // -apple-system / Arial 系フォールバックで OS 標準フォントに委譲する。
+      // 詳細: docs/adr/ADR-0015-pdf-font-strategy-shift.md
+      options: { ...input, onProgress, skipFontEmbedding: true },
     },
     {
       label: 'reduced images + no custom fonts',
