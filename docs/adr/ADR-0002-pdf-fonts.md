@@ -2,10 +2,19 @@
 
 # ADR-0002: PDFはNoto Sans系フォントを埋め込みで固定する
 
-- Status: Accepted
+- Status: **Superseded by ADR-0015 (2026-04-09)**
 - Date: 2026-01-31
 - Deciders: @doooooraku
-- Related: Issue #5 / PR: (初期実装に含まれる) / constraints / basic_spec / functional_spec
+- Related: Issue #5 / Issue #292 / PR: (初期実装に含まれる) / constraints / basic_spec / functional_spec / **ADR-0015**
+
+> **2026-04-09 更新 (Superseded)**: Phase 1 実機計測 (PR #293 / Pixel 8a) で、
+> Android Chromium 印刷エンジンが 15-40 MB の `@font-face { src: url('data:font/ttf;base64,...') }`
+> を処理できず **blank PDF (681 bytes)** を silent failure で返していることが
+> 判明した（Issue #292）。結果として Android ユーザーは画質劣化版の attempt 2
+> (reduced: 800/1000 px @ quality 0.65) の PDF を常時受け取っており、本 ADR の
+> 「提出先と同じ見た目を担保する」という価値そのものが実装上破綻していた。
+> **ADR-0015** でシステムフォント運用に切り替え、画像を full quality
+> (1200/1600 px @ 0.80) に戻す方針を採用した。本 ADR は歴史的記録として残す。
 
 ---
 
