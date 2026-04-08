@@ -252,12 +252,19 @@ export default function PdfPreviewScreen() {
           // 写真処理フェーズ: 0% → 80%
           const denom = Math.max(total, 1);
           const ratio = Math.min(1, processed / denom);
-          setExportProgress(Math.round(ratio * 80));
+          const next = Math.round(ratio * 80);
+          // ADR-0013 のフォールバックチェーン（full → reduced → tiny）は
+          // attempt ごとに buildPdfHtml() を再実行し、pdfTemplate.ts:521 の
+          // onProgress?.(0, total) で進捗が 0 にリセットされる。
+          // ユーザー視点では「80% まで進んだのに 0 に戻って再度 80%」という
+          // 逆戻りに見えるため、UI 層で monotonic non-decreasing にクランプする。
+          setExportProgress((prev) => (prev == null ? next : Math.max(prev, next)));
         },
       );
 
       // 写真処理が終わったら 80% で固定し、印刷フェーズの擬似進捗タイマーを起動する。
-      setExportProgress(80);
+      // 上の onProgress で既に 80 に達している場合を考慮し、monotonic にクランプする。
+      setExportProgress((prev) => (prev == null ? 80 : Math.max(prev, 80)));
       const tickIntervalMs = Math.max(200, photoCount * 5);
       printPhaseTimer = setInterval(() => {
         setExportProgress((prev) => {
