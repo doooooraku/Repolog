@@ -100,8 +100,8 @@ describe('buildPdfHtml — section count must match calculatePageCount', () => {
   }
 });
 
-describe('buildPdfHtml — defensive CSS for iOS WebKit print (#286)', () => {
-  test('.page height uses calc(- 1mm) slack to absorb subpixel rounding', async () => {
+describe('buildPdfHtml — defensive CSS for iOS WebKit print (ADR-0009 + ADR-0018)', () => {
+  test('.page height uses 20mm slack to absorb iOS 26 page-break offset (ADR-0018)', async () => {
     const html = await buildPdfHtml({
       report: makeReport(),
       photos: makePhotos(2),
@@ -110,8 +110,19 @@ describe('buildPdfHtml — defensive CSS for iOS WebKit print (#286)', () => {
       isPro: true,
       skipFontEmbedding: true,
     });
-    // 1mm slack must be present in .page rule to prevent footer overflow on iOS
-    expect(html).toContain('height: calc(var(--page-h) - 1mm)');
+    // 20mm slack must be present in .page rule to prevent footer overflow on iOS.
+    //
+    // 経緯:
+    // - ADR-0009 (2026-04-07): iOS 18 の subpixel 丸め (~0.5mm) を 1mm slack で吸収
+    // - ADR-0018 (2026-04-09): iOS 26 で break-after: page 後の .page を物理ページ
+    //   y=54.2pt (~19mm) に配置する quirk が発覚 → 1mm slack では足りず、
+    //   19mm + 1mm 安全マージン = 20mm slack に拡大
+    //
+    // この literal を変更するときは pdf_template.md (SSoT) と pdfTemplate.ts の
+    // .page rule を同時更新すること (ADR-0017 SSoT 不変条件原則)。
+    expect(html).toContain('height: calc(var(--page-h) - 20mm)');
+    // 旧 1mm slack が残っていないことを明示的に確認 (リグレッション防止)
+    expect(html).not.toContain('height: calc(var(--page-h) - 1mm)');
     // .page-footer must use border-box to fix outer height to var(--footer-h)
     expect(html).toMatch(/\.page-footer\s*\{[^}]*box-sizing:\s*border-box/);
   });
