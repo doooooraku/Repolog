@@ -75,6 +75,36 @@
 - **状況**: `Promise.all(chunk.map(...))` で同一ページの画像を並列処理 → メモリピークが2倍
 - **ルール**: 大きなバイナリデータ（画像のbase64等）を扱う場合は逐次処理（`for...of`）を使う
 
+### 2026-04-09: iOS 26 で WKWebView print engine の `break-after: page` 挙動が iOS 18 と桁違いに変わり ADR-0009/0017 の修正が無効化された (ADR-0018)
+
+- **状況**: ADR-0017 (PR #300/#301) で iOS 18.6.2 の写真ページ後の空白ページ問題を修正したが、ユーザーから iOS 26.2.1 で同症状が **完全に再発** したと報告。提供 PDF (`docs/reference/9B946DF5-…pdf`、producer=`iOS Version 26.2.1`) を PyMuPDF で構造解析したところ、写真 10 枚 / standard レイアウトの PDF が **期待 6 ページ → 実体 11 ページ** という壊滅的状態
+- **根本原因（PyMuPDF 実測で確定）**:
+  - `.page` セクション自体は仕様通り 838.2pt (=296mm = `calc(297mm - 1mm)`) で正しく作られていた
+  - `.photo-no` も ADR-0017 の SSoT 通り `.photo-frame` の内側 absolute に配置されていた
+  - **真因は iOS 26 の WKWebView 印刷エンジンの挙動変化**: `break-after: page` 後の `.page` セクションを物理ページ y=0 ではなく **y=54.2pt (≒19mm)** から配置するようになった。表紙（最初の `.page`）には適用されない
+  - 838.2 + 54.2 = 892.4 > 物理ページ 842pt → 50.4pt (≒17.8mm) が物理ページ下端からはみ出し、フッターが次ページに押し出される
+  - 結果: 表紙以外の全写真ページで「写真ページ + 空白フッターページ」のペアが生まれ、+5 ページの空白挿入
+- **iOS 18 との挙動差**:
+  - iOS 18.x: subpixel 丸めで ~0.5mm の overflow → ADR-0009 の 1mm slack で吸収可能
+  - iOS 26.x: 系統的に 19mm の top offset を挿入 → 1mm slack では完全に飲み込まれる (38 倍の差)
+  - Apple WWDC 2025 では未公表の内部実装変更
+- **対応 (ADR-0018)**: `.page { height: calc(var(--page-h) - 1mm) }` を `calc(var(--page-h) - 20mm)` に拡大。20mm = 観測値 19mm + 安全マージン 1mm。`pdfTemplate.ts` 1 箇所 + `pdfTemplate.test.ts` 1 箇所 + SSoT (`pdf_template.md`) 同期の合計 3 ファイル + ADR-0018 起票の最小修正
+- **副作用**: standard レイアウトで写真高さが 125mm → 116mm に縮小（-7.4%）。実 DPI は約 7% 低下するが、4032×3024 写真を A4 に印刷するユースケースでは画質劣化として認識されないレベル。iOS 18 ユーザーには表紙フッター位置が ~19mm 上昇するが視認可能だが実害なし
+- **却下した代替案 (ADR-0018 Alternatives 参照)**:
+  - **Approach A: HTML 構造リファクタ + CSS Paged Media** — 根本治療だが pdfTemplate.ts 全面書き換え + 19 言語フォント embed との相互作用未検証 + iOS WKWebView の `@page` margin-box サポート不明。緊急ホットフィックスに不向き
+  - **Approach B: pdf-lib による per-page 個別レンダリング** — 完全な根本治療だが新規依存追加 + ADR-0013 fallback chain と再設計が必要
+  - **Approach C: OS 別 slack (Platform.Version 分岐)** — 保守コスト増 + テストマトリクスが倍 + iOS 26 minor 更新で挙動差出る可能性
+  - **Approach D: useMarkupFormatter: true** — UIMarkupTextPrintFormatter は HTML4 ベースで CSS3 サポート皆無。grid レイアウト崩壊
+- **ルール**:
+  1. **iOS メジャーアップデート時は必ず PDF 24 ケース手動回帰検証** (standard/large × A4/Letter × 写真 0/1/2/3/5/10) を実施する。`expo-print` のような native 橋渡し API は OS 更新で挙動が桁違いに変わり得る
+  2. **ADR の Re-evaluation criteria は「桁違いの拡大」も想定する**。「1mm を 2mm に増やす」のような連続的な変動だけでなく、「1mm を 20mm に拡大する」のような不連続な変動も視野に入れる
+  3. **slack 値を変更したら CSS literal を assert する Jest テストも同時更新する**。`pdfTemplate.test.ts` の `expect(html).toContain('height: calc(var(--page-h) - Xmm)')` は SSoT の同期チェックポイント
+  4. **slack 拡大時は SSoT (`pdf_template.md`) も同時更新する**。ADR-0017 で「SSoT と実装の乖離は CI で検出」原則あり
+  5. **真因が完全に解明できなくても、観測値ベースで動く対症療法は許容される**。iOS 26 の 54.2pt offset の根本原因（UIViewPrintFormatter の `contentInsets` 変更？UIPrintPageRenderer の safe area？Quartz PDFContext？）は本対応では特定していないが、観測値 + 安全マージン方式で確実に動く
+- **再発防止 SOP の宿題 (Follow-up)**:
+  - `docs/how-to/development/ios_pdf_regression_check.md` (新規) で「iOS バージョンアップ時の PDF 回帰チェック手順」を文書化する余地
+  - `.github/ISSUE_TEMPLATE/bug_report.yml` に iOS バージョン記入欄を必須化する余地
+
 ### 2026-04-09 (Phase 1 計測結果): PDF フォント埋め込みが Android WebView で silent failure (Issue #292 調査)
 
 - **状況**: PR #291 で attempt 1 が毎回 `blank PDF` で失敗することを確認した Issue #292 の根本調査。PR #293 で構造化診断ログ（`buildPdfFontCss`/`buildPdfHtml`/`printHtml`/`assertPdfLooksValid` の 4 箇所に cssBytes/htmlBytes/sizeBytes を出力）を追加し、Pixel 8a 実機で 4 シナリオ（日本語 × standard/A4、日本語 × large/A4、日本語 × large/Letter、中国語簡体 × standard/A4）を計測

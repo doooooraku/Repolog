@@ -243,18 +243,30 @@ body {
 
 /* 1ページ（用紙そのもの）
  *
- * 重要: height は @page のサイズより 1mm 小さく設定する。
- * iOS WebKit print (UIPrintPageRenderer + WKWebView) は subpixel 丸めで
- * .page-inner 末尾の .page-footer を次の PDF ページに押し出すバグがあり、
- * .page の border-box が @page と完全一致するとスラックがゼロになる。
- * 1mm のスラックで累積丸め誤差を吸収する。
- * Android Chromium 印刷エンジンには無影響。
- * 詳細: docs/reference/lessons.md > PDF生成 > 2026-04-07
- * 意思決定: docs/adr/ADR-0009-pdf-print-engine-compat.md
+ * 重要: height は @page のサイズより 20mm 小さく設定する。
+ *
+ * iOS WebKit print engine の挙動は OS バージョンで桁違いに変わる:
+ *
+ * - iOS 18.x: subpixel 丸めで ~0.5mm の overflow → 1mm slack で吸収可能だった
+ *   (ADR-0009, 2026-04-07)
+ *
+ * - iOS 26.x: break-after: page 後の .page を物理ページ y=54.2pt (≒19mm)
+ *   に配置する quirk が発覚 → 1mm slack では足りず、19mm + 1mm 安全マージン
+ *   = 20mm slack で吸収する (ADR-0018, 2026-04-09)
+ *
+ * Android Chromium 印刷エンジンには無影響（standard レイアウトで写真高さが
+ * ~7% 縮むのみ）。
+ *
+ * SSoT 変更時は src/features/pdf/pdfTemplate.ts の同一値も必ず同期すること
+ * (ADR-0017 で SSoT と実装の乖離は CI で検出するルール化済み)。
+ *
+ * 詳細: docs/reference/lessons.md > PDF生成 > 2026-04-09
+ * 意思決定: docs/adr/ADR-0018-pdf-ios26-page-break-offset.md
+ *           (前提: ADR-0009 / ADR-0017)
  */
 .page {
   width: var(--page-w);
-  height: calc(var(--page-h) - 1mm);
+  height: calc(var(--page-h) - 20mm);
   box-sizing: border-box;
   padding: var(--page-pad);
   background: #fff;
