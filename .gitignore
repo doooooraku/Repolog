@@ -59,3 +59,12 @@ app-example
 
 # Store screenshot raw captures (Maestro output)
 screenshots/
+
+# fastlane (https://docs.fastlane.tools)
+# 注: AuthKey.p8 は上の *.p8 で既に ignore されているが明示的に列挙
+fastlane/AuthKey.p8
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots.html
+fastlane/.fastlane/
+fastlane/test_output/

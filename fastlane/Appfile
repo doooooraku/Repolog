@@ -1,0 +1,7 @@
+# fastlane Appfile — Repolog iOS
+# https://docs.fastlane.tools/advanced/Appfile/
+#
+# 認証は App Store Connect API Key (.p8) を使うため、apple_id と team_id は必須ではない。
+# Fastfile 側で app_store_connect_api_key を呼び出して JWT を発行する。
+
+app_identifier("com.dooooraku.repolog")
