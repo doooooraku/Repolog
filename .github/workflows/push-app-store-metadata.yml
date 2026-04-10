@@ -15,6 +15,14 @@ name: Push App Store Metadata
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'What to push (metadata-only or screenshots-only)'
+        type: choice
+        options:
+          - metadata
+          - screenshots
+        default: metadata
   pull_request:
     branches: [main]
     paths:
@@ -79,17 +87,29 @@ jobs:
           fi
           bundle exec fastlane precheck_metadata
 
-      - name: Push metadata (main / manual — actual upload)
-        if: github.event_name != 'pull_request'
+      - name: Push metadata (main push / manual metadata mode)
+        if: github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.mode == 'metadata')
         env:
           ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
           ASC_API_KEY_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
         run: |
           if [ ! -d fastlane/metadata ]; then
-            echo "::warning::fastlane/metadata/ がまだ存在しません。Stage 1c (fastlane deliver init) を実行するまで push をスキップします。"
+            echo "::warning::fastlane/metadata/ がまだ存在しません。push をスキップします。"
             exit 0
           fi
           bundle exec fastlane push_metadata
+
+      - name: Push screenshots (manual screenshots mode only)
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'screenshots'
+        env:
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_API_KEY_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
+        run: |
+          if [ ! -d fastlane/screenshots ]; then
+            echo "::error::fastlane/screenshots/ が存在しません。"
+            exit 1
+          fi
+          bundle exec fastlane push_screenshots
 
       - name: Cleanup decoded API key
         if: always()
