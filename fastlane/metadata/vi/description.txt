@@ -1,6 +1,6 @@
 Báo cáo ảnh PDF sẵn sàng nộp, tạo từ những bức ảnh đã có trong điện thoại.
 
-"Ảnh công trường nằm rải rác trong Zalo, cuối ngày lại phải mở máy tính copy vào Word..."
+"Ảnh công trường nằm rải rác trong ứng dụng nhắn tin, cuối ngày lại phải mở máy tính copy vào trình soạn thảo văn bản..."
 "Sếp bảo 'gửi báo cáo kèm ảnh, dạng PDF' là lại mất cả giờ nghỉ trưa..."
 
 Nếu bạn từng gặp tình huống này, Repolog giúp được.

@@ -2,7 +2,7 @@
   già sul telefono.
 
   Stanco di foto di cantiere sparse nella galleria, mandate via
-  WhatsApp e poi riattaccate in un Word a fine giornata? Repolog
+  un'app di messaggistica e poi riattaccate in un documento di testo a fine giornata? Repolog
   trasforma le foto e gli appunti che prendi già sul campo in un
   PDF chiaro e professionale — senza account, senza cloud, senza
   aspettare.
@@ -89,3 +89,6 @@
 
   Scarica Repolog e trasforma le foto sul tuo telefono nel
   rapporto che il tuo cliente sta aspettando.
+
+  Informativa sulla privacy: https://doooooraku.github.io/Repolog/privacy/
+  Termini di utilizzo: https://doooooraku.github.io/Repolog/terms/

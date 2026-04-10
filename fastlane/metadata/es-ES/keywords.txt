@@ -1,1 +1,1 @@
-construccion,inspeccion,parte,diario,subcontrata,acta,entrega,evidencia,visita,reformas,revision
+construcción,inspección,parte,diario,subcontrata,acta,entrega,evidencia,visita,reformas,revisión

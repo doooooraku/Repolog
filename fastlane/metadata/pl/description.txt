@@ -1,6 +1,6 @@
 Gotowy raport PDF prosto z budowy -- ze zdjęć, które już masz w telefonie.
 
-Znasz to? Zdjęcia rozrzucone po galerii, przesłane na WhatsApp, a wieczorem siadasz do laptopa i wklejasz je od nowa do Worda. Repolog zamienia zdjęcia i notatki z budowy w czytelny PDF -- bez rejestracji, bez chmury, bez czekania.
+Znasz to? Zdjęcia rozrzucone po galerii, przesłane na komunikator, a wieczorem siadasz do laptopa i wklejasz je od nowa do edytora tekstu. Repolog zamienia zdjęcia i notatki z budowy w czytelny PDF -- bez rejestracji, bez chmury, bez czekania.
 
 Repolog to aplikacja do raportu fotograficznego. Dla kierowników budowy, inspektorów i każdego, kto musi oddać "raport ze zdjęciami" przed końcem dnia.
 

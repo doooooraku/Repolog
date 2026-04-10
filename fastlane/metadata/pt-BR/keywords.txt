@@ -1,1 +1,1 @@
-construcao,vistoria,manutencao,empreiteiro,laudo,entrega,diario,evidencia,inspecao,reforma,limpeza
+construção,vistoria,manutenção,empreiteiro,laudo,entrega,diário,evidência,inspeção,reforma,limpeza
