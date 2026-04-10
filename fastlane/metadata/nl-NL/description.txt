@@ -1,0 +1,66 @@
+Kant-en-klare PDF-rapporten, gemaakt van de foto's op je telefoon.
+
+Herkenbaar? Bouwfoto's verspreid over je filmrol, doorgestuurd via WhatsApp en 's avonds overgetypt in een Word-document. Repolog maakt daar een eind aan: je foto's en notities worden ter plekke een strak, professioneel PDF -- zonder account, zonder cloud, zonder gedoe.
+
+Repolog is een fotorapport-app voor aannemers, inspecteurs en iedereen die voor het einde van de dag een "rapport met foto's" moet inleveren.
+
+FUNCTIES
+- Bijschrift bij elke foto -- schrijf een korte notitie onder elke opname ("scheur noordmuur", "voor / na", "serienr. 1042") zodat elk bewijsstuk voor zich spreekt
+- Automatisch ingevulde gegevens -- datum, locatie en weer worden voor je ingevuld, zodat jij je op het werk kunt richten in plaats van op de administratie
+- Inleverklaar A4-/Letter-PDF -- voorblad, opmerkingenpagina en fotopagina's precies zoals opdrachtgevers het verwachten
+- Foto's blijven compleet -- niet bijgesneden, de originele beeldverhouding blijft behouden (geen afgesneden apparatuur, geen ontbrekende schade)
+- Ingebouwde fotonummering -- elke opname krijgt een nummer (Foto 1, Foto 2 ...) zodat je aan de telefoon naar "foto 12" kunt verwijzen zonder te scrollen
+- Startscherm als logboek -- je startscherm wordt een tijdlijn waarmee je elk rapport terugvindt op datum, naam of pin
+- Zoeken en filteren -- Alles, Vastgepind en Deze Week plus zoeken op naam en opmerking
+- Back-up en herstel -- ZIP-gebaseerde lokale back-up, jij houdt de controle
+- Volledig offline -- geen account, geen inlog, geen cloud
+- 19 talen -- vanaf dag een ontworpen voor internationale bouwplaatsen
+- Licht, Donker en Systeem-thema
+
+WAAROM REPOLOG
+
+Foto's worden nooit bijgesneden
+Andere tools proppen foto's in een raster en knippen randen af. Repolog behoudt het originele formaat, zodat scheuren, serienummers en voor-na-opnames leesbaar blijven in print.
+
+Notitie bij iedere foto
+Onder elke foto staat jouw opmerking. Zo vertelt het PDF een verhaal in plaats van de lezer te laten gissen. En dankzij fotonummers verwijs je in een gesprek moeiteloos naar "foto 5".
+
+Geen ballast
+Digitale handtekeningen, goedkeuringsworkflows en checklists heeft Repolog bewust weggelaten. De focus ligt op precies een ding: een strak PDF van je telefoon naar de inbox van je opdrachtgever.
+
+Geen inlog, geen cloud-dwang
+Geen gebruikersaccount, geen cloud-abonnement -- je gegevens blijven op je toestel, onafhankelijk van bedrijfsregels.
+
+VOOR WIE
+- Onderaannemers in de bouw die een bouwdagboek bijhouden
+- Inspecteurs voor opleverings- en gebrekenrapporten
+- Onderhouds- en facilitaire teams voor storingsverslagen
+- Schoonmaak-, beveiligings- en rondeteams voor bezoekrapporten
+- Zzp'ers die een opleverings- of afleveringsrapport nodig hebben
+- Vastgoedbeheerders voor woninginspecties en gebrekenlijsten
+- Klusjesmannen die hun project willen documenteren
+
+PRIJZEN
+Gratis
+- Tot 10 foto's per rapport
+- 5 PDF-exports per maand
+- Standaardlay-out (2 foto's per pagina)
+- Klein reclamebanner
+
+Pro
+- Onbeperkt foto's per rapport -- elk met een eigen bijschrift
+- Onbeperkte PDF-exports
+- Groot formaat (1 foto per pagina) -- elke foto met bijschrift krijgt een hele pagina
+- Geen advertenties
+- Premium voorblad en sjablonen
+
+PRIVACY
+Repolog slaat alles lokaal op. Geen gebruikersaccount, geen cloud-sync, geen tracking. Foto's en rapporten blijven op je toestel, tenzij je ze zelf exporteert. Camera- en locatietoegang zijn optioneel en worden alleen gevraagd wanneer je ze inschakelt.
+
+REGELMATIGE UPDATES
+Repolog brengt kleine, gerichte updates uit. Bugrapporten worden binnen dagen opgelost, niet binnen kwartalen.
+
+Download Repolog en maak van de foto's op je telefoon het rapport waar je opdrachtgever op wacht.
+
+Privacybeleid: https://doooooraku.github.io/Repolog/privacy/
+Gebruiksvoorwaarden (EULA): https://doooooraku.github.io/Repolog/terms/

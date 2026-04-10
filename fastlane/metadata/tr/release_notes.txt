@@ -1,0 +1,1 @@
+PDF dışa aktarma iyileştirildi: daha kararlı düzen ve daha hızlı çıktı.

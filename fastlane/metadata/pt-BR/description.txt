@@ -1,0 +1,57 @@
+PDFs prontos pra entregar, feitos com as fotos que ja estao no seu celular.
+
+Fotos de obra espalhadas na galeria, mandadas por WhatsApp e depois coladas de novo num Word de madrugada... conhece essa rotina? O Repolog transforma as fotos e anotacoes que voce ja faz na obra em um relatorio PDF limpo e profissional, sem cadastro, sem nuvem, sem demora.
+
+Repolog e um app de relatorios fotograficos pra pedreiros, eletricistas, encanadores, inspetores e qualquer profissional que precisa entregar um "relatorio com fotos" antes de acabar o dia.
+
+PRINCIPAIS FUNCOES
+- Legenda em cada foto — escreva uma nota embaixo de cada imagem ("trinca na parede norte," "antes / depois," "n/s 1042") pra que cada evidencia fale por si
+- Preenchimento automatico — data, localizacao e clima preenchidos sozinhos pra voce focar no servico, nao na papelada
+- PDFs A4 / Carta prontos pra entrega — capa, pagina de comentarios e paginas de fotos no formato que quem analisa espera receber
+- Fotos sem corte — proporcao original preservada (sem cortar equipamentos nem danos)
+- Numeracao automatica — cada foto recebe seu numero (Foto 1, Foto 2...) pra voce poder dizer "olha a foto 12" numa ligacao sem ficar procurando
+- Linha do tempo na tela inicial — sua tela inicial vira um diario de obra onde voce acha qualquer relatorio por data, nome ou marcador
+- Busca e filtros — Todos, Fixados e Esta Semana, alem de busca por nome e comentario
+- Backup e restauracao — backup local em ZIP pra voce ter controle dos seus dados
+- Funciona offline — sem conta, sem login, sem nuvem
+- 19 idiomas — pensado desde o inicio pra obras com equipes de varios paises
+- Tema claro, escuro e automatico
+
+POR QUE REPOLOG
+Outras ferramentas de relatorio empurram voce pra contas na nuvem, assinaturas mensais e fluxos de aprovacao que voce nao precisa. O Repolog foca em uma coisa so: tirar um PDF limpo do seu celular e mandar pro cliente. E o caminho mais curto entre "foto na obra" e "relatorio entregue."
+
+A maioria dos apps joga todas as fotos numa grade sem contexto. O Repolog deixa voce escrever uma legenda embaixo de cada imagem, assim o PDF que voce entrega conta uma historia em vez de deixar quem analisa adivinhando. E como as fotos mantem a proporcao original, trincas, numeros de serie e comparativos antes/depois ficam legiveis na impressao.
+
+PRA QUEM E
+- Empreiteiros e subempreiteiros que entregam diarios de obra
+- Inspetores que fazem laudos de vistoria e listas de pendencias
+- Equipes de manutencao e facilities que registram reparos e ocorrencias
+- Empresas de limpeza, seguranca e rondas que entregam relatorios de visita
+- Autonomos que precisam de um termo de entrega ou aceite pra cada servico
+- Administradores de imoveis que fazem vistorias e checklists de entrada
+- Quem faz reforma por conta propria e quer um registro fotografico organizado
+
+PRECOS
+Gratis
+- Ate 10 fotos por relatorio
+- 5 exportacoes PDF por mes
+- Layout padrao (2 fotos por pagina)
+- Pequeno banner de publicidade
+
+Pro
+- Fotos ilimitadas por relatorio, cada uma com sua legenda
+- Exportacoes PDF ilimitadas
+- Layout grande (1 foto por pagina) pra dar espaco completo a cada imagem comentada
+- Sem publicidade
+- Opcoes de capa e template premium
+
+PRIVACIDADE EM PRIMEIRO LUGAR
+Repolog e local por design. Sem contas de usuario. Sem sincronizacao na nuvem. Sem rastreamento na web. Fotos e relatorios ficam no seu aparelho a menos que voce escolha exporta-los. Camera e localizacao sao opcionais e so sao solicitadas quando voce ativa.
+
+ATUALIZACOES FREQUENTES
+O Repolog publica atualizacoes pequenas e objetivas. Bugs reportados viram correcoes em dias, nao em meses.
+
+Baixe o Repolog e transforme as fotos que ja estao no seu celular no relatorio que seu cliente esta esperando.
+
+Politica de privacidade: https://doooooraku.github.io/Repolog/privacy/
+Termos de uso (EULA): https://doooooraku.github.io/Repolog/terms/

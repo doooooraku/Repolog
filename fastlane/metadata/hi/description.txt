@@ -1,0 +1,57 @@
+साइट की फ़ोटो यहाँ-वहाँ बिखरी हैं, रात को बैठकर Word में चिपकाओ, फिर PDF बनाओ — ये रोज़ की कहानी है ना?
+
+Repolog (रेपोलॉग) सीधा इसी problem को solve करता है। साइट पर फ़ोटो लो, हर फ़ोटो पर कमेंट लिखो — और एक टैप में A4/Letter PDF रिपोर्ट तैयार। Client को भेजने लायक, submit करने लायक। PC खोलने की ज़रूरत ख़त्म।
+
+ये app उन लोगों के लिए है जिन्हें रोज़ "photo report" या "site visit report" submit करना पड़ता है — contractors, supervisors, inspectors, maintenance crew, या कोई भी जिसे फ़ोटो के साथ रिपोर्ट देनी हो।
+
+KEY FEATURES
+- हर फ़ोटो पर कैप्शन — "north wall crack," "before/after," "serial #1042" जैसा note हर फ़ोटो के नीचे लिख सकते हो। PDF में evidence अपनी बात ख़ुद बोलता है
+- Date, weather, GPS अपने आप भरे — paperwork कम, काम ज़्यादा
+- तैयार PDF — cover page, comment page, numbered photo pages — जैसा reviewer चाहता है
+- फ़ोटो कभी crop नहीं होती — original aspect ratio बनी रहती है, damage या serial number कटता नहीं
+- Photo numbering built-in — Photo 1, Photo 2… call पर "photo 12 देखो" कहना आसान
+- Home timeline — अपने सारे reports date-wise देखो, search करो, pin करो
+- Search और filter — All, Pinned, This Week, plus name और comment search
+- Backup और restore — ZIP backup से data safe
+- पूरी तरह offline — कोई account नहीं, कोई login नहीं, कोई cloud नहीं
+- 19 भाषाएँ — international job sites के लिए बनाया गया
+- Light, Dark, System theme
+
+REPOLOG क्यों?
+दूसरे report tools आपको cloud account, monthly subscription, और approval workflows में फँसाते हैं जिनकी ज़रूरत ही नहीं। Repolog बस एक काम करता है — फ़ोन से clean PDF निकालकर client की inbox में पहुँचाना। "साइट पर फ़ोटो" से "रिपोर्ट submit" तक का सबसे छोटा रास्ता।
+
+ज़्यादातर apps सारी फ़ोटो एक grid में डाल देते हैं बिना किसी context के। Repolog में हर फ़ोटो के नीचे अपना note लिख सकते हो — ताकि PDF एक कहानी बताए, reviewer को guess न करना पड़े। और फ़ोटो original size में रहती हैं — cracks, serial numbers, before/after सब readable।
+
+किसके लिए है?
+- Construction contractors — daily site log, progress report
+- Building inspectors — condition report, punchlist
+- Maintenance और facility crew — repair log, incident report
+- Cleaning, security, store rounds — visit report
+- Freelancers — delivery report, acceptance report
+- Property managers — inventory check-in, snag list
+- DIY renovators — personal photo log
+
+PRICING
+Free
+- 10 photos per report
+- 5 PDF exports per month
+- Standard layout (2 photos per page)
+- छोटा banner ad
+
+Pro
+- Unlimited photos — हर फ़ोटो पर caption
+- Unlimited PDF exports
+- Large layout (1 photo per page) — हर shot को full page
+- No ads
+- Premium cover और template options
+
+PRIVACY
+Repolog पूरी तरह local-first है। कोई user account नहीं। कोई cloud sync नहीं। कोई web tracking नहीं। Photos और reports आपके device में रहते हैं जब तक आप ख़ुद export न करें। Camera और location access optional है — आप ON करें तभी permission माँगेगा।
+
+REGULAR UPDATES
+Repolog छोटे, focused updates देता है। Bug report मिलते ही fix निकलता है — महीनों का इंतज़ार नहीं।
+
+अभी Repolog download करो और आज की साइट visit की फ़ोटो से वो रिपोर्ट बनाओ जो client को भेजनी है।
+
+Privacy Policy: https://doooooraku.github.io/Repolog/privacy/
+Terms of Use (EULA): https://doooooraku.github.io/Repolog/terms/

@@ -1,0 +1,65 @@
+Báo cáo ảnh PDF sẵn sàng nộp, tạo từ những bức ảnh đã có trong điện thoại.
+
+"Ảnh công trường nằm rải rác trong Zalo, cuối ngày lại phải mở máy tính copy vào Word..."
+"Sếp bảo 'gửi báo cáo kèm ảnh, dạng PDF' là lại mất cả giờ nghỉ trưa..."
+
+Nếu bạn từng gặp tình huống này, Repolog giúp được.
+
+Repolog là ứng dụng ghi nhận hiện trường giúp bạn ghép ảnh chụp và ghi chú thành báo cáo PDF khổ A4/Letter sẵn sàng nộp chỉ với một chạm. Mọi thứ hoàn thành ngay trên điện thoại, không cần mở máy tính.
+
+TINH NANG CHINH
+- Ghi chú riêng từng ảnh -- viết mô tả dưới mỗi bức ảnh, ví dụ "Vết nứt tường phía bắc", "Trước/Sau sửa chữa", giúp mỗi bức ảnh tự kể câu chuyện
+- Đánh số ảnh tự động -- mỗi ảnh được gắn số (Ảnh 1, 2, 3...), họp bàn chỉ cần nói "xem ảnh số 12" là hiểu
+- Dữ liệu tự động điền -- ngày, vị trí, thời tiết tự điền, bạn chỉ cần tập trung vào công việc
+- PDF sẵn sàng nộp -- A4/Letter đầy đủ trang bìa, trang nhận xét, trang ảnh, bố cục chuyên nghiệp
+- Ảnh không bị cắt -- giữ nguyên tỷ lệ gốc, vết nứt, số serial, thiết bị hiện đầy đủ
+- Trang chủ dạng dòng thời gian -- xem lại báo cáo cũ dễ dàng, tìm theo tên, ngày, hoặc ghim
+- Tìm kiếm và lọc -- tất cả / đã ghim / tuần này, tìm theo tên và nhận xét
+- Sao lưu và khôi phục -- sao lưu dạng ZIP, tự quản lý dữ liệu
+- Hoạt động hoàn toàn offline -- không cần đăng nhập, không cần tài khoản, không cần mạng
+- Hỗ trợ 19 ngôn ngữ -- gồm tiếng Việt, Anh, Trung, Nhật, Hàn
+- Giao diện Sáng / Tối / Theo hệ thống
+
+TAI SAO CHON REPOLOG
+
+Anh giữ nguyên, không bị cắt -- Ứng dụng khác tự crop ảnh, Repolog giữ nguyên tỷ lệ gốc. Bằng chứng hiện trường đầy đủ, không ai thắc mắc "ảnh gốc khác mà".
+
+Ghi chú riêng từng ảnh -- Viết mô tả ngay dưới mỗi bức, không gom hết xuống cuối báo cáo. Người đọc thấy ảnh kèm chú thích, hiểu ngay không cần đoán.
+
+Tập trung vào báo cáo, không ôm đồm -- Không ký số, không quy trình duyệt phức tạp. Chỉ một việc duy nhất: biến ảnh hiện trường thành PDF gửi khách hàng, nhanh nhất có thể.
+
+Không cần đăng nhập, dữ liệu trong máy -- Không tài khoản, không upload lên cloud, không lo chính sách bảo mật công ty.
+
+AI DUNG REPOLOG
+- Nhà thầu xây dựng: báo cáo tiến độ / sửa chữa / hoàn công hằng ngày
+- Thợ điện, thợ nước, kỹ thuật: ghi nhận bảo trì sửa chữa
+- Đội giám sát công trình: viết biên bản kiểm tra hiện trạng
+- Đội vệ sinh, bảo vệ: báo cáo tuần tra, round check
+- Môi giới bất động sản: chụp hiện trạng căn hộ, bàn giao nội thất
+- Thợ tự do: báo cáo nghiệm thu, bàn giao công việc
+- Sửa nhà DIY: lưu nhật ký tiến độ cá nhân
+
+GIA
+Miễn phi
+- Tối đa 10 ảnh mỗi báo cáo
+- Xuất PDF 5 lần mỗi tháng
+- Bố cục tiêu chuẩn (2 ảnh mỗi trang)
+- Có quảng cáo banner nhỏ
+
+Pro
+- Ảnh không giới hạn + ghi chú từng ảnh
+- Xuất PDF không giới hạn
+- Bố cục lớn (1 ảnh mỗi trang) -- mỗi ảnh chiếm trọn trang, thấy rõ chi tiết
+- Không quảng cáo
+- Mẫu bìa và template cao cấp
+
+QUYEN RIENG TU
+Repolog được thiết kế ưu tiên lưu trữ cục bộ. Không tài khoản. Không đồng bộ cloud. Không theo dõi. Ảnh và báo cáo nằm trong máy bạn, chỉ được gửi đi khi bạn chọn xuất. Camera và vị trí chỉ yêu cầu khi bạn bật.
+
+CAP NHAT THUONG XUYEN
+Tính năng mới và sửa lỗi liên tục. Gửi góp ý từ mục Cài đặt trong ứng dụng.
+
+Bắt đầu dùng Repolog ngay hôm nay. Biến ảnh hiện trường thành báo cáo sẵn sàng nộp, đơn giản hơn bạn nghĩ.
+
+Chính sách quyền riêng tư: https://doooooraku.github.io/Repolog/privacy/
+Điều khoản sử dụng (EULA): https://doooooraku.github.io/Repolog/terms/

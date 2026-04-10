@@ -1,0 +1,66 @@
+Abgabefertige PDF-Berichte aus den Fotos auf deinem Handy.
+
+Kennst du das? Baustellenfotos verteilen sich im Kameraordner, werden per Messenger hin- und hergeschickt und abends in ein Word-Dokument eingefügt. Repolog macht Schluss damit: Aus deinen Fotos und Notizen entsteht direkt ein sauberes, professionelles PDF -- ohne Konto, ohne Cloud, ohne Umwege.
+
+Repolog ist eine Fotobericht-App für Handwerker, Bauleiter, Prüfer und alle, die am Ende des Tages einen "Bericht mit Fotos" abgeben müssen.
+
+FUNKTIONEN
+- Beschriftung für jedes Foto -- schreib eine kurze Notiz unter jedes Bild ("Riss Nordwand", "vorher / nachher", "Seriennr. 1042"), damit jeder Beleg für sich spricht
+- Automatisch ausgefüllte Metadaten -- Datum, Standort und Wetter werden eingetragen, damit du dich auf die Arbeit konzentrierst, nicht auf den Papierkram
+- Abgabefertiges A4-/Letter-PDF -- Deckblatt, Kommentarseite und Fotoseiten so angeordnet, wie Prüfer es erwarten
+- Fotos bleiben vollständig -- kein Zuschnitt, das Originalformat bleibt erhalten (kein abgeschnittenes Gerät, kein fehlender Schaden)
+- Fotonummern eingebaut -- jede Aufnahme trägt eine Nummer (Foto 1, Foto 2 ...), sodass du am Telefon auf "Foto 12" verweisen kannst, ohne zu scrollen
+- Startseite als Logbuch -- dein Homescreen wird zur Zeitleiste, um jeden Bericht per Datum, Name oder Pin zu finden
+- Suche und Filter -- Alle, Angepinnt und Diese Woche sowie Namens- und Kommentarsuche
+- Backup und Wiederherstellung -- ZIP-basierte lokale Sicherung, du behältst die Kontrolle
+- Komplett offline nutzbar -- kein Konto, kein Login, keine Cloud
+- 19 Sprachen -- von Anfang an für internationale Baustellen gedacht
+- Hell, Dunkel und System-Theme
+
+WARUM REPOLOG
+
+Fotos werden nie beschnitten
+Andere Tools quetschen Fotos in ein Raster und schneiden Ränder ab. Repolog behält das Originalformat bei, damit Risse, Seriennummern und Vorher-Nachher-Aufnahmen im Druck lesbar bleiben.
+
+Notiz zu jedem einzelnen Foto
+Unter jedem Bild steht dein Kommentar. So erzählt das PDF eine Geschichte, statt den Prüfer rätseln zu lassen. Und dank Fotonummern kannst du im Gespräch auf "Foto 5" zeigen.
+
+Kein Ballast
+Elektronische Unterschriften, Genehmigungsworkflows und Checklisten hat Repolog bewusst weggelassen. Der Fokus liegt auf genau einer Sache: ein sauberes PDF von deinem Handy in den Posteingang deines Auftraggebers.
+
+Kein Login, kein Cloud-Zwang
+Kein Benutzerkonto, kein Cloud-Abo -- deine Daten bleiben auf dem Gerät, unabhängig von Firmenrichtlinien.
+
+FÜR WEN
+- Subunternehmer im Bau, die ein Bautagebuch führen
+- Bauleiter und Prüfer für Abnahme- und Mängelberichte
+- Wartungs- und Haustechnikteams für Störungsprotokolle
+- Reinigungs-, Sicherheits- und Rundgangteams für Besuchsberichte
+- Freiberufler, die Abnahme- oder Lieferberichte brauchen
+- Hausverwalter für Wohnungsabnahmen und Mängellisten
+- Heimwerker, die ihr Projekt dokumentieren wollen
+
+PREISE
+Kostenlos
+- Bis zu 10 Fotos pro Bericht
+- 5 PDF-Exporte pro Monat
+- Standardlayout (2 Fotos pro Seite)
+- Kleines Werbebanner
+
+Pro
+- Unbegrenzt Fotos pro Bericht -- jedes mit eigener Beschriftung
+- Unbegrenzte PDF-Exporte
+- Großes Layout (1 Foto pro Seite) -- jede beschriftete Aufnahme bekommt eine ganze Seite
+- Keine Werbung
+- Premium-Deckblatt und Vorlagen
+
+DATENSCHUTZ
+Repolog speichert alles lokal. Kein Benutzerkonto, kein Cloud-Sync, kein Tracking. Fotos und Berichte bleiben auf deinem Gerät, es sei denn, du exportierst sie selbst. Kamera- und Standortzugriff sind optional und werden nur auf Anfrage aktiviert.
+
+REGELMÄßIGE UPDATES
+Repolog bringt kleine, gezielte Updates. Fehlermeldungen werden in Tagen behoben, nicht in Quartalen.
+
+Lade Repolog herunter und mach aus den Fotos auf deinem Handy den Bericht, auf den dein Auftraggeber wartet.
+
+Datenschutzrichtlinie: https://doooooraku.github.io/Repolog/privacy/
+Nutzungsbedingungen (EULA): https://doooooraku.github.io/Repolog/terms/

@@ -1,0 +1,57 @@
+Gotowy raport PDF prosto z budowy -- ze zdjęć, które już masz w telefonie.
+
+Znasz to? Zdjęcia rozrzucone po galerii, przesłane na WhatsApp, a wieczorem siadasz do laptopa i wklejasz je od nowa do Worda. Repolog zamienia zdjęcia i notatki z budowy w czytelny PDF -- bez rejestracji, bez chmury, bez czekania.
+
+Repolog to aplikacja do raportu fotograficznego. Dla kierowników budowy, inspektorów i każdego, kto musi oddać "raport ze zdjęciami" przed końcem dnia.
+
+NAJWAŻNIEJSZE FUNKCJE
+. Opis do każdego zdjęcia -- napisz krótką notatkę pod każdym zdjęciem ("pęknięcie na ścianie północnej", "przed / po", "numer seryjny 1042"), żeby każdy dowód mówił sam za siebie
+. Automatyczne dane -- data, lokalizacja i pogoda uzupełniają się same, a Ty skupiasz się na pracy, nie na papierach
+. PDF gotowy do oddania -- strona tytułowa, komentarz i strony ze zdjęciami w układzie, jakiego oczekuje inwestor
+. Zdjęcia bez przycinania -- oryginalne proporcje są zachowane, nic nie jest ucięte (sprzęt widoczny w całości, uszkodzenia czytelne)
+. Numeracja zdjęć -- każde ujęcie podpisane (Zdjęcie 1, Zdjęcie 2...), możesz powiedzieć "zdjęcie 12" przez telefon bez przewijania
+. Oś czasu na ekranie głównym -- wszystkie raporty jak w dzienniku: szukaj po dacie, nazwie lub przypinkach
+. Wyszukiwanie i filtry -- "Wszystkie", "Przypięte", "Ten tydzień" plus wyszukiwanie po nazwie i komentarzach
+. Kopia zapasowa -- backup w pliku ZIP, pełna kontrola w Twoich rękach
+. Pełna praca offline -- bez konta, bez logowania, bez chmury
+. 19 języków -- stworzone z myślą o międzynarodowych budowach
+. Jasny, Ciemny i Systemowy motyw
+
+DLACZEGO REPOLOG
+Inne narzędzia ciągną Cię do chmury, wymagają abonamentu i narzucają obieg dokumentów, którego nie potrzebujesz. Repolog robi jedną rzecz: zamienia zdjęcia z budowy w gotowy PDF i wysyła go do inwestora. Najkrótsza droga od "zrobiłem zdjęcie" do "raport wysłany".
+
+Większość narzędzi wrzuca wszystkie zdjęcia w siatkę bez kontekstu. W Repolog do każdego zdjęcia możesz dodać komentarz, a PDF, który oddajesz, opowiada historię zamiast zostawiać sprawdzającego w domysłach. A ponieważ zdjęcia zachowują oryginalne proporcje, pęknięcia, numery seryjne i ujęcia "przed/po" są czytelne na wydruku.
+
+DLA KOGO TO JEST
+- Ekipy budowlane i podwykonawcy: raporty dzienne, usterki, odbiory
+- Inspektorzy budowlani: przeglądy, protokoły usterek, odbiory
+- Serwis i konserwacja: dokumentacja napraw i incydentów
+- Sprzątanie, ochrona, obchody: raporty z wizyt i stanu obiektu
+- Freelancerzy: protokoły odbioru, raporty dostawy
+- Zarządcy nieruchomości: inwentaryzacja, przegląd przed zasiedleniem
+- Majsterkowicze: osobisty dziennik fotograficzny remontu
+
+CENNIK
+Za darmo
+- Do 10 zdjęć w raporcie
+- 5 eksportów PDF miesięcznie
+- Standardowy układ (2 zdjęcia na stronę)
+- Mały baner reklamowy
+
+Pro
+- Dowolna liczba zdjęć -- opis do każdego
+- Nielimitowany eksport PDF
+- Duży układ (1 zdjęcie na stronę) -- każde ujęcie na całej stronie
+- Bez reklam
+- Szablony okładki premium
+
+PRYWATNOŚĆ
+Repolog działa lokalnie. Bez kont, bez synchronizacji w chmurze, bez śledzenia. Zdjęcia i raporty zostają na urządzeniu, dopóki sam ich nie wyeksportujesz. Dostęp do aparatu i lokalizacji jest żądany tylko wtedy, gdy je włączysz.
+
+REGULARNE AKTUALIZACJE
+Repolog jest aktualizowany często i celnie. Błędy poprawiamy w dni, nie w kwartały.
+
+Pobierz Repolog i zamień zdjęcia z budowy w raport, na który czeka Twój inwestor.
+
+Polityka prywatności: https://doooooraku.github.io/Repolog/privacy/
+Warunki użytkowania (EULA): https://doooooraku.github.io/Repolog/terms/
