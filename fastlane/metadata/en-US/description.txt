@@ -1,0 +1,90 @@
+  Submission-ready PDF reports, built from the photos already on
+  your phone.
+
+  Tired of jobsite photos scattered across your camera roll, sent
+  through chat apps, then re-typed into a Word document at night?
+  Repolog turns the photos and notes you already take on-site into
+  a clean, professional PDF — without an account, without the
+  cloud, without the wait.
+
+  Repolog is a photo report app for contractors, inspectors, and
+  anyone who has to hand in a "report with photos" before the end
+  of the day.
+
+  KEY FEATURES
+  ・ A caption for every photo — write a short note under each shot
+  ("crack on the north wall," "before / after," "serial #1042") so
+  every piece of evidence speaks for itself
+  ・ Auto-filled metadata — date, location, and weather fill in by
+  themselves so you can focus on the work, not the paperwork
+  ・ Submission-ready A4 / Letter PDFs — cover page, comment page,
+  and photo pages laid out the way reviewers expect
+  ・ Evidence stays whole — photos are never cropped; original
+  aspect ratio is preserved (no cut-off equipment, no missing
+  damage)
+  ・ Photo numbers built in — every shot is labeled (Photo 1, Photo
+  2…) so you can point to "photo 12" on a call without scrolling
+  ・ Home timeline — your home screen becomes a logbook so you can
+  find any past report by date, name, or pin
+  ・ Search and filters — All, Pinned, and This Week, plus name and
+  comment search
+  ・ Backup and restore — ZIP-based local backup keeps you in
+  control
+  ・ Works fully offline — no account, no sign-in, no cloud
+  ・ 19 languages — designed from day one for international job
+  sites
+  ・ Light, Dark, and System theme
+
+  WHY REPOLOG
+  Other report tools push you toward cloud accounts, monthly fees,
+  and approval workflows you do not need. Repolog stays focused on
+  one thing: getting a clean PDF off your phone and into your
+  client's inbox. It is the lightest path between "photo on the
+  jobsite" and "report submitted."
+
+  Most tools dump all your photos into a grid with no context.
+  Repolog lets you write a caption under every single photo, so the
+   PDF you hand in tells a story instead of leaving the reviewer
+  guessing. And because photos keep their original aspect ratio,
+  cracks, serial numbers, and before/after shots stay readable in
+  print.
+
+  WHO IT IS FOR
+  - Construction subcontractors filing a daily site log
+  - Building inspectors writing condition and punchlist reports
+  - Maintenance and facility crews logging fixes and incidents
+  - Cleaning, security, and store-rounds teams submitting visit
+  reports
+  - Freelancers who need an acceptance or delivery report for each
+  job
+  - Property managers running inventory check-ins and snag lists
+  - DIY renovators keeping a personal photo log
+
+  PRICING
+  Free
+  - Up to 10 photos per report
+  - 5 PDF exports per month
+  - Standard layout (2 photos per page)
+  - Small banner ad
+
+  Pro
+  - Unlimited photos per report — add a caption to every one
+  - Unlimited PDF exports
+  - Large layout (1 photo per page) — gives each captioned shot
+  full-page space
+  - No ads
+  - Premium cover and template options
+
+  PRIVACY FIRST
+  Repolog is local-first by design. No user accounts. No cloud
+  sync. No tracking that follows you across the web. Photos and
+  reports stay on your device unless you choose to export them.
+  Camera and location access are optional and only requested when
+  you turn them on.
+
+  REGULAR UPDATES
+  Repolog ships small, focused updates. Bug reports become fixes
+  within days, not quarters.
+
+  Download Repolog and turn the photos already on your phone into
+  the report your client is waiting for.
