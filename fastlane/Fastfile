@@ -1,0 +1,96 @@
+# fastlane Fastfile — Repolog iOS
+# https://docs.fastlane.tools/actions/upload_to_app_store/
+#
+# レーン:
+#   - precheck_metadata : ASC への upload はせず、ローカルの fastlane/metadata/ をバリデーション
+#                          (PR トリガー用 — 安全)
+#   - push_metadata     : 19 言語ぶんの **テキストメタデータのみ** を ASC に push
+#                          (main push / workflow_dispatch 用 — 本番)
+#   - push_screenshots  : スクリーンショットだけ別レーンで push (Stage 3 で使う)
+#
+# 認証: App Store Connect API Key (.p8) を ENV から読む。Apple ID + 2FA は使わない。
+# Stage 1a 時点では実データの metadata/ はまだ存在しない。fastlane deliver init で生成する。
+
+# ---- Helper: ASC API Key を ENV から読み込んで JWT 用オブジェクトを返す ----
+# fastlane の慣習に従ってトップレベル (platform ブロックの外) に定義する。
+# 各レーンから `asc_api_key` で呼び出せる。
+def asc_api_key
+  app_store_connect_api_key(
+    key_id:        ENV.fetch("ASC_API_KEY_ID"),
+    issuer_id:     ENV.fetch("ASC_API_KEY_ISSUER_ID"),
+    key_filepath:  "fastlane/AuthKey.p8",
+    duration:      1200,                # JWT 有効期間 (秒) — Apple の上限 1200
+    in_house:      false,
+  )
+end
+
+default_platform(:ios)
+
+platform :ios do
+  # ---- レーン: precheck_metadata (PR トリガー用) ----
+  desc "ローカルの fastlane/metadata/ を ASC にアップロードせず precheck だけ実行する (PR 用)"
+  lane :precheck_metadata do
+    precheck(
+      api_key:                            asc_api_key,
+      app_identifier:                     "com.dooooraku.repolog",
+      default_rule_level:                 :error,
+      include_in_app_purchases:           false,
+      use_live:                           false,                # 編集中バージョンを対象
+      negative_apple_sentiment:           :error,                # 競合・否定的言及を検出
+      placeholder_text:                   :error,                # "Lorem ipsum" 等を検出
+      other_platforms:                    :error,                # "Android"/"Google Play" 等を検出
+      future_functionality:               :warn,                 # "coming soon" 等
+      test_words:                         :warn,                 # "test"/"sample" 等
+      curse_words:                        :error,
+      free_stuff_in_iap:                  :error,
+      custom_text:                        :warn,
+      copyright_date:                     :error,
+      unreachable_urls:                   :warn,
+    )
+  end
+
+  # ---- レーン: push_metadata (main push / 手動実行用) ----
+  desc "19 言語ぶんのテキストメタデータを App Store Connect に push する (スクショは送らない)"
+  lane :push_metadata do
+    upload_to_app_store(
+      api_key:                              asc_api_key,
+      app_identifier:                       "com.dooooraku.repolog",
+
+      # ---- 何を送って何を送らないか ----
+      skip_binary_upload:                   true,        # .ipa は eas submit で別途処理
+      skip_screenshots:                     true,        # スクショは Stage 3 で別レーン
+      skip_metadata:                        false,       # ★ テキストメタデータは送る
+      skip_app_version_update:              false,
+
+      # ---- 安全策 ----
+      force:                                true,         # HTML プレビュー確認をスキップ (CI 用)
+      run_precheck_before_submit:           true,         # 提案 B: アップ前に必ず precheck
+      precheck_include_in_app_purchases:    false,        # IAP は別チェック (誤検知が多いので除外)
+      submit_for_review:                    false,        # ★ 「審査に出す」は人間が ASC で押す
+      automatic_release:                    false,        # 承認後の自動公開もしない
+      reject_if_possible:                   false,        # In Review 状態を勝手に reject しない
+
+      # ---- 動作モード ----
+      overwrite_screenshots:                false,        # スクショは触らない
+      sync_screenshots:                     false,        # 同上
+      verify_only:                          false,        # 実際にアップロード
+    )
+  end
+
+  # ---- レーン: push_screenshots (Stage 3 で使う) ----
+  desc "19 言語ぶんのスクリーンショットを App Store Connect に push する (Stage 3 用)"
+  lane :push_screenshots do
+    upload_to_app_store(
+      api_key:                              asc_api_key,
+      app_identifier:                       "com.dooooraku.repolog",
+      skip_binary_upload:                   true,
+      skip_screenshots:                     false,        # ★ スクショを送る
+      skip_metadata:                        true,         # テキストは触らない
+      force:                                true,
+      submit_for_review:                    false,
+      automatic_release:                    false,
+      overwrite_screenshots:                true,         # 既存スクショを上書き
+      sync_screenshots:                     true,         # ローカルに無いスクショは ASC からも消す
+    )
+  end
+end
