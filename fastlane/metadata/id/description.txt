@@ -1,0 +1,65 @@
+Laporan foto PDF siap kirim, dibuat dari foto yang sudah ada di HP kamu.
+
+"Foto proyek berserakan di galeri, dikirim lewat chat, terus harus disusun ulang di dokumen teks malam-malam..."
+"Bos minta 'kirim laporan pakai foto, format PDF' dan waktu istirahat langsung habis..."
+
+Kalau kamu pernah mengalami ini, Repolog solusinya.
+
+Repolog adalah aplikasi catatan lapangan yang mengubah foto dan catatan kamu jadi laporan PDF ukuran A4/Letter siap kirim hanya dengan satu ketukan. Semua selesai di HP, nggak perlu buka laptop lagi.
+
+FITUR UTAMA
+- Catatan per foto -- tulis keterangan di bawah setiap foto, misalnya "Retak dinding utara", "Sebelum/Sesudah perbaikan", supaya setiap foto punya konteks
+- Penomoran foto otomatis -- setiap foto diberi nomor (Foto 1, 2, 3...), saat meeting tinggal bilang "lihat foto 12" langsung paham
+- Data terisi otomatis -- tanggal, lokasi, cuaca diisi otomatis, kamu cukup fokus kerja
+- PDF siap kirim -- A4/Letter lengkap cover, halaman komentar, halaman foto, layout rapi dan profesional
+- Foto tidak dipotong -- rasio asli dipertahankan, retakan, nomor serial, peralatan tetap terlihat utuh
+- Halaman utama timeline -- lihat laporan lama dengan mudah, cari berdasarkan nama, tanggal, atau pin
+- Cari dan filter -- semua / di-pin / minggu ini, cari nama dan komentar
+- Backup dan restore -- cadangan format ZIP, kamu yang pegang datanya
+- 100% offline -- tanpa login, tanpa akun, tanpa internet
+- Dukung 19 bahasa -- termasuk Indonesia, Inggris, Mandarin, Jepang, Korea
+- Tema Terang / Gelap / Ikuti sistem
+
+KENAPA REPOLOG
+
+Foto utuh, tidak dipotong -- Aplikasi lain auto-crop foto. Repolog jaga rasio asli. Bukti lapangan lengkap, nggak ada debat "foto aslinya beda".
+
+Catatan di setiap foto -- Tulis keterangan langsung di bawah foto masing-masing, bukan dikumpulkan di akhir laporan. Pembaca lihat foto dan keterangan berdampingan, langsung ngerti tanpa tebak-tebakan.
+
+Fokus kirim laporan, bukan fitur berlimpah -- Tanpa tanda tangan digital, tanpa alur approval rumit. Cuma satu tujuan: ubah foto lapangan jadi PDF buat dikirim ke klien, secepat mungkin.
+
+Tanpa login, data di HP -- Nggak perlu bikin akun, nggak perlu upload ke cloud, nggak perlu khawatir kebijakan cloud kantor.
+
+SIAPA YANG PAKAI REPOLOG
+- Kontraktor konstruksi: laporan harian / perbaikan / penyelesaian proyek
+- Teknisi listrik, plumbing, AC: dokumentasi perawatan dan perbaikan
+- Tim inspeksi gedung: laporan pemeriksaan kondisi
+- Tim cleaning service, security: laporan patrol dan round check
+- Agen properti: foto kondisi unit, serah terima interior
+- Pekerja lepas: laporan serah terima pekerjaan
+- Renovasi rumah, DIY: catatan progres pribadi
+
+HARGA
+Gratis
+- Maksimal 10 foto per laporan
+- Ekspor PDF 5 kali per bulan
+- Layout standar (2 foto per halaman)
+- Ada banner iklan kecil
+
+Pro
+- Foto tak terbatas + catatan di setiap foto
+- Ekspor PDF tak terbatas
+- Layout besar (1 foto per halaman) -- detail lebih jelas
+- Tanpa iklan
+- Template dan cover premium
+
+PRIVASI
+Repolog didesain mengutamakan penyimpanan lokal. Tanpa akun. Tanpa sinkronisasi cloud. Tanpa pelacakan. Foto dan laporan tetap di HP kamu, hanya dikirim saat kamu pilih ekspor. Kamera dan lokasi hanya diminta saat kamu aktifkan.
+
+UPDATE RUTIN
+Fitur baru dan perbaikan bug secara berkala. Kirim masukan dari menu Pengaturan di aplikasi.
+
+Mulai pakai Repolog hari ini. Ubah foto lapangan jadi laporan siap kirim, lebih gampang dari yang kamu kira.
+
+Kebijakan Privasi: https://doooooraku.github.io/Repolog/privacy/
+Ketentuan Penggunaan (EULA): https://doooooraku.github.io/Repolog/terms/

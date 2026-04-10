@@ -1,0 +1,1 @@
+cantiere,sopralluogo,edilizia,muratore,operaio,rapporto,perizia,verbale,manutenzione,ispezione,ditta

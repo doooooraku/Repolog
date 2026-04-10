@@ -1,0 +1,57 @@
+Sahadan dönüyorsun, galeride yüzlerce fotoğraf var ama hangisi hangisi belli değil. Gece bilgisayarı aç, fotoğrafları Word'e yapıştır, PDF'e çevir — her gün aynı hikaye.
+
+Repolog bu derdi bitirir. Sahada fotoğraf çek, her karenin altına açıklama yaz — tek dokunuşla teslime hazır A4/Letter PDF rapor çıksın. Bilgisayar açmana gerek yok.
+
+Bu uygulama her gün "fotoğraflı saha raporu" teslim etmesi gereken herkes için: müteahhitler, şantiye şefleri, denetçiler, bakım ekipleri ya da sahadan fotoğraflı belge göndermesi gereken herkes.
+
+TEMEL ÖZELLİKLER
+- Her fotoğrafa açıklama — "kuzey duvar çatlak," "öncesi/sonrası," "seri no #1042" gibi notları her karenin altına yaz. PDF'deki kanıt kendi kendini anlatır
+- Tarih, hava durumu, konum otomatik — formla uğraşma, işine odaklan
+- Teslime hazır PDF — kapak sayfası, yorum sayfası, numaralı fotoğraf sayfaları — denetçinin beklediği formatta
+- Fotoğraf asla kırpılmaz — orijinal en-boy oranı korunur, hasar veya seri numarası kesilmez
+- Fotoğraf numaralandırma — Fotoğraf 1, Fotoğraf 2… telefonda "12. fotoğrafa bak" demek kolay
+- Ana ekran zaman çizelgesi — tüm raporlarını tarihe göre gör, ara, sabitle
+- Arama ve filtre — Tümü, Sabitlenmiş, Bu Hafta + isim ve açıklama araması
+- Yedekleme ve geri yükleme — ZIP yedek ile verin güvende
+- Tamamen çevrimdışı — hesap yok, giriş yok, bulut yok
+- 19 dil desteği — uluslararası şantiyeler için tasarlandı
+- Açık, Koyu ve Sistem teması
+
+NEDEN REPOLOG?
+Diğer rapor araçları seni bulut hesabına, aylık aboneliğe ve gereksiz onay süreçlerine sürüklüyor. Repolog tek bir şeye odaklanır: telefonundan temiz bir PDF çıkarıp müşterinin e-postasına ulaştırmak. "Sahada fotoğraf" ile "rapor teslim edildi" arasındaki en kısa yol.
+
+Çoğu uygulama tüm fotoğrafları bir ızgaraya döker, hiçbir bağlam olmadan. Repolog'da her fotoğrafın altına kendi notunu yazarsın — PDF bir hikaye anlatır, denetçi tahmin yürütmez. Fotoğraflar orijinal boyutta kalır — çatlaklar, seri numaraları, öncesi/sonrası kareleri baskıda okunur.
+
+KİME GÖRE?
+- İnşaat taşeronları — günlük saha raporu, ilerleme raporu
+- Yapı denetçileri — durum raporu, eksik/kusur listesi
+- Bakım ve tesis ekipleri — onarım kaydı, olay raporu
+- Temizlik, güvenlik, mağaza turları — ziyaret raporu
+- Serbest çalışanlar — teslimat raporu, kabul raporu
+- Mülk yöneticileri — envanter kontrolü, tespit listesi
+- Tadilat yapanlar — kişisel fotoğraf günlüğü
+
+FİYATLANDIRMA
+Ücretsiz
+- Rapor başına 10 fotoğraf
+- Ayda 5 PDF dışa aktarma
+- Standart düzen (sayfa başına 2 fotoğraf)
+- Küçük banner reklam
+
+Pro
+- Sınırsız fotoğraf — her birine açıklama
+- Sınırsız PDF dışa aktarma
+- Büyük düzen (sayfa başına 1 fotoğraf) — her kareye tam sayfa
+- Reklamsız
+- Premium kapak ve şablon seçenekleri
+
+GİZLİLİK
+Repolog tamamen yerel-öncelikli. Kullanıcı hesabı yok. Bulut senkronizasyonu yok. Web takibi yok. Fotoğraflar ve raporlar sen dışa aktarana kadar cihazında kalır. Kamera ve konum erişimi isteğe bağlı — sen açana kadar izin istemez.
+
+DÜZENLİ GÜNCELLEMELER
+Repolog küçük, odaklı güncellemeler sunar. Hata bildirimi gelir, düzeltme günler içinde çıkar — aylarca bekleme yok.
+
+Hemen Repolog'u indir ve bugünkü saha turundaki fotoğraflardan müşteriye teslim edeceğin raporu oluştur.
+
+Gizlilik Politikası: https://doooooraku.github.io/Repolog/privacy/
+Kullanım Koşulları (EULA): https://doooooraku.github.io/Repolog/terms/

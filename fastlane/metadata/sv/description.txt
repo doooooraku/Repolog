@@ -1,0 +1,66 @@
+Inlämningsklara PDF-rapporter, byggda från fotona i din telefon.
+
+Känner du igen det? Byggfoton utspridda i kamerarullen, skickade via meddelandeappar och på kvällen inklistrade i ett Word-dokument. Repolog gör slut på det: dina foton och anteckningar blir en prydlig, professionell PDF -- utan konto, utan moln, utan omvägar.
+
+Repolog är en fotorapport-app för hantverkare, byggledare, besiktningsmän och alla som ska lämna in en "rapport med bilder" innan dagen är slut.
+
+FUNKTIONER
+- Bildtext till varje foto -- skriv en kort anteckning under varje bild ("spricka norrvägg", "före / efter", "serienr. 1042") så att varje bevis talar för sig
+- Automatiskt ifyllda uppgifter -- datum, plats och väder fylls i åt dig så att du kan fokusera på jobbet istället för pappersarbetet
+- Inlämningsklar A4-/Letter-PDF -- försättsblad, kommentarsida och fotosidor upplagda precis som beställare förväntar sig
+- Fotona förblir hela -- ingen beskärning, originalformatet bevaras (ingen avklippt utrustning, ingen saknad skada)
+- Inbyggd fotonumrering -- varje bild får ett nummer (Foto 1, Foto 2 ...) så att du i telefon kan hänvisa till "foto 12" utan att scrolla
+- Startsidan som loggbok -- din hemskärm blir en tidslinje där du hittar varje rapport via datum, namn eller nål
+- Sök och filtrera -- Alla, Nålade och Denna Vecka samt namn- och kommentarsökning
+- Säkerhetskopiering och återställning -- ZIP-baserad lokal backup, du behåller kontrollen
+- Helt offline -- inget konto, ingen inloggning, inget moln
+- 19 språk -- designat från dag ett för internationella byggplatser
+- Ljust, Mörkt och Systemtema
+
+VARFÖR REPOLOG
+
+Foton beskärs aldrig
+Andra verktyg pressar in foton i ett rutnät och klipper bort kanter. Repolog behåller originalformatet så att sprickor, serienummer och före-efter-bilder förblir läsbara i tryck.
+
+Anteckning till varje enskild bild
+Under varje foto står din kommentar. Så berättar PDF:en en historia istället för att låta läsaren gissa. Och tack vare fotonummer kan du i samtal peka på "foto 5" utan att tänka efter.
+
+Inget onödigt
+Digitala signaturer, godkännandeflöden och checklistor har Repolog medvetet utelämnat. Fokus ligger på exakt en sak: en prydlig PDF från din telefon till beställarens inkorg.
+
+Ingen inloggning, inget molntvång
+Inget användarkonto, inget molnabonnemang -- dina data stannar på enheten, oberoende av företagets regler.
+
+FÖR VEM
+- Underentreprenörer som för byggdagbok
+- Byggledare och besiktningsmän för slutbesiktnings- och anmärkningsrapporter
+- Underhålls- och fastighetsteam för felanmälningar
+- Städ-, vakt- och ronderingsteam för besöksrapporter
+- Frilansare som behöver ett avlämnings- eller leveransprotokoll
+- Fastighetsförvaltare för inflyttningsbesiktningar och bristlistor
+- Hemmabyggare som vill dokumentera sitt projekt
+
+PRISER
+Gratis
+- Upp till 10 foton per rapport
+- 5 PDF-exporter per månad
+- Standardlayout (2 foton per sida)
+- Liten reklambanner
+
+Pro
+- Obegränsat antal foton per rapport -- alla med egen bildtext
+- Obegränsade PDF-exporter
+- Stort format (1 foto per sida) -- varje bild med bildtext får en hel sida
+- Ingen reklam
+- Premiumförsättsblad och mallar
+
+INTEGRITET
+Repolog lagrar allt lokalt. Inget användarkonto, ingen molnsynk, ingen spårning. Foton och rapporter stannar på din enhet om du inte själv väljer att exportera dem. Kamera- och platsåtkomst är valfria och begärs bara när du slår på dem.
+
+REGELBUNDNA UPPDATERINGAR
+Repolog levererar små, riktade uppdateringar. Felrapporter blir fixar inom dagar, inte kvartal.
+
+Ladda ner Repolog och förvandla fotona i din telefon till rapporten som din beställare väntar på.
+
+Integritetspolicy: https://doooooraku.github.io/Repolog/privacy/
+Användarvillkor (EULA): https://doooooraku.github.io/Repolog/terms/

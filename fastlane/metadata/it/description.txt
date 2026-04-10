@@ -1,0 +1,94 @@
+  Rapporti PDF pronti da consegnare, creati dalle foto che hai
+  già sul telefono.
+
+  Stanco di foto di cantiere sparse nella galleria, mandate via
+  un'app di messaggistica e poi riattaccate in un documento di testo a fine giornata? Repolog
+  trasforma le foto e gli appunti che prendi già sul campo in un
+  PDF chiaro e professionale — senza account, senza cloud, senza
+  aspettare.
+
+  Repolog è un'app per rapporti fotografici pensata per artigiani,
+  capicantiere e chiunque debba consegnare un « rapporto con
+  foto » prima di sera.
+
+  FUNZIONALITÀ PRINCIPALI
+  ・ Una nota per ogni foto — scrivi una didascalia sotto ogni scatto
+  (« crepa parete nord », « prima / dopo », « matricola #1042 »)
+  così ogni prova parla da sola
+  ・ Metadati automatici — data, posizione e meteo si compilano da
+  soli, così ti concentri sul lavoro e non sulle scartoffie
+  ・ PDF A4 / Letter pronto per la consegna — copertina, pagina
+  commenti e pagine foto, impaginati come il committente se li
+  aspetta
+  ・ Foto integre — mai ritagliate, il rapporto d'aspetto originale è
+  preservato (niente attrezzature tagliate, niente danni
+  invisibili)
+  ・ Numerazione automatica — ogni foto è etichettata (Foto 1,
+  Foto 2…) così puoi dire « guarda la foto 12 » al telefono senza
+  scorrere
+  ・ Diario a timeline — la schermata principale è un registro di
+  tutti i tuoi rapporti, trovabili per data, nome o preferiti
+  ・ Ricerca e filtri — Tutti, Preferiti, Questa settimana, più
+  ricerca per nome e commento
+  ・ Backup e ripristino — salvataggio ZIP in locale, tieni tutto
+  sotto controllo
+  ・ Funziona offline al 100 % — nessun account, nessun login,
+  nessun cloud
+  ・ 19 lingue — progettato fin dall'inizio per i cantieri
+  internazionali
+  ・ Tema chiaro, scuro o di sistema
+
+  PERCHÉ REPOLOG
+  Gli altri strumenti ti spingono verso account cloud, abbonamenti
+  mensili e flussi di approvazione di cui non hai bisogno. Repolog
+  resta concentrato su una cosa sola: far uscire un PDF pulito dal
+  tuo telefono e mandarlo al cliente. È il percorso più breve tra
+  « foto in cantiere » e « rapporto inviato ».
+
+  La maggior parte delle app butta tutte le foto in una griglia
+  senza contesto. Repolog ti permette di scrivere una didascalia
+  sotto ogni singola foto, così il PDF che consegni racconta una
+  storia invece di lasciare chi legge a tirare a indovinare. E
+  siccome le foto mantengono il rapporto d'aspetto originale,
+  crepe, numeri di serie e scatti prima/dopo restano leggibili
+  anche stampati.
+
+  PER CHI È
+  - Artigiani e imprese edili: rapportino giornaliero di cantiere
+  - Ispettori e periti: verbali di sopralluogo, perizie, collaudi
+  - Squadre di manutenzione e facility: registro interventi
+  - Pulizie, vigilanza, ronde: rapporti di visita
+  - Liberi professionisti: verbale di consegna o accettazione lavori
+  - Amministratori immobiliari: inventari, stati di consistenza
+  - Privati: diario ristrutturazione, registro foto personale
+
+  PREZZI
+  Gratuito
+  - Fino a 10 foto per rapporto
+  - 5 esportazioni PDF al mese
+  - Layout standard (2 foto per pagina)
+  - Piccolo banner pubblicitario
+
+  Pro
+  - Foto illimitate per rapporto — una didascalia su ognuna
+  - Esportazioni PDF illimitate
+  - Layout ampio (1 foto per pagina)
+  - Zero pubblicità
+  - Opzioni copertina e modelli premium
+
+  PRIVACY
+  Repolog è progettato local-first. Nessun account utente. Nessuna
+  sincronizzazione cloud. Nessun tracciamento. Foto e rapporti
+  restano sul tuo dispositivo a meno che tu non scelga di
+  esportarli. Fotocamera e posizione sono facoltative e richieste
+  solo quando le attivi.
+
+  AGGIORNAMENTI REGOLARI
+  Repolog pubblica aggiornamenti mirati. Le segnalazioni di bug
+  diventano correzioni in pochi giorni, non in mesi.
+
+  Scarica Repolog e trasforma le foto sul tuo telefono nel
+  rapporto che il tuo cliente sta aspettando.
+
+  Informativa sulla privacy: https://doooooraku.github.io/Repolog/privacy/
+  Termini di utilizzo: https://doooooraku.github.io/Repolog/terms/

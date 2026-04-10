@@ -1,0 +1,57 @@
+PDFs listos para entregar, hechos con las fotos que ya tienes en el móvil.
+
+Fotos de obra desperdigadas por el carrete, enviadas por apps de mensajería y luego pegadas a mano en un procesador de texto por la noche... ¿suena familiar? Repolog convierte las fotos y notas que ya tomas en obra en un informe PDF limpio y profesional, sin cuenta, sin nube, sin esperas.
+
+Repolog es una app de informes fotográficos para albañiles, instaladores, inspectores y cualquiera que tenga que entregar un "informe con fotos" antes de acabar la jornada.
+
+FUNCIONES PRINCIPALES
+- Un pie de foto para cada imagen — escribe una nota bajo cada foto ("grieta en muro norte," "antes / después," "n/s 1042") para que cada evidencia hable por sí sola
+- Metadatos automáticos — fecha, ubicación y clima se rellenan solos para que te centres en el trabajo, no en el papeleo
+- PDFs A4 / Carta listos para entregar — portada, página de comentarios y páginas de fotos con el formato que espera quien lo revisa
+- Las fotos no se recortan — se mantiene la proporción original (sin cortar equipos ni daños)
+- Numeración automática — cada foto lleva su número (Foto 1, Foto 2...) para poder decir "mira la foto 12" en una llamada sin buscar
+- Cronología en inicio — tu pantalla de inicio se convierte en un diario de obra donde localizas cualquier informe por fecha, nombre o marcador
+- Búsqueda y filtros — Todo, Fijados y Esta Semana, más búsqueda por nombre y comentario
+- Copia de seguridad — respaldo local en ZIP para que tú controles tus datos
+- Funciona sin conexión — sin cuenta, sin registro, sin nube
+- 19 idiomas — pensado desde el principio para obras con equipos internacionales
+- Tema claro, oscuro y automático
+
+POR QUÉ REPOLOG
+Otras herramientas de informes te empujan a crear cuentas en la nube, pagar suscripciones y usar flujos de aprobación que no necesitas. Repolog se centra en una sola cosa: sacar un PDF limpio de tu móvil y mandarlo al cliente. Es el camino más corto entre "foto en obra" e "informe entregado."
+
+La mayoría de apps meten todas las fotos en una cuadrícula sin contexto. Repolog te deja escribir un pie de foto debajo de cada imagen, así el PDF que entregas cuenta una historia en vez de dejar al revisor adivinando. Y como las fotos conservan su proporción original, grietas, números de serie y comparativas antes/después se leen perfectamente en papel.
+
+PARA QUIÉN ES
+- Subcontratas de construcción que presentan partes de obra diarios
+- Inspectores que redactan informes de estado y listas de repasos
+- Equipos de mantenimiento e instalaciones que registran reparaciones e incidencias
+- Empresas de limpieza, seguridad y rondas comerciales que entregan partes de visita
+- Autónomos que necesitan un acta de entrega o recepción por cada trabajo
+- Gestores de inmuebles que hacen inventarios y revisiones de estado
+- Aficionados al bricolaje que llevan un registro fotográfico de sus reformas
+
+PRECIOS
+Gratis
+- Hasta 10 fotos por informe
+- 5 exportaciones PDF al mes
+- Formato estándar (2 fotos por página)
+- Pequeño banner publicitario
+
+Pro
+- Fotos ilimitadas por informe, cada una con su pie de foto
+- Exportaciones PDF ilimitadas
+- Formato grande (1 foto por página) para dar espacio completo a cada imagen comentada
+- Sin publicidad
+- Opciones de portada y plantilla premium
+
+PRIVACIDAD ANTE TODO
+Repolog es local por diseño. Sin cuentas de usuario. Sin sincronización en la nube. Sin rastreo web. Fotos e informes se quedan en tu dispositivo salvo que tú elijas exportarlos. Cámara y ubicación son opcionales y solo se solicitan cuando las activas.
+
+ACTUALIZACIONES FRECUENTES
+Repolog publica actualizaciones pequeñas y concretas. Los errores reportados se corrigen en días, no en trimestres.
+
+Descarga Repolog y convierte las fotos que ya tienes en el móvil en el informe que tu cliente está esperando.
+
+Política de privacidad: https://doooooraku.github.io/Repolog/privacy/
+Condiciones de uso (EULA): https://doooooraku.github.io/Repolog/terms/
