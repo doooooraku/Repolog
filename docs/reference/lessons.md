@@ -512,6 +512,65 @@
 
 ---
 
+## App Store ローカライズ (fastlane)
+
+> 2026-04-10 セッション。19 言語ローカライズを fastlane + GitHub Actions で $0 実施。
+> 8 PR 中 7 回の CI 失敗を経て完了。以下はそこから得た教訓。
+
+### L-FL01: GitHub Actions の SHA pin 必須ポリシーを事前確認する
+- **状況**: `ruby/setup-ruby@v1`（タグ参照）で workflow を作成 → CI が「all actions must be pinned to a full-length commit SHA」で即失敗
+- **根本原因**: リポジトリの Settings → Actions → General → Allowed actions に SHA pin 強制ポリシーが設定されていたが、確認手順がなかった
+- **ルール**:
+  1. 新しい workflow を追加するとき、最初に `Settings → Actions → General` でポリシーを確認する
+  2. 既存 workflow の `uses:` 行から SHA の書き方をコピーする（タグ参照は使わない）
+  3. SHA は `gh api repos/{owner}/{repo}/git/refs/tags/{tag}` で取得できる
+
+### L-FL02: fastlane の「action」と「CLI サブコマンド」は認証パスが異なる
+- **状況**: `fastlane deliver download_metadata` を ENV 経由 API Key で実行 → `[!] No value found for 'username'` で失敗
+- **根本原因**: Fastfile 内の `app_store_connect_api_key` action は `APP_STORE_CONNECT_API_KEY_*` ENV を自動読み込みするが、`fastlane deliver download_metadata` CLI サブコマンドはこの ENV を読まない。`--api_key_path` で JSON ファイルを渡す必要がある
+- **ルール**:
+  1. Fastfile のレーン内では `app_store_connect_api_key()` action を使う（ENV 自動読み込み OK）
+  2. CLI 直叩き (`fastlane deliver download_metadata`) では `--api_key_path api_key.json` を渡す
+  3. JSON 形式: `{ "key_id": "...", "issuer_id": "...", "key": "PEM文字列", "duration": 1200, "in_house": false }`
+
+### L-FL03: fastlane precheck の個別ルールパラメータは Symbol 直渡し不可
+- **状況**: `precheck(negative_apple_sentiment: :error, ...)` → `rule_processor.rb:61` で `TypeError: no implicit conversion of Symbol into Integer`
+- **根本原因**: fastlane 2.232.x の precheck 内部は `rule_config[:level]` のように Hash を期待するが、`:error` Symbol を直接渡すと `Symbol#[]` が呼ばれて型エラーになる
+- **ルール**:
+  1. precheck の個別ルール設定は使わない。`default_rule_level: :warn` のみで十分
+  2. 細かいルール制御が必要なら `precheck_metadata` を専用レーンにして結果を手動確認
+
+### L-FL04: ラテン文字言語のアクセント欠落は自動検出する
+- **状況**: LLM サブエージェントが生成した es-ES / pt-BR の description が ASCII のみ（á→a, ç→c 等）。ネイティブには「壊れた文章」に見える
+- **根本原因**: サブエージェントへのプロンプトにアクセント必須の指示が無く、文字数バリデーションしか自動化していなかった
+- **ルール**:
+  1. es-ES, pt-BR, fr-FR, de-DE, nl-NL, sv, pl, tr, vi のメタデータは「アクセント記号の存在」を自動検証する（`scripts/validate-metadata.mjs`）
+  2. LLM に翻訳を依頼するプロンプトに「ASCII-only は不可。正しいアクセント（á,é,ñ,ç,ã,ö,å 等）を必ず使え」を必須ルールとして含める
+  3. 検証ロジック: 言語ごとに「含まれるべき文字クラス」を定義し、description に 1 つも含まれなければエラー
+
+### L-FL05: .gitignore のパターンは「将来追加するファイル」まで考慮する
+- **状況**: ルートの `screenshots/` ignore パターンが `fastlane/screenshots/` もマッチし、`git add` が拒否された
+- **根本原因**: Stage 1a で .gitignore を編集したとき、Stage 3 で `fastlane/screenshots/` を追加することを想定していなかった
+- **ルール**:
+  1. `.gitignore` にディレクトリパターンを追加するとき、`git add --dry-run fastlane/` 等で影響範囲を確認する
+  2. 段階的に進めるプロジェクトでは、全 Stage の要件を `.gitignore` 設計時に一括で考慮する
+
+### L-FL06: sync_screenshots は fastlane 2.232 でベータ機能
+- **状況**: `sync_screenshots: true` → `FASTLANE_ENABLE_BETA_DELIVER_SYNC_SCREENSHOTS` 環境変数が無いとエラー
+- **根本原因**: fastlane 2.232 で screenshot sync がベータ扱いに変わったが、changelog を確認していなかった
+- **ルール**:
+  1. `sync_screenshots` は使わない。`overwrite_screenshots: true` で十分（既存スクショを上書き）
+  2. fastlane の新バージョンを使うとき、CHANGELOG の Breaking Changes を確認する
+
+### L-FL07: push_screenshots レーンで precheck を無効化する
+- **状況**: スクショ upload 後に precheck が走り「Precheck cannot check In-app purchases with API Key」で失敗
+- **根本原因**: `upload_to_app_store` のデフォルトで precheck が有効。スクショ専用レーンでは不要
+- **ルール**:
+  1. スクショ専用レーンには `run_precheck_before_submit: false` と `precheck_include_in_app_purchases: false` を明示的に設定する
+  2. precheck は `precheck_metadata` 専用レーンに完全分離する
+
+---
+
 ### Claude Code トリガーフレーズ
 - 有効なフレーズ: 「デバッグセッションを分析して」「rebuild して」「Maestro スクショ付きで E2E テストして」
 - 分析時は summary.md → app_logcat.log → screenshots/ の順に読むのが効率的

@@ -67,3 +67,5 @@ Repolog PR Template
 - [ ] DBにファイルパスを保存する変更がある場合、相対パスで保存している（`toRelativePath()` 経由）
 - [ ] DBスキーマ変更がある場合、バックアップ export/import に反映した
 - [ ] iOS の OS 標準 UI に依存する機能（レビュー依頼・共有・保存）を追加した場合、**TestFlight で挙動が変わらないもの**を `docs/how-to/workflow/ios_testflight_release.md` §7-4 と照合した
+- [ ] `fastlane/metadata/` を変更した場合、`pnpm metadata:check` を実行してエラーが 0 件であること
+- [ ] GitHub Actions workflow を追加/変更した場合、全 `uses:` が SHA pin されていること
