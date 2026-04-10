@@ -81,7 +81,6 @@ platform :ios do
       submit_for_review:                    false,
       automatic_release:                    false,
       overwrite_screenshots:                true,         # 既存スクショを上書き
-      sync_screenshots:                     true,         # ローカルに無いスクショは ASC からも消す
     )
   end
 end
