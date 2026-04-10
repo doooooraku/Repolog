@@ -81,6 +81,8 @@ platform :ios do
       submit_for_review:                    false,
       automatic_release:                    false,
       overwrite_screenshots:                true,         # 既存スクショを上書き
+      run_precheck_before_submit:           false,        # スクショ専用レーン — precheck 不要
+      precheck_include_in_app_purchases:    false,        # API Key では IAP precheck 不可
     )
   end
 end
