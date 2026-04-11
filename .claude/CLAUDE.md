@@ -1,64 +1,59 @@
-## ワークフロー設計
+<!-- グローバルルール (シンプル第一 / HARD GATE / 対処療法禁止 / 4段階デバッグ / pnpm 必須 等) は ~/.claude/CLAUDE.md を参照 -->
 
-### 1. Planモードを基本とする
-- 3ステップ以上 or アーキテクチャに関わるタスクは必ずPlanモードで開始する
-- 途中でうまくいかなくなったら、無理に進めずすぐに立ち止まって再計画する
-- 構築だけでなく、検証ステップにもPlanモードを使う
-- 曖昧さを減らすため、実装前に詳細な仕様を書く
+# Repolog プロジェクト固有ルール
 
-### 2. サブエージェント戦略
-- メインのコンテキストウィンドウをクリーンに保つためにサブエージェントを積極的に活用する
-- リサーチ・調査・並列分析はサブエージェントに任せる
-- 複雑な問題には、サブエージェントを使ってより多くの計算リソースを投入する
-- 集中して実行するために、サブエージェント1つにつき1タスクを割り当てる
+## iOS 初期設定ルール
 
-### 3. 自己改善ループ
-- ユーザーから修正を受けたら必ず `docs/reference/lessons.md` にそのパターンを記録する
-- 同じミスを繰り返さないように、自分へのルールを書く
-- ミス率が下がるまで、ルールを徹底的に改善し続ける
-- セッション開始時に、そのプロジェクトに関連するlessonsをレビューする
-
-### 4. 完了前に必ず検証する
-- 動作を証明できるまで、タスクを完了とマークしない
-- 必要に応じてmainブランチと自分の変更の差分を確認する
-- 「スタッフエンジニアはこれを承認するか？」と自問する
-- テストを実行し、ログを確認し、正しく動作することを示す
-
-### 5. エレガントさを追求する（バランスよく）
-- 重要な変更をする前に「もっとエレガントな方法はないか？」と一度立ち止まる
-- ハック的な修正に感じたら「今知っていることをすべて踏まえて、エレガントな解決策を実装する」
-- シンプルで明白な修正にはこのプロセスをスキップする（過剰設計しない）
-- 提示する前に自分の作業に自問自答する
-
-### 6. 自律的なバグ修正
-- バグレポートを受けたら、手取り足取り教えてもらわずにそのまま修正する
-- ログ・エラー・失敗しているテストを見て、自分で解決する
-- ユーザーのコンテキスト切り替えをゼロにする
-- 言われなくても、失敗しているCIテストを修正しに行く
+- Expo プロジェクト作成時、`app.json` の `ios` セクションに `"config": { "usesNonExemptEncryption": false }` と `privacyManifests` を必ず設定する
+- 暗号化ライブラリ追加時は `usesNonExemptEncryption` の値を再評価する (ADR-0010 参照)
+- 不要な iOS 権限 (マイク、常時位置情報等) はプラグイン設定で明示的にブロックする
 
 ---
 
-## タスク管理
+## Sub-Agents (user-level: `~/.claude/agents/`)
 
-1. **まず計画を立てる**：TaskCreate ツールでタスクリストを作成する
-2. **計画を確認する**：実装を開始する前に確認する
-3. **進捗を記録する**：TaskUpdate で完了した項目を随時マークしていく
-4. **変更を説明する**：各ステップで高レベルのサマリーを提供する
-5. **結果をドキュメント化する**：PR 本文にレビューセクションを追加する
-6. **学びを記録する**：修正を受けた後に `docs/reference/lessons.md` を更新する
+| Agent              | Tools                  | Model | When                                                  |
+| ------------------ | ---------------------- | ----- | ----------------------------------------------------- |
+| `eas-build-doctor` | Bash, Read, Glob, Grep | haiku | EAS ビルド前の env 検証 + ビルド実行支援              |
+| `commit-helper`    | Bash, Read             | haiku | Conventional Commits ドラフト + ユーザー承認後 commit |
 
----
-
-## iOS初期設定ルール
-
-- Expoプロジェクト作成時、`app.json` の `ios` セクションに `"config": { "usesNonExemptEncryption": false }` と `privacyManifests` を必ず設定する
-- 暗号化ライブラリ追加時は `usesNonExemptEncryption` の値を再評価する（ADR-0010参照）
-- 不要なiOS権限（マイク、常時位置情報等）はプラグイン設定で明示的にブロックする
+> **インストール**: `cp -n ../../template/app_template/.claude/agents/*.md ~/.claude/agents/`
+> **認識確認**: Claude Code 再起動後に `/agents` で Personal Library に表示される
+> **理由**: 現バージョンの Claude Code は project-level `.claude/agents/` を認識しない (2026-04-11 検証済み)。SoT は `template/app_template/.claude/agents/`
 
 ---
 
-## コア原則
+## User-Invocable Skills (user-level: `~/.claude/skills/`)
 
-- **シンプル第一**：すべての変更をできる限りシンプルにする。影響するコードを最小限にする。
-- **手を抜かない**：根本原因を見つける。一時的な修正は避ける。シニアエンジニアの水準を保つ。
-- **影響を最小化する**：変更は必要な箇所のみにとどめる。バグを新たに引き込まない。
+| Skill            | When                                                  |
+| ---------------- | ----------------------------------------------------- |
+| `/discuss`       | 議論 / 方針決定 / 認識合わせ (コードを変更しない)     |
+| `/plan`          | W-01〜W-05: Issue / ADR / Context ドラフト作成        |
+| `/review-pr`     | W-10.5: PR レビュー (AC 適合 / ADR 整合 / 影響範囲)   |
+| `/retro`         | リリース / マイルストーン振り返り                     |
+| `/progress`      | 3 軸監査 (planning / integration / quality)           |
+| `/store-text`    | App Store / Google Play 文言生成                      |
+| `/release-check` | リリース前最終チェック                                |
+
+---
+
+## Repolog 固有コマンド
+
+- `pnpm dev` — Metro 起動
+- `pnpm verify` — full check (lint + type-check + format + test + i18n + config)
+- `pnpm test` — Jest unit
+- `pnpm test:e2e` — Maestro E2E
+- `pnpm build:android:apk:local` — local APK (`SKIP_KEYS=1` で初回)
+- `pnpm build:android:aab:local` — local AAB (production)
+- `pnpm i18n:check` — locale keys 検証
+- `pnpm metadata:check` — `fastlane/metadata/` 検証
+
+---
+
+## Repolog 固有の重要制約
+
+- **PDF hang は受容済み (ADR-0016)**: OS-level WebView pool 累積が真因。アプリ側での追加緩和策は実施しない
+- **EAS local build は `.env` をコピーしない**: API キーは `eas env:create --environment production` で登録 (詳細: MEMORY.md)
+- **expo-file-system SDK 54 破壊変更**: legacy API は `expo-file-system/legacy` 経由
+- **photos.local_uri は相対パス**: iOS Store update での container UUID 変化対策
+- **WSL2 PATH literal `${PATH}` 問題**: pnpm/node 実行時は `PATH=/usr/bin:/bin:$PATH` を prepend
