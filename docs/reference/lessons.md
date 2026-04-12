@@ -169,6 +169,47 @@
   3. **ADR の前提が時間で崩れるのは自然なこと**: ADR-0002 (2026-01) の「フォント埋め込みで固定」という決定は当時正しかったが、SDK 54 + Android Chromium の挙動変化で前提が崩れた。ADR は Supersede 可能な生きたドキュメントとして扱う
   4. **リスク分離原則**: 1 行のコード修正と 10+ ファイルの dead code 削除を同一 PR に混ぜない。失敗時の切り分けが困難になる。本 PR では修正のみ、削除は Phase 2b に分離
 
+### 2026-04-08 (Phase 3a 完了): PDF hang の真因は OS-level WebView renderer pool の累積 (Issue #298)
+
+- **状況**: PR #299 (attempt 1 cap 10s) は Issue #298 の暫定緩和だったが、根本原因は未解明のまま生存。Phase 3a として実機 (SHARP SH-M25 / Android 14) で `dumpsys meminfo` + `ps -A` + `dumpsys gfxinfo` を **8 cell マトリクス** で観測した
+- **観測ハーネス**: `scripts/phase3a_observe.sh` を新規開発 (init/cell/status/summary/regen/dry-run の 6 サブコマンド)。trigger 検知 → T+0/+5/+9/+12 で自動 dump → end marker 検知で完了 → cell_summary.json 生成。観測 SOP は `docs/how-to/development/pdf_observation_protocol.md` にまとめた
+- **決定的観測 (C1 vs C7)**: 完全に同じ条件 (force-stop + Fixture + standard A4 + 10 photos) で **C1 = success / C7 = HANG** という結果差を取得。差の内訳:
+  - **Repolog プロセスの Native Heap 差: 128 KB のみ** (29.32 MB vs 29.30 MB) — H5 (アプリ内メモリ圧迫) の **強い反証**
+  - **OS-level WebView 関連プロセスの RSS 差: +233 MB** (~319 MB → ~552 MB) — プロセス数 5 → 7 に膨張
+  - 膨張源は 1 つ前の C6 (新規未保存レポート 10 枚 export) 時点で発生し、`am force-stop com.dooooraku.repolog` でも **kill されずに C7 に持ち越された**
+- **真因モデル (確定)**: PDF 出力時に `react-native-webview` (preview 用) と `expo-print` (Print engine 用) がそれぞれ `com.google.android.webview` の `sandboxed_process0` を要求 → 通常は再利用されるが、新規未保存レポート 10 枚のような高負荷シナリオで **新規 spawn される子プロセスが残留**。Repolog は別 UID なので `kill` も `force-stop` もできない (`adb shell kill -9` ですら `Operation not permitted`)。Android の LRU eviction を待つしか無い
+- **transient な性質**: 観測中 idle 状態で WebView pool が **7 → 4 に自動減少** することを確認。永続累積ではなく rapid consecutive exports が hang trigger
+- **ルール**:
+  1. **アプリのプロセス境界の外を観測しないと真因を見落とす**。`dumpsys meminfo com.dooooraku.repolog` だけを見ていた限り「Repolog の Native Heap は変わっていない」までしか分からず、本当の汚染源 (`com.google.android.webview` プロセス群) を見落とす。今後の hang/leak 系問題は **`adb shell ps -A | grep webview` と `dumpsys meminfo` を併用** すること
+  2. **`am force-stop <my package>` は WebView 子プロセスを kill しない**。webview_zygote とその子は別 UID で、自分のアプリの force-stop では触れない。「force-stop で全部リセットされる」という暗黙の前提は誤り
+  3. **`Image.clearMemoryCache()` / `router.dismissAll()` はアプリプロセス内のみ有効**。OS レベルの WebView renderer pool には届かない。ADR-0013 の防御層は「Repolog の navigation/expo-image cache をクリア」までで、その境界の外には及ばない事実を ADR-0013 補遺に追記すべき
+  4. **「同じ条件で異なる結果」を見たら process 境界を疑う**。アプリ内 state が同じでも OS-level の他プロセス state が違えば結果が変わる。再現性が壊れたら「観測の解像度が足りない」という選択肢を常に第一候補に
+  5. **観測前に決定木を書く**。Phase 3a では「Native Heap が +30MB → H5 支持 / WebView count が +N → H6 支持」を事前に書いておいたため、結果が出た瞬間に解釈ができた。事後解釈だと確証バイアスがかかる
+  6. **観測ツールは資産として残す**。`scripts/phase3a_observe.sh` は本 Issue の調査だけでなく次の hang 系調査でも再利用可能。1 回限りの ad-hoc スクリプトにせず、汎用性を持たせて `docs/how-to/development/pdf_observation_protocol.md` に SOP として残した
+  7. **観測の自動化が背後で起きている "ユーザーの意図しない挙動" を全部記録できる**。Phase 3a の最初の C1 (汚染版) で logcat kill のバグでユーザーの意図せぬ追加 export が 4 回分記録されてしまったが、その「事故データ」が結果的に **新規未保存レポートの hang パターン** を示す決定的な evidence になった。事故は時に最良のデータを生む — **生データは捨てない**
+- **次フェーズ**: ADR-0016 (本 lesson と同日付) に真因を文書化。Phase 3d (緩和策の比較検討) は当初予定だったが、下記「Final Decision」により **キャンセル**
+
+#### Final Decision (2026-04-08): **受容 (Accepted as Limitation)**
+
+ユーザー (@doooooraku) と合議の上、**アプリ側で追加の緩和策は実施しない**ことを正式に決定。PR #299 の attempt 1 cap (10s) を **永続的な対応** として維持する。Issue #298 はクローズ。
+
+**受容の根拠 (canonical rationale)**:
+
+> 「**真因は Android system レベル (`com.google.android.webview` プロセス群の状態管理) にあり、その介入はアプリ側の責任範囲を超えている**」 — @doooooraku
+
+**この判断の正当性**:
+
+1. **責任範囲の認識**: アプリの責任は「アプリ自身のコードと設定」までであり、Android system 内部の renderer LRU 管理に介入することは責任範囲外。境界を越えた領域での対症療法は **「自分の家で他人の家の壊れ方を補修しようとする」** ことに等しく、長期的に保守不能になる
+2. **既存の止血が機能している**: PR #299 で 44s → 12s。ユーザーは PDF を依然として受け取れる (Pro 会員の画質が時々下がる制約は残るが、機能停止ではない)
+3. **追加緩和の ROI が低い**: cool-down (Option A) や警告通知 (Option B) はユーザー体感を別の形で悪化させるだけで真因解決にはならない
+4. **将来の再評価を排除しない**: ADR-0016 に Re-evaluation criteria を明記。ストアレビューや Pro 解約理由の変化を月次でモニタリングし、閾値を超えたら ADR-0017 を起こして再判断する
+
+**追加されたメタ教訓**:
+
+8. **「真因が分かったら受容も valid な選択肢」**。原因究明の目的は必ずしも修正のためではない。原因が「アプリの責任範囲外」と判明したら、**修正しないという判断もまた engineering judgment**。受容を恥じる必要はなく、むしろ責任範囲を明確化することはコード負債の蓄積を防ぐ
+9. **「受容」と「諦め」を区別する**。受容は (a) 真因が観測データで特定済み (b) 再評価条件が明文化済み (c) 観測ハーネスが資産として残っている という前提があってこそ valid。これらが揃わなければただの「諦め」になる
+10. **「Issue を閉じる勇気」**。open バックログにある Issue は無意識のストレス源。「真因は分かった、対策は意図的に実施しない」と決めたら **クローズすることが正解**。半年後の自分が「これ何だっけ?」と再調査ループに入らないように、ADR と lessons.md に決定の根拠を残しておく
+
 ### 2026-04-08: ADR-0009 が修正したはずの iOS 空白ページが SSoT ドリフトで再発（ADR-0017）
 
 - **状況**: ユーザー報告「iOS で出力した PDF の写真ページ直後に空白ページが入る」。提供された 6 ファイル（iOS 18.6.2）を PyMuPDF で構造解析した結果、5 件は標準的な「1 photo / 期待 2 ページ → 実体 3 ページ」、1 件は「**70 photos / 期待 71 ページ → 実体 141 ページ**」（large レイアウトで全ての写真ページに空白ページペアが付く壊滅的状況）。各空白ページの実体は `</div>...</div>` の中に `N/M` フッターテキストだけが y=4pt（ページ最上部）に描画されており、ADR-0009 が修正したはずの「iOS WebKit subpixel フッター押し出し」現象が完全に再発していた
@@ -518,6 +559,34 @@
   2. Pressable の `disabled={state}` プロパティも同じ理由で state flush 待ちの race window を持つため、state 単独では不十分
   3. try-catch-finally で ref の解放を保証する。早期 return でも finally は走るので安全
   4. 将来この pattern を捨てようとしたら `__tests__/pdfExportGuard.test.ts` が落ちる設計にしてある
+
+---
+
+## リリース配信パイプライン
+
+### 2026-04-09: 「修正したのに反映されていない」報告の真因はビルド配信ギャップ
+- **状況**: ユーザー報告「iOS PDF にまだ空白ページがある / Android にまだプログレスバーが出る」。コミット `c71bb11` (#300/#301) と `7ced68e` (#298/#299) は前日中に main にマージ済み、iOS TestFlight への workflow_dispatch ビルドも `headSha=c71bb11` で success、ローカル `dist/repolog-production.aab` も c71bb11 マージ後 23 分にビルドされており、bundle 内 grep で `pdfGeneratingProgress` 0 件 / `photo-no` 存在 / `page-footer` 2件を確認 — つまり**最新コードは各ビルド成果物に確実に入っていた**
+- **真因**: コードの問題ではなく、**ローカル `dist/repolog-production.aab` が Play Console にアップロードされておらず、ユーザー端末では PR #299 マージ前 (= 14:45 JST 以前) に作られた古い AAB が動き続けていた**。スクリーンショットに「PDFを作成中... 0%」プログレスバーが映っていたことが、PR #299 の i18n キー削除前のビルドである動かぬ証拠
+- **構造的な根本原因**:
+  1. main へのマージとストア配布が完全に分離した別ステップで、後者は人手 (`pnpm build:android:aab:local` → 手動 Play Console アップロード)
+  2. iOS workflow `build-ios-testflight.yml` は `workflow_dispatch` または `push tag:v*` のみ起動。連続マージ中はタグを切らずにマージしてしまい、どのビルドがどの commit の修正を含むのかが不可視に
+  3. `dist/repolog-production.aab` は固定パスで上書きされ続け、ファイル名から「いつ・どの commit でビルドしたか」が一切読めない
+  4. Play Console にアップロード済みの AAB が最新コードを含むかを機械的に確認する手段がなかった
+- **対策（実施済み）**: PR feat/build-artifact-sha-stamping にて
+  1. `scripts/postbuild-verify.mjs` に **forbidden bundle string check** を追加。`FORBIDDEN_BUNDLE_STRINGS` 配列に「最新ビルドには絶対に存在してはいけない文字列」(`pdfGeneratingProgress` など) を列挙し、bundle に検出されたら exit 1 で aupload を阻止
+  2. `--stamp-sha` フラグを追加。`pnpm build:android:aab:local` 実行後に `dist/repolog-production.aab` が `dist/repolog-production-{shortSha}.aab` に自動リネームされるため、ファイル名から「どの commit からビルドされたか」が一目で分かる
+  3. `package.json` の `build:android:aab:local` を `--stamp-sha` 付きに更新。preview-local APK は `install:device` が固定パスを参照するため stamp 対象外
+- **ルール**:
+  1. **「修正済み」と「ユーザー端末に届いた」の間には常に配信レイヤがある**。バグ報告を受けたら、まず `(a) ソースに修正が入っているか` `(b) ビルド成果物に修正が入っているか` `(c) ストアにアップロードされているか` `(d) ユーザー端末にインストールされているか` の 4 点を順番に検証する
+  2. **ビルド成果物のファイル名にコミット SHA を埋める**。固定パスで上書きされる成果物は、何世代前のものか分からなくなった瞬間に事故源になる
+  3. **削除された i18n キーは forbidden canary に登録する**。ユーザー報告のスクリーンショットに削除済みの文字列が映っていたら、それは古いビルドが動いている動かぬ証拠 — 同種の証拠を機械的に取れるようにスクリプト化する
+  4. **「コードはマージ済み = ユーザーに届いた」と思い込まない**。Solo dev 環境では特に、配信ステップが手動になりやすい。マージ後の TODO 「タグ → CI → TestFlight 送信完了 → Play Console アップロード」をチェックリスト化して docs/how-to/workflow/google_play_release.md と ios_testflight_release.md に置く
+  5. **「ユーザーの古いキャッシュかもしれない」と決めつける前に bundle 文字列で証拠を取る**。`unzip -p dist/repolog-production.aab base/assets/index.android.bundle | grep -c <expected-removed-string>` を 30 秒で叩けるようにしておく
+- **再発防止のセルフチェック**: 次回「直したのに直っていない」と聞いたら、以下を順に確認:
+  1. `git log --oneline | head -5` で直近のコミットを確認
+  2. `unzip -p dist/repolog-production.aab base/assets/index.android.bundle | grep -c <forbidden-string>` で bundle が最新か検証
+  3. `gh run list --workflow=build-ios-testflight.yml --limit 5 --json headSha,createdAt` で TestFlight ビルドの SHA を確認
+  4. ファイル名に SHA が入っていれば視認で完結。入っていなければまず `--stamp-sha` で stamp し直す
 
 ---
 

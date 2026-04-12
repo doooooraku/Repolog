@@ -186,17 +186,21 @@ pnpm build:android:aab:local
 このコマンドの中身（`package.json` で定義済み）：
 
 ```bash
-npx eas-cli@latest build -p android --profile production --local --output dist/repolog-production.aab
+node scripts/prebuild-env-check.mjs android \
+  && npx eas-cli@latest build -p android --profile production --local --output dist/repolog-production.aab \
+  && node scripts/postbuild-verify.mjs dist/repolog-production.aab --stamp-sha
 ```
 
 | オプション | 意味 |
 |-----------|------|
+| `prebuild-env-check.mjs android` | EAS 環境変数（REVENUECAT_*, ADMOB_*）が production に登録済か事前検証 |
 | `npx eas-cli@latest` | EAS CLIの最新版を一時的にダウンロードして実行 |
 | `build` | 「ビルドして」という命令 |
 | `-p android` | Androidプラットフォームを指定 |
 | `--profile production` | `eas.json` の `production` 設定を使用（AAB形式、autoIncrement有効） |
 | `--local` | クラウドではなくローカルでビルド（**無料枠を消費しない**） |
-| `--output dist/repolog-production.aab` | 完成ファイルの出力先を指定 |
+| `--output dist/repolog-production.aab` | 完成ファイルの一時出力先（直後に SHA スタンプ付きにリネームされる） |
+| `postbuild-verify.mjs ... --stamp-sha` | (1) API キー埋込検証 (2) 禁止文字列 canary 検証 (3) `dist/repolog-production-{shortSha}.aab` にリネーム |
 
 #### 初回ビルド時の特別な対話
 
@@ -217,19 +221,33 @@ npx eas-cli@latest build -p android --profile production --local --output dist/r
 
 | 項目 | 値 |
 |------|-----|
-| 出力ファイル | `dist/repolog-production.aab` |
+| 出力ファイル | `dist/repolog-production-{shortSha}.aab`（例: `dist/repolog-production-c71bb11.aab`）|
 | ファイルサイズ | 約123MB |
 | 所要時間（初回） | 約30-45分 |
 | 所要時間（2回目以降） | 約6-15分 |
 | versionCode | 自動インクリメント（`eas.json` の `autoIncrement: true`） |
 
+> **2026-04-09 以降**: `pnpm build:android:aab:local` は `dist/repolog-production.aab` でビルドした後、`scripts/postbuild-verify.mjs --stamp-sha` がファイル名を `dist/repolog-production-{shortSha}.aab` に自動リネームします（`shortSha` は `git rev-parse --short HEAD` の出力）。これによりファイル名から「どのコミットからビルドされた成果物か」が視認できます。詳細は `docs/reference/lessons.md` の「2026-04-09: 「修正したのに反映されていない」報告の真因はビルド配信ギャップ」参照。
+
 #### ビルド完了の確認
 
 ```bash
-ls -lh dist/repolog-production.aab
+ls -lh dist/repolog-production-*.aab
 ```
 
-`dist/repolog-production.aab` が存在し、サイズが100MB以上あれば成功。
+最新のスタンプ済み AAB が存在し、サイズが100MB以上あれば成功。アップロード対象は **必ずファイル名のコミット SHA を `git log --oneline -1` の出力と一致するかチェック** してから Play Console に上げること。
+
+#### ビルド成果物の検証ステップ（postbuild-verify.mjs）
+
+`pnpm build:android:aab:local` の最後で自動実行される `scripts/postbuild-verify.mjs` は以下を確認します。すべて ✓ でなければ Play Console にアップロードしないでください:
+
+| チェック | 失敗時の意味 |
+|---------|------------|
+| API キー埋込（REVENUECAT_*, ADMOB_*）| EAS 環境変数が production に登録されていない |
+| Forbidden bundle string canary（`pdfGeneratingProgress` 等の削除済みマーカー）| ビルドキャッシュが古い／JS bundle が stale |
+| `--stamp-sha` リネーム | git repo 外で実行されたなど（警告のみで継続） |
+
+Forbidden string list はスクリプト内 `FORBIDDEN_BUNDLE_STRINGS` 配列で管理。新しい削除済み文字列は PR ごとにここへ追記してください。
 
 ### 1-7. Keystoreバックアップ（初回ビルド後に必ず実施）
 
@@ -292,17 +310,23 @@ keytool -list -v -keystore ./path/to/keystore.jks
 
 ### 2-1. AABファイルをWindowsに転送
 
-WSL2からWindowsのダウンロードフォルダにコピー：
+WSL2からWindowsのダウンロードフォルダにコピー（**必ず最新の SHA スタンプ付きファイル**を選ぶこと）:
 
 ```bash
-cp dist/repolog-production.aab /mnt/c/Users/doooo/Downloads/
+# 1) 最新ビルドの commit SHA を確認
+git log --oneline -1
+
+# 2) その SHA を含む AAB をコピー（例: c71bb11）
+cp dist/repolog-production-$(git rev-parse --short HEAD).aab /mnt/c/Users/doooo/Downloads/
 ```
 
 | 部分 | 意味 |
 |------|------|
 | `cp` | ファイルをコピーするコマンド |
-| `dist/repolog-production.aab` | コピー元（WSL2内のビルド成果物） |
+| `dist/repolog-production-$(git rev-parse --short HEAD).aab` | コピー元（現在の HEAD でビルドした AAB）|
 | `/mnt/c/Users/doooo/Downloads/` | コピー先（WindowsのダウンロードフォルダをWSL2からアクセスするパス） |
+
+> **配信ミス防止**: コピー前に `ls -lh dist/repolog-production-*.aab` を実行して `dist/` 内に古い世代の AAB が残っていないか確認。残っていてアップロード対象が紛らわしい場合は古いものを削除してから操作する。
 
 ### 2-2. Google Play Console でアップロード
 
@@ -311,7 +335,7 @@ cp dist/repolog-production.aab /mnt/c/Users/doooo/Downloads/
 3. 左メニュー →「テスト」→「内部テスト」
 4. **「新しいリリースを作成」** をクリック
 5. 「App Bundle」セクションの **「アップロード」** をクリック
-6. Windowsのダウンロードフォルダから `repolog-production.aab` を選択
+6. Windowsのダウンロードフォルダから `repolog-production-{shortSha}.aab` を選択（**ファイル名の SHA が `git log --oneline -1` の SHA と一致するか必ず目視確認**）
 7. アップロード完了を待つ（123MB、数分かかる）
 
 ### 2-3. リリースの詳細を入力
@@ -510,8 +534,8 @@ grep secrets .gitignore
 ### 4-6. EAS Submit を実行（2回目以降）
 
 ```bash
-# ローカルのAABファイルを直接提出
-npx eas-cli@latest submit -p android --path ./dist/repolog-production.aab
+# ローカルのAABファイルを直接提出（現在の HEAD でビルドしたものを選ぶ）
+npx eas-cli@latest submit -p android --path "./dist/repolog-production-$(git rev-parse --short HEAD).aab"
 
 # またはEASビルド済みの最新を提出
 npx eas-cli@latest submit -p android --latest
@@ -521,7 +545,7 @@ npx eas-cli@latest submit -p android --latest
 |-----------|------|
 | `submit` | 「ストアに提出して」という命令 |
 | `-p android` | Androidを対象 |
-| `--path ./dist/...` | ローカルのAABファイルを直接指定 |
+| `--path ./dist/...` | ローカルのAABファイルを直接指定（SHA スタンプ付き）|
 | `--latest` | EASサーバー上の最新ビルドを自動選択 |
 
 ### 4-7. ビルドから提出までの一括フロー（推奨）
@@ -530,11 +554,11 @@ npx eas-cli@latest submit -p android --latest
 # Step 1: 品質チェック
 pnpm verify
 
-# Step 2: ローカルビルド
+# Step 2: ローカルビルド（dist/repolog-production-{sha}.aab に出力される）
 pnpm build:android:aab:local
 
-# Step 3: 自動提出
-npx eas-cli@latest submit -p android --path ./dist/repolog-production.aab
+# Step 3: 自動提出（同じ HEAD の SHA を解決して渡す）
+npx eas-cli@latest submit -p android --path "./dist/repolog-production-$(git rev-parse --short HEAD).aab"
 ```
 
 ---
@@ -544,15 +568,15 @@ npx eas-cli@latest submit -p android --path ./dist/repolog-production.aab
 ### 5-1. アップデートの流れ
 
 ```bash
-# 1. コード修正
+# 1. コード修正 & マージ
 # 2. 品質チェック
 pnpm verify
 
-# 3. AABビルド（versionCodeは自動インクリメント）
+# 3. AABビルド（versionCodeは自動インクリメント、ファイル名に commit SHA が付く）
 pnpm build:android:aab:local
 
 # 4. 提出（EAS Submit設定済みの場合）
-npx eas-cli@latest submit -p android --path ./dist/repolog-production.aab
+npx eas-cli@latest submit -p android --path "./dist/repolog-production-$(git rev-parse --short HEAD).aab"
 ```
 
 ### 5-2. バージョン管理
