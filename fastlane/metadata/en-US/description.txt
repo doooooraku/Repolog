@@ -88,3 +88,6 @@
 
   Download Repolog and turn the photos already on your phone into
   the report your client is waiting for.
+
+Privacy Policy: https://doooooraku.github.io/Repolog/privacy/
+Terms of Use (EULA): https://doooooraku.github.io/Repolog/terms/
