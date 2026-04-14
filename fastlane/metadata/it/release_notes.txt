@@ -1,1 +1,6 @@
-Prima versione.
+I piani Pro sono ora disponibili:
+- Mensile
+- Annuale
+- Acquisto unico (a vita)
+
+Pro rimuove i limiti di foto per report e di esportazioni PDF, e disattiva pubblicità e filigrane PDF.

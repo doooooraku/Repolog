@@ -1,1 +1,6 @@
-Lanzamiento inicial.
+Ya están disponibles los planes Pro:
+- Mensual
+- Anual
+- Compra única (de por vida)
+
+Pro elimina los límites de fotos por informe y de exportaciones PDF, y desactiva la publicidad y las marcas de agua.

@@ -1,1 +1,6 @@
-Lancamento inicial.
+Os planos Pro agora estão disponíveis:
+- Mensal
+- Anual
+- Compra única (vitalícia)
+
+O Pro remove os limites de fotos por relatório e exportações de PDF, e desativa anúncios e marcas d'água.

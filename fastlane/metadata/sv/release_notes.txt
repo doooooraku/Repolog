@@ -1,1 +1,6 @@
-PDF-exporten förbättrad: stabilare layout och snabbare export.
+Pro-abonnemang är nu tillgängliga:
+- Månatligt
+- Årligt
+- Engångsköp (livstid)
+
+Pro tar bort gränserna för foton per rapport och PDF-exporter, och inaktiverar annonser och PDF-vattenstämplar.
