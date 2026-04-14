@@ -1,1 +1,1 @@
-Ulepszony eksport PDF: stabilniejszy układ i szybsze generowanie.
+
