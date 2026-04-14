@@ -1,1 +1,6 @@
+Các gói Pro hiện đã có:
+- Hàng tháng
+- Hàng năm
+- Mua một lần (trọn đời)
 
+Pro gỡ bỏ giới hạn số ảnh mỗi báo cáo và số lần xuất PDF, đồng thời tắt quảng cáo và hình mờ PDF.

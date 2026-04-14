@@ -1,1 +1,6 @@
-PDF-Ausgabe verbessert: stabileres Layout und schnellerer Export.
+Pro-Abos sind jetzt verfügbar:
+- Monatlich
+- Jährlich
+- Einmalkauf (lebenslang)
+
+Mit Pro entfernen Sie die Limits für Fotos pro Bericht und PDF-Exporte und schalten Werbung sowie PDF-Wasserzeichen ab.

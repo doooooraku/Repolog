@@ -1,1 +1,6 @@
-PDF dışa aktarma iyileştirildi: daha kararlı düzen ve daha hızlı çıktı.
+Pro planları artık kullanılabilir:
+- Aylık plan
+- Yıllık plan
+- Tek seferlik satın alma (kalıcı)
+
+Pro, rapor başına fotoğraf sayısını ve PDF dışa aktarmalarını sınırsız kılar, reklamları ve PDF filigranlarını devre dışı bırakır.

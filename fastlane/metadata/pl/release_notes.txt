@@ -1,1 +1,6 @@
-Ulepszony eksport PDF: stabilniejszy układ i szybsze generowanie.
+Plany Pro są już dostępne:
+- Miesięczny
+- Roczny
+- Zakup jednorazowy (na zawsze)
+
+Pro usuwa limity zdjęć w raportach i eksportów PDF, wyłącza reklamy i znaki wodne PDF.

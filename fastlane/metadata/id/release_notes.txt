@@ -1,1 +1,6 @@
+Paket Pro kini tersedia:
+- Bulanan
+- Tahunan
+- Sekali beli (seumur hidup)
 
+Pro menghapus batas foto per laporan dan ekspor PDF, serta mematikan iklan dan tanda air PDF.

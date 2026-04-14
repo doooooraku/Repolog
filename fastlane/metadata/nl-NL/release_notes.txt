@@ -1,1 +1,6 @@
-PDF-export verbeterd: stabielere opmaak en snellere verwerking.
+Pro-abonnementen zijn nu beschikbaar:
+- Maandelijks
+- Jaarlijks
+- Eenmalige aankoop (levenslang)
+
+Pro verwijdert de limieten voor foto's per rapport en PDF-exports, en schakelt advertenties en PDF-watermerken uit.

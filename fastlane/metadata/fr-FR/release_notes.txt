@@ -1,1 +1,6 @@
-Première version.
+Les plans Pro sont désormais disponibles :
+- Mensuel
+- Annuel
+- Achat unique (à vie)
+
+Pro supprime les limites de photos par rapport et d'exports PDF, et désactive les publicités et les filigranes PDF.
