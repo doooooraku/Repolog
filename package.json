@@ -20,6 +20,7 @@
     "i18n:inventory": "node scripts/i18n-audit.mjs --inventory",
     "verify": "pnpm lint && pnpm type-check && pnpm test && pnpm i18n:check && pnpm config:check",
     "config:check": "node scripts/config-check.mjs",
+    "metadata:check": "node scripts/validate-metadata.mjs",
     "ump:consent:check": "node scripts/ump-consent-check.mjs",
     "pdf:font:benchmark": "node --expose-gc scripts/pdf-font-benchmark.mjs",
     "prebuild": "expo prebuild",

@@ -61,7 +61,8 @@ docs/
 │   │   ├── release_notes_template.md
 │   │   ├── backup_restore.md        バックアップ運用と障害対応
 │   │   ├── figma_mcp_prompt.md
-│   │   └── store_screenshots.md     ストアスクリーンショット撮影
+│   │   ├── store_screenshots.md     ストアスクリーンショット撮影
+│   │   └── app_store_localization.md  App Store多言語ローカライズ（fastlane）
 │   ├── testing/                   テスト・ベンチマーク
 │   │   ├── testing.md             テスト戦略と実行手順
 │   │   └── pdf_font_benchmark.md  フォント性能計測
